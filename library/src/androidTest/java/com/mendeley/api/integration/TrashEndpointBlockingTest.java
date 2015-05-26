@@ -1,10 +1,9 @@
 package com.mendeley.api.integration;
 
 
-import com.mendeley.api.callbacks.document.DocumentIdList;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.DocumentId;
-import com.mendeley.api.params.DocumentRequestParameters;
+import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.testUtils.AssertUtils;
 import com.mendeley.api.util.DateUtils;
 
@@ -22,10 +21,10 @@ public class TrashEndpointBlockingTest extends EndpointBlockingTest {
 
         // WHEN trashing one of them
         final String trashingDocId = serverDocsBefore.get(0).id;
-        getSdk().trashDocument(trashingDocId);
+        getSdk().trashDocument(trashingDocId).run();
 
         // THEN the server does not list the document as non trashed documents
-        final List<Document> serverDocsAfter= getSdk().getDocuments().documents;
+        final List<Document> serverDocsAfter= getSdk().getDocuments().run().resource;
         for (Document doc : serverDocsAfter) {
             assertFalse(trashingDocId.equals(doc.id));
         }
@@ -38,12 +37,12 @@ public class TrashEndpointBlockingTest extends EndpointBlockingTest {
         final List<Document> expectedTrashedDocs = new ArrayList<Document>();
         for (int i = 0; i < existingDocs.size() / 2; i++) {
             final Document doc = existingDocs.get(i);
-            getSdk().trashDocument(doc.id);
+            getSdk().trashDocument(doc.id).run();
             expectedTrashedDocs.add(doc);
         }
 
         // WHEN requesting trashed docs
-        final List<Document> actualTrashedDocs = getSdk().getTrashedDocuments().documents;
+        final List<Document> actualTrashedDocs = getSdk().getTrashedDocuments().run().resource;
 
 
         // THEN we receive the trashed docs
@@ -68,7 +67,7 @@ public class TrashEndpointBlockingTest extends EndpointBlockingTest {
         getSdk().restoreDocument(restoredDoc.id);
 
         // THEN the document is no longer trashed
-        final List<Document> actual   = getSdk().getDocuments().documents;
+        final List<Document> actual   = getSdk().getDocuments().run().resource;
         final List<Document> expected = Arrays.asList(restoredDoc);
 
         Comparator<Document> comparator = new Comparator<Document>() {
@@ -84,17 +83,17 @@ public class TrashEndpointBlockingTest extends EndpointBlockingTest {
         // GIVEN one trashed document in the server
         final String deletedSince = DateUtils.formatMendeleyApiTimestamp(getServerDate());
         final Document deletingDoc = setUpDocumentsInServer(1).get(0);
-        getSdk().trashDocument(deletingDoc.id);
+        getSdk().trashDocument(deletingDoc.id).run();
 
         // WHEN deleting it
-        getSdk().deleteTrashedDocument(deletingDoc.id);
+        getSdk().deleteTrashedDocument(deletingDoc.id).run();
 
         // THEN the document is permanently deleted
         final DocumentRequestParameters params = new DocumentRequestParameters();
-        final DocumentIdList deletedDocsIdList = getSdk().getDeletedDocuments(deletedSince, params);
 
         final List<DocumentId> expectedDeletedDocIds = Arrays.asList(new DocumentId.Builder().setDocumentId(deletingDoc.id).build());
-        final List<DocumentId> actualDeletedDocIds = deletedDocsIdList.documentIds;
+        final List<DocumentId> actualDeletedDocIds = getSdk().getDeletedDocuments(deletedSince, params).run().resource;
+
         Comparator<DocumentId> comparator = new Comparator<DocumentId>() {
             @Override
             public int compare(DocumentId lhs, DocumentId rhs) {
@@ -121,6 +120,6 @@ public class TrashEndpointBlockingTest extends EndpointBlockingTest {
             docs.add(doc);
         }
 
-        return getSdk().getDocuments().documents;
+        return getSdk().getDocuments().run().resource;
     }
 }

@@ -3,7 +3,6 @@ package com.mendeley.api.integration;
 
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.mendeley.api.callbacks.read_position.ReadPositionList;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
@@ -30,8 +29,7 @@ public class ReadPositionEndpointBlockingTest extends EndpointBlockingTest {
         }
 
         // WHEN getting recently read positions
-        final ReadPositionList response = getSdk().getRecentlyRead(null, null, 20);
-        final List<ReadPosition> actual = response.readPositions;
+        final List<ReadPosition> actual = getSdk().getRecentlyRead(null, null, 20).run().resource;
 
         // THEN we have the expected recently read positions
         AssertUtils.assertReadPositions(expected, actual);
@@ -50,7 +48,7 @@ public class ReadPositionEndpointBlockingTest extends EndpointBlockingTest {
                 .setDate(new Date())
                 .build();
 
-        getSdk().postRecentlyRead(expected);
+        getSdk().postRecentlyRead(expected).run();
 
         // THEN we have successfully posted it
         final List<ReadPosition> actual = getTestAccountSetupUtils().getAllReadingPositions();
@@ -70,7 +68,7 @@ public class ReadPositionEndpointBlockingTest extends EndpointBlockingTest {
                 .setDate(new Date())
                 .build();
 
-        getSdk().postRecentlyRead(firstReadPostion);
+        getSdk().postRecentlyRead(firstReadPostion).run();
 
         // WHEN updating (posting for second time) the read position for the same file
 
@@ -82,7 +80,7 @@ public class ReadPositionEndpointBlockingTest extends EndpointBlockingTest {
                 .setDate(new Date())
                 .build();
 
-        getSdk().postRecentlyRead(secondReadPostion);
+        getSdk().postRecentlyRead(secondReadPostion).run();
 
         // THEN we have successfully posted it
         final List<ReadPosition> actual = getTestAccountSetupUtils().getAllReadingPositions();

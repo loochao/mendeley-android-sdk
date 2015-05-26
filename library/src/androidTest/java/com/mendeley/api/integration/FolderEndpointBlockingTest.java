@@ -1,12 +1,11 @@
 package com.mendeley.api.integration;
 
-import com.mendeley.api.callbacks.document.DocumentIdList;
-import com.mendeley.api.callbacks.folder.FolderList;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.Folder;
-import com.mendeley.api.params.FolderRequestParameters;
-import com.mendeley.api.params.Page;
+import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.params.FolderRequestParameters;
+import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Arrays;
@@ -32,8 +31,7 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
         }
 
         // WHEN getting folders
-        final FolderList response = getSdk().getFolders();
-        final List<Folder> actual = response.folders;
+        final List<Folder> actual = getSdk().getFolders().run().resource;
 
         Comparator<Folder> comparator = new Comparator<Folder>() {
             @Override
@@ -63,8 +61,7 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
         FolderRequestParameters params = new FolderRequestParameters();
         params.groupId = null;
         params.limit = 10;
-        final FolderList response = getSdk().getFolders(params);
-        final List<Folder> actual = response.folders;
+        final List<Folder> actual = getSdk().getFolders(params).run().resource;
 
         Comparator<Folder> comparator = new Comparator<Folder>() {
             @Override
@@ -99,16 +96,16 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
         params.limit = pageSize;
 
         final List<Folder> actual = new LinkedList<Folder>();
-        FolderList response = getSdk().getFolders(params);
+        RequestResponse<List<Folder>> response = getSdk().getFolders(params).run();
 
         // THEN we receive a folder list...
         for (int page = 0; page < pageCount; page++) {
-            actual.addAll(response.folders);
+            actual.addAll(response.resource);
 
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getFolders(response.next);
+                response = getSdk().getFolders(response.next).run();
             }
         }
 
@@ -129,14 +126,14 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
         final Folder postingFolder = createParentFolder();
 
         // WHEN posting it
-        final Folder returnedFolder = getSdk().postFolder(postingFolder);
+        final Folder returnedFolder = getSdk().postFolder(postingFolder).run().resource;
 
         // THEN we receive the same folder back, with id filled
         AssertUtils.assertFolder(postingFolder, returnedFolder);
         assertNotNull(returnedFolder.id);
 
         // ...and the folder exists in the server
-        AssertUtils.assertFolders(getSdk().getFolders().folders, Arrays.asList(postingFolder));
+        AssertUtils.assertFolders(getSdk().getFolders().run().resource, Arrays.asList(postingFolder));
     }
 
     public void test_postDocumentsToFolder_createsDocumentsInTheFolderInServer() throws Exception {
@@ -155,11 +152,11 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
 
         // WHEN posting the documents to the folder
         for (Document document : documents) {
-            getSdk().postDocumentToFolder(folder.id, document.id);
+            getSdk().postDocumentToFolder(folder.id, document.id).run();
         }
 
-        DocumentIdList response = getSdk().getFolderDocumentIds(new FolderRequestParameters(), folder.id);
-        final Set<DocumentId> actualDeletedDocIds = new HashSet<DocumentId>(response.documentIds);
+        RequestResponse<List<DocumentId>> response = getSdk().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        final Set<DocumentId> actualDeletedDocIds = new HashSet<DocumentId>(response.resource);
 
         Comparator<DocumentId> comparator = new Comparator<DocumentId>() {
             @Override
@@ -181,10 +178,10 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
 
         // WHEN deleting one of them
         final String deletingFolderId = serverFoldersBefore.get(0).id;
-        getSdk().deleteFolder(deletingFolderId);
+        getSdk().deleteFolder(deletingFolderId).run();
 
         // THEN the server does not have the deleted folder any more
-        final List<Folder> serverFoldersAfter = getSdk().getFolders().folders;
+        final List<Folder> serverFoldersAfter = getSdk().getFolders().run().resource;
         for (Folder folder : serverFoldersAfter) {
             assertFalse(deletingFolderId.equals(folder.id));
         }
@@ -199,13 +196,13 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
                 .setName(folder.name + "updated")
                 .build();
 
-        final Folder returnedFolder = getSdk().patchFolder(folder.id, folderPatched);
+        final Folder returnedFolder = getSdk().patchFolder(folder.id, folderPatched).run().resource;
 
         // THEN we receive the patched folder
         AssertUtils.assertFolder(folderPatched, returnedFolder);
 
         // ...and the server has updated the folder
-        final Folder folderAfter = getSdk().getFolder(folderPatched.id);
+        final Folder folderAfter = getSdk().getFolder(folderPatched.id).run().resource;
         AssertUtils.assertFolder(folderPatched, folderAfter);
     }
 

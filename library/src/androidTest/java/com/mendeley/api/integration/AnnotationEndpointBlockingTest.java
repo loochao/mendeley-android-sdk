@@ -1,12 +1,12 @@
 package com.mendeley.api.integration;
 
-import com.mendeley.api.callbacks.annotations.AnnotationList;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Point;
-import com.mendeley.api.params.AnnotationRequestParameters;
-import com.mendeley.api.params.Page;
+import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.params.AnnotationRequestParameters;
+import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Arrays;
@@ -28,8 +28,7 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
         }
 
         // WHEN getting annotations
-        final AnnotationList response = getSdk().getAnnotations();
-        final List<Annotation> actual = response.annotations;
+        final List<Annotation> actual = getSdk().getAnnotations().run().resource;
 
         Comparator<Annotation> comparator = new Comparator<Annotation>() {
             @Override
@@ -57,8 +56,7 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
         AnnotationRequestParameters params = new AnnotationRequestParameters();
         params.documentId = postedDocument.id;
         params.limit = 12;
-        final AnnotationList response = getSdk().getAnnotations(params);
-        final List<Annotation> actual = response.annotations;
+        final List<Annotation> actual = getSdk().getAnnotations(params).run().resource;
 
         Comparator<Annotation> comparator = new Comparator<Annotation>() {
             @Override
@@ -91,16 +89,16 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
         params.limit = pageSize;
 
         final List<Annotation> actual = new LinkedList<Annotation>();
-        AnnotationList response = getSdk().getAnnotations(params);
+        RequestResponse<List<Annotation>> response = getSdk().getAnnotations(params).run();
 
         // THEN we receive an annotations list...
         for (int page = 0; page < pageCount; page++) {
-            actual.addAll(response.annotations);
+            actual.addAll(response.resource);
 
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getAnnotations(response.next);
+                response = getSdk().getAnnotations(response.next).run();
             }
         }
 
@@ -122,14 +120,14 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
         final Annotation postingAnnotation = createAnnotation(postedDocument.id);
 
         // WHEN posting it
-        final Annotation returnedAnnotation = getSdk().postAnnotation(postingAnnotation);
+        final Annotation returnedAnnotation = getSdk().postAnnotation(postingAnnotation).run().resource;
 
         // THEN we receive the same annotation back, with id filled
         AssertUtils.assertAnnotation(postingAnnotation, returnedAnnotation);
         assertNotNull(returnedAnnotation.id);
 
         // ...and the annotation exists in the server
-        AssertUtils.assertAnnotations(getSdk().getAnnotations().annotations, Arrays.asList(postingAnnotation));
+        AssertUtils.assertAnnotations(getSdk().getAnnotations().run().resource, Arrays.asList(postingAnnotation));
     }
 
     public void test_deleteAnnotation_removesTheAnnotationFromServer() throws Exception {
@@ -137,15 +135,16 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
         final Document postedDocument = getTestAccountSetupUtils().setupDocument(createDocument("doc title"));
         final List<Annotation> serverAnnotationsBefore = setUpAnnotationsInServer(postedDocument.id, 5);
 
-
         // WHEN deleting one of them
         final String deletingAnnotationId = serverAnnotationsBefore.get(0).id;
-        getSdk().deleteAnnotation(deletingAnnotationId);
+        getSdk().deleteAnnotation(deletingAnnotationId).run();
 
         // THEN the server does not have the deleted annotation any more
-        final List<Annotation> serverAnnotationsAfter = getSdk().getAnnotations().annotations;
+        final List<Annotation> serverAnnotationsAfter = getSdk().getAnnotations().run().resource;
+        assertEquals("Annotation deleted", serverAnnotationsBefore.size() - 1, serverAnnotationsAfter.size());
+
         for (Annotation annotation : serverAnnotationsAfter) {
-            assertFalse(deletingAnnotationId.equals(annotation.id));
+            assertFalse("Right annotation deleted", deletingAnnotationId.equals(annotation.id));
         }
     }
 
@@ -159,13 +158,13 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
                 .setText(annotation.text + "updated")
                 .build();
 
-        final Annotation returnedAnnotation = getSdk().patchAnnotation(annotation.id, annotationPatched);
+        final Annotation returnedAnnotation = getSdk().patchAnnotation(annotation.id, annotationPatched).run().resource;
 
         // THEN we receive the patched annotation
         AssertUtils.assertAnnotation(annotationPatched, returnedAnnotation);
 
         // ...and the server has updated the annotation
-        final Annotation annotationAfter = getSdk().getAnnotation(annotationPatched.id);
+        final Annotation annotationAfter = getSdk().getAnnotation(annotationPatched.id).run().resource;
         AssertUtils.assertAnnotation(annotationPatched, annotationAfter);
     }
 
@@ -200,7 +199,7 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
             annotations.add(annotation);
         }
 
-        return getSdk().getAnnotations().annotations;
+        return getSdk().getAnnotations().run().resource;
     }
 
 }

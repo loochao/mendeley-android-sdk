@@ -1,6 +1,6 @@
 package com.mendeley.api.exceptions;
 
-import com.mendeley.api.network.NetworkUtils;
+import com.mendeley.api.request.NetworkUtils;
 
 import org.apache.http.HttpResponse;
 

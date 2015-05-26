@@ -1,17 +1,18 @@
 package com.mendeley.api.testUtils;
 
+import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.BuildConfig;
-import com.mendeley.api.callbacks.group.GroupList;
+import com.mendeley.api.impl.RequestsFactory;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.impl.AsyncMendeleySdk;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.Folder;
+import com.mendeley.api.model.Group;
 import com.mendeley.api.model.ReadPosition;
-import com.mendeley.api.network.JsonParser;
-import com.mendeley.api.network.NetworkUtils;
-import com.mendeley.api.params.GroupRequestParameters;
+import com.mendeley.api.request.JsonParser;
+import com.mendeley.api.request.NetworkUtils;
+import com.mendeley.api.request.params.GroupRequestParameters;
 import com.mendeley.api.util.DateUtils;
 
 import junit.framework.Assert;
@@ -33,10 +34,12 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class TestAccountSetupUtils{
 
-    private final AsyncMendeleySdk sdk;
+    private final RequestsFactory requestFactory;
+    private final AuthTokenManager authTokenManager;
 
-    public TestAccountSetupUtils(AsyncMendeleySdk sdk) {
-        this.sdk = sdk;
+    public TestAccountSetupUtils(AuthTokenManager authTokenManager, RequestsFactory requestFactory) {
+        this.requestFactory = requestFactory;
+        this.authTokenManager = authTokenManager;
     }
 
     /**
@@ -50,23 +53,23 @@ public class TestAccountSetupUtils{
     private void cleanDocs() {
         try {
             // delete non-trashed docs
-            // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
-            for (Document doc: sdk.getDocuments().documents) {
-                // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
-                sdk.deleteDocument(doc.id);
+            // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
+            for (Document doc: requestFactory.getDocuments().run().resource) {
+                // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
+                requestFactory.deleteDocument(doc.id).run();
             }
 
             // delete trashed docs
-            // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
-            for (Document doc: sdk.getTrashedDocuments().documents) {
-                // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
-                sdk.deleteTrashedDocument(doc.id);
+            // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
+            for (Document doc: requestFactory.getTrashedDocuments().run().resource) {
+                // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
+                requestFactory.deleteTrashedDocument(doc.id).run();
             }
 
             // ensure no documents at all (trashed or deleted)
-            // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
-            Assert.assertEquals("Expected empty list of non trashed docs in server", 0, sdk.getDocuments().documents.size());
-            Assert.assertEquals("Expected empty list of trashed docs in server", 0, sdk.getTrashedDocuments().documents.size());
+            // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
+            Assert.assertEquals("Expected empty list of non trashed docs in server", 0, requestFactory.getDocuments().run().resource.size());
+            Assert.assertEquals("Expected empty list of trashed docs in server", 0, requestFactory.getTrashedDocuments().run().resource.size());
 
         } catch (Exception e) {
             throw new TestAccountSetupException(e);
@@ -76,15 +79,15 @@ public class TestAccountSetupUtils{
     private void cleanFolders() {
         try {
             // delete parent folders as sub folders will be deleted as well
-            // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
-            for (Folder folder: sdk.getFolders().folders) {
-                // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
+            // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
+            for (Folder folder: requestFactory.getFolders().run().resource) {
+                // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
                 if (folder.parentId == null) {
-                    sdk.deleteFolder(folder.id);
+                    requestFactory.deleteFolder(folder.id).run();
                 }
             }
 
-            Assert.assertEquals("Expected empty list of folders in server", 0, sdk.getFolders().folders.size());
+            Assert.assertEquals("Expected empty list of folders in server", 0, requestFactory.getFolders().run().resource.size());
 
         } catch (Exception e) {
             throw new TestAccountSetupException(e);
@@ -92,30 +95,29 @@ public class TestAccountSetupUtils{
     }
 
     public Document setupDocument(Document doc) throws MendeleyException {
-        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
-        return sdk.postDocument(doc);
+        // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
+        return requestFactory.postDocument(doc).run().resource;
     }
 
     public Annotation setupAnnotation(Annotation annotation) throws MendeleyException {
-        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
-        return sdk.postAnnotation(annotation);
+        // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
+        return requestFactory.postAnnotation(annotation).run().resource;
     }
 
     public File setupFile(String docId, String fileName, InputStream inputStream) throws MendeleyException {
-        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
-        return sdk.postFile("application/pdf", docId, inputStream, fileName);
+        // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
+        return requestFactory.postFileBinary("application/pdf", docId, inputStream, fileName).run().resource;
     }
 
     public Folder setupFolder(Folder folder) throws MendeleyException {
-        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
-        return sdk.postFolder(folder);
+        // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
+        return requestFactory.postFolder(folder).run().resource;
     }
 
-    public GroupList getGroups() throws MendeleyException {
-        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
-        return sdk.getGroups(new GroupRequestParameters());
+    public List<Group> getGroups() throws MendeleyException {
+        // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
+        return requestFactory.getGroups(new GroupRequestParameters()).run().resource;
     }
-
 
     public ReadPosition setupReadingPosition(String fileId, int page, int verticalPosition, Date date) throws Exception{
         HttpsURLConnection con = null;
@@ -134,7 +136,7 @@ public class TestAccountSetupUtils{
 
             con = (HttpsURLConnection) callUrl.openConnection();
             con.setRequestMethod("POST");
-            con.addRequestProperty("Authorization", "Bearer " + sdk.getAccessToken());
+            con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
             con.addRequestProperty("Content-type", "application/vnd.mendeley-recently-read.1+json");
 
             con.connect();
@@ -178,7 +180,7 @@ public class TestAccountSetupUtils{
 
             con = (HttpsURLConnection) callUrl.openConnection();
             con.setRequestMethod("GET");
-            con.addRequestProperty("Authorization", "Bearer " + sdk.getAccessToken());
+            con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
             con.addRequestProperty("Content-type", "application/vnd.mendeley-recently-read.1+json");
 
             con.connect();
@@ -205,6 +207,7 @@ public class TestAccountSetupUtils{
         }
     }
 
+
     public String setupApplicationFeature(String name) throws Exception{
         HttpsURLConnection con = null;
         OutputStream os = null;
@@ -219,7 +222,7 @@ public class TestAccountSetupUtils{
 
             con = (HttpsURLConnection) callUrl.openConnection();
             con.setRequestMethod("POST");
-            con.addRequestProperty("Authorization", "Bearer " + sdk.getAccessToken());
+            con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
             con.addRequestProperty("Content-type", "application/vnd.mendeley-feature-mappings.1+json");
 
             con.connect();
@@ -261,7 +264,7 @@ public class TestAccountSetupUtils{
         }
     }
 
-    private void deleteApplicationFeature(String applicationFeatureId) throws Exception{
+    private void deleteApplicationFeature(String applicationFeatureId) throws Exception {
         HttpsURLConnection con = null;
 
         try {
@@ -270,7 +273,7 @@ public class TestAccountSetupUtils{
 
             con = (HttpsURLConnection) callUrl.openConnection();
             con.setRequestMethod("DELETE");
-            con.addRequestProperty("Authorization", "Bearer " + sdk.getAccessToken());
+            con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
             con.addRequestProperty("Content-type", "application/vnd.mendeley-feature-mappings.1+json");
 
             con.connect();
@@ -285,9 +288,11 @@ public class TestAccountSetupUtils{
                 if (con != null) {
                     con.disconnect();
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
+
 
     /**
      * Exceptions that may happen when trying to set up the testing scenario

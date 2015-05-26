@@ -9,9 +9,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.mendeley.api.impl.DefaultMendeleySdk;
 import com.mendeley.api.R;
-import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.util.Utils;
 
 /**
@@ -21,20 +19,15 @@ import com.mendeley.api.util.Utils;
  * Mendeley home page.
  *
  * The "sign in" button starts SignInActivity to obtain an authorization code, which is
- * passed to AuthenticationManager.
+ * passed to AuthenticationApi.
  */
 public class SignInOrSignUpActivity extends Activity implements OnClickListener {
-	private final static int SIGNIN_RESULT = 0;
 	private final static String CREATE_ACCOUNT_URL = "http://www.mendeley.com/";
-
-    private AuthenticationManager authenticationManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        authenticationManager = DefaultMendeleySdk.getInstance().getAuthenticationManager();
 
         setContentView(R.layout.splash_layout);
 
@@ -56,7 +49,7 @@ public class SignInOrSignUpActivity extends Activity implements OnClickListener 
 		int id = v.getId();
 		if (id == R.id.signinButton) {
 			Intent intent = new Intent(this, SignInActivity.class);
-			startActivityForResult(intent, SIGNIN_RESULT);
+			startActivityForResult(intent, SignInActivity.AUTH_REQUEST_CODE);
 		} else if (id == R.id.signupButton) {
 			openUrlInBrowser(CREATE_ACCOUNT_URL);
 		}
@@ -74,16 +67,15 @@ public class SignInOrSignUpActivity extends Activity implements OnClickListener 
     /**
      * Handling on activity result.
      * Will be called after the user logged in in the SignInActivity.
-     * If an authorisation code is received will call authenticated method of the AuthenticationManager
+     * If an authorisation code is received will call authenticated method of the AuthenticationApi
      * otherwise will call failedToAuthenticate.
      */
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
 		switch(requestCode) {
-			case SIGNIN_RESULT:
-				if (resultCode == Activity.RESULT_OK) {
-					finish();
-				}
+			case SignInActivity.AUTH_REQUEST_CODE:
+				setResult(resultCode, data);
+				finish();
 				break;
     		}
     }

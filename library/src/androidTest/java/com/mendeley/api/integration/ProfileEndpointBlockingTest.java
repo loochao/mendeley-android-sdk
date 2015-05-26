@@ -16,7 +16,7 @@ public class ProfileEndpointBlockingTest extends EndpointBlockingTest {
         Profile expected = createTestProfile();
 
         // WHEN getting the profile
-        final Profile actual = getSdk().getProfile(expected.id);
+        final Profile actual = getSdk().getProfile(expected.id).run().resource;
 
         // THEN we have the expected profile
         AssertUtils.assertProfile(expected, actual);
@@ -27,7 +27,7 @@ public class ProfileEndpointBlockingTest extends EndpointBlockingTest {
         Profile expected = createTestProfile();
 
         // WHEN getting the profile
-        final Profile actual = getSdk().getMyProfile();
+        final Profile actual = getSdk().getMyProfile().run().resource;
 
         // THEN we have the expected profile
         AssertUtils.assertProfile(expected, actual);

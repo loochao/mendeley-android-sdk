@@ -6,7 +6,7 @@ import java.util.Set;
 public class DocumentTypesEndpointBlockingTest extends EndpointBlockingTest {
 
     public void test_getDocumentTypes_receivesCorrectDocumentTypes() throws Exception {
-        Map<String, String> types = getSdk().getDocumentTypes();
+        final Map<String, String> types = getSdk().getDocumentTypes().run().resource;
 
         Set<String> keys = types.keySet();
         assertTrue("document types must contain journal", keys.contains("journal"));

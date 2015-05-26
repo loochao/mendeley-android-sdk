@@ -1,13 +1,12 @@
 package com.mendeley.api.integration;
 
-import com.mendeley.api.callbacks.document.DocumentIdList;
-import com.mendeley.api.callbacks.document.DocumentList;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.DocumentId;
-import com.mendeley.api.params.DocumentRequestParameters;
-import com.mendeley.api.params.Page;
-import com.mendeley.api.params.Sort;
-import com.mendeley.api.params.View;
+import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.params.DocumentRequestParameters;
+import com.mendeley.api.request.params.Page;
+import com.mendeley.api.request.params.Sort;
+import com.mendeley.api.request.params.View;
 import com.mendeley.api.testUtils.AssertUtils;
 import com.mendeley.api.util.DateUtils;
 
@@ -33,8 +32,7 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
         }
 
         // WHEN getting documents
-        final DocumentList response = getSdk().getDocuments();
-        final List<Document> actual = response.documents;
+        final List<Document> actual = getSdk().getDocuments().run().resource;
 
         Comparator<Document> comparator = new Comparator<Document>() {
             @Override
@@ -61,8 +59,7 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
         final DocumentRequestParameters params = new DocumentRequestParameters();
         params.sort = Sort.TITLE;
 
-        final DocumentList response = getSdk().getDocuments(params);
-        final List<Document> actual = response.documents;
+        final List<Document> actual = getSdk().getDocuments(params).run().resource;
 
         // THEN we have the expected documents
         AssertUtils.assertDocuments(expected, actual);
@@ -87,7 +84,7 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
         params.limit = pageSize;
         params.sort = Sort.TITLE;
 
-        DocumentList response = getSdk().getDocuments(params);
+        RequestResponse<List<Document>> response = getSdk().getDocuments(params).run();
 
         // THEN we receive a document list...
         for (int page = 0; page < pageCount; page++) {
@@ -95,14 +92,14 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
             final int begin =  page      * pageSize;
             final int end   = (page + 1) * pageSize;
             final List<Document> expectedInPage = expected.subList(begin, end);
-            final List<Document> actualInPage = response.documents;
+            final List<Document> actualInPage = response.resource;
 
             AssertUtils.assertDocuments(expectedInPage, actualInPage);
 
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getDocuments(response.next);
+                response = getSdk().getDocuments(response.next).run();
             }
         }
     }
@@ -116,14 +113,14 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
         final Document postingDoc = createDocument("posting document");
 
         // WHEN posting it
-        final Document returnedDoc = getSdk().postDocument(postingDoc);
+        final Document returnedDoc = getSdk().postDocument(postingDoc).run().resource;
 
         // THEN we receive the same document back, with id filled
         AssertUtils.assertDocument(postingDoc, returnedDoc);
         assertNotNull(returnedDoc.id);
 
         // ...and the document exists in the server
-        AssertUtils.assertDocuments(getSdk().getDocuments().documents, Arrays.asList(postingDoc));
+        AssertUtils.assertDocuments(getSdk().getDocuments().run().resource, Arrays.asList(postingDoc));
     }
 
     public void test_postDocument_withStrangeCharacters_createsDocumentInServer() throws Exception {
@@ -137,14 +134,14 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
                 build();
 
         // WHEN posting it
-        final Document returnedDoc = getSdk().postDocument(postingDoc);
+        final Document returnedDoc = getSdk().postDocument(postingDoc).run().resource;
 
         // THEN we receive the same document back, with id filled
         AssertUtils.assertDocument(postingDoc, returnedDoc);
         assertNotNull(returnedDoc.id);
 
         // ...and the document exists in the server
-        AssertUtils.assertDocuments(getSdk().getDocuments().documents, Arrays.asList(postingDoc));
+        AssertUtils.assertDocuments(getSdk().getDocuments().run().resource, Arrays.asList(postingDoc));
     }
 
 
@@ -154,10 +151,10 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
 
         // WHEN deleting one of them
         final String deletingDocId = serverDocsBefore.get(0).id;
-        getSdk().deleteDocument(deletingDocId);
+        getSdk().deleteDocument(deletingDocId).run();
 
         // THEN the server does not have the deleted document any more
-        final List<Document> serverDocsAfter= getSdk().getDocuments().documents;
+        final List<Document> serverDocsAfter= getSdk().getDocuments().run().resource;
         for (Document doc : serverDocsAfter) {
             assertFalse(deletingDocId.equals(doc.id));
         }
@@ -165,6 +162,7 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
 
     public void test_patchDocument_updatesTheDocumentFromServer() throws Exception {
         // GIVEN ine document in the server
+        Date date = getServerDate();
         final Document docBefore = setUpDocumentsInServer(1).get(0);
 
         // WHEN patching in
@@ -176,18 +174,19 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
                 .build();
 
 
-        final Document returnedDoc = getSdk().patchDocument(docPatching.id, new Date(), docPatching);
+        final Document returnedDoc = getSdk().patchDocument(docPatching.id, date, docPatching).run().resource;
 
         // THEN we receive the patched document
         AssertUtils.assertDocument(docPatching, returnedDoc);
 
         // ...and the server has updated the doc
-        final Document docAfter = getSdk().getDocument(docPatching.id, View.ALL);
+        final Document docAfter = getSdk().getDocument(docPatching.id, View.ALL).run().resource;
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
     public void test_patchDocument_withStrangeCharacters_updatesTheDocumentFromServer() throws Exception {
         // GIVEN ine document in the server
+        Date date = getServerDate();
         final Document docBefore = setUpDocumentsInServer(1).get(0);
 
         // WHEN patching in
@@ -199,13 +198,13 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
                 .build();
 
 
-        final Document returnedDoc = getSdk().patchDocument(docPatching.id, new Date(), docPatching);
+        final Document returnedDoc = getSdk().patchDocument(docPatching.id, date, docPatching).run().resource;
 
         // THEN we receive the patched document
         AssertUtils.assertDocument(docPatching, returnedDoc);
 
         // ...and the server has updated the doc
-        final Document docAfter = getSdk().getDocument(docPatching.id, View.ALL);
+        final Document docAfter = getSdk().getDocument(docPatching.id, View.ALL).run().resource;
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
@@ -218,17 +217,17 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
         final Set<DocumentId> expectedDeletedDocIds = new HashSet<DocumentId>();
         for (int i = 0; i < existingDocs.size() / 2; i++) {
             final Document doc = existingDocs.get(i);
-            getSdk().deleteDocument(doc.id);
+            getSdk().deleteDocument(doc.id).run();;
             expectedDeletedDocIds.add(new DocumentId.Builder().setDocumentId(doc.id).build());
         }
 
         // WHEN requesting deleted doc since that date
         DocumentRequestParameters params = new DocumentRequestParameters();
-        DocumentIdList deletedDocsIdList = getSdk().getDeletedDocuments(deletedSince, params);
+        List<DocumentId> deletedDocsIdList = getSdk().getDeletedDocuments(deletedSince, params).run().resource;
 
 
         // THEN we receive the deleted docs
-        final Set<DocumentId> actualDeletedDocIds = new HashSet<DocumentId>(deletedDocsIdList.documentIds);
+        final Set<DocumentId> actualDeletedDocIds = new HashSet<DocumentId>(deletedDocsIdList);
         Comparator<DocumentId> comparator = new Comparator<DocumentId>() {
             @Override
             public int compare(DocumentId lhs, DocumentId rhs) {
@@ -260,6 +259,6 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
             docs.add(doc);
         }
 
-        return getSdk().getDocuments().documents;
+        return getSdk().getDocuments().run().resource;
     }
 }

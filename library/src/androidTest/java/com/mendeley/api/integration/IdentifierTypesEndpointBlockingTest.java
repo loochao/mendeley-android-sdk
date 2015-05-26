@@ -24,7 +24,7 @@ public class IdentifierTypesEndpointBlockingTest extends EndpointBlockingTest {
 
     public void test_getIdentifierTypes_receivesCorrectIdentifierTypes() throws MendeleyException {
 
-        Map<String, String> actualIdTypes = getSdk().getIdentifierTypes();
+        Map<String, String> actualIdTypes = getSdk().getIdentifierTypes().run().resource;
 
         // we test that the API returns at least the identifiers that existed when writing this test
         for (String key : expectedIdentifierTypes.keySet()) {

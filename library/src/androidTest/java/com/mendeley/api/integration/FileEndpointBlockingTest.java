@@ -1,10 +1,10 @@
 package com.mendeley.api.integration;
 
-import com.mendeley.api.callbacks.file.FileList;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
-import com.mendeley.api.params.FileRequestParameters;
-import com.mendeley.api.params.Page;
+import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.params.FileRequestParameters;
+import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;
 import com.mendeley.api.util.DateUtils;
 
@@ -28,8 +28,7 @@ public class FileEndpointBlockingTest extends EndpointBlockingTest {
         }
 
         // WHEN getting files
-        final FileList response = getSdk().getFiles();
-        final List<File> actual = response.files;
+        final List<File> actual = getSdk().getFiles().run().resource;
 
         Comparator<File> comparator = new Comparator<File>() {
             @Override
@@ -60,8 +59,7 @@ public class FileEndpointBlockingTest extends EndpointBlockingTest {
         params.addedSince = currentDate;
         params.documentId = document.id;
 
-        final FileList response = getSdk().getFiles(params);
-        final List<File> actual = response.files;
+        final List<File> actual = getSdk().getFiles(params).run().resource;
 
         Comparator<File> comparator = new Comparator<File>() {
             @Override
@@ -93,17 +91,17 @@ public class FileEndpointBlockingTest extends EndpointBlockingTest {
         final FileRequestParameters params = new FileRequestParameters();
         params.limit = pageSize;
 
-        FileList response = getSdk().getFiles(params);
+        RequestResponse<List<File>> response = getSdk().getFiles(params).run();
 
         final List<File> actual = new LinkedList<File>();
         // THEN we receive a files list...
         for (int page = 0; page < pageCount; page++) {
-            actual.addAll(response.files);
+            actual.addAll(response.resource);
 
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getFiles(response.next);
+                response = getSdk().getFiles(response.next).run();
             }
         }
 
@@ -127,14 +125,14 @@ public class FileEndpointBlockingTest extends EndpointBlockingTest {
         File postingFile = createFile(document.id);
 
         // WHEN posting it
-        final File returnedFile = getSdk().postFile(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName);
+        final File returnedFile = getSdk().postFileBinary(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName).run().resource;
 
         // THEN we receive the same file back, with id filled
         AssertUtils.assertFile(postingFile, returnedFile);
         assertNotNull(returnedFile.id);
 
         // ...and the file exists in the server
-        AssertUtils.assertFiles(getSdk().getFiles().files, Arrays.asList(postingFile));
+        AssertUtils.assertFiles(getSdk().getFiles().run().resource, Arrays.asList(postingFile));
     }
 
     public void test_deleteFile_removesTheFileFromServer() throws Exception {
@@ -151,10 +149,10 @@ public class FileEndpointBlockingTest extends EndpointBlockingTest {
 
         // WHEN deleting one of them
         final String deletingFileId = serverFilesBefore.get(0).id;
-        getSdk().deleteFile(deletingFileId);
+        getSdk().deleteFile(deletingFileId).run();;
 
         // THEN the server does not have the deleted file any more
-        final List<File> serverFilesAfter = getSdk().getFiles().files;
+        final List<File> serverFilesAfter = getSdk().getFiles().run().resource;
         for (File file : serverFilesAfter) {
             assertFalse(deletingFileId.equals(file.id));
         }

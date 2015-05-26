@@ -1,11 +1,10 @@
 package com.mendeley.api.integration;
 
-import com.mendeley.api.callbacks.group.GroupList;
-import com.mendeley.api.callbacks.group.GroupMembersList;
 import com.mendeley.api.model.Group;
+import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.model.UserRole;
-import com.mendeley.api.params.GroupRequestParameters;
-import com.mendeley.api.params.Page;
+import com.mendeley.api.request.params.GroupRequestParameters;
+import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Collections;
@@ -41,8 +40,7 @@ public class GroupEndpointBlockingTest extends EndpointBlockingTest {
         }
 
         // WHEN getting groups
-        final GroupList response = getSdk().getGroups(new GroupRequestParameters());
-        final List<Group> actual = response.groups;
+        final List<Group> actual = getSdk().getGroups(new GroupRequestParameters()).run().resource;
 
         Comparator<Group> comparator = new Comparator<Group>() {
             @Override
@@ -71,17 +69,17 @@ public class GroupEndpointBlockingTest extends EndpointBlockingTest {
         params.limit = pageSize;
 
         final List<Group> actual = new LinkedList<Group>();
-        GroupList response = getSdk().getGroups(params);
+        RequestResponse<List<Group>> response = getSdk().getGroups(params).run();
 
 
         // THEN we receive a group list...
         for (int page = 0; page < pageCount; page++) {
-            actual.addAll(response.groups);
+            actual.addAll(response.resource);
 
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getGroups(response.next);
+                response = getSdk().getGroups(response.next).run();
             }
         }
 
@@ -98,10 +96,10 @@ public class GroupEndpointBlockingTest extends EndpointBlockingTest {
 
     public void test_getGroupById_receivesTheCorrectGroup() throws Exception {
         // GIVEN a group on the server
-        Group expected = getTestAccountSetupUtils().getGroups().groups.get(0);
+        Group expected = getTestAccountSetupUtils().getGroups().get(0);
 
         // WHEN getting the group by id
-        final Group actual = getSdk().getGroup(expected.id);
+        final Group actual = getSdk().getGroup(expected.id).run().resource;
 
         // THEN we have the expected group
         AssertUtils.assertGroup(expected, actual);
@@ -109,7 +107,7 @@ public class GroupEndpointBlockingTest extends EndpointBlockingTest {
 
     public void test_getGroupMembers_receivesTheCorrectGroupMembers() throws Exception {
         // GIVEN a group
-        List<Group> groups = getTestAccountSetupUtils().getGroups().groups;
+        List<Group> groups = getTestAccountSetupUtils().getGroups();
 
         Comparator<Group> groupComparator = new Comparator<Group>() {
             @Override
@@ -127,8 +125,7 @@ public class GroupEndpointBlockingTest extends EndpointBlockingTest {
         }
 
         // WHEN getting the group members
-        GroupMembersList groupMembersList = getSdk().getGroupMembers(new GroupRequestParameters(), group.id);
-        List<UserRole> actual = groupMembersList.userRoles;
+        List<UserRole> actual = getSdk().getGroupMembers(new GroupRequestParameters(), group.id).run().resource;
 
         // THEN we have the expected members
         Comparator<UserRole> userRoleComparator = new Comparator<UserRole>() {
