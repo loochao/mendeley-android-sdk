@@ -68,13 +68,11 @@ public interface MendeleySdk {
 
     /**
      * Sign the user in.
-     *
+     *  @param clientCredentials your app's Mendeley ID/secret/Uri, from the registration process.
      * @param activity used for creating the sign-in activity.
-     * @param clientCredentials your app's Mendeley ID/secret/Uri, from the registration process.
      * @param signInCallback used to receive sign in/out events. May be null.
      */
-    void signIn(Activity activity, MendeleySignInInterface signInCallback,
-                ClientCredentials clientCredentials);
+    void signIn(Activity activity, MendeleySignInInterface signInCallback);
 
     /**
      * Determine if the user is signed in.

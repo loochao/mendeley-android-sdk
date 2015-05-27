@@ -1,8 +1,9 @@
-package com.mendeley.api.auth;
+package com.mendeley.api.impl;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+import com.mendeley.api.auth.CredentialsManager;
 import com.mendeley.api.util.Utils;
 
 import java.util.Calendar;
@@ -22,7 +23,7 @@ public class SharedPreferencesCredentialsManager implements CredentialsManager {
  
 	private SharedPreferences preferences;
  
-	protected SharedPreferencesCredentialsManager(SharedPreferences preferences) {
+	SharedPreferencesCredentialsManager(SharedPreferences preferences) {
         this.preferences = preferences;
 	}
 

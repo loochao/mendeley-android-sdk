@@ -1,7 +1,5 @@
 package com.mendeley.api.auth;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -52,16 +50,14 @@ public class AuthenticationManager implements AccessTokenProvider {
 	
 	private static final String TAG = AuthenticationManager.class.getSimpleName();
 
-    public AuthenticationManager(Context context, AuthenticationInterface authInterface,
+    public AuthenticationManager(CredentialsManager credentialsManager, AuthenticationInterface authInterface,
                                  String clientId, String clientSecret, String redirectUri) {
 
+        this.credentialsManager = credentialsManager;
         this.authInterface = authInterface;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.redirectUri = redirectUri;
-
-        SharedPreferences preferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE);
-        credentialsManager = new SharedPreferencesCredentialsManager(preferences);
     }
 
     public boolean isSignedIn() {

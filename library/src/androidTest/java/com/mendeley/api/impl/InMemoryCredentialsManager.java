@@ -1,7 +1,6 @@
 package com.mendeley.api.impl;
 
 import com.mendeley.api.auth.CredentialsManager;
-import com.mendeley.api.auth.SharedPreferencesCredentialsManager;
 
 public class InMemoryCredentialsManager implements CredentialsManager {
     private String accessToken; // null if not set

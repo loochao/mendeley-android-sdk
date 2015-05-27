@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.auth.AuthenticationManager;
-import com.mendeley.api.auth.UserCredentials;
 import com.mendeley.api.callbacks.MendeleySignInInterface;
 import com.mendeley.api.network.NetworkUtils;
 
@@ -35,34 +34,24 @@ import java.util.List;
 public class InternalMendeleySdk extends AsyncMendeleySdk {
     public static final String GRANT_TYPE_PASSWORD = "password";
 
-    private static InternalMendeleySdk instance;
-
-
-    public static InternalMendeleySdk getInstance() {
-        if (instance == null) {
-            instance = new InternalMendeleySdk();
-        }
-        return instance;
-    }
-
-    private InternalMendeleySdk() {}
-
     private String username;
     private String password;
 
-    public void signIn(MendeleySignInInterface signInCallback,
-                       ClientCredentials clientCredentials, UserCredentials userCredentials)  {
-
-        this.mendeleySignInInterface = signInCallback;
-        this.username = userCredentials.username;
-        this.password = userCredentials.password;
-
+    public InternalMendeleySdk(String username, String password, ClientCredentials clientCredentials) {
         authenticationManager = new AuthenticationManager(
-                null,
+                new InMemoryCredentialsManager(),
                 createAuthenticationInterface(),
                 clientCredentials.clientId,
                 clientCredentials.clientSecret,
                 clientCredentials.redirectUri);
+
+        this.username = username;
+        this.password = password;
+    }
+
+    @Override
+    public void signIn(Activity activity, MendeleySignInInterface signInCallback) {
+        this.mendeleySignInInterface = signInCallback;
 
         initProviders();
 
@@ -125,8 +114,5 @@ public class InternalMendeleySdk extends AsyncMendeleySdk {
         return response;
     }
 
-    @Override
-    public void signIn(Activity activity, MendeleySignInInterface signInCallback, ClientCredentials clientCredentials) {
-        throw new UnsupportedOperationException("Internal SDK only supports resource owner password auth flow");
-    }
+
 }
