@@ -1,14 +1,8 @@
 package com.mendeley.api.auth;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 
-import com.mendeley.api.activity.SignInActivity;
 import com.mendeley.api.callbacks.RequestHandle;
 import com.mendeley.api.exceptions.AuthenticationException;
 import com.mendeley.api.exceptions.HttpResponseException;
@@ -26,6 +20,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -40,15 +35,11 @@ public class AuthenticationManager implements AccessTokenProvider {
     public static final String TOKENS_URL = "https://api.mendeley.com/oauth/token";
     public static final String GRANT_TYPE_AUTH = "authorization_code";
     public static final String GRANT_TYPE_REFRESH = "refresh_token";
-    public static final String GRANT_TYPE_PASSWORD = "password";
     public static final String SCOPE = "all";
     public static final String RESPONSE_TYPE = "code";
 
     // Only use tokens which don't expire in the next 5 mins:
     private static final int MIN_TOKEN_VALIDITY_SEC = 300;
-
-    private final String username;
-    private final String password;
 
     private final String clientId;
     private final String clientSecret;
@@ -59,48 +50,18 @@ public class AuthenticationManager implements AccessTokenProvider {
 	
 	private static final String TAG = AuthenticationManager.class.getSimpleName();
 
-    private Handler refreshHandler;
-
-    public AuthenticationManager(Context context, AuthenticationInterface authInterface,
+    public AuthenticationManager(CredentialsManager credentialsManager, AuthenticationInterface authInterface,
                                  String clientId, String clientSecret, String redirectUri) {
-        this.username = null;
-        this.password = null;
+
+        this.credentialsManager = credentialsManager;
         this.authInterface = authInterface;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.redirectUri = redirectUri;
-
-        SharedPreferences preferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE);
-        credentialsManager = new SharedPreferencesCredentialsManager(preferences);
-    }
-
-    public AuthenticationManager(String username, String password,
-                                 AuthenticationInterface authInterface,
-                                 String clientId, String clientSecret, String redirectUri) {
-        this.username = username;
-        this.password = password;
-        this.authInterface = authInterface;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.redirectUri = redirectUri;
-
-        credentialsManager = new InMemoryCredentialsManager();
     }
 
     public boolean isSignedIn() {
         return credentialsManager.hasCredentials();
-    }
-
-    public void signIn(Activity activity) {
-        if (isSignedIn()) {
-            return;
-        }
-        if (username == null) {
-            Intent intent = new Intent(activity, SignInActivity.class);
-            activity.startActivity(intent);
-        } else {
-            new PasswordAuthenticationTask().execute();
-        }
     }
 
     public void clearCredentials() {
@@ -130,7 +91,25 @@ public class AuthenticationManager implements AccessTokenProvider {
      * @throws JSONException
      */
     public void setTokenDetails(String tokenString) throws JSONException {
-        credentialsManager.setCredentials(tokenString);
+        String accessToken;
+        String refreshToken;
+        String tokenType;
+        int expiresIn;
+
+        try {
+            JSONObject tokenObject = new JSONObject(tokenString);
+
+            accessToken = tokenObject.getString("access_token");
+            refreshToken = tokenObject.getString("refresh_token");
+            tokenType = tokenObject.getString("token_type");
+            expiresIn = tokenObject.getInt("expires_in");
+        } catch(JSONException e) {
+            // If the client credentials are incorrect, the tokenString contains an error message
+            Log.e(TAG, "Error token string: " + tokenString);
+            throw e;
+        }
+
+        credentialsManager.setCredentials(accessToken, refreshToken, tokenType, expiresIn);
     }
 
     public void authenticated(boolean manualSignIn) {
@@ -257,37 +236,6 @@ public class AuthenticationManager implements AccessTokenProvider {
     }
 
     /**
-     * AsyncTask class that obtains an access token from username and password.
-     */
-    private class PasswordAuthenticationTask extends AsyncTask<Void, Void, String> {
-        @Override
-        protected String doInBackground(Void... params) {
-            String result = null;
-            try {
-                HttpResponse response = doPasswordPost();
-                String jsonTokenString = NetworkUtils.readInputStream(response.getEntity().getContent());
-                setTokenDetails(jsonTokenString);
-                result = "ok";
-            } catch (IOException e) {
-                Log.e(TAG, "", e);
-            } catch (JSONException e) {
-                Log.e(TAG, "", e);
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result == null) {
-                failedToAuthenticate();
-            } else {
-                authenticated(true);
-            }
-        }
-    }
-
-    /**
 	 * Helper method for executing http post request for token refresh.
 	 */
 	private HttpResponse doRefreshPost() throws ClientProtocolException, IOException {
@@ -308,25 +256,4 @@ public class AuthenticationManager implements AccessTokenProvider {
 		return response;  
 	}
 
-    /**
-     * Helper method for executing http post request for password-based authentication.
-     */
-    private HttpResponse doPasswordPost() throws ClientProtocolException, IOException {
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(TOKENS_URL);
-
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("grant_type", GRANT_TYPE_PASSWORD));
-        nameValuePairs.add(new BasicNameValuePair("scope", SCOPE));
-        nameValuePairs.add(new BasicNameValuePair("client_id", clientId));
-        nameValuePairs.add(new BasicNameValuePair("client_secret", clientSecret));
-        nameValuePairs.add(new BasicNameValuePair("username", username));
-        nameValuePairs.add(new BasicNameValuePair("password", password));
-
-        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-        HttpResponse response = httpclient.execute(httppost);
-
-        return response;
-    }
 }

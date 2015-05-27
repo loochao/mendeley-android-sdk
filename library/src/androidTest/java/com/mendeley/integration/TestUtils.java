@@ -1,13 +1,9 @@
 package com.mendeley.integration;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.util.Log;
 
-import com.mendeley.api.BlockingSdk;
 import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.R;
-import com.mendeley.api.auth.UserCredentials;
 import com.mendeley.api.callbacks.MendeleySignInInterface;
 import com.mendeley.api.impl.InternalMendeleySdk;
 
@@ -51,10 +47,11 @@ public class TestUtils {
             public void onSignInFailure() {}
         };
 
-        UserCredentials userCredentials = new UserCredentials(username, password);
+
         ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, redirectUri);
-        InternalMendeleySdk sdk = InternalMendeleySdk.getInstance();
-        sdk.signIn(signinCallback, clientCredentials, userCredentials);
+        InternalMendeleySdk sdk = new InternalMendeleySdk(username, password, clientCredentials);
+        sdk.signIn(null, signinCallback);
+
         if (!signInLatch.await(SIGN_IN_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
             throw new SignInException("timed out signing in");
         }

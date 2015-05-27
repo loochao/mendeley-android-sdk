@@ -1,37 +1,58 @@
 package com.mendeley.api.impl;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 
 import com.mendeley.api.ClientCredentials;
+import com.mendeley.api.activity.SignInActivity;
 import com.mendeley.api.auth.AuthenticationManager;
+import com.mendeley.api.auth.CredentialsManager;
 import com.mendeley.api.callbacks.MendeleySignInInterface;
 
 public class DefaultMendeleySdk extends AsyncMendeleySdk {
     private static DefaultMendeleySdk instance;
 
-    private DefaultMendeleySdk() {}
+    public static void sdkInitialise(Application applicationContext, ClientCredentials clientCredentials) {
+        instance = new DefaultMendeleySdk(applicationContext, clientCredentials);
+    }
 
     /**
      * Return the MendeleySdk singleton.
      */
     public static DefaultMendeleySdk getInstance() {
         if (instance == null) {
-            instance = new DefaultMendeleySdk();
+            throw new IllegalStateException("Sdk is not initialised. You must call #sdkInitialise() first.");
         }
         return instance;
     }
 
-    @Override
-    public void signIn(Activity activity, MendeleySignInInterface signInCallback,
-                       ClientCredentials clientCredentials) {
-        this.mendeleySignInInterface = signInCallback;
+    private DefaultMendeleySdk(Context context, ClientCredentials clientCredentials) {
+        final SharedPreferences preferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE);
+        CredentialsManager credentialsManager = new SharedPreferencesCredentialsManager(preferences);
+
         authenticationManager = new AuthenticationManager(
-                activity,
+                credentialsManager,
                 createAuthenticationInterface(),
                 clientCredentials.clientId,
                 clientCredentials.clientSecret,
                 clientCredentials.redirectUri);
+
         initProviders();
-        authenticationManager.signIn(activity);
+    }
+
+    @Override
+    public void signIn(Activity activity, MendeleySignInInterface signInCallback) {
+        this.mendeleySignInInterface = signInCallback;
+
+        if (authenticationManager.isSignedIn()) {
+            mendeleySignInInterface.onSignedIn();
+            return;
+        }
+
+        final Intent intent = new Intent(activity, SignInActivity.class);
+        activity.startActivity(intent);
     }
 }

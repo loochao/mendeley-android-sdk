@@ -1,32 +1,39 @@
 package com.mendeley.api.auth;
 
-import org.json.JSONException;
-
 public interface CredentialsManager {
-    public void setCredentials(String tokenString) throws JSONException;
+
+    /**
+     * Stores the token details in shared preferences.
+     *
+     * @param accessToken the access toekn string
+     * @param refreshToken the refresh token string
+     * @param tokenType the token type string
+     * @param expiresIn the expires in value
+     */
+    void setCredentials(String accessToken, String refreshToken, String tokenType, int expiresIn);
 
     /**
      * Removes the credentials from the SharedPreferences as well as the NetworkProvider static string objects.
      */
-    public void clearCredentials();
+    void clearCredentials();
 
     /**
      * Check if required credentials exist.
      */
-    public boolean hasCredentials();
+    boolean hasCredentials();
 
     /**
      * @return the expires in string value or null if it does not exist.
      */
-    public String getExpiresAt();
+    String getExpiresAt();
 
     /**
      * @return the refresh token string or null if it does not exist.
      */
-    public String getRefreshToken();
+    String getRefreshToken();
 
     /**
      * @return the access token string or null if it does not exist.
      */
-    public String getAccessToken();
+    String getAccessToken();
 }

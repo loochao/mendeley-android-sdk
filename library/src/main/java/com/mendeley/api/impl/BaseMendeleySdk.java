@@ -575,7 +575,7 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
 
     protected RequestHandle run(Command command) {
         if (authenticationManager == null || !authenticationManager.isSignedIn()) {
-            // Must call signIn first - caller error!
+            // Must call startSignInProcess first - caller error!
             throw new NotSignedInException();
         }
         if (authenticationManager.willExpireSoon()) {
