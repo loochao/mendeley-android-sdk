@@ -16,7 +16,7 @@ public abstract class Procedure<Result> {
 
     public Result checkedRun() throws MendeleyException {
         if (authenticationManager == null || !authenticationManager.isSignedIn()) {
-            // Must call signIn first - caller error!
+            // Must call startSignInProcess first - caller error!
             throw new NotSignedInException();
         }
         if (authenticationManager.willExpireSoon()) {

@@ -1,15 +1,12 @@
 package com.mendeley.integration;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.util.Log;
 
-import com.mendeley.api.BlockingSdk;
 import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.R;
 import com.mendeley.api.auth.UserCredentials;
 import com.mendeley.api.callbacks.MendeleySignInInterface;
-import com.mendeley.api.impl.InternalMendeleySdk;
+import com.mendeley.InternalMendeleySdk;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
