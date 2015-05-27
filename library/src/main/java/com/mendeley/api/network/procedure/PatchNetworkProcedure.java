@@ -5,7 +5,6 @@ import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.network.NetworkUtils;
-import com.mendeley.api.network.task.NetworkTask;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,7 +19,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import static com.mendeley.api.network.NetworkUtils.getHttpPatch;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
+import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
 public abstract class PatchNetworkProcedure<ResultType> extends NetworkProcedure<ResultType> {
     private final String url;
@@ -57,11 +56,11 @@ public abstract class PatchNetworkProcedure<ResultType> extends NetworkProcedure
 
             final int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode != getExpectedResponse()) {
-                throw new HttpResponseException(url, responseCode, NetworkUtils.getErrorMessage(response));
+                throw HttpResponseException.create(response, url);
             } else {
                 HttpEntity responseEntity = response.getEntity();
                 is = responseEntity.getContent();
-                String responseString = getJsonString(is);
+                String responseString = readInputStream(is);
                 return processJsonString(responseString);
             }
         } catch (IOException e) {

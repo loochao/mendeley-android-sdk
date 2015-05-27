@@ -11,9 +11,10 @@ import android.util.Log;
 import com.mendeley.api.activity.SignInActivity;
 import com.mendeley.api.callbacks.RequestHandle;
 import com.mendeley.api.exceptions.AuthenticationException;
+import com.mendeley.api.exceptions.HttpResponseException;
+import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.impl.BaseMendeleySdk;
-import com.mendeley.api.network.JsonParser;
+import com.mendeley.api.network.NetworkUtils;
 import com.mendeley.api.util.Utils;
 
 import org.apache.http.HttpResponse;
@@ -175,15 +176,19 @@ public class AuthenticationManager implements AccessTokenProvider {
      * Refresh the token. Blocks until done.
      */
     public void refreshToken() throws MendeleyException {
-        HttpResponse response = null;
         try {
-            response = doRefreshPost();
-            String jsonTokenString = JsonParser.getJsonString(response.getEntity().getContent());
-            setTokenDetails(jsonTokenString);
+            final HttpResponse response = doRefreshPost();
+            final int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != 200) {
+                final HttpResponseException cause = HttpResponseException.create(response, TOKENS_URL);
+                throw new AuthenticationException("Cannot refresh token", cause);
+            }
+            final String responseString = NetworkUtils.readInputStream(response.getEntity().getContent());
+            setTokenDetails(responseString);
         } catch (IOException e) {
-            throw new AuthenticationException("Cannot refresh token");
+            throw new MendeleyException("Cannot refresh token", e);
         } catch (JSONException e) {
-            throw new AuthenticationException("Cannot refresh token");
+            throw new JsonParsingException("Cannot refresh token", e);
         }
     }
 
@@ -208,7 +213,7 @@ public class AuthenticationManager implements AccessTokenProvider {
 			boolean result = false;
             try {
                 HttpResponse response = doRefreshPost();
-                String jsonTokenString = JsonParser.getJsonString(response.getEntity().getContent());
+                String jsonTokenString = NetworkUtils.readInputStream(response.getEntity().getContent());
                 setTokenDetails(jsonTokenString);
                 result = true;
             } catch (IOException ignored) {
@@ -260,7 +265,7 @@ public class AuthenticationManager implements AccessTokenProvider {
             String result = null;
             try {
                 HttpResponse response = doPasswordPost();
-                String jsonTokenString = JsonParser.getJsonString(response.getEntity().getContent());
+                String jsonTokenString = NetworkUtils.readInputStream(response.getEntity().getContent());
                 setTokenDetails(jsonTokenString);
                 result = "ok";
             } catch (IOException e) {

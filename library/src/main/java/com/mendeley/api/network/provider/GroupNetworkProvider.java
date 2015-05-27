@@ -25,7 +25,6 @@ import org.json.JSONException;
 import java.util.List;
 
 import static com.mendeley.api.network.NetworkUtils.API_URL;
-import static com.mendeley.api.network.NetworkUtils.getErrorMessage;
 
 /**
  * NetworkProvider class for Group API calls

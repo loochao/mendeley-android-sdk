@@ -14,8 +14,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import static com.mendeley.api.network.NetworkUtils.getConnection;
-import static com.mendeley.api.network.NetworkUtils.getErrorMessage;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
+import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
 /**
  * A NetworkProcedure specialised for making HTTP GET requests.
@@ -52,12 +51,12 @@ public abstract class GetNetworkProcedure<ResultType> extends NetworkProcedure<R
 
             final int responseCode = con.getResponseCode();
             if (responseCode != getExpectedResponse()) {
-                throw new HttpResponseException(url, responseCode, getErrorMessage(con));
+                throw  HttpResponseException.create(con);
             }
 
             getResponseHeaders();
             is = con.getInputStream();
-            responseString = getJsonString(is);
+            responseString = readInputStream(is);
             return processJsonString(responseString);
         } catch (MendeleyException me) {
             throw me;

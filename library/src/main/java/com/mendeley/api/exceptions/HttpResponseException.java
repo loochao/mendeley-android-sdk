@@ -1,5 +1,13 @@
 package com.mendeley.api.exceptions;
 
+import com.mendeley.api.network.NetworkUtils;
+
+import org.apache.http.HttpResponse;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+
 /**
  * General exception type that is thrown whenever server returns an error code.
  * <p>
@@ -11,14 +19,59 @@ public class HttpResponseException extends MendeleyException {
     public final String url;
     public final int httpReturnCode;
 
-	public HttpResponseException(String url, int httpReturnCode, String message) {
-		super(message);
+    public static HttpResponseException create(HttpURLConnection con) {
+        try {
+            final int responseCode = con.getResponseCode();
+            final String responseMessage = con.getResponseMessage();
+            final String url = con.getURL().toString();
+            InputStream is = null;
+            try {
+                is = con.getInputStream();
+            } catch (IOException ignored) {
+            }
+            return create(responseCode, responseMessage, url, is);
+        } catch (IOException e) {
+            return new HttpResponseException(-1, "Unknown", "Unknown");
+        }
+    }
+
+    public static HttpResponseException create(HttpResponse response, String url) {
+        final int responseCode = response.getStatusLine().getStatusCode();
+        final String responseMessage = response.getStatusLine().getReasonPhrase();
+        InputStream is = null;
+        try {
+            is = response.getEntity().getContent();
+        } catch (IOException ignored) {
+        }
+        return create(responseCode, responseMessage, url, is);
+    }
+
+    private static HttpResponseException create(int statusCode, String reasonPhrase, String url, InputStream stream) {
+        String responseString = "";
+        if (stream != null) {
+            try {
+                responseString = NetworkUtils.readInputStream(stream);
+            } catch (IOException ignored) {
+            }
+        }
+        return new HttpResponseException(statusCode, reasonPhrase, url, responseString);
+    }
+
+
+    private HttpResponseException(int httpReturnCode, String message, String url, String response) {
+		super(message + ". " + response);
         this.url = url;
         this.httpReturnCode = httpReturnCode;
 	}
 
+    private HttpResponseException(int httpReturnCode, String message, String url) {
+        this(httpReturnCode, message, url, "");
+    }
+
     @Override
     public String getMessage() {
-        return String.format("%s (%s)", super.getMessage(), url);
+        return String.format("%d %s (%s)", httpReturnCode, super.getMessage(), url);
     }
+
+
 }

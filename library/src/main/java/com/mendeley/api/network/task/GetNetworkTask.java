@@ -13,8 +13,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import static com.mendeley.api.network.NetworkUtils.getConnection;
-import static com.mendeley.api.network.NetworkUtils.getErrorMessage;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
+import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
 /**
  * A NetworkTask specialised for making HTTP GET requests.
@@ -48,7 +47,7 @@ public abstract class GetNetworkTask extends NetworkTask {
 
             final int responseCode = con.getResponseCode();
             if (responseCode != getExpectedResponse()) {
-                throw  new HttpResponseException(url, responseCode, getErrorMessage(con));
+                throw HttpResponseException.create(con);
             }
 
             if (isCancelled()) {
@@ -56,7 +55,7 @@ public abstract class GetNetworkTask extends NetworkTask {
             }
 
             is = con.getInputStream();
-            responseBody = getJsonString(is);
+            responseBody = readInputStream(is);
             processJsonString(responseBody);
         } catch (MendeleyException me) {
             throw me;

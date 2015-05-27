@@ -4,22 +4,17 @@ import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.model.File;
-import com.mendeley.api.network.JsonParser;
-import com.mendeley.api.network.NetworkUtils;
 
 import org.json.JSONException;
 
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.text.ParseException;
 
 import static com.mendeley.api.network.NetworkUtils.API_URL;
 import static com.mendeley.api.network.NetworkUtils.getConnection;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
+import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
 public abstract class PostFileNetworkProcedure<ResultType> extends NetworkProcedure<ResultType> {
     private final String contentType;
@@ -84,10 +79,10 @@ public abstract class PostFileNetworkProcedure<ResultType> extends NetworkProced
 
             final int responseCode = con.getResponseCode();
             if (responseCode != getExpectedResponse()) {
-                throw new HttpResponseException(filesUrl, responseCode, NetworkUtils.getErrorMessage(con));
+                throw HttpResponseException.create(con);
             } else {
                 is = con.getInputStream();
-                String jsonString = getJsonString(is);
+                String jsonString = readInputStream(is);
                 is.close();
 
                 return processJsonString(jsonString);

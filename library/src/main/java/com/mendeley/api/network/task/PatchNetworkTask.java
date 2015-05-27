@@ -15,7 +15,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import static com.mendeley.api.network.NetworkUtils.getHttpPatch;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
+import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
 public abstract class PatchNetworkTask extends NetworkTask {
     @Override
@@ -37,11 +37,11 @@ public abstract class PatchNetworkTask extends NetworkTask {
 
             final int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode != getExpectedResponse()) {
-                return new HttpResponseException(url, responseCode, NetworkUtils.getErrorMessage(response));
+                return HttpResponseException.create(response, url);
             } else {
                 HttpEntity responseEntity = response.getEntity();
                 is = responseEntity.getContent();
-                String responseString = getJsonString(is);
+                String responseString = readInputStream(is);
                 processJsonString(responseString);
                 return null;
             }
