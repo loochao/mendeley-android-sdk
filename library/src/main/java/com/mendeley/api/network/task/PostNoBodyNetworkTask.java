@@ -1,15 +1,11 @@
 package com.mendeley.api.network.task;
 
 import com.mendeley.api.exceptions.HttpResponseException;
-import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.network.NetworkUtils;
-import com.mendeley.api.network.task.NetworkTask;
 
 import java.io.IOException;
 
 import static com.mendeley.api.network.NetworkUtils.getConnection;
-import static com.mendeley.api.network.NetworkUtils.getErrorMessage;
 
 public abstract class PostNoBodyNetworkTask extends NetworkTask {
     @Override
@@ -28,12 +24,12 @@ public abstract class PostNoBodyNetworkTask extends NetworkTask {
 
             final int responseCode = con.getResponseCode();
             if (responseCode != getExpectedResponse()) {
-                return new HttpResponseException(url, responseCode, NetworkUtils.getErrorMessage(con));
+                return HttpResponseException.create(con);
             } else {
                 return null;
             }
-        }	catch (IOException e) {
-            return new JsonParsingException(e.getMessage());
+        } catch (IOException e) {
+            return new MendeleyException("Could not post request", e);
         } finally {
             closeConnection();
         }

@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.mendeley.api.network.NetworkUtils.API_URL;
-import static com.mendeley.api.network.NetworkUtils.getErrorMessage;
 
 /**
  * NetworkProvider class for Documents API calls

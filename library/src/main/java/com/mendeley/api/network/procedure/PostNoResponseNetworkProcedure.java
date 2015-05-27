@@ -2,11 +2,7 @@ package com.mendeley.api.network.procedure;
 
 import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.exceptions.HttpResponseException;
-import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.network.NetworkUtils;
-
-import org.json.JSONException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,7 +10,6 @@ import java.io.OutputStreamWriter;
 import java.text.ParseException;
 
 import static com.mendeley.api.network.NetworkUtils.getConnection;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
 
 public abstract class PostNoResponseNetworkProcedure extends NetworkProcedure<Void> {
     private final String url;
@@ -53,12 +48,12 @@ public abstract class PostNoResponseNetworkProcedure extends NetworkProcedure<Vo
 
             final int responseCode = con.getResponseCode();
             if (responseCode != getExpectedResponse()) {
-                throw new HttpResponseException(url, responseCode, NetworkUtils.getErrorMessage(con));
+                throw HttpResponseException.create(con);
             }
         } catch (ParseException pe) {
-            throw new MendeleyException("Could not parse web API headers for " + url);
+            throw new MendeleyException("Could not parse web API headers for " + url, pe);
         } catch (IOException e) {
-            throw new JsonParsingException(e.getMessage());
+            throw new MendeleyException("Could not make POST request", e);
         } finally {
             closeConnection();
         }

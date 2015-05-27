@@ -15,7 +15,7 @@ import android.webkit.WebViewClient;
 import com.mendeley.api.R;
 import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.impl.DefaultMendeleySdk;
-import com.mendeley.api.network.JsonParser;
+import com.mendeley.api.network.NetworkUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -155,7 +155,7 @@ public class DialogActivity extends Activity {
     	protected String getJSONTokenString(String authorizationCode) throws IOException {
     		HttpResponse response = doPost(AuthenticationManager.TOKENS_URL, AuthenticationManager.GRANT_TYPE_AUTH,
                     authorizationCode, authenticationManager);
-    		return JsonParser.getJsonString(response.getEntity().getContent());
+    		return NetworkUtils.readInputStream(response.getEntity().getContent());
 		}
     	
     	protected String getAuthorizationCode(String authReturnUrl) {

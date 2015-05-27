@@ -22,10 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1021,35 +1017,5 @@ public class JsonParser {
 
         return groups;
     }
-	
-	/**
-     * Helper method for getting json string from an InputStream object
-     * 
-     * @param stream the InputStream object
-     * @return the json String object
-     * @throws IOException
-     */
-    public static String getJsonString(InputStream stream) throws IOException {
-		
-		StringBuffer data = new StringBuffer();
-		InputStreamReader isReader = null;
-		BufferedReader br = null;
-		
-		try {
-			
-			isReader = new InputStreamReader(stream); 
-            br = new BufferedReader(isReader);
-            String brl = ""; 
-            while ((brl = br.readLine()) != null) {
-        	    data.append(brl);
-            }
-            
-		} finally {
-			stream.close();
-            isReader.close();
-            br.close();
-		}
-		
-		return data.toString();
-	}
+
 }

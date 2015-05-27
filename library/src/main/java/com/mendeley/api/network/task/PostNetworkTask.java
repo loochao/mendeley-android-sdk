@@ -3,8 +3,6 @@ package com.mendeley.api.network.task;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.network.NetworkUtils;
-import com.mendeley.api.network.task.NetworkTask;
 
 import org.json.JSONException;
 
@@ -13,8 +11,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import static com.mendeley.api.network.NetworkUtils.getConnection;
-import static com.mendeley.api.network.NetworkUtils.getErrorMessage;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
+import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
 public abstract class PostNetworkTask extends NetworkTask {
     @Override
@@ -44,11 +41,11 @@ public abstract class PostNetworkTask extends NetworkTask {
 
             final int responseCode = con.getResponseCode();
             if (responseCode != getExpectedResponse()) {
-                return new HttpResponseException(url, responseCode, NetworkUtils.getErrorMessage(con));
+                return HttpResponseException.create(con);
             } else {
 
                 is = con.getInputStream();
-                String responseString = getJsonString(is);
+                String responseString = readInputStream(is);
 
                 processJsonString(responseString);
 

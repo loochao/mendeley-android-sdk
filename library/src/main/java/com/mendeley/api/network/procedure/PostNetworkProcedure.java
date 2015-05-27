@@ -4,8 +4,6 @@ import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.network.NetworkUtils;
-import com.mendeley.api.network.task.NetworkTask;
 
 import org.json.JSONException;
 
@@ -15,7 +13,7 @@ import java.io.OutputStreamWriter;
 import java.text.ParseException;
 
 import static com.mendeley.api.network.NetworkUtils.getConnection;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
+import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
 public abstract class PostNetworkProcedure<ResultType> extends NetworkProcedure<ResultType> {
     private final String url;
@@ -54,10 +52,10 @@ public abstract class PostNetworkProcedure<ResultType> extends NetworkProcedure<
 
             final int responseCode = con.getResponseCode();
             if (responseCode != getExpectedResponse()) {
-                throw new HttpResponseException(url, responseCode, NetworkUtils.getErrorMessage(con));
+                throw HttpResponseException.create(con);
             } else {
                 is = con.getInputStream();
-                String responseString = getJsonString(is);
+                String responseString = readInputStream(is);
                 return processJsonString(responseString);
             }
         } catch (ParseException pe) {

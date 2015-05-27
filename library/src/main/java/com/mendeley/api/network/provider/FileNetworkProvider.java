@@ -14,14 +14,12 @@ import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.exceptions.NoMorePagesException;
 import com.mendeley.api.exceptions.UserCancelledException;
-import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.network.Environment;
 import com.mendeley.api.network.JsonParser;
 import com.mendeley.api.network.NullRequest;
 import com.mendeley.api.network.procedure.GetNetworkProcedure;
 import com.mendeley.api.network.procedure.PostFileNetworkProcedure;
-import com.mendeley.api.network.procedure.PostNetworkProcedure;
 import com.mendeley.api.network.task.DeleteNetworkTask;
 import com.mendeley.api.network.task.GetNetworkTask;
 import com.mendeley.api.network.task.NetworkTask;
@@ -46,8 +44,7 @@ import java.util.Map;
 import static com.mendeley.api.network.NetworkUtils.API_URL;
 import static com.mendeley.api.network.NetworkUtils.getConnection;
 import static com.mendeley.api.network.NetworkUtils.getDownloadConnection;
-import static com.mendeley.api.network.NetworkUtils.getErrorMessage;
-import static com.mendeley.api.network.NetworkUtils.getJsonString;
+import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
 /**
  * NetworkProvider class for Files API calls
@@ -320,7 +317,7 @@ public class FileNetworkProvider {
 				getResponseHeaders();
 
 				if (con.getResponseCode() != getExpectedResponse()) {
-					return new FileDownloadException("HTTP status error downloading file.", new HttpResponseException(url, con.getResponseCode(), "Server did NOT redirect to final file URL"), fileId);
+					return new FileDownloadException("HTTP status error downloading file.", HttpResponseException.create(con), fileId);
 				} else {		
 					con.disconnect();
 					
@@ -330,7 +327,7 @@ public class FileNetworkProvider {
 					int responseCode = con.getResponseCode();
 					
 					if (responseCode != 200) {
-						return new FileDownloadException("HTTP status error downloading file.", new HttpResponseException(url, responseCode, getErrorMessage(con)), fileId);
+						return new FileDownloadException("HTTP status error downloading file.", HttpResponseException.create(con), fileId);
 					} else {
                         if (fileName == null) {
                             String content = con.getHeaderFields().get("Content-Disposition").get(0);
@@ -490,11 +487,11 @@ public class FileNetworkProvider {
 
                 final int responseCode = con.getResponseCode();
                 if (responseCode != getExpectedResponse()) {
-                    return new HttpResponseException(filesUrl, responseCode, getErrorMessage(con));
+                    return HttpResponseException.create(con);
                 } else {
 
                     is = con.getInputStream();
-                    String jsonString = getJsonString(is);
+                    String jsonString = readInputStream(is);
                     is.close();
 
                     file = JsonParser.parseFile(jsonString);

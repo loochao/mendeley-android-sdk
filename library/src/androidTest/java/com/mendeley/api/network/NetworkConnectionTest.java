@@ -103,7 +103,7 @@ public class NetworkConnectionTest extends AndroidTestCase {
 
         InputStream is = getConnection.getInputStream();
 
-        String responseString = getJsonString(is);
+        String responseString = readInputStream(is);
 
         JSONObject reponseJson = new JSONObject(responseString);
         JSONObject headersJson = reponseJson.getJSONObject("headers");
@@ -132,7 +132,7 @@ public class NetworkConnectionTest extends AndroidTestCase {
 		os.close();
 
 		InputStream is = postConnection.getInputStream();
-		String responseString = getJsonString(is);
+		String responseString = readInputStream(is);
 		is.close();
 		
 		JSONObject reponseJson = new JSONObject(responseString);
@@ -171,7 +171,7 @@ public class NetworkConnectionTest extends AndroidTestCase {
 		values.add(deleteConnection);
     	InputStream is = response.getEntity().getContent();
 		
-		String responseString = getJsonString(is);
+		String responseString = readInputStream(is);
 
 		JSONObject reponseJson = new JSONObject(responseString);
 		JSONObject jsonObject = reponseJson.getJSONObject("json");

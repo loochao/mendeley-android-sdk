@@ -2,7 +2,6 @@ package com.mendeley.api.network;
 
 import com.mendeley.api.auth.AccessTokenProvider;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 import java.io.BufferedReader;
@@ -52,67 +51,6 @@ public class NetworkUtils {
         public String getMethod() {
             return METHOD_NAME;
         }
-    }
-
-    /**
-     * Creates an error message string from a given URLConnection object,
-     * which includes the response code, response message and the error stream from the server
-     *
-     * @param con the URLConnection object
-     * @return the error message string
-     */
-    public static String getErrorMessage(HttpsURLConnection con) {
-        String message = "";
-        InputStream is = null;
-        try {
-            message = con.getResponseCode() + " "  + con.getResponseMessage();
-            is = con.getErrorStream();
-            String responseString = "";
-            if (is != null) {
-                responseString = getJsonString(is);
-            }
-            message += "\n" + responseString;
-        } catch (IOException e) {
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                    is = null;
-                } catch (IOException e) {
-                }
-            }
-        }
-        return message;
-    }
-
-    /**
-     * Creates an error message string from a given HttpResponse object,
-     * which includes the response code, response message and the error stream from the server
-     *
-     * @return the error message string
-     */
-    public static String getErrorMessage(HttpResponse response) {
-        String message = "";
-        InputStream is = null;
-        try {
-            message = response.getStatusLine().getStatusCode() + " "  + response.getStatusLine().getReasonPhrase();
-            is = response.getEntity().getContent();
-            String responseString = "";
-            if (is != null) {
-                responseString = getJsonString(is);
-            }
-            message += "\n" + responseString;
-        } catch (IOException e) {
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                    is = null;
-                } catch (IOException e) {
-                }
-            }
-        }
-        return message;
     }
 
     /**
@@ -178,10 +116,10 @@ public class NetworkUtils {
      * Extracting json String from the given InputStream object.
      *
      * @param stream the InputStream holding the json string
-     * @return the json string
+     * @return the String
      * @throws IOException
      */
-    public static String getJsonString(InputStream stream) throws IOException {
+    public static String readInputStream(InputStream stream) throws IOException {
         StringBuffer data = new StringBuffer();
         InputStreamReader isReader = null;
         BufferedReader br = null;
@@ -202,4 +140,5 @@ public class NetworkUtils {
 
         return data.toString();
     }
+
 }
