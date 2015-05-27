@@ -1,15 +1,11 @@
 package com.mendeley.api.auth;
 
-import java.util.Calendar;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 import com.mendeley.api.util.Utils;
 
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.Calendar;
 
 /**
  * This class is responsible for storing and retrieving the credentials when needed.
@@ -31,26 +27,15 @@ public class SharedPreferencesCredentialsManager implements CredentialsManager {
 	}
 
     @Override
-    public void setCredentials(String tokenString) throws JSONException {
-    	String accessToken;
-    	String refreshToken;
-    	String tokenType;
-    	int expiresIn;
+    public void setCredentials(String accessToken, String refreshToken, String tokenType, int expiresIn)  {
+        String expiresAt = generateExpiresAtFromExpiresIn(expiresIn);
 
-    	try {
-	        JSONObject tokenObject = new JSONObject(tokenString);
-	
-	        accessToken = tokenObject.getString("access_token");
-	        refreshToken = tokenObject.getString("refresh_token");
-	        tokenType = tokenObject.getString("token_type");
-	        expiresIn = tokenObject.getInt("expires_in");
-    	} catch(JSONException e) {
-    		// If the client credentials are incorrect, the tokenString contains an error message
-    		Log.e(TAG, "Error token string: " + tokenString);
-    		throw e;
-    	}
-
-        storeCredentials(accessToken, refreshToken, tokenType, expiresIn);
+        Editor editor = preferences.edit();
+        editor.putString(ACCESS_TOKEN_KEY, accessToken);
+        editor.putString(REFRESH_TOKEN_KEY, refreshToken);
+        editor.putString(TOKEN_TYPE_KEY, tokenType);
+        editor.putString(EXPIRES_AT_KEY, expiresAt);
+        editor.commit();
     }
 
     @Override
@@ -84,25 +69,6 @@ public class SharedPreferencesCredentialsManager implements CredentialsManager {
     @Override
     public String getAccessToken() {
         return preferences.getString(ACCESS_TOKEN_KEY, null);
-    }
-
-    /**
-     * Stores the token details in shared preferences.
-     *
-     * @param accessToken the access toekn string
-     * @param refreshToken the refresh token string
-     * @param tokenType the token type string
-     * @param expiresIn the expires in value
-     */
-    private void storeCredentials(String accessToken, String refreshToken, String tokenType, int expiresIn) {
-        String expiresAt = generateExpiresAtFromExpiresIn(expiresIn);
-
-        Editor editor = preferences.edit();
-        editor.putString(ACCESS_TOKEN_KEY, accessToken);
-        editor.putString(REFRESH_TOKEN_KEY, refreshToken);
-        editor.putString(TOKEN_TYPE_KEY, tokenType);
-        editor.putString(EXPIRES_AT_KEY, expiresAt);
-        editor.commit();
     }
 
     public static String generateExpiresAtFromExpiresIn(int expiresIn) {

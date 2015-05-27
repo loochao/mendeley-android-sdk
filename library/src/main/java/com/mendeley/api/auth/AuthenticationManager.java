@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 
 import com.mendeley.api.activity.SignInActivity;
@@ -26,6 +25,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -58,8 +58,6 @@ public class AuthenticationManager implements AccessTokenProvider {
 	private final AuthenticationInterface authInterface;
 	
 	private static final String TAG = AuthenticationManager.class.getSimpleName();
-
-    private Handler refreshHandler;
 
     public AuthenticationManager(Context context, AuthenticationInterface authInterface,
                                  String clientId, String clientSecret, String redirectUri) {
@@ -130,7 +128,25 @@ public class AuthenticationManager implements AccessTokenProvider {
      * @throws JSONException
      */
     public void setTokenDetails(String tokenString) throws JSONException {
-        credentialsManager.setCredentials(tokenString);
+        String accessToken;
+        String refreshToken;
+        String tokenType;
+        int expiresIn;
+
+        try {
+            JSONObject tokenObject = new JSONObject(tokenString);
+
+            accessToken = tokenObject.getString("access_token");
+            refreshToken = tokenObject.getString("refresh_token");
+            tokenType = tokenObject.getString("token_type");
+            expiresIn = tokenObject.getInt("expires_in");
+        } catch(JSONException e) {
+            // If the client credentials are incorrect, the tokenString contains an error message
+            Log.e(TAG, "Error token string: " + tokenString);
+            throw e;
+        }
+
+        credentialsManager.setCredentials(accessToken, refreshToken, tokenType, expiresIn);
     }
 
     public void authenticated(boolean manualSignIn) {
