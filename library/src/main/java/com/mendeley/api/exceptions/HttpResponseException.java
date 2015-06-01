@@ -24,11 +24,7 @@ public class HttpResponseException extends MendeleyException {
             final int responseCode = con.getResponseCode();
             final String responseMessage = con.getResponseMessage();
             final String url = con.getURL().toString();
-            InputStream is = null;
-            try {
-                is = con.getInputStream();
-            } catch (IOException ignored) {
-            }
+            final InputStream is = con.getErrorStream();
             return create(responseCode, responseMessage, url, is);
         } catch (IOException e) {
             return new HttpResponseException(-1, "Unknown", "Unknown");
