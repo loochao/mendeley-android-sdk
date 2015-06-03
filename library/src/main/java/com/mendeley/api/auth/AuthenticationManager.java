@@ -8,6 +8,7 @@ import com.mendeley.api.exceptions.AuthenticationException;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
+
 import com.mendeley.api.network.NetworkUtils;
 import com.mendeley.api.util.Utils;
 
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import static com.mendeley.api.impl.BaseMendeleySdk.Command;
 
 public class AuthenticationManager implements AccessTokenProvider {
-    public static final String TOKENS_URL = "https://api.mendeley.com/oauth/token";
+    public static final String TOKENS_URL = NetworkUtils.API_URL + "/oauth/token";
     public static final String GRANT_TYPE_AUTH = "authorization_code";
     public static final String GRANT_TYPE_REFRESH = "refresh_token";
     public static final String SCOPE = "all";

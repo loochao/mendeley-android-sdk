@@ -15,6 +15,7 @@ import android.webkit.WebViewClient;
 import com.mendeley.api.R;
 import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.impl.DefaultMendeleySdk;
+
 import com.mendeley.api.network.NetworkUtils;
 
 import org.apache.http.HttpResponse;
@@ -37,7 +38,7 @@ import java.util.List;
  * and a dialog view for larg ones.
  */
 public class DialogActivity extends Activity {
-    private static final String OAUTH2_URL = "https://api.mendeley.com/oauth/authorize";
+    private static final String OAUTH2_URL = NetworkUtils.API_URL + "oauth/authorize";
 
 	private static final double SMALL_SCREEN_SIZE = 6.0;
 	private static final String FORGOT_PASSWORD_URL = "http://www.mendeley.com/forgot/";
@@ -157,8 +158,8 @@ public class DialogActivity extends Activity {
                     authorizationCode, authenticationManager);
     		return NetworkUtils.readInputStream(response.getEntity().getContent());
 		}
-    	
-    	protected String getAuthorizationCode(String authReturnUrl) {
+
+		protected String getAuthorizationCode(String authReturnUrl) {
     		String AuthorizationCode = null;
 			int index = authReturnUrl.indexOf("code=");	       			
 	        if (index != -1) {
