@@ -4,6 +4,7 @@ import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
+import com.mendeley.api.network.NetworkUtils;
 
 import org.json.JSONException;
 
@@ -41,7 +42,7 @@ public abstract class PostFileNetworkProcedure<ResultType> extends NetworkProced
 
     @Override
     protected ResultType run() throws MendeleyException {
-        String link = "<https://api.mendeley.com/documents/"+documentId+">; rel=\"document\"";
+        String link = "<"+ NetworkUtils.API_URL+"documents/"+documentId+">; rel=\"document\"";
         String contentDisposition = "attachment; filename*=UTF-8\'\'"+fileName;
 
         try {
