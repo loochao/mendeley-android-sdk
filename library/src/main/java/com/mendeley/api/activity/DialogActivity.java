@@ -45,6 +45,7 @@ public class DialogActivity extends Activity {
 	private static final String TAG = DialogActivity.class.getSimpleName();
 
     private AuthenticationManager authenticationManager;
+	private WebView webView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,20 +60,24 @@ public class DialogActivity extends Activity {
         }
         
         setContentView(R.layout.dialog_layout);
-
-        WebView webView = (WebView) findViewById(R.id.dialogWebView);
+		webView = (WebView) findViewById(R.id.dialogWebView);
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setVerticalScrollBarEnabled(true);
 		webView.setHorizontalScrollBarEnabled(true);
-	    webView.setVerticalScrollBarEnabled(true);
-	    webView.setHorizontalScrollBarEnabled(true);
-	    webView.requestFocusFromTouch();
-	    webView.getSettings().setUseWideViewPort(true);                                                         
-	    webView.getSettings().setLoadWithOverviewMode(true);
-	    webView.getSettings().setBuiltInZoomControls(true);
+		webView.setVerticalScrollBarEnabled(true);
+		webView.setHorizontalScrollBarEnabled(true);
+		webView.requestFocusFromTouch();
+		webView.getSettings().setUseWideViewPort(true);
+		webView.getSettings().setLoadWithOverviewMode(true);
+		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setUserAgentString("Android " + getPackageName());
 		webView.setWebViewClient(new MendeleyWebViewClient());
-		webView.loadUrl(getOauth2URL(authenticationManager));
+
+		if (savedInstanceState != null) {
+			webView.restoreState(savedInstanceState);
+		} else {
+			webView.loadUrl(getOauth2URL(authenticationManager));
+		}
 
         View dismissButton = findViewById(R.id.dismissButton);
         if (dismissButton != null) {
@@ -85,7 +90,12 @@ public class DialogActivity extends Activity {
         }
     }
 
-    /**
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		webView.saveState(outState);
+	}
+
+	/**
      * Finding the screen size in inches
      * 
      * @return the screen size
