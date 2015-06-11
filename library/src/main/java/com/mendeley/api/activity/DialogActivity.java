@@ -15,7 +15,6 @@ import android.webkit.WebViewClient;
 import com.mendeley.api.R;
 import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.impl.DefaultMendeleySdk;
-
 import com.mendeley.api.network.NetworkUtils;
 
 import org.apache.http.HttpResponse;
@@ -55,9 +54,12 @@ public class DialogActivity extends Activity {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        if (getScreenSize() > SMALL_SCREEN_SIZE) {
-        	super.setTheme(android.R.style.Theme_Holo_Dialog);
-        }
+        if (getScreenSize() <= SMALL_SCREEN_SIZE) {
+			super.setTheme(R.style.AppTheme);
+
+        } else {
+			setFinishOnTouchOutside(false);
+		}
         
         setContentView(R.layout.dialog_layout);
 		webView = (WebView) findViewById(R.id.dialogWebView);

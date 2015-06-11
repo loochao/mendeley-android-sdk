@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background_red">#9d1620</color>
- 	<color name="signin_botton_text">#9d1620</color>
+    <color name="mendeley_red">#9d1620</color>
  	<color name="create_account_botton_text">#ffffff</color>
  	<color name="dialog_title">#545454</color>
- 	<color name="dialog_title_text">#ffffff</color>
- 	<color name="download_progress_bar">#3483e1</color>
-
     <color name="title_bar_background_clicked">#747474</color>
     <color name="title_bar_background">#545454</color>
+	<color name="login_screen_background">#e9eaec</color>
 </resources>
