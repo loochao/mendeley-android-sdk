@@ -1,5 +1,8 @@
 package com.mendeley.api.network;
 
+import android.os.Build;
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,6 +50,13 @@ public class NoSSLv3Factory extends SSLSocketFactory {
     private static Socket makeSocketSafe(Socket socket) {
         if (socket instanceof SSLSocket) {
             socket = new NoSSLv3SSLSocket((SSLSocket) socket);
+
+            //    Enabling protocols "TLSv1", "TLSv1.1", "TLSv1.2",
+            //    which are supported from API level 16 but not enabled by default in API < 20+
+            //    http://developer.android.com/reference/javax/net/ssl/SSLSocket.html
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                ((SSLSocket) socket).setEnabledProtocols(new String[]{"TLSv1.1", "TLSv1.2"});
+            }
         }
         return socket;
     }
