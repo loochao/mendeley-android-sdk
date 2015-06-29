@@ -4,6 +4,8 @@ import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
+import com.mendeley.api.model.File;
+import com.mendeley.api.network.JsonParser;
 import com.mendeley.api.network.NetworkUtils;
 
 import org.json.JSONException;
@@ -17,7 +19,7 @@ import static com.mendeley.api.network.NetworkUtils.API_URL;
 import static com.mendeley.api.network.NetworkUtils.getConnection;
 import static com.mendeley.api.network.NetworkUtils.readInputStream;
 
-public abstract class PostFileNetworkProcedure<ResultType> extends NetworkProcedure<ResultType> {
+public class PostFileNetworkProcedure extends NetworkProcedure<File> {
     private final String contentType;
     private final String documentId;
     private final String fileName;
@@ -41,7 +43,7 @@ public abstract class PostFileNetworkProcedure<ResultType> extends NetworkProced
     }
 
     @Override
-    protected ResultType run() throws MendeleyException {
+    protected File run() throws MendeleyException {
         String link = "<"+ NetworkUtils.API_URL+"documents/"+documentId+">; rel=\"document\"";
         String contentDisposition = "attachment; filename*=UTF-8\'\'"+fileName;
 
@@ -73,7 +75,7 @@ public abstract class PostFileNetworkProcedure<ResultType> extends NetworkProced
                 throw HttpResponseException.create(con);
             } else {
                 is = con.getInputStream();
-                return processJsonString(readInputStream(is));
+                return JsonParser.parseFile(readInputStream(is));
             }
         } catch (ParseException pe) {
             throw new MendeleyException("Could not parse web API headers for " + filesUrl);
@@ -85,6 +87,4 @@ public abstract class PostFileNetworkProcedure<ResultType> extends NetworkProced
             closeConnection();
         }
     }
-
-    protected abstract ResultType processJsonString(String jsonString) throws JSONException;
 }

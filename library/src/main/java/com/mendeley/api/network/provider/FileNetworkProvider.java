@@ -567,14 +567,4 @@ public class FileNetworkProvider {
         }
     }
 
-    public static class PostFileProcedure extends PostFileNetworkProcedure<File> {
-        public PostFileProcedure(String contentType, String documentId, String fileName, InputStream inputStream, AuthenticationManager authenticationManager) {
-            super(contentType, documentId, fileName, inputStream, authenticationManager);
-        }
-
-        @Override
-        protected File processJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseFile(jsonString);
-        }
-    }
 }
