@@ -8,6 +8,8 @@ import com.mendeley.api.exceptions.NotSignedInException;
 public abstract class Procedure<Result> {
     protected AuthenticationManager authenticationManager;
 
+    private boolean cancelled;
+
     public Procedure(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
@@ -33,5 +35,13 @@ public abstract class Procedure<Result> {
                 throw e;
             }
         }
+    }
+
+    public final void cancel() {
+        cancelled = true;
+    }
+
+    public final boolean isCancelled() {
+        return cancelled;
     }
 }

@@ -1,29 +1,5 @@
 package com.mendeley.api.impl;
 
-import static com.mendeley.api.network.provider.AnnotationsNetworkProvider.deleteAnnotationUrl;
-import static com.mendeley.api.network.provider.AnnotationsNetworkProvider.getAnnotationUrl;
-import static com.mendeley.api.network.provider.AnnotationsNetworkProvider.getAnnotationsUrl;
-import static com.mendeley.api.network.provider.DocumentNetworkProvider.DOCUMENT_TYPES_BASE_URL;
-import static com.mendeley.api.network.provider.DocumentNetworkProvider.IDENTIFIER_TYPES_BASE_URL;
-import static com.mendeley.api.network.provider.DocumentNetworkProvider.getGetDocumentUrl;
-import static com.mendeley.api.network.provider.DocumentNetworkProvider.getGetDocumentsUrl;
-import static com.mendeley.api.network.provider.DocumentNetworkProvider.getTrashDocumentUrl;
-import static com.mendeley.api.network.provider.FolderNetworkProvider.getDeleteFolderUrl;
-import static com.mendeley.api.network.provider.FolderNetworkProvider.getGetFolderDocumentIdsUrl;
-import static com.mendeley.api.network.provider.FolderNetworkProvider.getGetFolderUrl;
-import static com.mendeley.api.network.provider.FolderNetworkProvider.getGetFoldersUrl;
-import static com.mendeley.api.network.provider.FolderNetworkProvider.getPostDocumentToFolderUrl;
-import static com.mendeley.api.network.provider.GroupNetworkProvider.getGetGroupMembersUrl;
-import static com.mendeley.api.network.provider.GroupNetworkProvider.getGetGroupsUrl;
-import static com.mendeley.api.network.provider.ProfileNetworkProvider.PROFILES_URL;
-
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Map;
-
-import org.json.JSONException;
-
 import com.mendeley.api.BlockingSdk;
 import com.mendeley.api.auth.AuthenticationInterface;
 import com.mendeley.api.auth.AuthenticationManager;
@@ -49,6 +25,8 @@ import com.mendeley.api.model.Profile;
 import com.mendeley.api.network.Environment;
 import com.mendeley.api.network.JsonParser;
 import com.mendeley.api.network.procedure.DeleteNetworkProcedure;
+import com.mendeley.api.network.procedure.GetFileNetworkProcedure;
+import com.mendeley.api.network.procedure.PostFileNetworkProcedure;
 import com.mendeley.api.network.procedure.PostNoBodyNetworkProcedure;
 import com.mendeley.api.network.procedure.Procedure;
 import com.mendeley.api.network.provider.AnnotationsNetworkProvider;
@@ -85,6 +63,30 @@ import com.mendeley.api.params.FolderRequestParameters;
 import com.mendeley.api.params.GroupRequestParameters;
 import com.mendeley.api.params.Page;
 import com.mendeley.api.params.View;
+
+import org.json.JSONException;
+
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.Map;
+
+import static com.mendeley.api.network.provider.AnnotationsNetworkProvider.deleteAnnotationUrl;
+import static com.mendeley.api.network.provider.AnnotationsNetworkProvider.getAnnotationUrl;
+import static com.mendeley.api.network.provider.AnnotationsNetworkProvider.getAnnotationsUrl;
+import static com.mendeley.api.network.provider.DocumentNetworkProvider.DOCUMENT_TYPES_BASE_URL;
+import static com.mendeley.api.network.provider.DocumentNetworkProvider.IDENTIFIER_TYPES_BASE_URL;
+import static com.mendeley.api.network.provider.DocumentNetworkProvider.getGetDocumentUrl;
+import static com.mendeley.api.network.provider.DocumentNetworkProvider.getGetDocumentsUrl;
+import static com.mendeley.api.network.provider.DocumentNetworkProvider.getTrashDocumentUrl;
+import static com.mendeley.api.network.provider.FolderNetworkProvider.getDeleteFolderUrl;
+import static com.mendeley.api.network.provider.FolderNetworkProvider.getGetFolderDocumentIdsUrl;
+import static com.mendeley.api.network.provider.FolderNetworkProvider.getGetFolderUrl;
+import static com.mendeley.api.network.provider.FolderNetworkProvider.getGetFoldersUrl;
+import static com.mendeley.api.network.provider.FolderNetworkProvider.getPostDocumentToFolderUrl;
+import static com.mendeley.api.network.provider.GroupNetworkProvider.getGetGroupMembersUrl;
+import static com.mendeley.api.network.provider.GroupNetworkProvider.getGetGroupsUrl;
+import static com.mendeley.api.network.provider.ProfileNetworkProvider.PROFILES_URL;
 
 /**
  * Implementation of the blocking API calls.
@@ -341,11 +343,17 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
     }
 
     @Override
-    public File postFile(String contentType, String documentId, InputStream inputStream, String fileName) throws MendeleyException {
-
-        Procedure<File> proc = new FileNetworkProvider.PostFileProcedure(contentType, documentId, fileName, inputStream, authenticationManager);
+    public long getFile(String fileId, java.io.File targetFile) throws MendeleyException {
+        Procedure<Long> proc = new GetFileNetworkProcedure(fileId, targetFile, authenticationManager);
         return proc.checkedRun();
     }
+
+    @Override
+    public File postFile(String contentType, String documentId, InputStream inputStream, String fileName) throws MendeleyException {
+        Procedure<File> proc = new PostFileNetworkProcedure(contentType, documentId, fileName, inputStream, authenticationManager);
+        return proc.checkedRun();
+    }
+
 
     @Override
     public void deleteFile(String fileId) throws MendeleyException {

@@ -55,4 +55,5 @@ public class DefaultMendeleySdk extends AsyncMendeleySdk {
         final Intent intent = new Intent(activity, SignInActivity.class);
         activity.startActivity(intent);
     }
+
 }

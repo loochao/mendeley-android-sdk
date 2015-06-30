@@ -1,7 +1,6 @@
 package com.mendeley.api.network.procedure;
 
 import com.mendeley.api.auth.AuthenticationManager;
-import com.mendeley.api.network.procedure.Procedure;
 import com.mendeley.api.params.Page;
 import com.mendeley.api.util.DateUtils;
 import com.mendeley.api.util.Utils;
@@ -10,11 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -96,4 +93,5 @@ public abstract class NetworkProcedure<ResultType> extends Procedure<ResultType>
         Utils.closeQuietly(is);
         Utils.closeQuietly(os);
     }
+
 }
