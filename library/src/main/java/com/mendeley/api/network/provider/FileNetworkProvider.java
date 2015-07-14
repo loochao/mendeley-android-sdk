@@ -102,13 +102,12 @@ public class FileNetworkProvider {
     }
 
 	/**
-	 *  Getting the appropriate url string and executes the GetFileTask
-	 *  @param fileId the id of the file to get
-	 * @param folderPath the path in which to save the file
+	 * Getting the appropriate url string and executes the GetFileTask
+	 * @param targetFile the file in which to save the file
      * @param callback
      */
-    public void doGetFile(final String fileId, final String folderPath, String fileName, GetFileCallback callback) {
-		final GetFileTask fileTask = new GetFileTask(folderPath, fileName, fileId, callback);
+    public void doGetFile(final String fileId, java.io.File targetFile, GetFileCallback callback) {
+		final GetFileTask fileTask = new GetFileTask(targetFile, fileId, callback);
 		fileTaskMap.put(fileId, fileTask);
 		String[] params = new String[] { getGetFileUrl(fileId) };
 		fileTask.executeOnExecutor(environment.getExecutor(), params);
@@ -276,8 +275,7 @@ public class FileNetworkProvider {
         private static final String PARTIALLY_DOWNLOADED_EXTENSION = ".part";
         private final GetFileCallback callback;
 
-        private final String folderPath;
-		private String fileName;
+		private final java.io.File targetFile;
 
         private final String fileId;
 
@@ -285,11 +283,10 @@ public class FileNetworkProvider {
         private String finalFilePath;
 
         /**
-         * @param fileName if null, use the name from the file itself.
+         * @param targetFile
          */
-        private GetFileTask(String folderPath, String fileName, String fileId, GetFileCallback callback) {
-            this.folderPath = folderPath;
-            this.fileName = fileName;
+        private GetFileTask(java.io.File targetFile, String fileId, GetFileCallback callback) {
+            this.targetFile = targetFile;
             this.fileId = fileId;
             this.callback = callback;
         }
@@ -330,13 +327,8 @@ public class FileNetworkProvider {
 					if (responseCode != 200) {
 						return new FileDownloadException("HTTP status error downloading file.", HttpResponseException.create(con), fileId);
 					} else {
-                        if (fileName == null) {
-                            String content = con.getHeaderFields().get("Content-Disposition").get(0);
-                            fileName = content.substring(content.indexOf("\"") + 1, content.lastIndexOf("\""));
-                        }
-						
-						finalFilePath = folderPath + java.io.File.separator + fileName;
-                        tempFilePath = finalFilePath + PARTIALLY_DOWNLOADED_EXTENSION;
+
+                        final java.io.File tempFile = new java.io.File(targetFile.getParent(), targetFile.getName() + PARTIALLY_DOWNLOADED_EXTENSION);
 
                         int fileLength = con.getContentLength();
                         is = con.getInputStream();
@@ -358,7 +350,7 @@ public class FileNetworkProvider {
                             return new UserCancelledException();
                         }
 
-                        if (!renameFile()) {
+                        if (!tempFile.renameTo(targetFile)) {
                             return new FileDownloadException("Cannot rename downloaded file", fileId);
                         }
 
@@ -394,19 +386,10 @@ public class FileNetworkProvider {
             super.onCancelled(result);
 	    }
 
-        /**
-         * @return true if rename successful.
-         */
-        private boolean renameFile() {
-            java.io.File tempFile = new java.io.File(tempFilePath);
-            java.io.File finalFile = new java.io.File(finalFilePath);
-            return tempFile.renameTo(finalFile);
-        }
-
 		@Override
 		protected void onSuccess() {
             fileTaskMap.remove(fileId);
-            callback.onFileReceived(fileId, fileName);
+            callback.onFileReceived(fileId, targetFile);
 		}
 
 		@Override
@@ -567,14 +550,4 @@ public class FileNetworkProvider {
         }
     }
 
-    public static class PostFileProcedure extends PostFileNetworkProcedure<File> {
-        public PostFileProcedure(String contentType, String documentId, String fileName, InputStream inputStream, AuthenticationManager authenticationManager) {
-            super(contentType, documentId, fileName, inputStream, authenticationManager);
-        }
-
-        @Override
-        protected File processJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseFile(jsonString);
-        }
-    }
 }

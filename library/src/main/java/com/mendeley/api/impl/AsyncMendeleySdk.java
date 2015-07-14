@@ -30,9 +30,7 @@ import com.mendeley.api.callbacks.group.GetGroupsCallback;
 import com.mendeley.api.callbacks.profile.GetProfileCallback;
 import com.mendeley.api.callbacks.trash.RestoreDocumentCallback;
 import com.mendeley.api.callbacks.utils.GetImageCallback;
-import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.File;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.params.DocumentRequestParameters;
 import com.mendeley.api.params.FileRequestParameters;
@@ -202,22 +200,11 @@ public abstract class AsyncMendeleySdk extends BaseMendeleySdk implements Mendel
     }
 
     @Override
-    public void getFile(final String fileId, final String folderPath, final GetFileCallback callback) {
+    public void getFile(final String fileId, final java.io.File targetFile, final GetFileCallback callback) {
         run(new Command() {
             @Override
             public RequestHandle exec() {
-                fileNetworkProvider.doGetFile(fileId, folderPath, null, callback);
-                return null;
-            }
-        });
-    }
-
-    @Override
-    public void getFile(final String fileId, final String folderPath, final String fileName, final GetFileCallback callback) {
-        run(new Command() {
-            @Override
-            public RequestHandle exec() {
-                fileNetworkProvider.doGetFile(fileId, folderPath, fileName, callback);
+                fileNetworkProvider.doGetFile(fileId, targetFile, callback);
                 return null;
             }
         });

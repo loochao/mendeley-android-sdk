@@ -137,8 +137,19 @@ public interface BlockingSdk {
      */
     FileList getFiles(Page next) throws MendeleyException;
 
+
     /**
-     * Post a file
+     * Download the content of a file.
+     *
+     * @param fileId the id of the file to download.
+     * @param targetFile the file name to store the file as.
+     *
+     * @return bytes downloaded
+     */
+    long getFile(String fileId, java.io.File targetFile) throws MendeleyException;
+
+    /**
+     * Upload the content of a file
      *
      * @param contentType of the file
      * @param documentId the id of the document this file belongs to
