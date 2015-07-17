@@ -27,7 +27,6 @@ public class PostFileNetworkProcedure extends NetworkProcedure<File> {
 
     private static String filesUrl = API_URL + "files";
 
-
     public PostFileNetworkProcedure(String contentType, String documentId, String fileName,
                                     InputStream inputStream, AuthenticationManager authenticationManager) {
         super(authenticationManager);
