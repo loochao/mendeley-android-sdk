@@ -78,11 +78,11 @@ public class PostFileNetworkProcedure extends NetworkProcedure<File> {
                 return JsonParser.parseFile(readInputStream(is));
             }
         } catch (ParseException pe) {
-            throw new MendeleyException("Could not parse web API headers for " + filesUrl);
+            throw new JsonParsingException("Could not post file" + filesUrl, pe);
         } catch (IOException e) {
-            throw new MendeleyException(e.getMessage());
+            throw new MendeleyException("Could not post file" + filesUrl , e);
         } catch (JSONException e) {
-            throw new JsonParsingException(e.getMessage());
+            throw new JsonParsingException("Could not post file", e);
         } finally {
             closeConnection();
         }
