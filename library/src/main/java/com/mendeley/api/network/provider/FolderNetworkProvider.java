@@ -259,7 +259,7 @@ public class FolderNetworkProvider {
 	 * @param documentId the id of the document to delete
 	 */
     public static String getDeleteDocumentFromFolderUrl(String folderId, String documentId) {
-		return FOLDERS_URL + "/" + folderId + "/documents" + documentId;
+		return FOLDERS_URL + "/" + folderId + "/documents/" + documentId;
 	}
 	
     /* TASKS */
