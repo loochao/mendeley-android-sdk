@@ -1,5 +1,6 @@
 package com.mendeley.api.network;
 
+import com.mendeley.api.BuildConfig;
 import com.mendeley.api.auth.AccessTokenProvider;
 
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -18,7 +19,7 @@ import javax.net.ssl.HttpsURLConnection;
  * Utilities for the NetworkProviders.
  */
 public class NetworkUtils {
-    public static final String API_URL = "https://api.mendeley.com/";
+    public static final String API_URL = BuildConfig.WEB_API_BASE_URL;
 
     public static final int CONNECTION_TIMEOUT = 1500;
     public static final int READ_TIMEOUT = 15000 ;

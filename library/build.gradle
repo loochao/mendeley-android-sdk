@@ -14,6 +14,7 @@ android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
 
+
     sourceSets {
         main {
         }
@@ -21,5 +22,16 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    // Ref: http://stackoverflow.com/questions/24860659/multi-flavor-app-based-on-multi-flavor-library-in-android-gradle
+    publishNonDefault true
+    productFlavors{
+        staging{
+            buildConfigField 'String', 'WEB_API_BASE_URL', '\"https://api-staging.mendeley.com/\"'
+        }
+        production{
+            buildConfigField 'String', 'WEB_API_BASE_URL', '\"https://api.mendeley.com/\"'
+        }
     }
 }
