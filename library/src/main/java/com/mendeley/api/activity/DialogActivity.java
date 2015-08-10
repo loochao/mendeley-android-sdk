@@ -208,7 +208,13 @@ public class DialogActivity extends Activity {
 			if (result != null) {
 	        	resultData.putExtra("authorization_code", authorizationCode);
 			}
-			
+
+			if (authorizationCode != null) {
+				authenticationManager.authenticated(true);
+			} else {
+				authenticationManager.failedToAuthenticate();
+			}
+
 			setResult(Activity.RESULT_OK, resultData);
 			finish();
 		}
