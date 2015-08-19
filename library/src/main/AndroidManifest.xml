@@ -17,12 +17,12 @@
 
         <!-- Activities needed by the SDK -->
         <activity
-            android:name=".activity.SignInActivity"
+            android:name=".activity.SignInOrSignUpActivity"
             android:label="@string/title_activity_sign_in" >
         </activity>
 
         <activity
-            android:name=".activity.DialogActivity"
+            android:name=".activity.SignInActivity"
             android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
     </application>
