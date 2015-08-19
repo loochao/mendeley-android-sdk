@@ -79,13 +79,13 @@ public class SignInActivity  extends Activity implements OnClickListener {
      */
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
-    	if (resultCode == Activity.RESULT_OK) {
-    		switch(requestCode) {
-	    		case SIGNIN_RESULT:
-	    			finish();
-	    			break;
+		switch(requestCode) {
+			case SIGNIN_RESULT:
+				if (resultCode == Activity.RESULT_OK) {
+					finish();
+				}
+				break;
     		}
-    	}
     }
 
 	@Override

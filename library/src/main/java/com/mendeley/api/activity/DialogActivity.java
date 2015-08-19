@@ -205,17 +205,15 @@ public class DialogActivity extends Activity {
 		@Override
 		protected void onPostExecute(String result) {
 			Intent resultData = new Intent();
-			if (result != null) {
-	        	resultData.putExtra("authorization_code", authorizationCode);
-			}
 
 			if (authorizationCode != null) {
 				authenticationManager.authenticated(true);
+				setResult(Activity.RESULT_OK, resultData);
 			} else {
 				authenticationManager.failedToAuthenticate();
+				setResult(Activity.RESULT_CANCELED, resultData);
 			}
 
-			setResult(Activity.RESULT_OK, resultData);
 			finish();
 		}
     }
