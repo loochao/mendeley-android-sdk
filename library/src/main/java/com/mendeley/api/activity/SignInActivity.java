@@ -82,16 +82,6 @@ public class SignInActivity  extends Activity implements OnClickListener {
     	if (resultCode == Activity.RESULT_OK) {
     		switch(requestCode) {
 	    		case SIGNIN_RESULT:
-	    			String code = null;
-	    			Bundle bundle = data.getExtras();
-	    			if (bundle != null && bundle.containsKey("authorization_code")) {
-	    				code = bundle.getString("authorization_code");
-	    			}
-	    			if (code != null) {
-		    			authenticationManager.authenticated(true);
-	    			} else {
-	    				authenticationManager.failedToAuthenticate();
-	    			}
 	    			finish();
 	    			break;
     		}
