@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.activity.DialogActivity;
 import com.mendeley.api.activity.SignInActivity;
+import com.mendeley.api.activity.SignInOrSignUpActivity;
 import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.auth.CredentialsManager;
 import com.mendeley.api.callbacks.MendeleySignInInterface;
@@ -45,18 +45,18 @@ public class DefaultMendeleySdk extends AsyncMendeleySdk {
     }
 
     @Override
-    public void signIn(Activity activity, MendeleySignInInterface signInCallback, boolean showSplashScreen) {
+    public void signIn(Activity activity, MendeleySignInInterface signInCallback, boolean showSignUpScreen) {
         this.mendeleySignInInterface = signInCallback;
 
         final Intent intent;
-        if (showSplashScreen) {
+        if (showSignUpScreen) {
             if (authenticationManager.isSignedIn()) {
                 mendeleySignInInterface.onSignedIn();
                 return;
             }
-            intent = new Intent(activity, SignInActivity.class);
+            intent = new Intent(activity, SignInOrSignUpActivity.class);
         } else {
-            intent = new Intent(activity, DialogActivity.class);
+            intent = new Intent(activity, SignInActivity.class);
         }
         activity.startActivity(intent);
     }
