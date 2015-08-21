@@ -100,7 +100,7 @@ public class FolderNetworkProviderTest extends AndroidTestCase {
 	public void test_getDeleteDocumentFromFolderUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
 		String documentId = "test-document_id";
-		String expectedUrl = foldersUrl+"/"+folderId+"/documents"+documentId;
+		String expectedUrl = foldersUrl+"/"+folderId+"/documents/"+documentId;
 		String url = FolderNetworkProvider.getDeleteDocumentFromFolderUrl(folderId, documentId);
 
 		assertEquals("Delete document from folder url is wrong", expectedUrl, url);

@@ -50,7 +50,7 @@ public class TestUtils {
 
         ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, redirectUri);
         InternalMendeleySdk sdk = new InternalMendeleySdk(username, password, clientCredentials);
-        sdk.signIn(null, signinCallback);
+        sdk.signIn(null, signinCallback, true);
 
         if (!signInLatch.await(SIGN_IN_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
             throw new SignInException("timed out signing in");

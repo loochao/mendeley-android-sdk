@@ -50,7 +50,7 @@ public class InternalMendeleySdk extends AsyncMendeleySdk {
     }
 
     @Override
-    public void signIn(Activity activity, MendeleySignInInterface signInCallback) {
+    public void signIn(Activity activity, MendeleySignInInterface signInCallback, boolean showSplash) {
         this.mendeleySignInInterface = signInCallback;
 
         initProviders();
