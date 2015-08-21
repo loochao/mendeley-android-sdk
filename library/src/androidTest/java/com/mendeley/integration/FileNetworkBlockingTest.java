@@ -12,6 +12,8 @@ import com.mendeley.api.params.DocumentRequestParameters;
 import com.mendeley.api.params.FileRequestParameters;
 import com.mendeley.api.params.Page;
 import com.mendeley.api.util.DateUtils;
+import com.mendeley.testUtils.SignInException;
+import com.mendeley.testUtils.TestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

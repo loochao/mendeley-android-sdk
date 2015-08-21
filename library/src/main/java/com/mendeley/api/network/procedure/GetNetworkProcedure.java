@@ -79,5 +79,5 @@ public abstract class GetNetworkProcedure<ResultType> extends NetworkProcedure<R
         }
     }
 
-    protected abstract ResultType processJsonString(String jsonString) throws JSONException;
+    protected abstract ResultType processJsonString(String jsonString) throws JSONException, ParseException;
 }

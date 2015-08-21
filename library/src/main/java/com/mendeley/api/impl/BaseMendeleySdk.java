@@ -12,6 +12,7 @@ import com.mendeley.api.callbacks.file.FileList;
 import com.mendeley.api.callbacks.folder.FolderList;
 import com.mendeley.api.callbacks.group.GroupList;
 import com.mendeley.api.callbacks.group.GroupMembersList;
+import com.mendeley.api.callbacks.read_position.ReadPositionList;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.exceptions.NoMorePagesException;
@@ -22,6 +23,7 @@ import com.mendeley.api.model.File;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.model.Group;
 import com.mendeley.api.model.Profile;
+import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.network.Environment;
 import com.mendeley.api.network.JsonParser;
 import com.mendeley.api.network.procedure.DeleteNetworkProcedure;
@@ -53,6 +55,7 @@ import com.mendeley.api.network.provider.GroupNetworkProvider.GetGroupMembersPro
 import com.mendeley.api.network.provider.GroupNetworkProvider.GetGroupsProcedure;
 import com.mendeley.api.network.provider.ProfileNetworkProvider;
 import com.mendeley.api.network.provider.ProfileNetworkProvider.GetProfileProcedure;
+import com.mendeley.api.network.provider.RecentlyReadNetworkProvider;
 import com.mendeley.api.network.provider.TrashNetworkProvider;
 import com.mendeley.api.network.provider.UtilsNetworkProvider;
 import com.mendeley.api.params.AnnotationRequestParameters;
@@ -142,6 +145,8 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
     public interface Command {
         RequestHandle exec();
     }
+
+
 
     /* DOCUMENTS BLOCKING */
 
@@ -572,6 +577,25 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
         String url = CatalogDocumentNetworkProvider.getGetCatalogDocumentUrl(catalogId, view);
         Procedure<Document> proc = new CatalogDocumentNetworkProvider.GetCatalogDocumentProcedure(url, authenticationManager);
         return proc.checkedRun();
+    }
+
+    /* RECENTLY READ POSITIONS */
+
+    @Override
+    public ReadPositionList getRecentlyRead(String groupId, String fileId, int limit) throws MendeleyException {
+        String url = RecentlyReadNetworkProvider.getGetRecentlyReadUrl(groupId, fileId, limit);
+        Procedure<ReadPositionList> proc = new RecentlyReadNetworkProvider.GetRecentlyReadProcedure(url, authenticationManager);
+        return proc.checkedRun();
+    }
+
+    @Override
+    public ReadPosition postRecentlyRead(ReadPosition readPosition) throws MendeleyException {
+        try {
+            Procedure<ReadPosition> proc = new RecentlyReadNetworkProvider.PostRecentlyReadProcedure(readPosition, authenticationManager);
+            return proc.checkedRun();
+        } catch (JSONException e) {
+            throw new JsonParsingException(e.getMessage());
+        }
     }
 
     /**

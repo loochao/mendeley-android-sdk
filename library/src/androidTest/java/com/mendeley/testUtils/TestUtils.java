@@ -1,4 +1,4 @@
-package com.mendeley.integration;
+package com.mendeley.testUtils;
 
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -6,7 +6,6 @@ import android.util.Log;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.callbacks.MendeleySignInInterface;
 import com.mendeley.api.impl.InternalMendeleySdk;
-import com.mendeley.testUtils.SignInException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

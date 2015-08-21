@@ -61,4 +61,5 @@ public class DefaultMendeleySdk extends AsyncMendeleySdk {
         activity.startActivity(intent);
     }
 
+
 }

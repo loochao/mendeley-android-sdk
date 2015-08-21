@@ -114,5 +114,4 @@ public class InternalMendeleySdk extends AsyncMendeleySdk {
         return response;
     }
 
-
 }
