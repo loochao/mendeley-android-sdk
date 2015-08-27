@@ -1,7 +1,6 @@
 package com.mendeley.api.impl;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,8 +15,8 @@ import com.mendeley.api.callbacks.MendeleySignInInterface;
 public class DefaultMendeleySdk extends AsyncMendeleySdk {
     private static DefaultMendeleySdk instance;
 
-    public static void sdkInitialise(Application applicationContext, ClientCredentials clientCredentials) {
-        instance = new DefaultMendeleySdk(applicationContext, clientCredentials);
+    public static void sdkInitialise(Context context, ClientCredentials clientCredentials) {
+        instance = new DefaultMendeleySdk(context, clientCredentials);
     }
 
     /**
