@@ -90,6 +90,11 @@ public interface MendeleySdk {
      */
     void signOut();
 
+    /**
+     * @returns the access token to authenticate against the Mendeley API
+     */
+    String getAccessToken();
+
     /* DOCUMENTS */
 
     /**

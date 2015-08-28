@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.test.AndroidTestCase;
 
 import com.mendeley.api.BlockingSdk;
-import com.mendeley.api.R;
 import com.mendeley.api.callbacks.annotations.AnnotationList;
 import com.mendeley.api.callbacks.document.DocumentList;
 import com.mendeley.api.exceptions.MendeleyException;
@@ -13,6 +12,8 @@ import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Point;
 import com.mendeley.api.params.DocumentRequestParameters;
 import com.mendeley.api.params.Sort;
+import com.mendeley.testUtils.SignInException;
+import com.mendeley.testUtils.TestUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;

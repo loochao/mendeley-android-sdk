@@ -7,6 +7,7 @@ import com.mendeley.api.callbacks.file.FileList;
 import com.mendeley.api.callbacks.folder.FolderList;
 import com.mendeley.api.callbacks.group.GroupList;
 import com.mendeley.api.callbacks.group.GroupMembersList;
+import com.mendeley.api.callbacks.read_position.ReadPositionList;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
@@ -14,6 +15,7 @@ import com.mendeley.api.model.File;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.model.Group;
 import com.mendeley.api.model.Profile;
+import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.params.AnnotationRequestParameters;
 import com.mendeley.api.params.CatalogDocumentRequestParameters;
 import com.mendeley.api.params.DocumentRequestParameters;
@@ -366,4 +368,24 @@ public interface BlockingSdk {
     Annotation patchAnnotation(String annotationId, Annotation annotation) throws MendeleyException;
 
     void deleteAnnotation(String annotationId) throws MendeleyException;
+
+    /* RECENTLY READ POSITIONS */
+
+    /**
+     * Queries the last {@link ReadPosition}s for some files
+     *
+     * @param groupId id of the group of the documents of the files of which read positions we want. If null it will return only the ones in the user's library.
+     * @param fileId id of the file of which read position we want. If null it will return positions for all the files in the specified group.
+     * @param limit
+     * @return a {@link ReadPositionList} with the last {@link ReadPosition} for some files
+     */
+    ReadPositionList getRecentlyRead(String groupId, String fileId, int limit) throws MendeleyException;
+
+    /**
+     * Posts the passed {@link ReadPosition} to the Mendeley Web API
+     *
+     * @param readPosition
+     * @return the posted {@link ReadPosition} as it's now in the server
+     */
+    ReadPosition postRecentlyRead(ReadPosition readPosition) throws MendeleyException;
 }

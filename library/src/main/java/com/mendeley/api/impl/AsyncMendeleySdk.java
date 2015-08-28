@@ -61,6 +61,14 @@ public abstract class AsyncMendeleySdk extends BaseMendeleySdk implements Mendel
         }
     }
 
+    @Override
+    public String getAccessToken() {
+        if (authenticationManager == null) {
+            throw new IllegalStateException("Sdk not initialised yet");
+        }
+        return authenticationManager.getAccessToken();
+    }
+
     /* DOCUMENTS ASYNC */
 
     @Override

@@ -18,8 +18,12 @@ import com.mendeley.api.model.Person;
 import com.mendeley.api.model.Photo;
 import com.mendeley.api.model.Point;
 import com.mendeley.api.model.Profile;
+import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.model.UserRole;
-import com.mendeley.integration.TestUtils;
+import com.mendeley.api.util.DateUtils;
+import com.mendeley.testUtils.TestUtils;
+
+import junit.framework.Assert;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +31,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,8 +49,9 @@ public class JsonParserTest extends InstrumentationTestCase {
     final String userRoleFile =  "test_user_role.json";
     final String annotationWithNotNullValuesFile = "test_annotation_not_null_values.json";
     final String annotationWithNullValuesFile = "test_annotation_null_values.json";
+    final String readPositionFile =  "test_read_position.json";
 
-	public Document getTestDocumentWithNonNotNullCollections() {
+    private Document getTestDocumentWithNonNotNullCollections() {
         HashMap<String,String> identifiers = new HashMap<String, String>();
 
         Person author = new Person("test-first_name", "test-last_name");
@@ -69,7 +75,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 	    return getTestDocument(authorsList, editorsList, keywords, tags, websites, identifiers);
 	}
 
-    public Document getTestDocument(ArrayList<Person> authorsList, ArrayList<Person> editorsList, ArrayList<String> keywords, ArrayList<String> tags, ArrayList<String> websites, HashMap<String, String> identifiers) {
+    private Document getTestDocument(ArrayList<Person> authorsList, ArrayList<Person> editorsList, ArrayList<String> keywords, ArrayList<String> tags, ArrayList<String> websites, HashMap<String, String> identifiers) {
         Document.Builder testDocument = new Document.Builder();
 
         testDocument.setTitle("test-title");
@@ -115,7 +121,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         return testDocument.build();
     }
 
-    public Group getTestGroup() {
+    private Group getTestGroup() {
 
         Group.Builder testGroup = new Group.Builder();
         testGroup.setName("test-group-name");
@@ -136,7 +142,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         return testGroup.build();
     }
 
-    public UserRole getTestUserRole() {
+    private UserRole getTestUserRole() {
 
         UserRole.Builder testUserRole = new UserRole.Builder();
         testUserRole.setProfileId("test-user-role-id");
@@ -146,15 +152,15 @@ public class JsonParserTest extends InstrumentationTestCase {
         return testUserRole.build();
     }
 
-	public Folder getTestFolder() {
+    private Folder getTestFolder() {
 		Folder.Builder mendeleyFolder = new Folder.Builder("test-name");
 		mendeleyFolder.setId("test-id");
 		mendeleyFolder.setAdded("2014-02-20T16:53:25.000Z");
 	    
 	    return mendeleyFolder.build();
 	}
-	
-	public File getTestFile() {
+
+    private File getTestFile() {
 	    File.Builder testFile = new File.Builder();
 	    testFile.setId("test-id");
 	    testFile.setDocumentId("test-document_id");
@@ -165,8 +171,8 @@ public class JsonParserTest extends InstrumentationTestCase {
 	    
 	    return testFile.build();
 	}
-	
-	public Profile getTestProfile() {
+
+    private Profile getTestProfile() {
 		
 		Discipline testDiscipline = new Discipline();
 		testDiscipline.name = "test-name";
@@ -216,7 +222,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 	    return testProfile.build();
 	}
 
-    public Annotation getTestAnnotationWithNonNotNullValues() {
+    private Annotation getTestAnnotationWithNonNotNullValues() {
         ArrayList<Box> positions = new ArrayList<Box>();
         positions.add(new Box(new Point(1, 2), new Point(3, 4), 5));
         Integer color = Color.argb(255, 255, 0, 0);
@@ -226,7 +232,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         return getTestAnnotation(positions, color, privacyLevel, type);
     }
 
-    public Annotation getTestAnnotation(ArrayList<Box> positions, Integer color, Annotation.PrivacyLevel privacyLevel, Annotation.Type type) {
+    private Annotation getTestAnnotation(ArrayList<Box> positions, Integer color, Annotation.PrivacyLevel privacyLevel, Annotation.Type type) {
         Annotation.Builder bld = new Annotation.Builder();
 
         bld.setId("test-id");
@@ -247,7 +253,17 @@ public class JsonParserTest extends InstrumentationTestCase {
         return bld.build();
     }
 
-	public String getJsonStringFromAssetsFile(String fileNameName) throws IOException {
+    private ReadPosition getTestReadPosition() throws ParseException {
+        return new ReadPosition.Builder()
+                .setId("id")
+                .setFileId("file_id")
+                .setPage(69)
+                .setVerticalPosition(1969)
+                .setDate(DateUtils.parseMendeleyApiTimestamp("2014-02-20T16:53:25.000Z"))
+                .build();
+    }
+
+	private String getJsonStringFromAssetsFile(String fileNameName) throws IOException {
 	    return TestUtils.getAssetsFileAsString(getInstrumentation().getContext().getAssets(), fileNameName);
 	}
 	
@@ -563,6 +579,34 @@ public class JsonParserTest extends InstrumentationTestCase {
         assertNull(actualAnnotation.color);
         assertNull(actualAnnotation.privacyLevel);
         assertNull(actualAnnotation.type);
+    }
+
+    @SmallTest
+    public void test_parseReadPosition()
+            throws Exception {
+        ReadPosition expected = getTestReadPosition();
+        String parsingString = getJsonStringFromAssetsFile(readPositionFile);
+
+        ReadPosition actual = JsonParser.parseReadPosition(parsingString);
+
+        Assert.assertEquals("ReadPosition id", expected.id, actual.id);
+        Assert.assertEquals("ReadPosition fileId", expected.fileId, actual.fileId);
+        Assert.assertEquals("ReadPosition page", expected.page, actual.page);
+        Assert.assertEquals("ReadPosition vertical position", expected.verticalPosition, actual.verticalPosition);
+        Assert.assertEquals("ReadPosition date", expected.date, actual.date);
+    }
+
+
+    @SmallTest
+    public void test_jsonFromFromReadPosition()
+            throws Exception {
+
+        ReadPosition parsingReadPosition = getTestReadPosition();
+
+        String actualJson = JsonParser.jsonFromReadPosition(parsingReadPosition);
+        String expectedJson = getJsonStringFromAssetsFile(readPositionFile);
+
+        JSONAssert.assertEquals(expectedJson, actualJson, false);
     }
 
     private void assertDocumentsAreEqual(Document doc1, Document doc2)

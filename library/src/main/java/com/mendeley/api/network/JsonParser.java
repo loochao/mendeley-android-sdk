@@ -16,15 +16,19 @@ import com.mendeley.api.model.Person;
 import com.mendeley.api.model.Photo;
 import com.mendeley.api.model.Point;
 import com.mendeley.api.model.Profile;
+import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.model.UserRole;
+import com.mendeley.api.util.DateUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -1018,4 +1022,73 @@ public class JsonParser {
         return groups;
     }
 
+    /**
+     * Creating a list of {@link ReadPosition} from a JSON string
+     *
+     * @param jsonString the json string
+     * @return the list of objects
+     * @throws JSONException
+     */
+    public static List<ReadPosition> parseReadPositionList(String jsonString) throws JSONException, ParseException {
+
+        List<ReadPosition> readPositions = new LinkedList<>();
+
+        JSONArray jsonarray = new JSONArray(jsonString);
+
+        for (int i = 0; i < jsonarray.length(); i++) {
+            readPositions.add(parseReadPosition(jsonarray.getString(i)));
+        }
+
+        return readPositions;
+    }
+
+    /**
+     * Creating a {@link ReadPosition} from a JSON string
+     *
+     * @param jsonString the json string
+     * @return the list of objects
+     * @throws JSONException
+     */
+    public static ReadPosition parseReadPosition(String jsonString) throws JSONException, ParseException {
+        JSONObject jsonObject = new JSONObject(jsonString);
+
+        ReadPosition.Builder bld = new ReadPosition.Builder();
+
+        for (@SuppressWarnings("unchecked") Iterator<String> keysIter = jsonObject.keys(); keysIter.hasNext();) {
+            String key = keysIter.next();
+
+            if (key.equals("id")) {
+                bld.setId(jsonObject.getString(key));
+
+            } else if (key.equals("file_id")) {
+                bld.setFileId(jsonObject.getString(key));
+
+            } else if (key.equals("page")) {
+                bld.setPage(jsonObject.getInt(key));
+
+            } else if (key.equals("vertical_position")) {
+                bld.setVerticalPosition(jsonObject.getInt(key));
+
+            } else if (key.equals("date")) {
+                bld.setDate(DateUtils.parseMendeleyApiTimestamp(jsonObject.getString(key)));
+            }
+        }
+
+        return bld.build();
+    }
+
+    /**
+     * Creating a String from a {@link ReadPosition}
+     */
+    public static String jsonFromReadPosition(ReadPosition readPosition) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("id", readPosition.id);
+        jsonObject.put("file_id", readPosition.fileId);
+        jsonObject.put("page", readPosition.page);
+        jsonObject.put("vertical_position", readPosition.verticalPosition);
+        jsonObject.put("date", DateUtils.formatMendeleyApiTimestamp(readPosition.date));
+
+        return jsonObject.toString();
+    }
 }

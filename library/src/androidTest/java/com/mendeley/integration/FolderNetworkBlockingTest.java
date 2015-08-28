@@ -6,6 +6,8 @@ import com.mendeley.api.BlockingSdk;
 import com.mendeley.api.callbacks.folder.FolderList;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Folder;
+import com.mendeley.testUtils.SignInException;
+import com.mendeley.testUtils.TestUtils;
 
 import java.util.Comparator;
 
