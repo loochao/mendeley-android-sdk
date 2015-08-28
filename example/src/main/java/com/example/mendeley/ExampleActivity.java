@@ -1,5 +1,25 @@
 package com.example.mendeley;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.mendeley.api.ClientCredentials;
+import com.mendeley.api.MendeleySdk;
+import com.mendeley.api.MendeleySdkFactory;
+import com.mendeley.api.callbacks.MendeleySignInInterface;
+import com.mendeley.api.callbacks.document.GetDocumentsCallback;
+import com.mendeley.api.exceptions.MendeleyException;
+import com.mendeley.api.impl.DefaultMendeleySdk;
+import com.mendeley.api.model.Document;
+import com.mendeley.api.params.DocumentRequestParameters;
+import com.mendeley.api.params.Page;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,26 +30,6 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-
-import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.callbacks.MendeleySignInInterface;
-import com.mendeley.api.MendeleySdk;
-import com.mendeley.api.MendeleySdkFactory;
-import com.mendeley.api.callbacks.document.GetDocumentsCallback;
-import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.model.Document;
-import com.mendeley.api.params.DocumentRequestParameters;
-import com.mendeley.api.params.Page;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 public class ExampleActivity extends Activity implements View.OnClickListener, GetDocumentsCallback, MendeleySignInInterface
 {
@@ -80,7 +80,9 @@ public class ExampleActivity extends Activity implements View.OnClickListener, G
 
                 setSignInStatus(SignInStatus.SIGNING_IN);
                 ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, clientRedirectUri);
-                sdk.signIn(this, this, clientCredentials);
+                DefaultMendeleySdk.sdkInitialise(ExampleActivity.this.getApplicationContext(), clientCredentials);
+
+                sdk.signIn(this, this, true);
             } catch (IOException ioe) {
                 throw new IllegalStateException("Could not read property files with client configuration. Should be located in assets/"+CONFIG_FILE, ioe);
             } catch (MissingResourceException mr) {
