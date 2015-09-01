@@ -1,4 +1,4 @@
-package com.mendeley.testUtils;
+package com.mendeley.api.testUtils;
 
 import com.mendeley.api.model.ReadPosition;
 

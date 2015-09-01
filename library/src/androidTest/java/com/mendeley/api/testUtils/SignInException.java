@@ -1,4 +1,4 @@
-package com.mendeley.testUtils;
+package com.mendeley.api.testUtils;
 
 public class SignInException extends Exception {
     public SignInException(String s) {

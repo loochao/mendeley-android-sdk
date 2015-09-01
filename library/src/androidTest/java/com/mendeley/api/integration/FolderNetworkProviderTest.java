@@ -1,4 +1,4 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 import com.mendeley.api.MendeleySdk;
 import com.mendeley.api.callbacks.folder.DeleteFolderCallback;
@@ -8,8 +8,8 @@ import com.mendeley.api.callbacks.folder.PostFolderCallback;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.params.Page;
-import com.mendeley.testUtils.SignInException;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.SignInException;
+import com.mendeley.api.testUtils.TestUtils;
 
 import java.util.Comparator;
 import java.util.List;

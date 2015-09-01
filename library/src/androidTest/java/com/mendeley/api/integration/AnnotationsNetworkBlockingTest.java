@@ -1,4 +1,4 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 import android.graphics.Color;
 import android.test.AndroidTestCase;
@@ -12,8 +12,8 @@ import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Point;
 import com.mendeley.api.params.DocumentRequestParameters;
 import com.mendeley.api.params.Sort;
-import com.mendeley.testUtils.SignInException;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.SignInException;
+import com.mendeley.api.testUtils.TestUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;

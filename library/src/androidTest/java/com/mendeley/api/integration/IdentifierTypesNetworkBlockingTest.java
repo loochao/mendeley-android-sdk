@@ -1,12 +1,12 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 import android.test.AndroidTestCase;
 
 import com.mendeley.api.BlockingSdk;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Folder;
-import com.mendeley.testUtils.SignInException;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.SignInException;
+import com.mendeley.api.testUtils.TestUtils;
 
 import java.util.Comparator;
 import java.util.HashMap;

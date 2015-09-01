@@ -1,4 +1,4 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 import com.mendeley.api.MendeleySdk;
 import com.mendeley.api.callbacks.document.GetDocumentsCallback;
@@ -7,8 +7,8 @@ import com.mendeley.api.callbacks.trash.RestoreDocumentCallback;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.params.Page;
-import com.mendeley.testUtils.SignInException;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.SignInException;
+import com.mendeley.api.testUtils.TestUtils;
 
 import java.util.Date;
 import java.util.List;

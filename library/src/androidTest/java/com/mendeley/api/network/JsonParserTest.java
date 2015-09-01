@@ -21,7 +21,7 @@ import com.mendeley.api.model.Profile;
 import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.util.DateUtils;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.TestUtils;
 
 import junit.framework.Assert;
 

@@ -1,11 +1,11 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 import com.mendeley.api.MendeleySdk;
 import com.mendeley.api.callbacks.profile.GetProfileCallback;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Profile;
-import com.mendeley.testUtils.SignInException;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.SignInException;
+import com.mendeley.api.testUtils.TestUtils;
 
 public class ProfileNetworkProviderTest extends BaseNetworkProviderTest {
     private MendeleySdk sdk;
