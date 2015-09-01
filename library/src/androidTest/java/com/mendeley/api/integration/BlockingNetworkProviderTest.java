@@ -1,12 +1,12 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 import android.test.AndroidTestCase;
 
 import com.mendeley.api.impl.AsyncMendeleySdk;
-import com.mendeley.testUtils.AssertUtils;
-import com.mendeley.testUtils.SignInException;
-import com.mendeley.testUtils.TestAccountSetupUtils;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.AssertUtils;
+import com.mendeley.api.testUtils.SignInException;
+import com.mendeley.api.testUtils.TestAccountSetupUtils;
+import com.mendeley.api.testUtils.TestUtils;
 
 import java.util.Random;
 

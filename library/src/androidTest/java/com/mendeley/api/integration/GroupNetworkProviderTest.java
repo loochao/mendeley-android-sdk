@@ -1,4 +1,4 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 import com.mendeley.api.MendeleySdk;
 import com.mendeley.api.callbacks.group.GetGroupCallback;
@@ -9,8 +9,8 @@ import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.params.GroupRequestParameters;
 import com.mendeley.api.params.Page;
-import com.mendeley.testUtils.SignInException;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.SignInException;
+import com.mendeley.api.testUtils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;

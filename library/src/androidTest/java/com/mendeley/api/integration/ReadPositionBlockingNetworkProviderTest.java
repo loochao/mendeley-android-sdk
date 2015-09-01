@@ -1,4 +1,4 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 
 import android.test.suitebuilder.annotation.LargeTest;
@@ -56,6 +56,37 @@ public class ReadPositionBlockingNetworkProviderTest extends BlockingNetworkProv
         getAssertUtils().assertReadPositions(Arrays.asList(expected), actual);
     }
 
+    @LargeTest
+    public void test_postRecentlyRead_postsCorrectItems_whenReadPositionAlreadyExisted() throws Exception {
+        // GIVEN a doc with a file
+        final File file = createDocumentAndFile();
+
+        // and a recently read position for it
+        final ReadPosition firstReadPostion = new ReadPosition.Builder()
+                .setFileId(file.id)
+                .setPage(Math.abs(getRandom().nextInt(1000)))
+                .setVerticalPosition(Math.abs(getRandom().nextInt(1000)))
+                .setDate(new Date())
+                .build();
+
+        getSdk().postRecentlyRead(firstReadPostion);
+
+        // WHEN updating (posting for second time) the read position for the same file
+
+        // and a recently read position for it
+        final ReadPosition secondReadPostion = new ReadPosition.Builder()
+                .setFileId(file.id)
+                .setPage(Math.abs(getRandom().nextInt(1000)))
+                .setVerticalPosition(Math.abs(getRandom().nextInt(1000)))
+                .setDate(new Date())
+                .build();
+
+        getSdk().postRecentlyRead(secondReadPostion);
+
+        // THEN we have successfully posted it
+        final List<ReadPosition> actual = getTestAccountSetupUtils().getAllReadingPositions();
+        getAssertUtils().assertReadPositions(Arrays.asList(secondReadPostion), actual);
+    }
 
     private File createDocumentAndFile() throws MendeleyException, IOException {
         // create doc

@@ -1,4 +1,4 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 
 import com.mendeley.api.callbacks.document.DocumentList;

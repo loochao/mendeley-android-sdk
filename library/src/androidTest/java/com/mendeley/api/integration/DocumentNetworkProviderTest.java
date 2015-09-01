@@ -1,4 +1,4 @@
-package com.mendeley.integration;
+package com.mendeley.api.integration;
 
 import com.mendeley.api.MendeleySdk;
 import com.mendeley.api.callbacks.document.DeleteDocumentCallback;
@@ -14,8 +14,8 @@ import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.params.DocumentRequestParameters;
 import com.mendeley.api.params.Page;
 import com.mendeley.api.params.Sort;
-import com.mendeley.testUtils.SignInException;
-import com.mendeley.testUtils.TestUtils;
+import com.mendeley.api.testUtils.SignInException;
+import com.mendeley.api.testUtils.TestUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
