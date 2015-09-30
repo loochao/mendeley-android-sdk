@@ -115,11 +115,11 @@ public class RecentlyReadNetworkProvider {
                     return JsonParser.parseReadPosition(responseString);
                 }
             } catch (ParseException pe) {
-                throw new MendeleyException("Could not parse response for " + url);
+                throw new MendeleyException("Could not parse response for " + url, pe);
             } catch (IOException e) {
-                throw new MendeleyException(e.getMessage());
+                throw new MendeleyException(e.getMessage(), e);
             } catch (JSONException e) {
-                throw new JsonParsingException(e.getMessage());
+                throw new JsonParsingException(e.getMessage(), e);
             } finally {
                 try {
                     if (os != null) {

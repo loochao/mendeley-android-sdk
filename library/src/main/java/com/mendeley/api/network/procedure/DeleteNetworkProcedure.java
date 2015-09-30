@@ -38,7 +38,7 @@ public class DeleteNetworkProcedure extends NetworkProcedure<Void> {
                 throw HttpResponseException.create(con);
             }
         } catch (ParseException pe) {
-            throw new MendeleyException("Could not parse web API headers for " + url);
+            throw new MendeleyException("Could not parse web API headers for " + url, pe);
         } catch (IOException e) {
             throw new MendeleyException("Could not perform DELETE request", e);
         } finally {

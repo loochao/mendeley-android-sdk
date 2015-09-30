@@ -70,7 +70,7 @@ public class DocumentNetworkProvider {
             return getDocumentsTask;
         }
         catch (UnsupportedEncodingException e) {
-            callback.onDocumentsNotReceived(new MendeleyException(e.getMessage()));
+            callback.onDocumentsNotReceived(new MendeleyException(e.getMessage(), e));
             return NullRequest.get();
         }
     }
@@ -84,7 +84,7 @@ public class DocumentNetworkProvider {
             return getDocumentsTask;
         }
         catch (UnsupportedEncodingException e) {
-            callback.onDeletedDocumentsNotReceived(new MendeleyException(e.getMessage()));
+            callback.onDeletedDocumentsNotReceived(new MendeleyException(e.getMessage(), e));
             return NullRequest.get();
         }
     }

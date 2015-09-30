@@ -1,7 +1,6 @@
 package com.mendeley.api.network.provider;
 
 import com.mendeley.api.auth.AccessTokenProvider;
-import com.mendeley.api.auth.AuthenticationManager;
 import com.mendeley.api.callbacks.RequestHandle;
 import com.mendeley.api.callbacks.document.GetDocumentsCallback;
 import com.mendeley.api.callbacks.trash.RestoreDocumentCallback;
@@ -9,16 +8,14 @@ import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.exceptions.NoMorePagesException;
 import com.mendeley.api.network.Environment;
 import com.mendeley.api.network.NullRequest;
-import com.mendeley.api.network.procedure.PostNoBodyNetworkProcedure;
 import com.mendeley.api.network.task.PostNoBodyNetworkTask;
 import com.mendeley.api.params.DocumentRequestParameters;
 import com.mendeley.api.params.Page;
 
 import java.io.UnsupportedEncodingException;
 
-import static com.mendeley.api.network.provider.DocumentNetworkProvider.GetDocumentsTask;
-import static com.mendeley.api.network.provider.DocumentNetworkProvider.getGetDocumentsUrl;
 import static com.mendeley.api.network.NetworkUtils.API_URL;
+import static com.mendeley.api.network.provider.DocumentNetworkProvider.GetDocumentsTask;
 import static com.mendeley.api.network.provider.DocumentNetworkProvider.getTrashDocumentsUrl;
 
 public class TrashNetworkProvider {
@@ -40,7 +37,7 @@ public class TrashNetworkProvider {
             return getDocumentsTask;
         }
         catch (UnsupportedEncodingException e) {
-            callback.onDocumentsNotReceived(new MendeleyException(e.getMessage()));
+            callback.onDocumentsNotReceived(new MendeleyException(e.getMessage(), e));
             return NullRequest.get();
         }
     }
