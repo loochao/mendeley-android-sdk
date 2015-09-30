@@ -1,9 +1,8 @@
 package com.mendeley.api.network.provider;
 
-import android.util.Log;
-
 import com.mendeley.api.auth.AccessTokenProvider;
 import com.mendeley.api.callbacks.utils.GetImageCallback;
+import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.network.Environment;
 import com.mendeley.api.network.NetworkUtils;
@@ -58,7 +57,7 @@ public class UtilsNetworkProvider {
                 return null;
 
             } catch (MendeleyException e) {
-                return new MendeleyException(e.getMessage());
+                return new MendeleyException(e.getMessage(), e);
             }
         }
 
@@ -91,7 +90,7 @@ public class UtilsNetworkProvider {
 
             int responseCode = con.getResponseCode();
             if (responseCode != 200) {
-                throw new MendeleyException(con.getResponseMessage());
+                throw HttpResponseException.create(con);
             } else {
 
                 is = con.getInputStream();

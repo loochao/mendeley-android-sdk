@@ -66,7 +66,7 @@ public abstract class PatchNetworkProcedure<ResultType> extends NetworkProcedure
         } catch (IOException e) {
             throw new JsonParsingException(e.getMessage());
         } catch (JSONException e) {
-            throw new MendeleyException(e.getMessage());
+            throw new MendeleyException(e.getMessage(), e);
         } finally {
             closeConnection();
         }

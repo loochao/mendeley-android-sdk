@@ -20,7 +20,6 @@ import com.mendeley.api.network.JsonParser;
 import com.mendeley.api.network.NetworkUtils;
 import com.mendeley.api.network.NullRequest;
 import com.mendeley.api.network.procedure.GetNetworkProcedure;
-import com.mendeley.api.network.procedure.PostFileNetworkProcedure;
 import com.mendeley.api.network.task.DeleteNetworkTask;
 import com.mendeley.api.network.task.GetNetworkTask;
 import com.mendeley.api.network.task.NetworkTask;
@@ -78,7 +77,7 @@ public class FileNetworkProvider {
             return getFilesTask;
 		}
 		catch (UnsupportedEncodingException e) {
-            callback.onFilesNotReceived(new MendeleyException(e.getMessage()));
+            callback.onFilesNotReceived(new MendeleyException(e.getMessage(), e));
             return NullRequest.get();
 		}
 	}
@@ -129,7 +128,7 @@ public class FileNetworkProvider {
         try {
             inputStream = new FileInputStream(sourceFile);
         } catch (FileNotFoundException e) {
-            callback.onFileNotPosted(new MendeleyException("File " + filePath + " not found"));
+            callback.onFileNotPosted(new MendeleyException("File " + filePath + " not found", e));
             return;
         }
         new PostFileTask(callback, inputStream).executeOnExecutor(environment.getExecutor(), paramsArray);
@@ -483,11 +482,11 @@ public class FileNetworkProvider {
                     return null;
                 }
             } catch (IOException e) {
-                return new MendeleyException(e.getMessage());
+                return new MendeleyException(e.getMessage(), e);
             } catch (JSONException e) {
                 return new JsonParsingException(e.getMessage());
             } catch (NullPointerException e) {
-                return new MendeleyException(e.getMessage());
+                return new MendeleyException(e.getMessage(), e);
             }
             finally {
                 closeConnection();

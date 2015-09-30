@@ -157,7 +157,7 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
             Procedure<DocumentList> proc = new GetDocumentsProcedure(url, authenticationManager);
             return proc.checkedRun();
         } catch (UnsupportedEncodingException e) {
-            throw new MendeleyException(e.getMessage());
+            throw new MendeleyException(e.getMessage(), e);
         }
     }
 
@@ -189,7 +189,7 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
             Procedure<DocumentIdList> proc = new GetDeletedDocumentsProcedure(url, authenticationManager);
             return proc.checkedRun();
         } catch (UnsupportedEncodingException e) {
-            throw new MendeleyException(e.getMessage());
+            throw new MendeleyException(e.getMessage(), e);
         }
     }
 
@@ -329,7 +329,7 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
             return proc.checkedRun();
         }
         catch (UnsupportedEncodingException e) {
-            throw new MendeleyException(e.getMessage());
+            throw new MendeleyException(e.getMessage(), e);
         }
     }
 
@@ -534,7 +534,7 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
             Procedure<DocumentList> proc = new GetDocumentsProcedure(url, authenticationManager);
             return proc.checkedRun();
         } catch (UnsupportedEncodingException e) {
-            throw new MendeleyException(e.getMessage());
+            throw new MendeleyException(e.getMessage(), e);
         }
     }
 
@@ -568,7 +568,7 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
             Procedure<DocumentList> proc = new CatalogDocumentNetworkProvider.GetCatalogDocumentsProcedure(url, authenticationManager);
             return proc.checkedRun();
         } catch (UnsupportedEncodingException e) {
-            throw new MendeleyException(e.getMessage());
+            throw new MendeleyException(e.getMessage(), e);
         }
     }
 
@@ -594,7 +594,7 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
             Procedure<ReadPosition> proc = new RecentlyReadNetworkProvider.PostRecentlyReadProcedure(readPosition, authenticationManager);
             return proc.checkedRun();
         } catch (JSONException e) {
-            throw new JsonParsingException(e.getMessage());
+            throw new JsonParsingException(e.getMessage(), e);
         }
     }
 

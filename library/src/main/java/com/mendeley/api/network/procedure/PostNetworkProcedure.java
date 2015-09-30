@@ -59,11 +59,11 @@ public abstract class PostNetworkProcedure<ResultType> extends NetworkProcedure<
                 return processJsonString(responseString);
             }
         } catch (ParseException pe) {
-            throw new MendeleyException("Could not parse web API headers for " + url);
+            throw new MendeleyException("Could not parse web API headers for " + url, pe);
         } catch (IOException e) {
-            throw new MendeleyException(e.getMessage());
+            throw new MendeleyException(e.getMessage(), e);
         } catch (JSONException e) {
-            throw new JsonParsingException(e.getMessage());
+            throw new JsonParsingException(e.getMessage(), e);
         } finally {
             closeConnection();
         }

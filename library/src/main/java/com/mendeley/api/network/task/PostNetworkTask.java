@@ -55,7 +55,7 @@ public abstract class PostNetworkTask extends NetworkTask {
         } catch (JSONException e) {
             return new JsonParsingException(e.getMessage());
         } catch (IOException e) {
-            return new MendeleyException(e.getMessage());
+            return new MendeleyException(e.getMessage(), e);
         } finally {
             closeConnection();
         }
