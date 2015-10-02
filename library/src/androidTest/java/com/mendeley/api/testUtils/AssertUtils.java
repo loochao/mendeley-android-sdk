@@ -23,7 +23,8 @@ public class AssertUtils {
         Assert.assertEquals(expected.fileId, actual.fileId);
         Assert.assertEquals(expected.page, actual.page);
         Assert.assertEquals(expected.verticalPosition, actual.verticalPosition);
-        Assert.assertEquals(expected.date, actual.date);
+        //cannot assert date as server ignores the posted date
+        //Assert.assertEquals(expected.date, actual.date);
     }
 
 

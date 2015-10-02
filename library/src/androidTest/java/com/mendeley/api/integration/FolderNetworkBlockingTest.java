@@ -4,6 +4,7 @@ import android.test.AndroidTestCase;
 
 import com.mendeley.api.BlockingSdk;
 import com.mendeley.api.callbacks.folder.FolderList;
+import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.testUtils.SignInException;
@@ -53,6 +54,16 @@ public class FolderNetworkBlockingTest extends AndroidTestCase {
         assertEquals("folder name incorrect", "Lampposts", rcvd.name);
 
         sdk.deleteFolder(rcvd.id);
+
+        int responseCode = -1;
+
+        try {
+            sdk.getFolder(rcvd.id);
+        } catch (HttpResponseException e) {
+            responseCode = e.httpReturnCode;
+        }
+
+        assertEquals("folder not deleted", 404, responseCode);
     }
 
     public void testPatchFolder() throws MendeleyException {
