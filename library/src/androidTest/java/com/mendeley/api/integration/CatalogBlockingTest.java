@@ -28,7 +28,7 @@ public class CatalogBlockingTest extends AndroidTestCase {
     public void testGetCatalogDocuments() throws MendeleyException, IOException {
         //GIVEN a file hash
         final String fileHash = "2064e86683343709cc3ff535587a4580bbb1b251";
-        final String catalogDocumentId = "6f4c827d-f303-3647-98fe-e51ea19700ed";
+        final String catalogDocumentId = "bcded033-52b5-370d-ac27-a3ec23146f88";
         CatalogDocumentRequestParameters catalogueParams = new CatalogDocumentRequestParameters();
         catalogueParams.filehash = fileHash;
 
@@ -42,7 +42,7 @@ public class CatalogBlockingTest extends AndroidTestCase {
 
     public void testGetCatalogDocument() throws MendeleyException, IOException {
         //GIVEN a catalog document id
-        final String catalogDocumentId = "6f4c827d-f303-3647-98fe-e51ea19700ed";
+        final String catalogDocumentId = "bcded033-52b5-370d-ac27-a3ec23146f88";
 
         //WHEN getting a catalog document with this id
         Document receivedDoc = sdk.getCatalogDocument(catalogDocumentId, null);
