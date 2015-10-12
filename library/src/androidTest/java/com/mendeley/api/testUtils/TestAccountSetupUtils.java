@@ -3,6 +3,7 @@ package com.mendeley.api.testUtils;
 import com.mendeley.api.BuildConfig;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.impl.AsyncMendeleySdk;
+import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.ReadPosition;
@@ -71,6 +72,11 @@ public class TestAccountSetupUtils{
     public Document setupDocument(Document doc) throws MendeleyException {
         // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
         return sdk.postDocument(doc);
+    }
+
+    public Annotation setupAnnotation(Annotation annotation) throws MendeleyException {
+        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
+        return sdk.postAnnotation(annotation);
     }
 
     public File setupFile(String docId, String fileName, InputStream inputStream) throws MendeleyException {

@@ -1,11 +1,15 @@
 package com.mendeley.api.testUtils;
 
+import com.mendeley.api.model.Annotation;
+import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Document;
+import com.mendeley.api.model.Point;
 import com.mendeley.api.model.ReadPosition;
 
 import junit.framework.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +35,21 @@ public class AssertUtils {
         Assert.assertEquals(expected.year, actual.year);
         Assert.assertEquals(expected.abstractString, actual.abstractString);
         Assert.assertEquals(expected.source, actual.source);
+    }
+
+    public static void assertAnnotations(List<Annotation> expected, List<Annotation> actual) {
+        Assert.assertEquals("Number of annotations gotten", expected.size(), actual.size());
+
+        for (int i = 0; i < expected.size(); i++) {
+            assertAnnotation(expected.get(i), actual.get(i));
+        }
+    }
+
+    public static void assertAnnotation(Annotation expected, Annotation actual) {
+        Assert.assertEquals(expected.type, actual.type);
+        Assert.assertEquals(expected.text, actual.text);
+        Assert.assertEquals(expected.documentId, actual.documentId);
+        Assert.assertEquals(expected.fileHash, actual.fileHash);
     }
 
     public static void assertReadPositions(List<ReadPosition> expected, List<ReadPosition> actual) {
