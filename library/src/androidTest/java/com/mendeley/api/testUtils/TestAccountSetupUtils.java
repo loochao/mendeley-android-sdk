@@ -1,7 +1,6 @@
 package com.mendeley.api.testUtils;
 
 import com.mendeley.api.BuildConfig;
-import com.mendeley.api.callbacks.document.DocumentList;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.impl.AsyncMendeleySdk;
 import com.mendeley.api.model.Document;
@@ -31,7 +30,6 @@ import javax.net.ssl.HttpsURLConnection;
 public class TestAccountSetupUtils{
 
     private final AsyncMendeleySdk sdk;
-    private List<ReadPosition> recentlyRead;
 
     public TestAccountSetupUtils(AsyncMendeleySdk sdk) {
         this.sdk = sdk;
@@ -46,37 +44,41 @@ public class TestAccountSetupUtils{
 
     private void cleanDocs() {
         try {
-            // get existing docs
+            // delete non-trashed docs
             // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
-            final DocumentList beforDocList = sdk.getDocuments();
-
-            // delete them
-            for (Document doc: beforDocList.documents) {
+            for (Document doc: sdk.getDocuments().documents) {
                 // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
                 sdk.deleteDocument(doc.id);
             }
 
-            // assert its actually deleted
+            // delete trashed docs
             // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
-            final DocumentList afterDocList = sdk.getDocuments();
-            Assert.assertEquals("Expected empty list of docs in server", 0, afterDocList.documents.size());
+            for (Document doc: sdk.getTrashedDocuments().documents) {
+                // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
+                sdk.deleteTrashedDocument(doc.id);
+            }
+
+            // ensure no documents at all (trashed or deleted)
+            // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
+            Assert.assertEquals("Expected empty list of non trashed docs in server", 0, sdk.getDocuments().documents.size());
+            Assert.assertEquals("Expected empty list of trashed docs in server", 0, sdk.getTrashedDocuments().documents.size());
 
         } catch (Exception e) {
             throw new TestAccountSetupException(e);
         }
     }
 
-    public Document createDocument(Document doc) throws MendeleyException {
+    public Document setupDocument(Document doc) throws MendeleyException {
         // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
         return sdk.postDocument(doc);
     }
 
-    public File createFile(String docId, String fileName, InputStream inputStream) throws MendeleyException {
+    public File setupFile(String docId, String fileName, InputStream inputStream) throws MendeleyException {
         // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
         return sdk.postFile("application/pdf", docId, inputStream, fileName);
     }
 
-    public ReadPosition createReadingPosition(String fileId, int page, int verticalPosition, Date date) throws Exception{
+    public ReadPosition setupReadingPosition(String fileId, int page, int verticalPosition, Date date) throws Exception{
         HttpsURLConnection con = null;
         OutputStream os = null;
         BufferedWriter writer = null;

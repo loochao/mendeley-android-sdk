@@ -3,19 +3,18 @@ package com.mendeley.api.integration;
 import android.test.AndroidTestCase;
 
 import com.mendeley.api.impl.AsyncMendeleySdk;
-import com.mendeley.api.testUtils.AssertUtils;
 import com.mendeley.api.testUtils.SignInException;
 import com.mendeley.api.testUtils.TestAccountSetupUtils;
 import com.mendeley.api.testUtils.TestUtils;
 
+import java.util.Date;
 import java.util.Random;
 
-public abstract class BlockingNetworkProviderTest extends AndroidTestCase {
+public abstract class EndpointBlockingTest extends AndroidTestCase {
 
     // TODO: this should not be an Async but a normal MendeleySdk, but we keep it like this for now as the hierarchy needs to be refactored
     private AsyncMendeleySdk sdk;
     private TestAccountSetupUtils testAccountSetupUtils;
-    private AssertUtils assertUtils;
     private Random random;
 
     @Override
@@ -24,7 +23,6 @@ public abstract class BlockingNetworkProviderTest extends AndroidTestCase {
 
         sdk = TestUtils.signIn(getContext().getAssets());
         testAccountSetupUtils = new TestAccountSetupUtils(sdk);
-        assertUtils = new AssertUtils();
 
         // reset account
         testAccountSetupUtils.cleanAll();
@@ -38,12 +36,13 @@ public abstract class BlockingNetworkProviderTest extends AndroidTestCase {
         return testAccountSetupUtils;
     }
 
-    protected final AssertUtils getAssertUtils() {
-        return assertUtils;
-    }
-
     protected final Random getRandom() {
         return random;
     }
 
+    protected Date getServerDate() throws Exception {
+        // wait a bit, so we get a "fresh" date
+        Thread.sleep(1000);
+        return getSdk().getDocuments().serverDate;
+    }
 }
