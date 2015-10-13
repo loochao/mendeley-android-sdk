@@ -1,14 +1,17 @@
 package com.mendeley.api.testUtils;
 
 import com.mendeley.api.BuildConfig;
+import com.mendeley.api.callbacks.group.GroupList;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.impl.AsyncMendeleySdk;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
+import com.mendeley.api.model.Folder;
 import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.network.JsonParser;
 import com.mendeley.api.network.NetworkUtils;
+import com.mendeley.api.params.GroupRequestParameters;
 import com.mendeley.api.util.DateUtils;
 
 import junit.framework.Assert;
@@ -41,6 +44,7 @@ public class TestAccountSetupUtils{
      */
     public void cleanAll() {
         cleanDocs();
+        cleanFolders();
     }
 
     private void cleanDocs() {
@@ -69,6 +73,24 @@ public class TestAccountSetupUtils{
         }
     }
 
+    private void cleanFolders() {
+        try {
+            // delete parent folders as sub folders will be deleted as well
+            // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
+            for (Folder folder: sdk.getFolders().folders) {
+                // FIXME: do not delegate into the sdk to this, because we are testing the sdk...
+                if (folder.parentId == null) {
+                    sdk.deleteFolder(folder.id);
+                }
+            }
+
+            Assert.assertEquals("Expected empty list of folders in server", 0, sdk.getFolders().folders.size());
+
+        } catch (Exception e) {
+            throw new TestAccountSetupException(e);
+        }
+    }
+
     public Document setupDocument(Document doc) throws MendeleyException {
         // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
         return sdk.postDocument(doc);
@@ -82,6 +104,11 @@ public class TestAccountSetupUtils{
     public File setupFile(String docId, String fileName, InputStream inputStream) throws MendeleyException {
         // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
         return sdk.postFile("application/pdf", docId, inputStream, fileName);
+    }
+
+    public Folder setupFolder(Folder folder) throws MendeleyException {
+        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
+        return sdk.postFolder(folder);
     }
 
     public ReadPosition setupReadingPosition(String fileId, int page, int verticalPosition, Date date) throws Exception{
@@ -174,6 +201,10 @@ public class TestAccountSetupUtils{
         }
     }
 
+    public GroupList getGroups() throws MendeleyException {
+        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
+        return sdk.getGroups(new GroupRequestParameters());
+    }
 
     /**
      * Exceptions that may happen when trying to set up the testing scenario

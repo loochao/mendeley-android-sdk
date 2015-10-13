@@ -579,7 +579,7 @@ public class FolderNetworkProvider {
 
     public static class PostDocumentToFolderProcedure extends PostNoResponseNetworkProcedure {
         public PostDocumentToFolderProcedure(String url, String json, AuthenticationManager authenticationManager) {
-            super(url, "application/vnd.mendeley-folder-add-document.1+json", json, authenticationManager);
+            super(url, "application/vnd.mendeley-document.1+json", json, authenticationManager);
         }
     }
 

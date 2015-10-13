@@ -93,7 +93,7 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
         final List<Annotation> actual = new LinkedList<Annotation>();
         AnnotationList response = getSdk().getAnnotations(params);
 
-        // THEN we receive a annotations list...
+        // THEN we receive an annotations list...
         for (int page = 0; page < pageCount; page++) {
             actual.addAll(response.annotations);
 
@@ -119,17 +119,17 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
 
         // GIVEN an annotation
         final Document postedDocument = getTestAccountSetupUtils().setupDocument(createDocument("doc title"));
-        final Annotation postingNoteAnnotation = createAnnotation(postedDocument.id);
+        final Annotation postingAnnotation = createAnnotation(postedDocument.id);
 
         // WHEN posting it
-        final Annotation returnedAnnotation = getSdk().postAnnotation(postingNoteAnnotation);
+        final Annotation returnedAnnotation = getSdk().postAnnotation(postingAnnotation);
 
         // THEN we receive the same annotation back, with id filled
-        AssertUtils.assertAnnotation(postingNoteAnnotation, returnedAnnotation);
+        AssertUtils.assertAnnotation(postingAnnotation, returnedAnnotation);
         assertNotNull(returnedAnnotation.id);
 
         // ...and the annotation exists in the server
-        AssertUtils.assertAnnotations(getSdk().getAnnotations().annotations, Arrays.asList(postingNoteAnnotation));
+        AssertUtils.assertAnnotations(getSdk().getAnnotations().annotations, Arrays.asList(postingAnnotation));
     }
 
     public void test_deleteAnnotation_removesTheAnnotationFromServer() throws Exception {

@@ -1,6 +1,5 @@
 package com.mendeley.api.callbacks.group;
 
-import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.params.Page;
 

@@ -1,15 +1,16 @@
 package com.mendeley.api.testUtils;
 
 import com.mendeley.api.model.Annotation;
-import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.Point;
+import com.mendeley.api.model.File;
+import com.mendeley.api.model.Folder;
+import com.mendeley.api.model.Group;
 import com.mendeley.api.model.ReadPosition;
+import com.mendeley.api.model.UserRole;
 
 import junit.framework.Assert;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,6 +53,37 @@ public class AssertUtils {
         Assert.assertEquals(expected.fileHash, actual.fileHash);
     }
 
+    public static void assertFiles(List<File> expected, List<File> actual) {
+        Assert.assertEquals("Number of files gotten", expected.size(), actual.size());
+
+        for (int i = 0; i < expected.size(); i++) {
+            assertFile(expected.get(i), actual.get(i));
+        }
+    }
+
+    public static void assertFile(File expected, File actual) {
+        Assert.assertEquals(expected.documentId, actual.documentId);
+        Assert.assertEquals(expected.mimeType, actual.mimeType);
+    }
+
+    public static void assertFolders(List<Folder> expected, List<Folder> actual) {
+        Assert.assertEquals("Number of folders gotten", expected.size(), actual.size());
+
+        for (int i = 0; i < expected.size(); i++) {
+            assertFolder(expected.get(i), actual.get(i));
+        }
+    }
+
+    public static void assertFolder(Folder expected, Folder actual) {
+        Assert.assertEquals(expected.parentId, actual.parentId);
+        Assert.assertEquals(expected.name, actual.name);
+    }
+
+    public static void assertGroup(Group expected, Group actual) {
+        Assert.assertEquals(expected.id, actual.id);
+        Assert.assertEquals(expected.name, actual.name);
+    }
+
     public static void assertReadPositions(List<ReadPosition> expected, List<ReadPosition> actual) {
         Assert.assertEquals("Number of read positions gotten", expected.size(), actual.size());
 
@@ -92,7 +124,4 @@ public class AssertUtils {
 
         return true;
     }
-
-
-
 }
