@@ -5,6 +5,7 @@ import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.model.Group;
+import com.mendeley.api.model.Profile;
 import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.model.UserRole;
 
@@ -82,6 +83,13 @@ public class AssertUtils {
     public static void assertGroup(Group expected, Group actual) {
         Assert.assertEquals(expected.id, actual.id);
         Assert.assertEquals(expected.name, actual.name);
+    }
+
+
+    public static void assertProfile(Profile expected, Profile actual) {
+        Assert.assertEquals(expected.id, actual.id);
+        Assert.assertEquals(expected.firstName, actual.firstName);
+        Assert.assertEquals(expected.lastName, actual.lastName);
     }
 
     public static void assertReadPositions(List<ReadPosition> expected, List<ReadPosition> actual) {

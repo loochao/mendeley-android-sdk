@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class DocumentTypesEndpointBlockingTest extends EndpointBlockingTest {
 
-    public void testGetDocumentTypes() throws Exception {
+    public void test_getDocumentTypes_receivesCorrectDocumentTypes() throws Exception {
         Map<String, String> types = getSdk().getDocumentTypes();
 
         Set<String> keys = types.keySet();
