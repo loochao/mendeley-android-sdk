@@ -27,6 +27,7 @@ import com.mendeley.api.params.View;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public interface BlockingSdk {
@@ -388,4 +389,16 @@ public interface BlockingSdk {
      * @return the posted {@link ReadPosition} as it's now in the server
      */
     ReadPosition postRecentlyRead(ReadPosition readPosition) throws MendeleyException;
+
+    /**
+     * This method is intended for internal development and should not be used by third party
+     * users of the SDK.
+     *
+     * TODO: remove this method from the public interface of the SDK.
+     *
+     * Retrieves a list of features from the web API with experimental features enabled.
+     * @return a list of features from the web API with experimental features enabled.
+     * @throws MendeleyException
+     */
+    List<String> getApplicationFeatures() throws MendeleyException;
 }

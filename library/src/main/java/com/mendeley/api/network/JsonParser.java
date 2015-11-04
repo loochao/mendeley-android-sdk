@@ -1091,4 +1091,16 @@ public class JsonParser {
 
         return jsonObject.toString();
     }
+
+    public static List<String> parseApplicationFeatures(String jsonString) throws JSONException {
+        List<String> featureList = new LinkedList<String>();
+
+        JSONArray jsonarray = new JSONArray(jsonString);
+
+        for (int i = 0; i < jsonarray.length(); i++) {
+            JSONObject jsonObject = jsonarray.getJSONObject(i);
+            featureList.add(jsonObject.getString("name"));
+        }
+        return featureList;
+    }
 }

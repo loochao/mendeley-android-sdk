@@ -35,6 +35,7 @@ import com.mendeley.api.network.provider.AnnotationsNetworkProvider;
 import com.mendeley.api.network.provider.AnnotationsNetworkProvider.GetAnnotationProcedure;
 import com.mendeley.api.network.provider.AnnotationsNetworkProvider.GetAnnotationsProcedure;
 import com.mendeley.api.network.provider.AnnotationsNetworkProvider.PatchAnnotationProcedure;
+import com.mendeley.api.network.provider.ApplicationFeaturesNetworkProvider;
 import com.mendeley.api.network.provider.CatalogDocumentNetworkProvider;
 import com.mendeley.api.network.provider.DocumentNetworkProvider;
 import com.mendeley.api.network.provider.DocumentNetworkProvider.GetDeletedDocumentsProcedure;
@@ -72,6 +73,7 @@ import org.json.JSONException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static com.mendeley.api.network.provider.AnnotationsNetworkProvider.deleteAnnotationUrl;
@@ -596,6 +598,12 @@ public abstract class BaseMendeleySdk implements BlockingSdk, Environment {
         } catch (JSONException e) {
             throw new JsonParsingException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public List<String> getApplicationFeatures()  throws MendeleyException {
+        Procedure<List<String>> proc = new ApplicationFeaturesNetworkProvider.GetApplicationFeaturesProcedure(authenticationManager);
+        return proc.checkedRun();
     }
 
     /**
