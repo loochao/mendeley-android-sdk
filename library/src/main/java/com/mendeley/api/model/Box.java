@@ -1,6 +1,9 @@
 package com.mendeley.api.model;
 
-public class Box {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Box implements Parcelable {
     public final Point topLeft;
     public final Point bottomRight;
     public final Integer page;
@@ -33,4 +36,29 @@ public class Box {
         result = 31 * result + (page != null ? page.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeDouble(topLeft.x);
+        dest.writeDouble(topLeft.y);
+        dest.writeDouble(bottomRight.x);
+        dest.writeDouble(bottomRight.y);
+        dest.writeInt(page);
+    }
+
+    public static final Creator<Box> CREATOR = new Creator<Box>() {
+        public Box createFromParcel(Parcel in) {
+            return new Box(new Point(in.readDouble(), in.readDouble()), new Point(in.readDouble(), in.readDouble()), in.readInt());
+        }
+
+        public Box[] newArray(int size) {
+            return new Box[size];
+        }
+    };
+
 }
