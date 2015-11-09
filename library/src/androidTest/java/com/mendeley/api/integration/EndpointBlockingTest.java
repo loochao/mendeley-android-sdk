@@ -18,7 +18,6 @@ import java.util.Random;
 
 public abstract class EndpointBlockingTest extends AndroidTestCase {
 
-    // TODO: this should not be an Async but a normal MendeleySdk, but we keep it like this for now as the hierarchy needs to be refactored
     private RequestsFactory requestsFactory;
     private TestAccountSetupUtils testAccountSetupUtils;
     private Random random;
@@ -28,8 +27,8 @@ public abstract class EndpointBlockingTest extends AndroidTestCase {
         random = new Random();
 
         final AssetManager assetManager =  getContext().getAssets();
-        final ClientCredentials clientCredentials = ClientCredentialsFromAssetsFactory.create(assetManager);
-        final AuthTokenManager authTokenManager = new InMemoryAuthTokenManager();
+        ClientCredentials clientCredentials = ClientCredentialsFromAssetsFactory.create(assetManager);
+        AuthTokenManager authTokenManager = new InMemoryAuthTokenManager();
         UsernameAndPasswordSessionManagerFactory.create(assetManager, clientCredentials, authTokenManager).signIn();
 
 
@@ -40,6 +39,7 @@ public abstract class EndpointBlockingTest extends AndroidTestCase {
         // reset account
         testAccountSetupUtils.cleanAll();
     }
+
 
     protected final RequestsFactory getSdk() {
         return requestsFactory;

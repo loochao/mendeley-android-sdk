@@ -1,9 +1,8 @@
-package com.mendeley.api.network.provider;
+package com.mendeley.api.request.procedure;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
 
 import org.json.JSONException;
 

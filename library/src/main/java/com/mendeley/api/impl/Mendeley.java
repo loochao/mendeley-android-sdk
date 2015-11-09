@@ -406,5 +406,10 @@ public class Mendeley implements RequestsFactory {
         return requestsFactoryDelegate.postRecentlyRead(readPosition);
     }
 
+    @Override
+    public Request<List<String>> getApplicationFeatures() {
+        return requestsFactoryDelegate.getApplicationFeatures();
+    }
+
 
 }

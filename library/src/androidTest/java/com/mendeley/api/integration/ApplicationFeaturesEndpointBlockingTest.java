@@ -42,7 +42,7 @@ public class ApplicationFeaturesEndpointBlockingTest extends EndpointBlockingTes
             assertTrue("no features posted", expected.size() > 0);
 
             // WHEN getting application features
-            final List<String> actual = getSdk().getApplicationFeatures();
+            final List<String> actual = getSdk().getApplicationFeatures().run().resource;
 
             // THEN we have the expected application features
             for (String feature : expected) {

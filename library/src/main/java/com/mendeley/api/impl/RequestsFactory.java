@@ -386,6 +386,7 @@ public interface RequestsFactory {
     Request<ReadPosition> postRecentlyRead(ReadPosition readPosition);
 
     /**
+     *
      * This method is intended for internal development and should not be used by third party
      * users of the SDK.
      *
