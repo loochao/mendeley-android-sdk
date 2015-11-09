@@ -29,26 +29,28 @@ public class ApplicationFeaturesEndpointBlockingTest extends EndpointBlockingTes
         final List<String> expected = new LinkedList<>();
 
         final List<String> featureIds = new ArrayList<>(features.length);
-        for (String feature : features) {
-            try {
-                String id = getTestAccountSetupUtils().setupApplicationFeature(feature);
-                featureIds.add(id);
-                expected.add(feature);
-            } catch(Exception e) {
-                Log.d("", "failed to post application feature", e);
+        try {
+            for (String feature : features) {
+                try {
+                    String id = getTestAccountSetupUtils().setupApplicationFeature(feature);
+                    featureIds.add(id);
+                    expected.add(feature);
+                } catch (Exception e) {
+                    Log.d("", "failed to post application feature", e);
+                }
             }
+
+            assertTrue("no features posted", expected.size() > 0);
+
+            // WHEN getting application features
+            final List<String> actual = getSdk().getApplicationFeatures();
+
+            // THEN we have the expected application features
+            for (String feature : expected) {
+                assertTrue(actual.indexOf(feature) != -1);
+            }
+        } finally {
+            getTestAccountSetupUtils().deleteApplicationFeatures(featureIds);
         }
-
-        assertTrue("no features posted", expected.size() > 0);
-
-        // WHEN getting application features
-        final List<String> actual = getSdk().getApplicationFeatures();
-
-        // THEN we have the expected application features
-        for (String feature : expected) {
-            assertTrue(actual.indexOf(feature) != -1);
-        }
-
-        getTestAccountSetupUtils().deleteApplicationFeatures(featureIds);
     }
 }
