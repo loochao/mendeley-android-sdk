@@ -111,6 +111,12 @@ public class TestAccountSetupUtils{
         return sdk.postFolder(folder);
     }
 
+    public GroupList getGroups() throws MendeleyException {
+        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
+        return sdk.getGroups(new GroupRequestParameters());
+    }
+
+
     public ReadPosition setupReadingPosition(String fileId, int page, int verticalPosition, Date date) throws Exception{
         HttpsURLConnection con = null;
         OutputStream os = null;
@@ -134,8 +140,6 @@ public class TestAccountSetupUtils{
             con.connect();
 
             os = con.getOutputStream();
-
-
 
             writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
             writer.write(jsonObject.toString());
@@ -201,9 +205,88 @@ public class TestAccountSetupUtils{
         }
     }
 
-    public GroupList getGroups() throws MendeleyException {
-        // FIXME: do not delegate into the sdk to this, because we are testing the sdk this should receive a JSON and post it using HTTP
-        return sdk.getGroups(new GroupRequestParameters());
+    public String setupApplicationFeature(String name) throws Exception{
+        HttpsURLConnection con = null;
+        OutputStream os = null;
+        BufferedWriter writer = null;
+
+        try {
+            final JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", name);
+            jsonObject.put("availability_level", "EVERYONE");
+
+            final URL callUrl = new URL("https://api-staging.mendeley.com/application_feature_mappings");
+
+            con = (HttpsURLConnection) callUrl.openConnection();
+            con.setRequestMethod("POST");
+            con.addRequestProperty("Authorization", "Bearer " + sdk.getAccessToken());
+            con.addRequestProperty("Content-type", "application/vnd.mendeley-feature-mappings.1+json");
+
+            con.connect();
+
+            os = con.getOutputStream();
+
+            writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonObject.toString());
+            writer.flush();
+            writer.close();
+
+            final int responseCode = con.getResponseCode();
+            if (responseCode < 200 || responseCode >= 300) {
+                throw new Exception("Invalid response code posting application features: " + responseCode + " " + con.getResponseMessage());
+            }
+
+            String responseString = NetworkUtils.readInputStream(con.getInputStream());
+            JSONObject returnedJsonObject = new JSONObject(responseString);
+            return returnedJsonObject.getString("id");
+
+        } finally {
+            try {
+                if (con != null) {
+                    con.disconnect();
+                }
+                if (os != null) {
+                    os.close();
+                }
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public void deleteApplicationFeatures(List<String> applicationFeatureIds) throws Exception{
+        for (String applicationFeatureId : applicationFeatureIds) {
+            deleteApplicationFeature(applicationFeatureId);
+        }
+    }
+
+    private void deleteApplicationFeature(String applicationFeatureId) throws Exception{
+        HttpsURLConnection con = null;
+
+        try {
+
+            final URL callUrl = new URL(BuildConfig.WEB_API_BASE_URL + "application_feature_mappings/" + applicationFeatureId);
+
+            con = (HttpsURLConnection) callUrl.openConnection();
+            con.setRequestMethod("DELETE");
+            con.addRequestProperty("Authorization", "Bearer " + sdk.getAccessToken());
+            con.addRequestProperty("Content-type", "application/vnd.mendeley-feature-mappings.1+json");
+
+            con.connect();
+
+            final int responseCode = con.getResponseCode();
+            if (responseCode < 200 && responseCode >= 300) {
+                throw new Exception("Invalid response code deleting application features:  " + responseCode + " " + con.getResponseMessage());
+            }
+
+        } finally {
+            try {
+                if (con != null) {
+                    con.disconnect();
+                }
+            } catch (Exception ignored) {}
+        }
     }
 
     /**
