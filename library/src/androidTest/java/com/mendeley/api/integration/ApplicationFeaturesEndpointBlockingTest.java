@@ -4,10 +4,9 @@ package com.mendeley.api.integration;
 import android.test.suitebuilder.annotation.SmallTest;
 import android.util.Log;
 
-import com.mendeley.api.test.BuildConfig;
+import com.mendeley.api.BuildConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
