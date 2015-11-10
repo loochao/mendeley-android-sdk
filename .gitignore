@@ -3,8 +3,13 @@
 .idea/
 
 # Credentials files
-example/src/main/assets/config.properties
 library/src/debug/assets/config.properties
+library/src/productionDebug/
+library/src/stagingDebug/
+
+example/src/debug/assets/config.properties
+example/src/productionDebug/
+example/src/stagingDebug/
 
 # Files for the Dalvik VM
 *.dex
