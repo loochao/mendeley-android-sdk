@@ -78,5 +78,5 @@ public abstract class GetNetworkRequest<ResultType> extends NetworkRequest<Resul
         }
     }
 
-    protected abstract ResultType parseJsonString(String jsonString) throws JSONException, ParseException;
+    protected abstract ResultType parseJsonString(String jsonString) throws JSONException, ParseException, IOException;
 }

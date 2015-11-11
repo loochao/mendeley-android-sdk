@@ -4,6 +4,7 @@ import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.test.InstrumentationTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
+import android.util.JsonReader;
 
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Box;
@@ -156,7 +157,8 @@ public class JsonParserTest extends InstrumentationTestCase {
     }
 
     private Folder getTestFolder() {
-		Folder.Builder mendeleyFolder = new Folder.Builder("test-name");
+		Folder.Builder mendeleyFolder = new Folder.Builder();
+        mendeleyFolder.setName("test-name");
 		mendeleyFolder.setId("test-id");
 		mendeleyFolder.setAdded("2014-02-20T16:53:25.000Z");
 	    
@@ -269,17 +271,23 @@ public class JsonParserTest extends InstrumentationTestCase {
 	private String getJsonStringFromAssetsFile(String fileNameName) throws IOException {
 	    return getAssetsFileAsString(getInstrumentation().getContext().getAssets(), fileNameName);
 	}
-	
+
+    private JsonReader getJsonReaderFromAssetsFile(String fileFile) throws IOException {
+        final InputStream is = getInstrumentation().getContext().getAssets().open(fileFile);
+        return new JsonReader(new InputStreamReader(is));
+    }
+
 	@SmallTest
     public void test_parseDocument_withNotNullCollections()
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
 
         // GIVEN the JSON representation of a document where its collections (authors, editors...) are NOT null
         Document expectedDocument = getTestDocumentWithNonNotNullCollections();
-        String parsingString = getJsonStringFromAssetsFile(documentWithNotNullCollectionsFile);
+
+        JsonReader reader = getJsonReaderFromAssetsFile(documentWithNotNullCollectionsFile);
 
         // WHEN we parse the JSON
-        Document actualDocument = JsonParser.parseDocument(parsingString);
+        Document actualDocument = JsonParser.parseDocument(reader);
 
         // THEN the parsed document matches the expected one
         assertDocumentsAreEqual(expectedDocument, actualDocument);
@@ -301,10 +309,9 @@ public class JsonParserTest extends InstrumentationTestCase {
 
         // GIVEN the JSON representation of a document where its collections (authors, editors...) ARE null
         Document expectedDocument = getTestDocument(null, null, null, null, null, null);
-        String parsingString = getJsonStringFromAssetsFile(documentWithNullCollectionsFile);
-
+        JsonReader reader = getJsonReaderFromAssetsFile(documentWithNullCollectionsFile);
         // WHEN we parse the JSON
-        Document actualDocument = JsonParser.parseDocument(parsingString);
+        Document actualDocument = JsonParser.parseDocument(reader);
 
         // THEN the parsed document matches the expected one
         assertDocumentsAreEqual(expectedDocument, actualDocument);
@@ -334,9 +341,11 @@ public class JsonParserTest extends InstrumentationTestCase {
 	public void test_parseFolder()
 			throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
 		Folder expectedFolder = getTestFolder();
-		String parsingString = getJsonStringFromAssetsFile(folderFile);
+		JsonReader reader = getJsonReaderFromAssetsFile(folderFile);
 
-		Folder actualFolder = JsonParser.parseFolder(parsingString);
+		Folder actualFolder = JsonParser.parseFolder(reader);
+
+        reader.close();
 
 		boolean equal =
 				expectedFolder.id.equals(actualFolder.id) &&
@@ -349,12 +358,13 @@ public class JsonParserTest extends InstrumentationTestCase {
 	@SmallTest
 	public void test_parseFile()
 			throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
-		File expectedFile = getTestFile();
-		String parsingString = getJsonStringFromAssetsFile(fileFile);
-		
-		File actualFile = JsonParser.parseFile(parsingString);
 
-		boolean equal = 
+		File expectedFile = getTestFile();
+        JsonReader reader = getJsonReaderFromAssetsFile(fileFile);
+
+		File actualFile = JsonParser.parseFile(reader);
+
+		boolean equal =
 				expectedFile.id.equals(actualFile.id) &&
 				expectedFile.documentId.equals(actualFile.documentId) &&
 				expectedFile.mimeType.equals(actualFile.mimeType) &&
@@ -362,16 +372,20 @@ public class JsonParserTest extends InstrumentationTestCase {
 				expectedFile.fileHash.equals(actualFile.fileHash) &&
                 expectedFile.fileSize == actualFile.fileSize;
 
+        reader.close();
+
 		assertTrue("Parsed folder with wrong or missing data", equal);
 	}
-	
-	@SmallTest
+
+
+
+    @SmallTest
 	public void test_parseProfile()
 			throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
 		Profile expectedProfile = getTestProfile();
-		String parsingString = getJsonStringFromAssetsFile(profileFile);
-		
-		Profile actualProfile = JsonParser.parseProfile(parsingString);
+		JsonReader reader = getJsonReaderFromAssetsFile(profileFile);
+
+		final Profile actualProfile = JsonParser.parseProfile(reader);
 
 		boolean equal =
                 expectedProfile.id.equals(actualProfile.id) &&
@@ -400,6 +414,8 @@ public class JsonParserTest extends InstrumentationTestCase {
                         expectedProfile.employment.get(0).endDate.equals(actualProfile.employment.get(0).endDate) &&
                         expectedProfile.employment.get(0).website.equals(actualProfile.employment.get(0).website) &&
                         expectedProfile.employment.get(0).isMainEmployment == actualProfile.employment.get(0).isMainEmployment;
+
+        reader.close();
 
         assertEquals("Employment classes array size not as expected", expectedProfile.employment.get(0).classes.size(), actualProfile.employment.get(0).classes.size());
 
@@ -491,14 +507,14 @@ public class JsonParserTest extends InstrumentationTestCase {
 	public void test_parseDocumentIds()
 			throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException {
 
-        String jsonString = getJsonStringFromAssetsFile(documentIdsFile);
+        final JsonReader reader = getJsonReaderFromAssetsFile(documentIdsFile);
+
 		List<String> expectedList = new ArrayList<String>();
         expectedList.add("test-document_id_1");
         expectedList.add("test-document_id_2");
         expectedList.add("test-document_id_3");
 		
-		List<DocumentId> actualList = JsonParser.parseDocumentIds(jsonString);
-
+		final List<DocumentId> actualList = JsonParser.parseDocumentIds(reader);
 
         assertEquals("Wrong list size", expectedList.size(), actualList.size());
 		for (int i = 0; i < actualList.size(); i++) {
@@ -510,10 +526,10 @@ public class JsonParserTest extends InstrumentationTestCase {
     public void test_parseGroup()
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
 
-        Group expectedGroup = getTestGroup();
-        String parsingString = getJsonStringFromAssetsFile(groupFile);
-
-        Group actualGroup = JsonParser.parseGroup(parsingString);
+        final Group expectedGroup = getTestGroup();
+        final JsonReader reader = getJsonReaderFromAssetsFile(groupFile);
+        final Group actualGroup = JsonParser.parseGroup(reader);
+        reader.close();
 
         assertEquals("id", expectedGroup.id, actualGroup.id);
         assertEquals("name", expectedGroup.name, actualGroup.name);
@@ -531,10 +547,10 @@ public class JsonParserTest extends InstrumentationTestCase {
     @SmallTest
     public void test_parseUserRole()
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
-        UserRole expectedUserRole = getTestUserRole();
-        String parsingJsonString = getJsonStringFromAssetsFile(userRoleFile);
+        final UserRole expectedUserRole = getTestUserRole();
+        final JsonReader reader = getJsonReaderFromAssetsFile(userRoleFile);
 
-        UserRole actualUserRole = JsonParser.parseUserRole(parsingJsonString);
+        UserRole actualUserRole = JsonParser.parseUserRole(reader);
 
         assertEquals("profile_id", expectedUserRole.profileId, actualUserRole.profileId);
         assertEquals("joined", expectedUserRole.joined, actualUserRole.joined);
@@ -547,11 +563,11 @@ public class JsonParserTest extends InstrumentationTestCase {
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
 
         // GIVEN the JSON representation of an annotation where its values (boxes, color) are NOT null
-        Annotation expectedAnnotation = getTestAnnotationWithNonNotNullValues();
-        String parsingString = getJsonStringFromAssetsFile(annotationWithNotNullValuesFile);
+        final Annotation expectedAnnotation = getTestAnnotationWithNonNotNullValues();
+        final JsonReader reader = getJsonReaderFromAssetsFile(annotationWithNotNullValuesFile);
 
         // WHEN we parse the JSON
-        Annotation actualAnnotation = JsonParser.parseAnnotation(parsingString);
+        final Annotation actualAnnotation = JsonParser.parseAnnotation(reader);
 
         // THEN the parsed document matches the expected one
         assertAnnotationsAreEqual(expectedAnnotation, actualAnnotation);
@@ -568,11 +584,11 @@ public class JsonParserTest extends InstrumentationTestCase {
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
 
         // GIVEN the JSON representation of an annotation where its values (boxes, color) are null
-        Annotation expectedAnnotation = getTestAnnotation(null, null, null, null);
-        String parsingString = getJsonStringFromAssetsFile(annotationWithNullValuesFile);
+        final Annotation expectedAnnotation = getTestAnnotation(null, null, null, null);
+        final JsonReader reader = getJsonReaderFromAssetsFile(annotationWithNullValuesFile);
 
         // WHEN we parse the JSON
-        Annotation actualAnnotation = JsonParser.parseAnnotation(parsingString);
+        Annotation actualAnnotation = JsonParser.parseAnnotation(reader);
 
         // THEN the parsed document matches the expected one
         assertAnnotationsAreEqual(expectedAnnotation, actualAnnotation);
@@ -585,12 +601,11 @@ public class JsonParserTest extends InstrumentationTestCase {
     }
 
     @SmallTest
-    public void test_parseReadPosition()
-            throws Exception {
-        ReadPosition expected = getTestReadPosition();
-        String parsingString = getJsonStringFromAssetsFile(readPositionFile);
+    public void test_parseReadPosition() throws Exception {
+        final ReadPosition expected = getTestReadPosition();
+        final JsonReader reader = getJsonReaderFromAssetsFile(readPositionFile);
 
-        ReadPosition actual = JsonParser.parseReadPosition(parsingString);
+        ReadPosition actual = JsonParser.parseReadPosition(reader);
 
         Assert.assertEquals("ReadPosition id", expected.id, actual.id);
         Assert.assertEquals("ReadPosition fileId", expected.fileId, actual.fileId);
@@ -601,8 +616,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
 
     @SmallTest
-    public void test_jsonFromFromReadPosition()
-            throws Exception {
+    public void test_jsonFromFromReadPosition() throws Exception {
 
         ReadPosition parsingReadPosition = getTestReadPosition();
 
@@ -715,5 +729,6 @@ public class JsonParserTest extends InstrumentationTestCase {
         in.close();
         return buf.toString();
     }
+
 
 }

@@ -2,6 +2,7 @@ package com.mendeley.api.request;
 
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
+import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.model.Document;
@@ -15,8 +16,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -135,8 +138,8 @@ public class NetworkConnectionTest extends AndroidTestCase {
 		
 		JSONObject reponseJson = new JSONObject(responseString);
 		JSONObject jsonObject = reponseJson.getJSONObject("json");
-		
-		Document responseDocument = parser.parseDocument(jsonObject.toString());
+		final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonObject.toString().getBytes())));
+		Document responseDocument = parser.parseDocument(reader);
 		
 		assertEquals("Response code != 200", 200, postConnection.getResponseCode());
 		assertEquals("Posted and returned documents are not equal", testDocument, responseDocument);
@@ -173,8 +176,9 @@ public class NetworkConnectionTest extends AndroidTestCase {
 
 		JSONObject reponseJson = new JSONObject(responseString);
 		JSONObject jsonObject = reponseJson.getJSONObject("json");
-		
-		Document responseDocument = parser.parseDocument(jsonObject.toString());
+
+		final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonObject.toString().getBytes())));
+		Document responseDocument = parser.parseDocument(reader);
 		
 		assertEquals("Response code != 200", 200, responseCode);
 		assertEquals("Posted and returned documents are not equal", testDocument, responseDocument);

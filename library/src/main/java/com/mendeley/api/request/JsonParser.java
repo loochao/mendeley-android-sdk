@@ -1,6 +1,7 @@
 package com.mendeley.api.request;
 
 import android.graphics.Color;
+import android.util.JsonReader;
 
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Box;
@@ -24,10 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,6 @@ import static com.mendeley.api.model.Annotation.PrivacyLevel;
  * as well as create json strings from objects that are used by the NetwrokProvider classes.
  */
 public class JsonParser {
-    private static final String TAG = JsonParser.class.getCanonicalName();
 
     public static String jsonFromAnnotation(Annotation annotation) throws JSONException {
         JSONObject jAnnotation = new JSONObject();
@@ -245,87 +245,114 @@ public class JsonParser {
 	/**
 	 * Creating a list of string document ids from a json string
 	 * 
-	 * @param jsonString the json string of the document ids
+	 * @param reader
 	 * @return the list of string document ids
 	 * @throws JSONException
 	 */
-    public static List<DocumentId> parseDocumentIds(String jsonString) throws JSONException {
-		List<DocumentId> documentIds = new ArrayList<DocumentId>();
-		JSONArray jsonArray = new JSONArray(jsonString);
-		for (int i = 0; i < jsonArray.length(); i++) {	
-			documentIds.add(parseDocumentId(jsonArray.get(i).toString()));
+    public static List<DocumentId> parseDocumentIds(JsonReader reader) throws JSONException, IOException {
+		final List<DocumentId> documentIds = new ArrayList<DocumentId>();
+
+        reader.beginArray();
+		while (reader.hasNext()) {
+			documentIds.add(parseDocumentId(reader));
 		}
+        reader.endArray();
 		
 		return documentIds;
 	}
 
-    public static Map<String, String> parseDocumentTypes(String jsonString) throws JSONException{
-		Map<String, String> typesMap = new HashMap<String, String>();
-		
-		JSONArray jsonarray = new JSONArray(jsonString);
-		
-		for (int i = 0; i < jsonarray.length(); i++) {
-			JSONObject jsonObject = jsonarray.getJSONObject(i);
-			String key = jsonObject.getString("name");
-			String value = jsonObject.getString("description");
-			typesMap.put(key, value);
+    public static Map<String, String> parseDocumentTypes(JsonReader reader) throws JSONException, IOException {
+		final Map<String, String> typesMap = new HashMap<String, String>();
+
+        reader.beginArray();
+
+		while (reader.hasNext()) {
+            parseDocumentTypeEntry(reader, typesMap);
 		}
+
+        reader.endArray();
 		return typesMap;
 	}
 
-	/**
+    private static void parseDocumentTypeEntry(JsonReader reader, Map<String, String> map) throws IOException {
+        reader.beginObject();
+
+        String nameValue = null;
+        String descriptionValue = null;
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if (key.equals("name")) {
+                nameValue = reader.nextString();
+            } else if (key.equals("description")) {
+                descriptionValue = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        map.put(nameValue, descriptionValue);
+
+        reader.endObject();
+    }
+
+    /**
 	 * Creating a File object from a json string
 	 * 
-	 * @param jsonString the json string
+	 * @param reader
 	 * @return the File object
 	 * @throws JSONException
 	 */
-    public static File parseFile(String jsonString) throws JSONException {
-		File.Builder mendeleyFile = new File.Builder();
-		
-		JSONObject documentObject = new JSONObject(jsonString);
-		
-		for (@SuppressWarnings("unchecked") Iterator<String> keysIter = 
-				 documentObject.keys(); keysIter.hasNext();) {
+    public static File parseFile(JsonReader reader) throws JSONException, IOException {
+        reader.beginObject();
+
+        final File.Builder builder = new File.Builder();
+
+		while (reader.hasNext()) {
 		  
-			String key = keysIter.next();
+			String key = reader.nextName();
             if (key.equals("id")) {
-                mendeleyFile.setId(documentObject.getString(key));
+                builder.setId(reader.nextString());
 
             } else if (key.equals("document_id")) {
-                mendeleyFile.setDocumentId(documentObject.getString(key));
+                builder.setDocumentId(reader.nextString());
 
             } else if (key.equals("mime_type")) {
-                mendeleyFile.setMimeType(documentObject.getString(key));
+                builder.setMimeType(reader.nextString());
 
             } else if (key.equals("file_name")) {
-                mendeleyFile.setFileName(documentObject.getString(key));
+                builder.setFileName(reader.nextString());
 
             } else if (key.equals("filehash")) {
-                mendeleyFile.setFileHash(documentObject.getString(key));
+                builder.setFileHash(reader.nextString());
 
             } else if (key.equals("size")) {
-                mendeleyFile.setFileSize(documentObject.getInt(key));
+                builder.setFileSize(reader.nextInt());
+            } else {
+                reader.skipValue();
             }
 		}
+        reader.endObject();
 		
-		return mendeleyFile.build();
+		return builder.build();
 	}
 
-    public static DocumentId parseDocumentId(String jsonString) throws JSONException {
+    public static DocumentId parseDocumentId(JsonReader reader) throws JSONException, IOException {
 		DocumentId.Builder mendeleyDocumentId = new DocumentId.Builder();
 		
-		JSONObject documentObject = new JSONObject(jsonString);
-		
-		for (@SuppressWarnings("unchecked") Iterator<String> keysIter = 
-				 documentObject.keys(); keysIter.hasNext();) {
-		  
-			String key = keysIter.next();
-            if (key.equals("id")) {
-                mendeleyDocumentId.setDocumentId(documentObject.getString(key));
+		reader.beginObject();
 
+        while (reader.hasNext()) {
+		  
+			final String key = reader.nextName();
+            if (key.equals("id")) {
+                mendeleyDocumentId.setDocumentId(reader.nextString());
+            } else {
+                reader.skipValue();
             }
 		}
+
+        reader.endObject();
 		
 		return mendeleyDocumentId.build();
 	}
@@ -333,747 +360,827 @@ public class JsonParser {
 	/**
 	 * Creating a list of Folder objects from a json string
 	 * 
-	 * @param jsonString the json string
+	 * @param reader
 	 * @return the list of Folder objects
 	 * @throws JSONException
 	 */
-    public static List<Folder> parseFolderList(String jsonString) throws JSONException {
+    public static List<Folder> parseFolderList(JsonReader reader) throws JSONException, IOException {
 		
-		List<Folder> folders = new ArrayList<Folder>();
+		final List<Folder> folders = new ArrayList<Folder>();
 		
-		JSONArray jsonarray = new JSONArray(jsonString);
-		
-		for (int i = 0; i < jsonarray.length(); i++) {
-			folders.add(parseFolder(jsonarray.getString(i)));
+		reader.beginArray();
+		while (reader.hasNext()) {
+            folders.add(parseFolder(reader));
 		}
-		
+		reader.endArray();
+
 		return folders;
 	}
 	
 	/**
 	 * Creating a Folder object from a json string
 	 * 
-	 * @param jsonString the json string
+	 * @param reader
 	 * @return the Folder object
 	 * @throws JSONException
 	 */
-    public static Folder parseFolder(String jsonString) throws JSONException {
-        JSONObject folderObject = new JSONObject(jsonString);
+    public static Folder parseFolder(JsonReader reader) throws JSONException, IOException {
+        final Folder.Builder bld = new Folder.Builder();
 
-        Folder.Builder mendeleyFolder = new Folder.Builder(folderObject.getString("name"));
-		
-		for (@SuppressWarnings("unchecked") Iterator<String> keysIter =
-				folderObject.keys(); keysIter.hasNext();) {
-			String key = keysIter.next();
-            if (key.equals("parent_id")) {
-                mendeleyFolder.setParentId(folderObject.getString(key));
+        reader.beginObject();
+		while (reader.hasNext()) {
+            final String key = reader.nextName();
 
+            if (key.equals("name")) {
+                bld.setName(reader.nextString());
+            } else if (key.equals("parent_id")) {
+                bld.setParentId(reader.nextString());
             } else if (key.equals("id")) {
-                mendeleyFolder.setId(folderObject.getString(key));
-
+                bld.setId(reader.nextString());
             } else if (key.equals("group_id")) {
-                mendeleyFolder.setGroupId(folderObject.getString(key));
-
+                bld.setGroupId(reader.nextString());
             } else if (key.equals("added")) {
-                mendeleyFolder.setAdded(folderObject.getString(key));
-
+                bld.setAdded(reader.nextString());
+            } else {
+                reader.skipValue();
             }
 		}
+        reader.endObject();
 		
-		return mendeleyFolder.build();
+		return bld.build();
 	}
 
     /**
      * Creating a UserRole object from a json string
      *
-     * @param jsonString the json string
+     * @param reader
      * @return the UserRole object
      * @throws JSONException
      */
-    public static UserRole parseUserRole(String jsonString) throws JSONException {
-        JSONObject userRoleObject = new JSONObject(jsonString);
+    public static UserRole parseUserRole(JsonReader reader) throws JSONException, IOException {
+        final UserRole.Builder mendeleyUserRole = new UserRole.Builder();
+        reader.beginObject();
 
-        UserRole.Builder mendeleyUserRole = new UserRole.Builder();
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
 
-        for (@SuppressWarnings("unchecked") Iterator<String> keysIter =
-                     userRoleObject.keys(); keysIter.hasNext();) {
-            String key = keysIter.next();
             if (key.equals("profile_id")) {
-                mendeleyUserRole.setProfileId(userRoleObject.getString(key));
-
+                mendeleyUserRole.setProfileId(reader.nextString());
             } else if (key.equals("joined")) {
-                mendeleyUserRole.setJoined(userRoleObject.getString(key));
-
+                mendeleyUserRole.setJoined(reader.nextString());
             } else if (key.equals("role")) {
-                mendeleyUserRole.setRole(userRoleObject.getString(key));
-
+                mendeleyUserRole.setRole(reader.nextString());
+            } else {
+                reader.skipValue();
             }
+
         }
 
+        reader.endObject();
         return mendeleyUserRole.build();
     }
 
-    public static Annotation parseAnnotation(String jsonString) throws JSONException {
-        Annotation.Builder builder = new Annotation.Builder();
+    public static Annotation parseAnnotation(JsonReader reader) throws JSONException, IOException {
+        final Annotation.Builder builder = new Annotation.Builder();
 
-        JSONObject jAnnotation = new JSONObject(jsonString);
+        reader.beginObject();
 
-        for (Iterator<String> keysIter = jAnnotation.keys(); keysIter.hasNext(); ) {
-            String key = keysIter.next();
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+
             if (key.equals("id")) {
-                builder.setId(jAnnotation.getString(key));
+                builder.setId(reader.nextString());
 
             } else if (key.equals("type")) {
-                builder.setType(Annotation.Type.fromName(jAnnotation.getString(key)));
+                builder.setType(Annotation.Type.fromName(reader.nextString()));
 
             } else if (key.equals("previous_id")) {
-                builder.setPreviousId(jAnnotation.getString(key));
+                builder.setPreviousId(reader.nextString());
 
             } else if (key.equals("color")) {
-                builder.setColor(parseColor(jAnnotation.getJSONObject(key)));
+                builder.setColor(parseColor(reader));
 
             } else if (key.equals("text")) {
-                builder.setText(jAnnotation.getString(key));
+                builder.setText(reader.nextString());
 
             } else if (key.equals("profile_id")) {
-                builder.setProfileId(jAnnotation.getString(key));
+                builder.setProfileId(reader.nextString());
 
             } else if (key.equals("positions")) {
-                JSONArray jPositions = jAnnotation.getJSONArray(key);
-                builder.setPositions(parseBoundingBoxes(jPositions));
+                builder.setPositions(parseBoundingBoxes(reader));
 
             } else if (key.equals("created")) {
-                builder.setCreated(jAnnotation.getString(key));
+                builder.setCreated(reader.nextString());
 
             } else if (key.equals("last_modified")) {
-                builder.setLastModified(jAnnotation.getString(key));
+                builder.setLastModified(reader.nextString());
 
             } else if (key.equals("privacy_level")) {
-                builder.setPrivacyLevel(PrivacyLevel.fromName(jAnnotation.getString(key)));
+                builder.setPrivacyLevel(PrivacyLevel.fromName(reader.nextString()));
 
             } else if (key.equals("filehash")) {
-                builder.setFileHash(jAnnotation.getString(key));
+                builder.setFileHash(reader.nextString());
 
             } else if (key.equals("document_id")) {
-                builder.setDocumentId(jAnnotation.getString(key));
-
+                builder.setDocumentId(reader.nextString());
+            } else {
+                reader.skipValue();
             }
         }
+
+        reader.endObject();
         return builder.build();
     }
 
-    private static int parseColor(JSONObject jColor) throws JSONException {
-        int r = jColor.getInt("r");
-        int g = jColor.getInt("g");
-        int b = jColor.getInt("b");
+    private static int parseColor(JsonReader reader) throws JSONException, IOException {
+        reader.beginObject();
+
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+
+            if (key.equals("r")) {
+                r = reader.nextInt();
+            } else if (key.equals("g")) {
+                g = reader.nextInt();
+            } else if (key.equals("b")) {
+                b = reader.nextInt();
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
         return Color.rgb(r, g, b);
     }
 
-    private static List<Box> parseBoundingBoxes(JSONArray jPositions) throws JSONException {
-        List<Box> boxes = new ArrayList<Box>();
-        for (int i = 0; i < jPositions.length(); i++) {
-            JSONObject jBox = jPositions.getJSONObject(i);
+    private static List<Box> parseBoundingBoxes(JsonReader reader) throws JSONException, IOException {
+        final List<Box> boxes = new ArrayList<Box>();
 
-            Point topLeft = null;
-            Point bottomRight = null;
-            Integer page = null;
-
-            if (jBox.has("page")) {
-                page = jBox.getInt("page");
-            }
-            if (jBox.has("top_left")) {
-                JSONObject jTopLeft = jBox.getJSONObject("top_left");
-                topLeft = new Point(jTopLeft.getDouble("x"), jTopLeft.getDouble("y"));
-            }
-            if (jBox.has("bottom_right")) {
-                JSONObject jBottomRight = jBox.getJSONObject("bottom_right");
-                bottomRight = new Point(jBottomRight.getDouble("x"), jBottomRight.getDouble("y"));
-            }
-
-            Box box = new Box(topLeft, bottomRight, page);
-            boxes.add(box);
+        reader.beginArray();
+        while (reader.hasNext()) {
+            boxes.add(parseBox(reader));
         }
+        reader.endArray();
+
         return boxes;
+    }
+
+    private static Box parseBox(JsonReader reader) throws JSONException, IOException {
+        Point topLeft = null;
+        Point bottomRight = null;
+        Integer page = null;
+
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+
+            if (key.equals("page")) {
+                page = reader.nextInt();
+            } else if (key.equals("top_left")) {
+                topLeft = parsePoint(reader);
+            } else if (key.equals("bottom_right")) {
+                bottomRight = parsePoint(reader);
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return new Box(topLeft, bottomRight, page);
+    }
+
+    private static Point parsePoint(JsonReader reader) throws IOException {
+        double x = 0;
+        double y = 0;
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+
+            if (key.equals("x")) {
+                x = reader.nextDouble();
+            } else if (key.equals("y")) {
+                y = reader.nextDouble();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return new Point(x, y);
     }
 
     /**
 	 * Creating a Profile object from a json string
 	 * 
-	 * @param jsonString the json string
+	 * @param reader
 	 * @return the Profile object
 	 * @throws JSONException
 	 */
-    public static Profile parseProfile(String jsonString) throws JSONException {
-		Profile.Builder mendeleyProfile = new Profile.Builder();
-		
-		JSONObject profileObject = new JSONObject(jsonString);
-		 
-		for (@SuppressWarnings("unchecked") Iterator<String> keysIter = 
-				profileObject.keys(); keysIter.hasNext();) {
+    public static Profile parseProfile(JsonReader reader) throws JSONException, IOException {
+		final Profile.Builder builder = new Profile.Builder();
+
+        reader.beginObject();
+
+		while (reader.hasNext()){
 		  
-			String key = keysIter.next();
+			final String key = reader.nextName();
             if (key.equals("location")) {
-                mendeleyProfile.setLocation(profileObject.getString(key));
+                builder.setLocation(reader.nextString());
 
             } else if (key.equals("id")) {
-                mendeleyProfile.setId(profileObject.getString(key));
+                builder.setId(reader.nextString());
 
             } else if (key.equals("display_name")) {
-                mendeleyProfile.setDisplayName(profileObject.getString(key));
+                builder.setDisplayName(reader.nextString());
 
             } else if (key.equals("user_type")) {
-                mendeleyProfile.setUserType(profileObject.getString(key));
+                builder.setUserType(reader.nextString());
 
             } else if (key.equals("url")) {
-                mendeleyProfile.setUrl(profileObject.getString(key));
+                builder.setUrl(reader.nextString());
 
             } else if (key.equals("email")) {
-                mendeleyProfile.setEmail(profileObject.getString(key));
+                builder.setEmail(reader.nextString());
 
             } else if (key.equals("link")) {
-                mendeleyProfile.setLink(profileObject.getString(key));
+                builder.setLink(reader.nextString());
 
             } else if (key.equals("first_name")) {
-                mendeleyProfile.setFirstName(profileObject.getString(key));
+                builder.setFirstName(reader.nextString());
 
             } else if (key.equals("last_name")) {
-                mendeleyProfile.setLastName(profileObject.getString(key));
+                builder.setLastName(reader.nextString());
 
             } else if (key.equals("research_interests")) {
-                mendeleyProfile.setResearchInterests(profileObject.getString(key));
+                builder.setResearchInterests(reader.nextString());
 
             } else if (key.equals("academic_status")) {
-                mendeleyProfile.setAcademicStatus(profileObject.getString(key));
+                builder.setAcademicStatus(reader.nextString());
 
             } else if (key.equals("verified")) {
-                mendeleyProfile.setVerified(profileObject.getBoolean(key));
+                builder.setVerified(reader.nextBoolean());
 
             } else if (key.equals("created_at")) {
-                mendeleyProfile.setCreatedAt(profileObject.getString(key));
+                builder.setCreatedAt(reader.nextString());
 
             } else if (key.equals("discipline")) {
-                JSONObject disciplineObject = profileObject.getJSONObject(key);
-                Discipline discipline = new Discipline();
-                if (disciplineObject.has("name")) {
-                    discipline.name = disciplineObject.getString("name");
-                }
-                mendeleyProfile.setDiscipline(discipline);
+                builder.setDiscipline(parseDiscipline(reader));
 
             } else if (key.equals("photo")) {
-                JSONObject photoObject = profileObject.getJSONObject(key);
-                Photo photo = parsePhoto(photoObject);
-
-                mendeleyProfile.setPhoto(photo);
+                builder.setPhoto(parsePhoto(reader));
 
             } else if (key.equals("education")) {
-                JSONArray educationArray = profileObject.getJSONArray(key);
-                ArrayList<Education> educationList = new ArrayList<Education>();
-
-                for (int i = 0; i < educationArray.length(); i++) {
-
-                    JSONObject educationObject = educationArray.getJSONObject(i);
-                    educationList.add(parseEducation(educationObject));
-
-                }
-
-                mendeleyProfile.setEducation(educationList);
+                builder.setEducation(parseEducationList(reader));
 
             } else if (key.equals("employment")) {
-                JSONArray employmentArray = profileObject.getJSONArray(key);
-                ArrayList<Employment> employmentList = new ArrayList<Employment>();
+                builder.setEmployment(paserEmploymentList(reader));
 
-                for (int i = 0; i < employmentArray.length(); i++) {
-                    JSONObject employmentObject = employmentArray.getJSONObject(i);
-                    employmentList.add(parseEmployment(employmentObject));
-                }
-
-                mendeleyProfile.setEmployment(employmentList);
-
+            } else {
+                reader.skipValue();
             }
 		}
+
+        reader.endObject();
 		
-		return mendeleyProfile.build();
+		return builder.build();
 	}
 
-    public static Photo parsePhoto(JSONObject photoObject) {
-        return new Photo(
-                                photoObject.optString("original"),
-                                photoObject.optString("standard"),
-                                photoObject.optString("square"));
-    }
+    private static Discipline parseDiscipline(JsonReader reader) throws IOException {
+        final Discipline discipline = new Discipline();
+        reader.beginObject();
 
-    private static Employment parseEmployment(JSONObject employmentObject) throws JSONException {
-        Employment.Builder employmentBuilder = new Employment.Builder();
-
-        for (@SuppressWarnings("unchecked") Iterator<String> employmentIter =
-                     employmentObject.keys(); employmentIter.hasNext(); ) {
-
-            String employmentKey = employmentIter.next();
-
-            if (employmentKey.equals("id")) {
-                employmentBuilder.setId(employmentObject.getString(employmentKey));
-
-            } else if (employmentKey.equals("institution")) {
-                employmentBuilder.setInstitution(employmentObject.getString(employmentKey));
-
-            } else if (employmentKey.equals("position")) {
-                employmentBuilder.setPosition(employmentObject.getString(employmentKey));
-
-            } else if (employmentKey.equals("start_date")) {
-                employmentBuilder.setStartDate(employmentObject.getString(employmentKey));
-
-            } else if (employmentKey.equals("end_date")) {
-                employmentBuilder.setEndDate(employmentObject.getString(employmentKey));
-
-            } else if (employmentKey.equals("website")) {
-                employmentBuilder.setWebsite(employmentObject.getString(employmentKey));
-
-            } else if (employmentKey.equals("classes")) {
-                JSONArray classesJsonArray = employmentObject.getJSONArray(employmentKey);
-                List<String> classesArray = new ArrayList<String>();
-                for (int i = 0; i < classesJsonArray.length(); i++) {
-                    classesArray.add(classesJsonArray.getString(i));
-                }
-                employmentBuilder.setClasses(classesArray);
-
-            } else if (employmentKey.equals("is_main_employment")) {
-                employmentBuilder.setIsMainEmployment(employmentObject.getBoolean(employmentKey));
-
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if ("name".equals(key)) {
+                discipline.name = reader.nextString();
+            } else {
+                reader.skipValue();
             }
         }
-        return employmentBuilder.build();
+
+        reader.endObject();
+        return discipline;
     }
 
-    private static Education parseEducation(JSONObject educationObject) throws JSONException {
-        Education.Builder education = new Education.Builder();
+    public static Photo parsePhoto(JsonReader reader) throws IOException {
+        reader.beginObject();
 
-        for (@SuppressWarnings("unchecked") Iterator<String> educationIter =
-                     educationObject.keys(); educationIter.hasNext(); ) {
+        String original = null;
+        String standard = null;
+        String square = null;
 
-            String educationKey = educationIter.next();
-            if (educationKey.equals("id")) {
-                education.setId(educationObject.getString(educationKey));
-
-            } else if (educationKey.equals("degree")) {
-                education.setDegree(educationObject.getString(educationKey));
-
-            } else if (educationKey.equals("institution")) {
-                education.setInstitution(educationObject.getString(educationKey));
-
-            } else if (educationKey.equals("start_date")) {
-                education.setStartDate(educationObject.getString(educationKey));
-
-            } else if (educationKey.equals("end_date")) {
-                education.setEndDate(educationObject.getString(educationKey));
-
-            } else if (educationKey.equals("website")) {
-                education.setWebsite(educationObject.getString(educationKey));
-
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if ("original".equals(key)) {
+                original = reader.nextString();
+            } else if ("standard".equals(key)) {
+                standard = reader.nextString();
+            } else if ("square".equals(key)) {
+                square = reader.nextString();
+            } else {
+                reader.skipValue();
             }
         }
-        return education.build();
+
+        reader.endObject();
+        return new Photo(original, standard, square);
+    }
+
+    private static List<Employment> paserEmploymentList(JsonReader reader) throws IOException, JSONException {
+        final List<Employment> list = new LinkedList<>();
+        reader.beginArray();
+
+        while (reader.hasNext()) {
+            list.add(parseEmployment(reader));
+        }
+
+        reader.endArray();
+        return list;
+    }
+
+
+    private static Employment parseEmployment(JsonReader reader) throws JSONException, IOException {
+        final Employment.Builder builder = new Employment.Builder();
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+
+            final String key = reader.nextName();
+
+            if (key.equals("id")) {
+                builder.setId(reader.nextString());
+
+            } else if (key.equals("institution")) {
+                builder.setInstitution(reader.nextString());
+
+            } else if (key.equals("position")) {
+                builder.setPosition(reader.nextString());
+
+            } else if (key.equals("start_date")) {
+                builder.setStartDate(reader.nextString());
+
+            } else if (key.equals("end_date")) {
+                builder.setEndDate(reader.nextString());
+
+            } else if (key.equals("website")) {
+                builder.setWebsite(reader.nextString());
+
+            } else if (key.equals("classes")) {
+                builder.setClasses(parseStringList(reader));
+
+            } else if (key.equals("is_main_employment")) {
+                builder.setIsMainEmployment(reader.nextBoolean());
+
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return builder.build();
+    }
+
+
+    private static List<Education> parseEducationList(JsonReader reader) throws IOException, JSONException {
+        final List<Education> list = new LinkedList<>();
+        reader.beginArray();
+
+        while (reader.hasNext()) {
+            list.add(parseEducation(reader));
+        }
+
+        reader.endArray();
+        return list;
+    }
+
+    private static Education parseEducation(JsonReader reader) throws JSONException, IOException {
+        final Education.Builder builder = new Education.Builder();
+
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if (key.equals("id")) {
+                builder.setId(reader.nextString());
+            } else if (key.equals("degree")) {
+                builder.setDegree(reader.nextString());
+            } else if (key.equals("institution")) {
+                builder.setInstitution(reader.nextString());
+            } else if (key.equals("start_date")) {
+                builder.setStartDate(reader.nextString());
+            } else if (key.equals("end_date")) {
+                builder.setEndDate(reader.nextString());
+            } else if (key.equals("website")) {
+                builder.setWebsite(reader.nextString());
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return builder.build();
     }
 
     /**
      * Creating a Group object from a json string
      *
-     * @param jsonString the json string
+     * @param reader
      * @return the Group object
      * @throws JSONException
      */
-    public static Group parseGroup(String jsonString) throws JSONException {
-        JSONObject groupObject = new JSONObject(jsonString);
+    public static Group parseGroup(JsonReader reader) throws JSONException, IOException {
+        final Group.Builder builder = new Group.Builder();
+        reader.beginObject();
 
-        Group.Builder mendeleyGroup = new Group.Builder();
+        while (reader.hasNext()) {
 
-        for (@SuppressWarnings("unchecked")
-             Iterator<String> keysIter = groupObject.keys(); keysIter.hasNext(); ) {
+            final String key = reader.nextName();
 
-            String key = keysIter.next();
             if (key.equals("id")) {
-                mendeleyGroup.setId(groupObject.getString(key));
+                builder.setId(reader.nextString());
 
             } else if (key.equals("created")) {
-                mendeleyGroup.setCreated(groupObject.getString(key));
+                builder.setCreated(reader.nextString());
 
             } else if (key.equals("owning_profile_id")) {
-                mendeleyGroup.setOwningProfileId(groupObject.getString(key));
+                builder.setOwningProfileId(reader.nextString());
 
             } else if (key.equals("link")) {
-                mendeleyGroup.setLink(groupObject.getString(key));
+                builder.setLink(reader.nextString());
 
             } else if (key.equals("role")) {
-                mendeleyGroup.setRole(Group.Role.fromValue(groupObject.getString(key)));
+                builder.setRole(Group.Role.fromValue(reader.nextString()));
 
             } else if (key.equals("access_level")) {
-                mendeleyGroup.setAccessLevel(Group.AccessLevel.fromValue(groupObject.getString(key)));
+                builder.setAccessLevel(Group.AccessLevel.fromValue(reader.nextString()));
 
             } else if (key.equals("name")) {
-                mendeleyGroup.setName(groupObject.getString(key));
+                builder.setName(reader.nextString());
 
             } else if (key.equals("description")) {
-                mendeleyGroup.setDescription(groupObject.getString(key));
+                builder.setDescription(reader.nextString());
 
             } else if (key.equals("tags")) {
-                JSONArray tagsJsonArray = groupObject.getJSONArray(key);
-                ArrayList<String> tagsArray = new ArrayList<String>();
-                for (int i = 0; i < tagsJsonArray.length(); i++) {
-                    tagsArray.add(tagsJsonArray.getString(i));
-                }
-                mendeleyGroup.setTags(tagsArray);
+                builder.setTags(parseStringList(reader));
 
             } else if (key.equals("webpage")) {
-                mendeleyGroup.setWebpage(groupObject.getString(key));
+                builder.setWebpage(reader.nextString());
 
             } else if (key.equals("disciplines")) {
-                JSONArray disciplinesJsonArray = groupObject.getJSONArray(key);
-                ArrayList<String> disciplinesArray = new ArrayList<String>();
-                for (int i = 0; i < disciplinesJsonArray.length(); i++) {
-                    disciplinesArray.add(disciplinesJsonArray.getString(i));
-                }
-                mendeleyGroup.setDisciplines(disciplinesArray);
+                builder.setDisciplines(parseStringList(reader));
 
             } else if (key.equals("photo")) {
-                JSONObject photoObject = groupObject.getJSONObject(key);
-                Photo photo = parsePhoto(photoObject);
-                mendeleyGroup.setPhoto(photo);
+                builder.setPhoto(parsePhoto(reader));
 
+            } else {
+                reader.skipValue();
             }
         }
 
-        return mendeleyGroup.build();
+        reader.endObject();
+        return builder.build();
     }
 
 	/**
 	 * Creating a Document object from a json string
 	 * 
-	 * @param jsonString the json string
+	 * @param reader
 	 * @return the Document object
 	 * @throws JSONException
 	 */
-    public static Document parseDocument(String jsonString) throws JSONException {
-        JSONObject documentObject = new JSONObject(jsonString);
+    public static Document parseDocument(JsonReader reader) throws JSONException, IOException {
 
-		Document.Builder bld = new Document.Builder();
+		final Document.Builder bld = new Document.Builder();
 
-		for (@SuppressWarnings("unchecked")
-             Iterator<String> keysIter = documentObject.keys(); keysIter.hasNext(); ) {
+        reader.beginObject();
+		while (reader.hasNext()) {
 
-			String key = keysIter.next();
+			final String key = reader.nextName();
             if (key.equals("title")) {
-                bld.setTitle(documentObject.getString(key));
+                bld.setTitle(reader.nextString());
 
             } else if (key.equals("type")) {
-                bld.setType(documentObject.getString(key));
+                bld.setType(reader.nextString());
 
             } else if (key.equals("last_modified")) {
-                bld.setLastModified(documentObject.getString(key));
+                bld.setLastModified(reader.nextString());
 
             } else if (key.equals("group_id")) {
-                bld.setGroupId(documentObject.getString(key));
+                bld.setGroupId(reader.nextString());
 
             } else if (key.equals("profile_id")) {
-                bld.setProfileId(documentObject.getString(key));
+                bld.setProfileId(reader.nextString());
 
             } else if (key.equals("read")) {
-                bld.setRead(documentObject.getBoolean(key));
+                bld.setRead(reader.nextBoolean());
 
             } else if (key.equals("starred")) {
-                bld.setStarred(documentObject.getBoolean(key));
+                bld.setStarred(reader.nextBoolean());
 
             } else if (key.equals("authored")) {
-                bld.setAuthored(documentObject.getBoolean(key));
+                bld.setAuthored(reader.nextBoolean());
 
             } else if (key.equals("confirmed")) {
-                bld.setConfirmed(documentObject.getBoolean(key));
+                bld.setConfirmed(reader.nextBoolean());
 
             } else if (key.equals("hidden")) {
-                bld.setHidden(documentObject.getBoolean(key));
+                bld.setHidden(reader.nextBoolean());
 
             } else if (key.equals("id")) {
-                bld.setId(documentObject.getString(key));
+                bld.setId(reader.nextString());
 
             } else if (key.equals("month")) {
-                bld.setMonth(documentObject.getInt(key));
+                bld.setMonth(reader.nextInt());
 
             } else if (key.equals("year")) {
-                bld.setYear(documentObject.getInt(key));
+                bld.setYear(reader.nextInt());
 
             } else if (key.equals("day")) {
-                bld.setDay(documentObject.getInt(key));
+                bld.setDay(reader.nextInt());
 
             } else if (key.equals("source")) {
-                bld.setSource(documentObject.getString(key));
+                bld.setSource(reader.nextString());
 
             } else if (key.equals("revision")) {
-                bld.setRevision(documentObject.getString(key));
+                bld.setRevision(reader.nextString());
 
             } else if (key.equals("created")) {
-                bld.setCreated(documentObject.getString(key));
+                bld.setCreated(reader.nextString());
 
             } else if (key.equals("abstract")) {
-                bld.setAbstractString(documentObject.getString(key));
+                bld.setAbstractString(reader.nextString());
 
             } else if (key.equals("pages")) {
-                bld.setPages(documentObject.getString(key));
+                bld.setPages(reader.nextString());
 
             } else if (key.equals("volume")) {
-                bld.setVolume(documentObject.getString(key));
+                bld.setVolume(reader.nextString());
 
             } else if (key.equals("issue")) {
-                bld.setIssue(documentObject.getString(key));
+                bld.setIssue(reader.nextString());
 
             } else if (key.equals("publisher")) {
-                bld.setPublisher(documentObject.getString(key));
+                bld.setPublisher(reader.nextString());
 
             } else if (key.equals("city")) {
-                bld.setCity(documentObject.getString(key));
+                bld.setCity(reader.nextString());
 
             } else if (key.equals("edition")) {
-                bld.setEdition(documentObject.getString(key));
+                bld.setEdition(reader.nextString());
 
             } else if (key.equals("institution")) {
-                bld.setInstitution(documentObject.getString(key));
+                bld.setInstitution(reader.nextString());
 
             } else if (key.equals("series")) {
-                bld.setSeries(documentObject.getString(key));
+                bld.setSeries(reader.nextString());
 
             } else if (key.equals("chapter")) {
-                bld.setChapter(documentObject.getString(key));
+                bld.setChapter(reader.nextString());
 
             } else if (key.equals("client_data")) {
-                bld.setClientData(documentObject.getString(key));
+                bld.setClientData(reader.nextString());
 
             } else if (key.equals("unique_id")) {
-                bld.setUniqueId(documentObject.getString(key));
+                bld.setUniqueId(reader.nextString());
 
             } else if (key.equals("authors")) {
-                final JSONArray authors = documentObject.getJSONArray(key);
-                final ArrayList<Person> authorsList = parsePersons(authors);
-
-                bld.setAuthors(authorsList);
+                bld.setAuthors(parsePersons(reader));
 
             } else if (key.equals("editors")) {
-                JSONArray editors = documentObject.getJSONArray(key);
-                ArrayList<Person> editorsList = new ArrayList<Person>();
-
-                for (int i = 0; i < editors.length(); i++) {
-                    Person editor = new Person(
-                            editors.getJSONObject(i).optString("first_name"),
-                            editors.getJSONObject(i).getString("last_name"));
-                    editorsList.add(editor);
-                }
-
-                bld.setEditors(editorsList);
+                bld.setEditors(parsePersons(reader));
 
             } else if (key.equals("identifiers")) {
-                JSONObject identifiersObject = documentObject.getJSONObject(key);
-                HashMap<String, String> identifiersMap = new HashMap<String, String>();
-
-                for (@SuppressWarnings("unchecked") Iterator<String> identifierIter =
-                             identifiersObject.keys(); identifierIter.hasNext(); ) {
-
-                    String identifierKey = identifierIter.next();
-                    identifiersMap.put(identifierKey, identifiersObject.getString(identifierKey));
-                }
-
-                bld.setIdentifiers(identifiersMap);
-
+                bld.setIdentifiers(parseStringMap(reader));
             } else if (key.equals("tags")) {
-                JSONArray tags = documentObject.getJSONArray(key);
-                ArrayList<String> tagsList = new ArrayList<String>();
-
-                for (int i = 0; i < tags.length(); i++) {
-                    tagsList.add(tags.getString(i));
-                }
-
-                bld.setTags(tagsList);
+                bld.setTags(parseStringList(reader));
 
             } else if (key.equals("accessed")) {
-                bld.setAccessed(documentObject.getString(key));
+                bld.setAccessed(reader.nextString());
 
             } else if (key.equals("file_attached")) {
-                bld.setFileAttached(documentObject.getBoolean(key));
+                bld.setFileAttached(reader.nextBoolean());
 
             } else if (key.equals("keywords")) {
-                JSONArray keywords = documentObject.getJSONArray(key);
-                ArrayList<String> keywordsList = new ArrayList<String>();
-
-                for (int i = 0; i < keywords.length(); i++) {
-                    keywordsList.add(keywords.getString(i));
-                }
-
-                bld.setKeywords(keywordsList);
+                bld.setKeywords(parseStringList(reader));
 
             } else if (key.equals("websites")) {
-                JSONArray websites = documentObject.getJSONArray(key);
-                ArrayList<String> websitesList = new ArrayList<String>();
-
-                for (int i = 0; i < websites.length(); i++) {
-                    websitesList.add(websites.getString(i));
-                }
-                bld.setWebsites(websitesList);
-
+                bld.setWebsites(parseStringList(reader));
+            } else {
+                reader.skipValue();
             }
 		}
+
+        reader.endObject();
 
 		return bld.build();
 	}
 
-    public static ArrayList<Person> parsePersons(JSONArray authors) throws JSONException {
+
+
+    private static List<String> parseStringList(JsonReader reader) throws IOException {
+        List<String> list = new LinkedList<String>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            list.add(reader.nextString());
+        }
+        reader.endArray();
+        return list;
+    }
+
+    private static Map<String, String> parseStringMap(JsonReader reader) throws IOException {
+        Map<String, String> map = new HashMap<>();
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            map.put(reader.nextName(), reader.nextString());
+        }
+        reader.endObject();
+        return map;
+    }
+
+    public static ArrayList<Person> parsePersons(JsonReader reader) throws JSONException, IOException {
         final ArrayList<Person> authorsList = new ArrayList<Person>();
 
-        for (int i = 0; i < authors.length(); i++) {
-            final Person author = new Person(
-                    authors.getJSONObject(i).optString("first_name"),
-                    authors.getJSONObject(i).getString("last_name"));
+        reader.beginArray();
+        while (reader.hasNext()) {
+            final Person author = parsePerson(reader);
             authorsList.add(author);
         }
+        reader.endArray();
         return authorsList;
+    }
+
+    private static Person parsePerson(JsonReader reader) throws IOException {
+        reader.beginObject();
+
+        String authorName = null;
+        String authorLastName = null;
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if ("first_name".equals(key)) {
+                authorName = reader.nextString();
+            } else if ("last_name".equals(key)) {
+                authorLastName = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return new Person(authorName, authorLastName);
     }
 
     /**
 	 * Creating a list of File objects from a json string
 	 * 
-	 * @param jsonString the json string
+	 * @param reader
 	 * @return the list of File objects
 	 * @throws JSONException
 	 */
-    public static List<File> parseFileList(String jsonString) throws JSONException {
+    public static List<File> parseFileList(JsonReader reader) throws JSONException, IOException {
 		
-		List<File> files = new ArrayList<File>();
+		final List<File> files = new ArrayList<File>();
 		
-		JSONArray jsonarray = new JSONArray(jsonString);
+		reader.beginArray();
 		
-		for (int i = 0; i < jsonarray.length(); i++) {
-			files.add(parseFile(jsonarray.getString(i)));
+		while (reader.hasNext()) {
+			files.add(parseFile(reader));
 		}
-		
+
+        reader.endArray();
+
 		return files;
 	}
 	
 	/**
 	 *  Creating a list of Document objects from a json string
 	 * 
-	 * @param jsonString the json string
+	 * @param reader
 	 * @return the list of Document objects
 	 * @throws JSONException
 	 */
-    public static List<Document> parseDocumentList(String jsonString) throws JSONException {
+    public static List<Document> parseDocumentList(JsonReader reader) throws JSONException, IOException {
+        final List<Document> documents = new ArrayList<Document>();
+        reader.beginArray();
 
-        List<Document> documents = new ArrayList<Document>();
-
-        JSONArray jsonarray = new JSONArray(jsonString);
-
-        for (int i = 0; i < jsonarray.length(); i++) {
-            documents.add(parseDocument(jsonarray.getString(i)));
+        while (reader.hasNext()) {
+            documents.add(parseDocument(reader));
         }
 
+        reader.endArray();
         return documents;
     }
 
-    public static List<Annotation> parseAnnotationList(String jsonString) throws JSONException {
-        List<Annotation> annotations = new ArrayList<Annotation>();
-        JSONArray jsonarray = new JSONArray(jsonString);
+    public static List<Annotation> parseAnnotationList(JsonReader reader) throws JSONException, IOException {
+        final List<Annotation> annotations = new ArrayList<Annotation>();
+        reader.beginArray();
 
-        for (int i = 0; i < jsonarray.length(); i++) {
-            annotations.add(parseAnnotation(jsonarray.getString(i)));
+        while (reader.hasNext()) {
+            annotations.add(parseAnnotation(reader));
         }
+
+        reader.endArray();
         return annotations;
     }
 
     /**
      *  Creating a list of UserRole objects from a json string
      *
-     * @param jsonString the json string
+     * @param reader
      * @return the list of UserRole objects
      * @throws JSONException
      */
-    public static List<UserRole> parseUserRoleList(String jsonString) throws JSONException {
+    public static List<UserRole> parseUserRoleList(JsonReader reader) throws JSONException, IOException {
+        final List<UserRole> userRoles = new ArrayList<UserRole>();
+        reader.beginArray();
 
-        List<UserRole> userRoles = new ArrayList<UserRole>();
-
-        JSONArray jsonarray = new JSONArray(jsonString);
-
-        for (int i = 0; i < jsonarray.length(); i++) {
-            userRoles.add(parseUserRole(jsonarray.getString(i)));
+        while (reader.hasNext()) {
+            userRoles.add(parseUserRole(reader));
         }
 
+        reader.endArray();
         return userRoles;
     }
 
     /**
      *  Creating a list of Group objects from a json string
      *
-     * @param jsonString the json string
+     * @param reader
      * @return the list of Group objects
      * @throws JSONException
      */
-    public static List<Group> parseGroupList(String jsonString) throws JSONException {
+    public static List<Group> parseGroupList(JsonReader reader) throws JSONException, IOException {
+        final List<Group> groups = new ArrayList<Group>();
+        reader.beginArray();
 
-        List<Group> groups = new ArrayList<Group>();
-
-        JSONArray jsonarray = new JSONArray(jsonString);
-
-        for (int i = 0; i < jsonarray.length(); i++) {
-            groups.add(parseGroup(jsonarray.getString(i)));
+        while (reader.hasNext()) {
+            groups.add(parseGroup(reader));
         }
 
+        reader.endArray();
         return groups;
     }
 
     /**
      * Creating a list of {@link ReadPosition} from a JSON string
      *
-     * @param jsonString the json string
+     * @param reader
      * @return the list of objects
      * @throws JSONException
      */
-    public static List<ReadPosition> parseReadPositionList(String jsonString) throws JSONException, ParseException {
+    public static List<ReadPosition> parseReadPositionList(JsonReader reader) throws JSONException, ParseException, IOException {
+        final List<ReadPosition> readPositions = new LinkedList<>();
 
-        List<ReadPosition> readPositions = new LinkedList<>();
-
-        JSONArray jsonarray = new JSONArray(jsonString);
-
-        for (int i = 0; i < jsonarray.length(); i++) {
-            readPositions.add(parseReadPosition(jsonarray.getString(i)));
+        reader.beginArray();
+        while (reader.hasNext()) {
+            readPositions.add(parseReadPosition(reader));
         }
-
+        reader.endArray();
         return readPositions;
     }
 
     /**
      * Creating a {@link ReadPosition} from a JSON string
      *
-     * @param jsonString the json string
+     * @param reader
      * @return the list of objects
      * @throws JSONException
      */
-    public static ReadPosition parseReadPosition(String jsonString) throws JSONException, ParseException {
-        JSONObject jsonObject = new JSONObject(jsonString);
+    public static ReadPosition parseReadPosition(JsonReader reader) throws JSONException, ParseException, IOException {
+        final ReadPosition.Builder bld = new ReadPosition.Builder();
+        reader.beginObject();
 
-        ReadPosition.Builder bld = new ReadPosition.Builder();
-
-        for (@SuppressWarnings("unchecked") Iterator<String> keysIter = jsonObject.keys(); keysIter.hasNext();) {
-            String key = keysIter.next();
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
 
             if (key.equals("id")) {
-                bld.setId(jsonObject.getString(key));
+                bld.setId(reader.nextString());
 
             } else if (key.equals("file_id")) {
-                bld.setFileId(jsonObject.getString(key));
+                bld.setFileId(reader.nextString());
 
             } else if (key.equals("page")) {
-                bld.setPage(jsonObject.getInt(key));
+                bld.setPage(reader.nextInt());
 
             } else if (key.equals("vertical_position")) {
-                bld.setVerticalPosition(jsonObject.getInt(key));
+                bld.setVerticalPosition(reader.nextInt());
 
             } else if (key.equals("date")) {
-                bld.setDate(DateUtils.parseMendeleyApiTimestamp(jsonObject.getString(key)));
+                bld.setDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
+            } else {
+                reader.skipValue();
             }
         }
 
+        reader.endObject();
         return bld.build();
     }
 
@@ -1092,15 +1199,35 @@ public class JsonParser {
         return jsonObject.toString();
     }
 
-    public static List<String> parseApplicationFeatures(String jsonString) throws JSONException {
-        List<String> featureList = new LinkedList<String>();
+    public static List<String> parseApplicationFeatures(JsonReader reader) throws JSONException, IOException {
+        final List<String> featureList = new LinkedList<String>();
 
-        JSONArray jsonarray = new JSONArray(jsonString);
+        reader.beginArray();
 
-        for (int i = 0; i < jsonarray.length(); i++) {
-            JSONObject jsonObject = jsonarray.getJSONObject(i);
-            featureList.add(jsonObject.getString("name"));
+        while (reader.hasNext()) {
+            featureList.add(parseApplicationFeature(reader));
         }
+
+        reader.endArray();
         return featureList;
+    }
+
+    private static String parseApplicationFeature(JsonReader reader) throws IOException {
+        reader.beginObject();
+
+        String featureName = null;
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+
+            if (key.equals("name")) {
+                featureName = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return featureName;
     }
 }

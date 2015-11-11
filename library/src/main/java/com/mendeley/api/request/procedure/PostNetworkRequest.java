@@ -72,5 +72,5 @@ public abstract class PostNetworkRequest<ResultType> extends NetworkRequest<Resu
 
     protected abstract String obtainJsonToPost() throws JSONException;
 
-    protected abstract ResultType parseJsonString(String jsonString) throws JSONException, ParseException;
+    protected abstract ResultType parseJsonString(String jsonString) throws JSONException, ParseException, IOException;
 }

@@ -3,10 +3,6 @@ package com.mendeley.api.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.ReasonPhraseCatalog;
-
-import com.mendeley.api.model.Education.Builder;
-
 /**
  * Model class representing profile json object.
  *
@@ -31,7 +27,7 @@ public class Profile {
 	public final Photo photo;
 	
 	public final List<Education> education;
-	public final ArrayList<Employment> employment;
+	public final List<Employment> employment;
 	
 	public Profile(
 			String location,
@@ -50,7 +46,7 @@ public class Profile {
 			Discipline discipline,
 			Photo photo,
 			List<Education> education,
-			ArrayList<Employment> employment) {
+			List<Employment> employment) {
 		this.location = location;
 		this.id = id;
 		this.displayName = displayName;
@@ -120,7 +116,7 @@ public class Profile {
 		private Discipline discipline;
 		private Photo photo;		
 		private List<Education> education;
-		private ArrayList<Employment> employment;	
+		private List<Employment> employment;
 		
 		public Builder() {}
 
@@ -224,7 +220,7 @@ public class Profile {
 			return this;
 		}
 		
-		public Builder setEmployment(ArrayList<Employment> employment) {
+		public Builder setEmployment(List<Employment> employment) {
 			this.employment = employment;
 			return this;
 		}		

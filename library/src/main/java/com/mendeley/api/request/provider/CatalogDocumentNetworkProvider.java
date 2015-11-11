@@ -1,15 +1,20 @@
 package com.mendeley.api.request.provider;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
 import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
 import com.mendeley.api.request.params.View;
+import com.mendeley.api.request.procedure.GetNetworkRequest;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -100,8 +105,9 @@ public class CatalogDocumentNetworkProvider {
         }
 
         @Override
-        protected List<Document> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocumentList(jsonString);
+        protected List<Document> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocumentList(reader);
         }
     }
 
@@ -111,8 +117,9 @@ public class CatalogDocumentNetworkProvider {
         }
 
         @Override
-        protected Document parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocument(jsonString);
+        protected Document parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocument(reader);
         }
     }
 }

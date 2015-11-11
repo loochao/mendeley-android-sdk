@@ -25,8 +25,7 @@ public class Folder {
         private String groupId;
         private String added;
 
-        public Builder(String name) {
-            this.name = name;
+        public Builder() {
         }
 
         public Builder(Folder folder) {

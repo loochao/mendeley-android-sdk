@@ -74,5 +74,5 @@ public abstract class PatchNetworkRequest<ResultType> extends NetworkRequest<Res
 
     protected abstract String obtainJsonToPost() throws JSONException;
 
-    protected abstract ResultType processJsonString(String jsonString) throws JSONException;
+    protected abstract ResultType processJsonString(String jsonString) throws JSONException, IOException;
 }

@@ -1,5 +1,7 @@
 package com.mendeley.api.request.provider;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
@@ -14,8 +16,10 @@ import com.mendeley.api.request.procedure.Request;
 import org.json.JSONException;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -24,7 +28,6 @@ import java.util.List;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
 import static com.mendeley.api.request.NetworkUtils.getConnection;
-import static com.mendeley.api.request.NetworkUtils.readInputStream;
 
 /**
  * NetworkProvider class for Recently read API calls
@@ -68,8 +71,9 @@ public class RecentlyReadNetworkProvider {
         }
 
         @Override
-        protected List<ReadPosition> parseJsonString(String jsonString) throws JSONException, ParseException {
-            return JsonParser.parseReadPositionList(jsonString);
+        protected List<ReadPosition> parseJsonString(String jsonString) throws JSONException, ParseException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseReadPositionList(reader);
         }
     }
 
@@ -112,9 +116,9 @@ public class RecentlyReadNetworkProvider {
                     throw HttpResponseException.create(con);
                 } else {
                     is = con.getInputStream();
-                    String responseString = readInputStream(is);
                     // FIXME passing null as server date
-                    return new RequestResponse<ReadPosition>(JsonParser.parseReadPosition(responseString), null);
+                    final JsonReader reader = new JsonReader(new InputStreamReader(is));
+                    return new RequestResponse<ReadPosition>(JsonParser.parseReadPosition(reader), null);
                 }
             } catch (ParseException pe) {
                 throw new MendeleyException("Could not parse response for " + url, pe);

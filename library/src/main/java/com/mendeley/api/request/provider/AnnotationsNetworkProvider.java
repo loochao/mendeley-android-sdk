@@ -1,5 +1,7 @@
 package com.mendeley.api.request.provider;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
@@ -11,6 +13,9 @@ import com.mendeley.api.request.params.AnnotationRequestParameters;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -82,8 +87,9 @@ public class AnnotationsNetworkProvider {
         }
 
         @Override
-        protected Annotation parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseAnnotation(jsonString);
+        protected Annotation parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseAnnotation(reader);
         }
     }
 
@@ -93,8 +99,9 @@ public class AnnotationsNetworkProvider {
         }
 
         @Override
-        protected List<Annotation> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseAnnotationList(jsonString);
+        protected List<Annotation> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseAnnotationList(reader);
         }
    }
 
@@ -112,8 +119,9 @@ public class AnnotationsNetworkProvider {
         }
 
         @Override
-        protected Annotation parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseAnnotation(jsonString);
+        protected Annotation parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseAnnotation(reader);
         }
     }
 
@@ -135,8 +143,9 @@ public class AnnotationsNetworkProvider {
         }
 
         @Override
-        protected Annotation processJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseAnnotation(jsonString);
+        protected Annotation processJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseAnnotation(reader);
         }
     }
 }

@@ -1,11 +1,16 @@
 package com.mendeley.api.request.procedure;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.request.JsonParser;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.List;
 
@@ -20,8 +25,9 @@ public class ApplicationFeaturesNetworkProvider {
         }
 
         @Override
-        protected List<String> parseJsonString(String jsonString) throws JSONException, ParseException {
-            return JsonParser.parseApplicationFeatures(jsonString);
+        protected List<String> parseJsonString(String jsonString) throws JSONException, ParseException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseApplicationFeatures(reader);
         }
     }
 }

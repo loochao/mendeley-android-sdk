@@ -207,14 +207,16 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
     }
 
     private Folder createParentFolder() {
-        Folder folder = new Folder.Builder("parent folder" + getRandom().nextInt())
+        Folder folder = new Folder.Builder()
+                .setName("parent folder" + getRandom().nextInt())
                 .build();
 
         return folder;
     }
 
     private Folder createSubFolder(String parentFolderId) {
-        Folder folder = new Folder.Builder("sub folder" + getRandom().nextInt())
+        Folder folder = new Folder.Builder()
+                .setName("sub folder" + getRandom().nextInt())
                 .setParentId(parentFolderId)
                 .build();
 

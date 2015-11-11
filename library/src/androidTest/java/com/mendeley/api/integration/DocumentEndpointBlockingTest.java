@@ -12,7 +12,6 @@ import com.mendeley.api.util.DateUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -162,7 +161,6 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
 
     public void test_patchDocument_updatesTheDocumentFromServer() throws Exception {
         // GIVEN ine document in the server
-        Date date = getServerDate();
         final Document docBefore = setUpDocumentsInServer(1).get(0);
 
         // WHEN patching in
@@ -174,7 +172,7 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
                 .build();
 
 
-        final Document returnedDoc = getSdk().patchDocument(docPatching.id, date, docPatching).run().resource;
+        final Document returnedDoc = getSdk().patchDocument(docPatching.id, null, docPatching).run().resource;
 
         // THEN we receive the patched document
         AssertUtils.assertDocument(docPatching, returnedDoc);
@@ -186,7 +184,6 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
 
     public void test_patchDocument_withStrangeCharacters_updatesTheDocumentFromServer() throws Exception {
         // GIVEN ine document in the server
-        Date date = getServerDate();
         final Document docBefore = setUpDocumentsInServer(1).get(0);
 
         // WHEN patching in
@@ -198,7 +195,7 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
                 .build();
 
 
-        final Document returnedDoc = getSdk().patchDocument(docPatching.id, date, docPatching).run().resource;
+        final Document returnedDoc = getSdk().patchDocument(docPatching.id, null, docPatching).run().resource;
 
         // THEN we receive the patched document
         AssertUtils.assertDocument(docPatching, returnedDoc);

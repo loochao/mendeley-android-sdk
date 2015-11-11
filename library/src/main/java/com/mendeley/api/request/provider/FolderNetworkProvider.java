@@ -1,5 +1,7 @@
 package com.mendeley.api.request.provider;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.DocumentId;
@@ -13,6 +15,9 @@ import com.mendeley.api.request.params.FolderRequestParameters;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
@@ -127,8 +132,9 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected List<Folder> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseFolderList(jsonString);
+        protected List<Folder> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseFolderList(reader);
         }
     }
 
@@ -138,8 +144,9 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected Folder parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseFolder(jsonString);
+        protected Folder parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseFolder(reader);
         }
     }
 
@@ -157,8 +164,9 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected Folder parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseFolder(jsonString);
+        protected Folder parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseFolder(reader);
         }
     }
 
@@ -176,8 +184,9 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected Folder processJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseFolder(jsonString);
+        protected Folder processJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseFolder(reader);
         }
     }
 
@@ -201,8 +210,9 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected List<DocumentId> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocumentIds(jsonString);
+        protected List<DocumentId> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocumentIds(reader);
         }
     }
 }

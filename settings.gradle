@@ -3,5 +3,5 @@
 include ':library'
 project( ':library' ).projectDir = new File(settingsDir, 'library' )
 
-include ':example'
-project( ':example' ).projectDir = new File(settingsDir, 'example' )
+//include ':example'
+//project( ':example' ).projectDir = new File(settingsDir, 'example' )

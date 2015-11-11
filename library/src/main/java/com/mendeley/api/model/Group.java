@@ -1,6 +1,7 @@
 package com.mendeley.api.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Model class representing Group json object.
@@ -70,9 +71,9 @@ public class Group {
     public final AccessLevel accessLevel;
     public final String name;
     public final String description;
-    public final ArrayList<String> tags;
+    public final List<String> tags;
     public final String webpage;
-    public final ArrayList<String> disciplines;
+    public final List<String> disciplines;
     public final Photo photo;
 
     private Group(
@@ -84,9 +85,9 @@ public class Group {
             AccessLevel accessLevel,
             String name,
             String description,
-            ArrayList<String> tags,
+            List<String> tags,
             String webpage,
-            ArrayList<String> disciplines,
+            List<String> disciplines,
             Photo photo) {
         this.id = id;
         this.created = created;
@@ -111,9 +112,9 @@ public class Group {
             private AccessLevel accessLevel;
             private String name;
             private String description;
-            private ArrayList<String> tags;
+            private List<String> tags;
             private String webpage;
-            private ArrayList<String> disciplines;
+            private List<String> disciplines;
             private Photo photo;
 
         public Builder() {}
@@ -173,7 +174,7 @@ public class Group {
             return this;
         }
 
-        public Builder setTags(ArrayList<String> tags) {
+        public Builder setTags(List<String> tags) {
             this.tags = tags;
             return this;
         }
@@ -183,7 +184,7 @@ public class Group {
             return this;
         }
 
-        public Builder setDisciplines(ArrayList<String> disciplines) {
+        public Builder setDisciplines(List<String> disciplines) {
             this.disciplines = disciplines;
             return this;
         }

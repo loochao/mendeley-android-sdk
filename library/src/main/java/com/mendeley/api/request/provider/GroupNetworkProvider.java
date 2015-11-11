@@ -1,15 +1,20 @@
 package com.mendeley.api.request.provider;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
 import com.mendeley.api.request.params.GroupRequestParameters;
+import com.mendeley.api.request.procedure.GetNetworkRequest;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
@@ -81,8 +86,9 @@ public class GroupNetworkProvider {
         }
 
         @Override
-        protected List<Group> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseGroupList(jsonString);
+        protected List<Group> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseGroupList(reader);
         }
     }
 
@@ -92,8 +98,9 @@ public class GroupNetworkProvider {
         }
 
         @Override
-        protected Group parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseGroup(jsonString);
+        protected Group parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseGroup(reader);
         }
     }
 
@@ -103,8 +110,9 @@ public class GroupNetworkProvider {
         }
 
         @Override
-        protected List<UserRole> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseUserRoleList(jsonString);
+        protected List<UserRole> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseUserRoleList(reader);
         }
     }
 }

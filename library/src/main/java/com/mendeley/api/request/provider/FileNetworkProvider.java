@@ -1,16 +1,20 @@
 package com.mendeley.api.request.provider;
 
 import android.os.AsyncTask;
+import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.File;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
 import com.mendeley.api.request.params.FileRequestParameters;
+import com.mendeley.api.request.procedure.GetNetworkRequest;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -102,8 +106,9 @@ public class FileNetworkProvider {
         }
 
         @Override
-        protected List<File> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseFileList(jsonString);
+        protected List<File> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseFileList(reader);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.mendeley.api.request.provider;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
@@ -13,6 +15,9 @@ import com.mendeley.api.request.procedure.PostNetworkRequest;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -173,8 +178,9 @@ public class DocumentNetworkProvider {
         }
 
         @Override
-        protected List<Document> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocumentList(jsonString);
+        protected List<Document> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocumentList(reader);
         }
    }
 
@@ -184,8 +190,9 @@ public class DocumentNetworkProvider {
         }
 
         @Override
-        protected List<DocumentId> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocumentIds(jsonString);
+        protected List<DocumentId> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocumentIds(reader);
         }
     }
 
@@ -196,8 +203,9 @@ public class DocumentNetworkProvider {
         }
 
         @Override
-        protected Document parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocument(jsonString);
+        protected Document parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocument(reader);
         }
     }
 
@@ -206,8 +214,9 @@ public class DocumentNetworkProvider {
             super(url, "application/vnd.mendeley-document-type.1+json", authTokenManager, clientCredentials);
         }
 
-        protected Map<String, String> parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocumentTypes(jsonString);
+        protected Map<String, String> parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocumentTypes(reader);
         }
     }
 
@@ -226,8 +235,9 @@ public class DocumentNetworkProvider {
         }
 
         @Override
-        protected Document parseJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocument(jsonString);
+        protected Document parseJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocument(reader);
         }
     }
 
@@ -245,8 +255,9 @@ public class DocumentNetworkProvider {
         }
 
         @Override
-        protected Document processJsonString(String jsonString) throws JSONException {
-            return JsonParser.parseDocument(jsonString);
+        protected Document processJsonString(String jsonString) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+            return JsonParser.parseDocument(reader);
         }
     }
 }

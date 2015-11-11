@@ -1,5 +1,7 @@
 package com.mendeley.api.request.procedure;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
@@ -15,11 +17,11 @@ import org.json.JSONException;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
 import static com.mendeley.api.request.NetworkUtils.getConnection;
-import static com.mendeley.api.request.NetworkUtils.readInputStream;
 
 public class PostFileNetworkRequest extends NetworkRequest<File> {
     private final String contentType;
@@ -76,7 +78,8 @@ public class PostFileNetworkRequest extends NetworkRequest<File> {
                 throw HttpResponseException.create(con);
             } else {
                 is = con.getInputStream();
-                return new RequestResponse<File>(JsonParser.parseFile(readInputStream(is)), serverDate);
+                final JsonReader reader = new JsonReader(new InputStreamReader(is));
+                return new RequestResponse<File>(JsonParser.parseFile(reader), serverDate);
             }
         } catch (ParseException pe) {
             throw new JsonParsingException("Could not post file" + filesUrl, pe);

@@ -1,9 +1,11 @@
 package com.mendeley.api.testUtils;
 
+import android.util.JsonReader;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.BuildConfig;
-import com.mendeley.api.impl.RequestsFactory;
 import com.mendeley.api.exceptions.MendeleyException;
+import com.mendeley.api.impl.RequestsFactory;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
@@ -21,6 +23,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -153,9 +156,8 @@ public class TestAccountSetupUtils{
                 throw new Exception("Invalid response code posting recently read position: " + responseCode + " " + con.getResponseMessage());
             }
 
-            String responseString = NetworkUtils.readInputStream(con.getInputStream());
-
-            return JsonParser.parseReadPosition(responseString);
+            final JsonReader reader = new JsonReader(new InputStreamReader(con.getInputStream()));
+            return JsonParser.parseReadPosition(reader);
         } finally {
             try {
                 if (con != null) {
@@ -192,9 +194,8 @@ public class TestAccountSetupUtils{
                 throw new Exception("Invalid response code getting recently read position: " + responseCode + " " + con.getResponseMessage());
             }
 
-            String responseString = NetworkUtils.readInputStream(con.getInputStream());
-
-            return JsonParser.parseReadPositionList(responseString);
+            final JsonReader reader = new JsonReader(new InputStreamReader(con.getInputStream()));
+            return JsonParser.parseReadPositionList(reader);
         } finally {
             try {
                 if (con != null) {
