@@ -15,8 +15,8 @@ import com.mendeley.api.request.procedure.Request;
 
 import org.json.JSONException;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -71,8 +71,8 @@ public class RecentlyReadNetworkProvider {
         }
 
         @Override
-        protected List<ReadPosition> parseJsonString(String jsonString) throws JSONException, ParseException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<ReadPosition> manageResponse(InputStream is) throws JSONException, ParseException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseReadPositionList(reader);
         }
     }

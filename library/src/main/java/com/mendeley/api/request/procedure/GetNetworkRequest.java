@@ -12,10 +12,10 @@ import com.mendeley.api.model.RequestResponse;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 
 import static com.mendeley.api.request.NetworkUtils.getConnection;
-import static com.mendeley.api.request.NetworkUtils.readInputStream;
 
 /**
  * A NetworkProcedure specialised for making HTTP GET requests.
@@ -42,7 +42,6 @@ public abstract class GetNetworkRequest<ResultType> extends NetworkRequest<Resul
     }
 
     private RequestResponse<ResultType> run(final int currentRetry) throws MendeleyException {
-        String responseString = null;
         try {
             con = getConnection(url, "GET", authTokenManager);
             con.addRequestProperty("Content-type", contentType);
@@ -55,8 +54,7 @@ public abstract class GetNetworkRequest<ResultType> extends NetworkRequest<Resul
 
             getResponseHeaders();
             is = con.getInputStream();
-            responseString = readInputStream(is);
-            return new RequestResponse(parseJsonString(responseString), serverDate, next);
+            return new RequestResponse(manageResponse(is), serverDate, next);
         } catch (MendeleyException me) {
             throw me;
         } catch (ParseException pe) {
@@ -70,13 +68,19 @@ public abstract class GetNetworkRequest<ResultType> extends NetworkRequest<Resul
                 throw new MendeleyException("IO error in GET request " + url + ": " + ioe.toString(), ioe);
             }
         } catch (JSONException e) {
-            throw new JsonParsingException("Passing error in GET request " + url + ": " + e.toString() + ". Response was: " + responseString, e);
+            throw new JsonParsingException("Passing error in GET request " + url + ": " + e.toString(), e);
         } catch (Exception e) {
             throw new MendeleyException("Error in GET request " + url + ": " + e.toString(), e);
         } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
+            }
             closeConnection();
         }
     }
 
-    protected abstract ResultType parseJsonString(String jsonString) throws JSONException, ParseException, IOException;
+    protected abstract ResultType manageResponse(InputStream is) throws JSONException, ParseException, IOException;
 }

@@ -35,7 +35,6 @@ import com.mendeley.api.request.provider.GroupNetworkProvider;
 import com.mendeley.api.request.provider.ProfileNetworkProvider;
 import com.mendeley.api.request.provider.RecentlyReadNetworkProvider;
 import com.mendeley.api.request.provider.TrashNetworkProvider;
-import com.mendeley.api.request.provider.UtilsNetworkProvider;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -71,7 +70,6 @@ public class RequestFactoryImpl implements RequestsFactory {
     protected ProfileNetworkProvider profileNetworkProvider;
     protected FolderNetworkProvider folderNetworkProvider;
     protected GroupNetworkProvider groupNetworkProvider;
-    protected UtilsNetworkProvider utilsNetworkProvider;
     protected TrashNetworkProvider trashNetworkProvider;
     protected AnnotationsNetworkProvider annotationsNetworkProvider;
 
@@ -82,7 +80,6 @@ public class RequestFactoryImpl implements RequestsFactory {
         profileNetworkProvider = new ProfileNetworkProvider();
         folderNetworkProvider = new FolderNetworkProvider();
         groupNetworkProvider = new GroupNetworkProvider();
-        utilsNetworkProvider = new UtilsNetworkProvider();
         trashNetworkProvider = new TrashNetworkProvider();
         annotationsNetworkProvider = new AnnotationsNetworkProvider();
     }

@@ -590,10 +590,7 @@ public class JsonParser {
 		while (reader.hasNext()){
 		  
 			final String key = reader.nextName();
-            if (key.equals("location")) {
-                builder.setLocation(reader.nextString());
-
-            } else if (key.equals("id")) {
+            if (key.equals("id")) {
                 builder.setId(reader.nextString());
 
             } else if (key.equals("display_name")) {
@@ -1171,7 +1168,7 @@ public class JsonParser {
                 bld.setPage(reader.nextInt());
 
             } else if (key.equals("vertical_position")) {
-                bld.setVerticalPosition(reader.nextInt());
+                bld.setVerticalPosition((float)reader.nextDouble());
 
             } else if (key.equals("date")) {
                 bld.setDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));

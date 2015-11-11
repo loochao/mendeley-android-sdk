@@ -12,8 +12,9 @@ import com.mendeley.api.request.procedure.GetNetworkRequest;
 
 import org.json.JSONException;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -106,8 +107,8 @@ public class FileNetworkProvider {
         }
 
         @Override
-        protected List<File> parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<File> manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseFileList(reader);
         }
     }

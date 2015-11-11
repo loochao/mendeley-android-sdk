@@ -10,10 +10,10 @@ public class ReadPosition {
     public final String id;
     public final String fileId;
     public final int page;
-    public final int verticalPosition;
+    public final float verticalPosition;
     public final Date date;
 
-    public ReadPosition(String id, String fileId, int page, int verticalPosition, Date date) {
+    public ReadPosition(String id, String fileId, int page, float verticalPosition, Date date) {
         this.id = id;
         this.fileId = fileId;
         this.page = page;
@@ -29,7 +29,7 @@ public class ReadPosition {
         private String id;
         private String fileId;
         private int page;
-        private int verticalPosition;
+        private float verticalPosition;
         private Date date;
 
         public Builder() {
@@ -58,7 +58,7 @@ public class ReadPosition {
             return this;
         }
 
-        public Builder setVerticalPosition(int verticalPosition) {
+        public Builder setVerticalPosition(float verticalPosition) {
             this.verticalPosition = verticalPosition;
             return this;
         }

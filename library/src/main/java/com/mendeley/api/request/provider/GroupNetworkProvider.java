@@ -12,8 +12,9 @@ import com.mendeley.api.request.procedure.GetNetworkRequest;
 
 import org.json.JSONException;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -86,8 +87,8 @@ public class GroupNetworkProvider {
         }
 
         @Override
-        protected List<Group> parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<Group> manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseGroupList(reader);
         }
     }
@@ -98,8 +99,8 @@ public class GroupNetworkProvider {
         }
 
         @Override
-        protected Group parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected Group manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseGroup(reader);
         }
     }
@@ -110,8 +111,8 @@ public class GroupNetworkProvider {
         }
 
         @Override
-        protected List<UserRole> parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<UserRole> manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseUserRoleList(reader);
         }
     }

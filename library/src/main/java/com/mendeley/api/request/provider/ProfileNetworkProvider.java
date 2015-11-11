@@ -10,8 +10,9 @@ import com.mendeley.api.request.procedure.GetNetworkRequest;
 
 import org.json.JSONException;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
@@ -31,8 +32,8 @@ public class ProfileNetworkProvider {
         }
 
         @Override
-        protected Profile parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected Profile manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseProfile(reader);
         }
     }

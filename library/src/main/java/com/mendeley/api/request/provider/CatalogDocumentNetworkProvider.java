@@ -12,8 +12,9 @@ import com.mendeley.api.request.procedure.GetNetworkRequest;
 
 import org.json.JSONException;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -105,8 +106,8 @@ public class CatalogDocumentNetworkProvider {
         }
 
         @Override
-        protected List<Document> parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<Document> manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentList(reader);
         }
     }
@@ -117,8 +118,8 @@ public class CatalogDocumentNetworkProvider {
         }
 
         @Override
-        protected Document parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected Document manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocument(reader);
         }
     }

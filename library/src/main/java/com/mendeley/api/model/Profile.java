@@ -9,7 +9,6 @@ import java.util.List;
  */
 public class Profile {
 
-	public final String location;
 	public final String id;
 	public final String displayName;
 	public final String userType;
@@ -30,7 +29,6 @@ public class Profile {
 	public final List<Employment> employment;
 	
 	public Profile(
-			String location,
 			String id,
 			String displayName,
 			String userType,
@@ -47,7 +45,7 @@ public class Profile {
 			Photo photo,
 			List<Education> education,
 			List<Employment> employment) {
-		this.location = location;
+
 		this.id = id;
 		this.displayName = displayName;
 		this.userType = userType;
@@ -80,8 +78,7 @@ public class Profile {
 			employmentString = "\n" + e;
 		}
 		
-		return "location: " + location + 
-				", id: " + id + 
+		return " id: " + id +
 				", displayName: " + displayName + 
 				", userType: " + userType + 
 				", url: " + url + 
@@ -100,7 +97,6 @@ public class Profile {
 	} 
 	
 	public static class Builder {
-		private String location;
 		private String id;
 		private String displayName;
 		private String userType;
@@ -121,7 +117,6 @@ public class Profile {
 		public Builder() {}
 
 		public Builder(Profile from) {
-			this.location = from.location;
 			this.id = from.id;
 			this.displayName = from.displayName;
 			this.userType = from.userType;
@@ -138,11 +133,6 @@ public class Profile {
 			this.photo = from.photo;
 			this.education = from.education==null?new ArrayList<Education>():from.education;
 			this.employment = from.employment==null?new ArrayList<Employment>():from.employment;
-		}
-		
-		public Builder setLocation(String location) {
-			this.location = location;
-			return this;
 		}
 		
 		public Builder setId(String id) {
@@ -227,7 +217,6 @@ public class Profile {
 
 		public Profile build() {
 			return new Profile(
-					location,
 					id,
 					displayName,
 					userType,

@@ -7,16 +7,18 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.request.JsonParser;
+import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.procedure.GetNetworkRequest;
 import com.mendeley.api.request.procedure.PatchNetworkRequest;
 import com.mendeley.api.request.procedure.PostNetworkRequest;
 import com.mendeley.api.request.procedure.PostNoResponseNetworkRequest;
-import com.mendeley.api.request.params.FolderRequestParameters;
 
 import org.json.JSONException;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -132,8 +134,8 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected List<Folder> parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<Folder> manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseFolderList(reader);
         }
     }
@@ -144,8 +146,8 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected Folder parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected Folder manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseFolder(reader);
         }
     }
@@ -210,8 +212,8 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected List<DocumentId> parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<DocumentId> manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentIds(reader);
         }
     }

@@ -6,15 +6,17 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.request.JsonParser;
+import com.mendeley.api.request.params.AnnotationRequestParameters;
 import com.mendeley.api.request.procedure.GetNetworkRequest;
 import com.mendeley.api.request.procedure.PatchNetworkRequest;
 import com.mendeley.api.request.procedure.PostNetworkRequest;
-import com.mendeley.api.request.params.AnnotationRequestParameters;
 
 import org.json.JSONException;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -87,8 +89,8 @@ public class AnnotationsNetworkProvider {
         }
 
         @Override
-        protected Annotation parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected Annotation manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseAnnotation(reader);
         }
     }
@@ -99,8 +101,8 @@ public class AnnotationsNetworkProvider {
         }
 
         @Override
-        protected List<Annotation> parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<Annotation> manageResponse(InputStream is) throws JSONException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseAnnotationList(reader);
         }
    }

@@ -8,8 +8,9 @@ import com.mendeley.api.request.JsonParser;
 
 import org.json.JSONException;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.List;
@@ -25,8 +26,8 @@ public class ApplicationFeaturesNetworkProvider {
         }
 
         @Override
-        protected List<String> parseJsonString(String jsonString) throws JSONException, ParseException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected List<String> manageResponse(InputStream is) throws JSONException, ParseException, IOException {
+            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseApplicationFeatures(reader);
         }
     }
