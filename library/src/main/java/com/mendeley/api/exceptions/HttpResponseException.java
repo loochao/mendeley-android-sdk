@@ -18,6 +18,7 @@ public class HttpResponseException extends MendeleyException {
 
     public final String url;
     public final int httpReturnCode;
+    private final String response;
 
     public static HttpResponseException create(HttpURLConnection con) {
         try {
@@ -55,9 +56,10 @@ public class HttpResponseException extends MendeleyException {
 
 
     public HttpResponseException(int httpReturnCode, String message, String url, String response) {
-		super(message + ". " + response);
+		super(message);
         this.url = url;
         this.httpReturnCode = httpReturnCode;
+        this.response = response;
 	}
 
     public HttpResponseException(int httpReturnCode, String message, String url) {
@@ -66,7 +68,11 @@ public class HttpResponseException extends MendeleyException {
 
     @Override
     public String getMessage() {
-        return String.format("%d %s (%s)", httpReturnCode, super.getMessage(), url);
+        return String.format("%d %s (%s)", httpReturnCode, super.getMessage() + ". " + response, url);
+    }
+
+    public String getResponse() {
+        return response;
     }
 
 
