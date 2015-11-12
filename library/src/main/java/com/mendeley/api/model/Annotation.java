@@ -1,5 +1,8 @@
 package com.mendeley.api.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.mendeley.api.util.NullableList;
 
 import java.util.List;
@@ -46,7 +49,7 @@ public class Annotation {
     public final Integer color;
     public final String text;
     public final String profileId;
-    public final NullableList<Box> positions;
+    public final NullableList<Position> positions;
     public final String created;
     public final String lastModified;
     public final PrivacyLevel privacyLevel;
@@ -60,7 +63,7 @@ public class Annotation {
             Integer color,
             String text,
             String profileId,
-            List<Box> positions,
+            List<Position> positions,
             String created,
             String lastModified,
             PrivacyLevel privacyLevel,
@@ -72,7 +75,7 @@ public class Annotation {
         this.color = color;
         this.text = text;
         this.profileId = profileId;
-        this.positions = new NullableList<Box>(positions);
+        this.positions = new NullableList<Position>(positions);
         this.created = created;
         this.lastModified = lastModified;
         this.privacyLevel = privacyLevel;
@@ -125,7 +128,7 @@ public class Annotation {
         private Integer color;
         private String text;
         private String profileId;
-        private List<Box> positions;
+        private List<Position> positions;
         private String created;
         private String lastModified;
         private PrivacyLevel privacyLevel;
@@ -180,7 +183,7 @@ public class Annotation {
             return this;
         }
 
-        public Builder setPositions(List<Box> positions) {
+        public Builder setPositions(List<Position> positions) {
             this.positions = positions;
             return this;
         }
@@ -225,5 +228,68 @@ public class Annotation {
                     fileHash,
                     documentId);
         }
+    }
+
+    /**
+     * Page number and coordinates of one {@link Annotation}
+     */
+    public static class Position implements Parcelable {
+        public final Point topLeft;
+        public final Point bottomRight;
+        public final Integer page;
+
+        public Position(Point topLeft, Point bottomRight, Integer page) {
+            this.topLeft = topLeft;
+            this.bottomRight = bottomRight;
+            this.page = page;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Position position = (Position) o;
+
+            if (bottomRight != null ? !bottomRight.equals(position.bottomRight) : position.bottomRight != null)
+                return false;
+            if (page != null ? !page.equals(position.page) : position.page != null) return false;
+            if (topLeft != null ? !topLeft.equals(position.topLeft) : position.topLeft != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = topLeft != null ? topLeft.hashCode() : 0;
+            result = 31 * result + (bottomRight != null ? bottomRight.hashCode() : 0);
+            result = 31 * result + (page != null ? page.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeDouble(topLeft.x);
+            dest.writeDouble(topLeft.y);
+            dest.writeDouble(bottomRight.x);
+            dest.writeDouble(bottomRight.y);
+            dest.writeInt(page);
+        }
+
+        public static final Creator<Position> CREATOR = new Creator<Position>() {
+            public Position createFromParcel(Parcel in) {
+                return new Position(new Point(in.readDouble(), in.readDouble()), new Point(in.readDouble(), in.readDouble()), in.readInt());
+            }
+
+            public Position[] newArray(int size) {
+                return new Position[size];
+            }
+        };
+
     }
 }

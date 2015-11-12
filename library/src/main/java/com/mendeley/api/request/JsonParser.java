@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.util.JsonReader;
 
 import com.mendeley.api.model.Annotation;
-import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Discipline;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Education;
@@ -57,8 +56,8 @@ public class JsonParser {
         if (!annotation.positions.isNull()) {
             JSONArray positions = new JSONArray();
             for (int i = 0; i < annotation.positions.size(); i++) {
-                Box box = annotation.positions.get(i);
-                positions.put(i, serializeBox(box));
+                Annotation.Position position = annotation.positions.get(i);
+                positions.put(i, serializePosition(position));
             }
             jAnnotation.put("positions", positions);
         }
@@ -82,25 +81,25 @@ public class JsonParser {
         return jColor;
     }
 
-    private static JSONObject serializeBox(Box box) throws JSONException {
+    private static JSONObject serializePosition(Annotation.Position position) throws JSONException {
         JSONObject topLeft = null;
         JSONObject bottomRight = null;
 
-        if (box.topLeft != null) {
+        if (position.topLeft != null) {
             topLeft = new JSONObject();
-            topLeft.put("x", box.topLeft.x);
-            topLeft.put("y", box.topLeft.y);
+            topLeft.put("x", position.topLeft.x);
+            topLeft.put("y", position.topLeft.y);
         }
-        if (box.bottomRight != null) {
+        if (position.bottomRight != null) {
             bottomRight = new JSONObject();
-            bottomRight.put("x", box.bottomRight.x);
-            bottomRight.put("y", box.bottomRight.y);
+            bottomRight.put("x", position.bottomRight.x);
+            bottomRight.put("y", position.bottomRight.y);
         }
 
         JSONObject bbox = new JSONObject();
         bbox.put("top_left", topLeft);
         bbox.put("bottom_right", bottomRight);
-        bbox.put("page", box.page);
+        bbox.put("page", position.page);
         return bbox;
     }
 
@@ -466,7 +465,7 @@ public class JsonParser {
                 builder.setProfileId(reader.nextString());
 
             } else if (key.equals("positions")) {
-                builder.setPositions(parseBoundingBoxes(reader));
+                builder.setPositions(parseBoundingPositions(reader));
 
             } else if (key.equals("created")) {
                 builder.setCreated(reader.nextString());
@@ -516,19 +515,19 @@ public class JsonParser {
         return Color.rgb(r, g, b);
     }
 
-    private static List<Box> parseBoundingBoxes(JsonReader reader) throws JSONException, IOException {
-        final List<Box> boxes = new ArrayList<Box>();
+    private static List<Annotation.Position> parseBoundingPositions(JsonReader reader) throws JSONException, IOException {
+        final List<Annotation.Position> positions = new ArrayList<Annotation.Position>();
 
         reader.beginArray();
         while (reader.hasNext()) {
-            boxes.add(parseBox(reader));
+            positions.add(parsePosition(reader));
         }
         reader.endArray();
 
-        return boxes;
+        return positions;
     }
 
-    private static Box parseBox(JsonReader reader) throws JSONException, IOException {
+    private static Annotation.Position parsePosition(JsonReader reader) throws JSONException, IOException {
         Point topLeft = null;
         Point bottomRight = null;
         Integer page = null;
@@ -550,7 +549,7 @@ public class JsonParser {
         }
 
         reader.endObject();
-        return new Box(topLeft, bottomRight, page);
+        return new Annotation.Position(topLeft, bottomRight, page);
     }
 
     private static Point parsePoint(JsonReader reader) throws IOException {

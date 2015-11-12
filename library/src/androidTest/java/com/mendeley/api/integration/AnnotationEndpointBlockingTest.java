@@ -1,7 +1,6 @@
 package com.mendeley.api.integration;
 
 import com.mendeley.api.model.Annotation;
-import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Point;
 import com.mendeley.api.model.RequestResponse;
@@ -174,7 +173,7 @@ public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
                 .setText("text " + getRandom().nextInt())
                 .setType(Annotation.Type.STICKY_NOTE)
                 .setFileHash("hash " + +getRandom().nextInt())
-                .setPositions(Arrays.asList(new Box(new Point(getRandom().nextInt(100), getRandom().nextInt(100)), null, getRandom().nextInt(40))))
+                .setPositions(Arrays.asList(new Annotation.Position(new Point(getRandom().nextInt(100), getRandom().nextInt(100)), null, getRandom().nextInt(40))))
                 .build();
         return annotation;
     }

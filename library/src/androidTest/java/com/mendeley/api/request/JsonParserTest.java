@@ -7,7 +7,6 @@ import android.test.suitebuilder.annotation.SmallTest;
 import android.util.JsonReader;
 
 import com.mendeley.api.model.Annotation;
-import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Discipline;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Education;
@@ -227,8 +226,8 @@ public class JsonParserTest extends InstrumentationTestCase {
 	}
 
     private Annotation getTestAnnotationWithNonNotNullValues() {
-        ArrayList<Box> positions = new ArrayList<Box>();
-        positions.add(new Box(new Point(1, 2), new Point(3, 4), 5));
+        ArrayList<Annotation.Position> positions = new ArrayList<Annotation.Position>();
+        positions.add(new Annotation.Position(new Point(1, 2), new Point(3, 4), 5));
         Integer color = Color.argb(255, 255, 0, 0);
         Annotation.PrivacyLevel privacyLevel = Annotation.PrivacyLevel.PRIVATE;
         Annotation.Type type = Annotation.Type.HIGHLIGHT;
@@ -236,7 +235,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         return getTestAnnotation(positions, color, privacyLevel, type);
     }
 
-    private Annotation getTestAnnotation(ArrayList<Box> positions, Integer color, Annotation.PrivacyLevel privacyLevel, Annotation.Type type) {
+    private Annotation getTestAnnotation(ArrayList<Annotation.Position> positions, Integer color, Annotation.PrivacyLevel privacyLevel, Annotation.Type type) {
         Annotation.Builder bld = new Annotation.Builder();
 
         bld.setId("test-id");
