@@ -4,7 +4,6 @@ import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.FolderRequestParameters;
@@ -206,13 +205,13 @@ public class FolderNetworkProvider {
         }
     }
 
-    public static class GetFolderDocumentIdsRequest extends GetNetworkRequest<List<DocumentId>> {
+    public static class GetFolderDocumentIdsRequest extends GetNetworkRequest<List<String>> {
         public GetFolderDocumentIdsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
         }
 
         @Override
-        protected List<DocumentId> manageResponse(InputStream is) throws JSONException, IOException {
+        protected List<String> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentIds(reader);
         }

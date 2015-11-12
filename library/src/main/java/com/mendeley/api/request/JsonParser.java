@@ -7,7 +7,6 @@ import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Discipline;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.Education;
 import com.mendeley.api.model.Employment;
 import com.mendeley.api.model.File;
@@ -249,8 +248,8 @@ public class JsonParser {
 	 * @return the list of string document ids
 	 * @throws JSONException
 	 */
-    public static List<DocumentId> parseDocumentIds(JsonReader reader) throws JSONException, IOException {
-		final List<DocumentId> documentIds = new ArrayList<DocumentId>();
+    public static List<String> parseDocumentIds(JsonReader reader) throws JSONException, IOException {
+		final List<String> documentIds = new ArrayList<String>();
 
         reader.beginArray();
 		while (reader.hasNext()) {
@@ -337,8 +336,8 @@ public class JsonParser {
 		return builder.build();
 	}
 
-    public static DocumentId parseDocumentId(JsonReader reader) throws JSONException, IOException {
-		DocumentId.Builder mendeleyDocumentId = new DocumentId.Builder();
+    public static String parseDocumentId(JsonReader reader) throws JSONException, IOException {
+        String id = null;
 		
 		reader.beginObject();
 
@@ -346,7 +345,7 @@ public class JsonParser {
 		  
 			final String key = reader.nextName();
             if (key.equals("id")) {
-                mendeleyDocumentId.setDocumentId(reader.nextString());
+                id = reader.nextString();
             } else {
                 reader.skipValue();
             }
@@ -354,7 +353,7 @@ public class JsonParser {
 
         reader.endObject();
 		
-		return mendeleyDocumentId.build();
+		return id;
 	}
 	
 	/**

@@ -13,7 +13,6 @@ import com.mendeley.api.activity.SignInActivity;
 import com.mendeley.api.activity.SignInOrSignUpActivity;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.model.Group;
@@ -162,12 +161,12 @@ public class Mendeley implements RequestsFactory {
     }
 
     @Override
-    public Request<List<DocumentId>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters) {
+    public Request<List<String>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters) {
         return requestsFactoryDelegate.getDeletedDocuments(deletedSince, parameters);
     }
 
     @Override
-    public Request<List<DocumentId>> getDeletedDocuments(Page next) {
+    public Request<List<String>> getDeletedDocuments(Page next) {
         return requestsFactoryDelegate.getDeletedDocuments(next);
     }
 
@@ -267,12 +266,12 @@ public class Mendeley implements RequestsFactory {
     }
 
     @Override
-    public Request<List<DocumentId>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId) {
+    public Request<List<String>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId) {
         return requestsFactoryDelegate.getFolderDocumentIds(parameters, folderId);
     }
 
     @Override
-    public Request<List<DocumentId>> getFolderDocumentIds(Page next) {
+    public Request<List<String>> getFolderDocumentIds(Page next) {
         return requestsFactoryDelegate.getFolderDocumentIds(next);
     }
 

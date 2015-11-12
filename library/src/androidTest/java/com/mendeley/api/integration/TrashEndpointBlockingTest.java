@@ -2,7 +2,6 @@ package com.mendeley.api.integration;
 
 
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.testUtils.AssertUtils;
 import com.mendeley.api.util.DateUtils;
@@ -91,13 +90,13 @@ public class TrashEndpointBlockingTest extends EndpointBlockingTest {
         // THEN the document is permanently deleted
         final DocumentRequestParameters params = new DocumentRequestParameters();
 
-        final List<DocumentId> expectedDeletedDocIds = Arrays.asList(new DocumentId.Builder().setDocumentId(deletingDoc.id).build());
-        final List<DocumentId> actualDeletedDocIds = getSdk().getDeletedDocuments(deletedSince, params).run().resource;
+        final List<String> expectedDeletedDocIds = Arrays.asList(deletingDoc.id);
+        final List<String> actualDeletedDocIds = getSdk().getDeletedDocuments(deletedSince, params).run().resource;
 
-        Comparator<DocumentId> comparator = new Comparator<DocumentId>() {
+        Comparator<String> comparator = new Comparator<String>() {
             @Override
-            public int compare(DocumentId lhs, DocumentId rhs) {
-                return lhs.id.compareTo(rhs.id);
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);
             }
         };
         AssertUtils.assertSameElementsInCollection(expectedDeletedDocIds, actualDeletedDocIds, comparator);

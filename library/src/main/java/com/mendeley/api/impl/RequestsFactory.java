@@ -2,7 +2,6 @@ package com.mendeley.api.impl;
 
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.model.Group;
@@ -58,14 +57,14 @@ public interface RequestsFactory {
      * @param deletedSince only return documents deleted since this timestamp. Should be supplied in ISO 8601 format.
      * @param parameters holds optional query parameters, will be ignored if null
      */
-    Request<List<DocumentId>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters);
+    Request<List<String>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters);
 
     /**
      * Retrieve subsequent pages of deleted documents in the user's library.
      *
      * @param next reference to next page returned in a previous DocumentIdList.
      */
-    Request<List<DocumentId>> getDeletedDocuments(Page next);
+    Request<List<String>> getDeletedDocuments(Page next);
 
     /**
      * Add a new document to the user's library.
@@ -213,14 +212,14 @@ public interface RequestsFactory {
      *
      * @param folderId ID of the folder to inspect.
      */
-    Request<List<DocumentId>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId);
+    Request<List<String>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId);
 
     /**
      * Returns the next page of document IDs stored in a particular folder.
      * @param next returned by a previous call to getFolderDocumentIds().
      *
      */
-    Request<List<DocumentId>> getFolderDocumentIds(Page next);
+    Request<List<String>> getFolderDocumentIds(Page next);
 
     /**
      * Add a document to a folder.

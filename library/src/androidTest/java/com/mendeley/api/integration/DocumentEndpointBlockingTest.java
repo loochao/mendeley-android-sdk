@@ -1,7 +1,6 @@
 package com.mendeley.api.integration;
 
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.Page;
@@ -211,24 +210,24 @@ public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
         final String deletedSince = DateUtils.formatMendeleyApiTimestamp(getServerDate());
         final List<Document> existingDocs = setUpDocumentsInServer(6);
 
-        final Set<DocumentId> expectedDeletedDocIds = new HashSet<DocumentId>();
+        final Set<String> expectedDeletedDocIds = new HashSet<String>();
         for (int i = 0; i < existingDocs.size() / 2; i++) {
             final Document doc = existingDocs.get(i);
             getSdk().deleteDocument(doc.id).run();;
-            expectedDeletedDocIds.add(new DocumentId.Builder().setDocumentId(doc.id).build());
+            expectedDeletedDocIds.add(doc.id);
         }
 
         // WHEN requesting deleted doc since that date
         DocumentRequestParameters params = new DocumentRequestParameters();
-        List<DocumentId> deletedDocsIdList = getSdk().getDeletedDocuments(deletedSince, params).run().resource;
+        List<String> deletedDocsIdList = getSdk().getDeletedDocuments(deletedSince, params).run().resource;
 
 
         // THEN we receive the deleted docs
-        final Set<DocumentId> actualDeletedDocIds = new HashSet<DocumentId>(deletedDocsIdList);
-        Comparator<DocumentId> comparator = new Comparator<DocumentId>() {
+        final Set<String> actualDeletedDocIds = new HashSet<String>(deletedDocsIdList);
+        Comparator<String> comparator = new Comparator<String>() {
             @Override
-            public int compare(DocumentId lhs, DocumentId rhs) {
-                return lhs.id.compareTo(rhs.id);
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);
             }
         };
         AssertUtils.assertSameElementsInCollection(expectedDeletedDocIds, actualDeletedDocIds, comparator);

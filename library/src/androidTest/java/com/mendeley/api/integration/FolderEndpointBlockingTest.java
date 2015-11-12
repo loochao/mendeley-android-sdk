@@ -1,7 +1,6 @@
 package com.mendeley.api.integration;
 
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.request.params.FolderRequestParameters;
@@ -143,11 +142,11 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
 
         // AND documents
         List<Document> documents = new LinkedList<Document>();
-        final Set<DocumentId> expectedDeletedDocIds = new HashSet<DocumentId>();
+        final Set<String> expectedDeletedDocIds = new HashSet<String>();
         for (int i = 0; i < 4; i++) {
             Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title" + i));
             documents.add(document);
-            expectedDeletedDocIds.add(new DocumentId.Builder().setDocumentId(document.id).build());
+            expectedDeletedDocIds.add(document.id);
         }
 
         // WHEN posting the documents to the folder
@@ -155,13 +154,13 @@ public class FolderEndpointBlockingTest extends EndpointBlockingTest {
             getSdk().postDocumentToFolder(folder.id, document.id).run();
         }
 
-        RequestResponse<List<DocumentId>> response = getSdk().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
-        final Set<DocumentId> actualDeletedDocIds = new HashSet<DocumentId>(response.resource);
+        RequestResponse<List<String>> response = getSdk().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        final Set<String> actualDeletedDocIds = new HashSet<String>(response.resource);
 
-        Comparator<DocumentId> comparator = new Comparator<DocumentId>() {
+        Comparator<String> comparator = new Comparator<String>() {
             @Override
-            public int compare(DocumentId lhs, DocumentId rhs) {
-                return lhs.id.compareTo(rhs.id);
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);
             }
         };
         AssertUtils.assertSameElementsInCollection(expectedDeletedDocIds, actualDeletedDocIds, comparator);

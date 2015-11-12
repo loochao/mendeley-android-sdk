@@ -10,7 +10,6 @@ import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Box;
 import com.mendeley.api.model.Discipline;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.Education;
 import com.mendeley.api.model.Employment;
 import com.mendeley.api.model.File;
@@ -514,11 +513,11 @@ public class JsonParserTest extends InstrumentationTestCase {
         expectedList.add("test-document_id_2");
         expectedList.add("test-document_id_3");
 		
-		final List<DocumentId> actualList = JsonParser.parseDocumentIds(reader);
+		final List<String> actualList = JsonParser.parseDocumentIds(reader);
 
         assertEquals("Wrong list size", expectedList.size(), actualList.size());
 		for (int i = 0; i < actualList.size(); i++) {
-			assertEquals("Wrong list item ", actualList.get(i).id, (expectedList.get(i)));
+			assertEquals("Wrong list item ", actualList.get(i), (expectedList.get(i)));
 		}
 	}
 

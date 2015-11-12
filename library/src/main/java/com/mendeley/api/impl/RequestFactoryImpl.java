@@ -4,7 +4,6 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.model.Group;
@@ -109,13 +108,13 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<DocumentId>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters)  {
+    public Request<List<String>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters)  {
         String url = getGetDocumentsUrl(parameters, deletedSince);
         return new DocumentNetworkProvider.GetDeletedDocumentsRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
-    public Request<List<DocumentId>> getDeletedDocuments(Page next) {
+    public Request<List<String>> getDeletedDocuments(Page next) {
         return new DocumentNetworkProvider.GetDeletedDocumentsRequest(next.link, authTokenManager, clientCredentials);
     }
 
@@ -272,13 +271,13 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<DocumentId>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId) {
+    public Request<List<String>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId) {
         String url = getGetFoldersUrl(parameters, getGetFolderDocumentIdsUrl(folderId));
         return new FolderNetworkProvider.GetFolderDocumentIdsRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
-    public Request<List<DocumentId>> getFolderDocumentIds(Page next) {
+    public Request<List<String>> getFolderDocumentIds(Page next) {
         return new FolderNetworkProvider.GetFolderDocumentIdsRequest(next.link, authTokenManager, clientCredentials);
     }
 

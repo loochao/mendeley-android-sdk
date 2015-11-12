@@ -5,7 +5,6 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.DocumentId;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.View;
@@ -186,13 +185,13 @@ public class DocumentNetworkProvider {
         }
    }
 
-    public static class GetDeletedDocumentsRequest extends GetNetworkRequest<List<DocumentId>> {
+    public static class GetDeletedDocumentsRequest extends GetNetworkRequest<List<String>> {
         public GetDeletedDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
         }
 
         @Override
-        protected List<DocumentId> manageResponse(InputStream is) throws JSONException, IOException {
+        protected List<String> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentIds(reader);
         }
