@@ -8,7 +8,7 @@ import com.mendeley.api.model.Document;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
+import com.mendeley.api.request.GetNetworkRequest;
 
 import org.json.JSONException;
 

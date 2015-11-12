@@ -8,7 +8,7 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.File;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.FileRequestParameters;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
+import com.mendeley.api.request.GetNetworkRequest;
 
 import org.json.JSONException;
 

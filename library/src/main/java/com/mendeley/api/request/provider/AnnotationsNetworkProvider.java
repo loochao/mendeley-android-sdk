@@ -7,7 +7,7 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.AnnotationRequestParameters;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
+import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.procedure.PatchNetworkRequest;
 import com.mendeley.api.request.procedure.PostNetworkRequest;
 

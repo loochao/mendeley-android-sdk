@@ -32,8 +32,6 @@ public abstract class NetworkRequest<ResultType> extends Request<ResultType> {
         super(authTokenManager, clientCredentials);
     }
 
-    protected abstract int getExpectedResponse();
-
     /**
      * Extracts the headers from the given HttpsURLConnection object.
      */

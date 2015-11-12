@@ -4,6 +4,7 @@ import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
+import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.JsonParser;
 
 import org.json.JSONException;

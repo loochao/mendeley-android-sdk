@@ -316,11 +316,6 @@ public class Mendeley implements RequestsFactory {
     }
 
     @Override
-    public Request<byte[]> getImage(String url) {
-        return requestsFactoryDelegate.getImage(url);
-    }
-
-    @Override
     public Request<List<Document>> getTrashedDocuments(DocumentRequestParameters parameters) {
         return requestsFactoryDelegate.getTrashedDocuments(parameters);
     }

@@ -21,7 +21,6 @@ import com.mendeley.api.request.params.View;
 import com.mendeley.api.request.procedure.ApplicationFeaturesNetworkProvider;
 import com.mendeley.api.request.procedure.DeleteNetworkRequest;
 import com.mendeley.api.request.procedure.GetFileNetworkRequest;
-import com.mendeley.api.request.procedure.GetImageNetworkRequest;
 import com.mendeley.api.request.procedure.PostFileNetworkRequest;
 import com.mendeley.api.request.procedure.PostNoBodyNetworkRequest;
 import com.mendeley.api.request.procedure.Request;
@@ -342,12 +341,6 @@ public class RequestFactoryImpl implements RequestsFactory {
         return new GroupNetworkProvider.GetGroupMembersRequest(next.link, authTokenManager, clientCredentials);
 
     }
-
-    @Override
-    public Request<byte[]> getImage(String url)  {
-        return new GetImageNetworkRequest(url, authTokenManager, clientCredentials);
-    }
-
 
     /* TRASH BLOCKING */
 

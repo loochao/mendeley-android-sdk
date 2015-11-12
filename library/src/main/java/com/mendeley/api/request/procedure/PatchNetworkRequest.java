@@ -35,7 +35,7 @@ public abstract class PatchNetworkRequest<ResultType> extends NetworkRequest<Res
         this.date = date;
     }
 
-    @Override
+
     protected int getExpectedResponse() {
         return 200;
     }

@@ -10,7 +10,7 @@ import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
+import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.procedure.Request;
 
 import org.json.JSONException;
@@ -27,7 +27,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
-import static com.mendeley.api.request.NetworkUtils.getConnection;
+import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
 
 /**
  * NetworkProvider class for Recently read API calls
@@ -99,7 +99,7 @@ public class RecentlyReadNetworkProvider {
             InputStream is = null;
             try {
                 final String postingJson = JsonParser.jsonFromReadPosition(readPosition);
-                con = getConnection(url, "POST", authTokenManager);
+                con = createGetConnectionWithMendeleyAuthToken(url, "POST", authTokenManager);
                 con.addRequestProperty("Content-type", "application/vnd.mendeley-recently-read.1+json");
                 con.setFixedLengthStreamingMode(postingJson.getBytes().length);
                 con.connect();

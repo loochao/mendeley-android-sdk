@@ -8,7 +8,7 @@ import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.GroupRequestParameters;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
+import com.mendeley.api.request.GetNetworkRequest;
 
 import org.json.JSONException;
 

@@ -77,10 +77,10 @@ public class NetworkUtils {
      * @return the HttpsURLConnection object
      * @throws IOException
      */
-    public static HttpsURLConnection getConnection(String url, String method, AuthTokenManager accessTokenProvider) throws IOException {
-        final HttpsURLConnection con = getDownloadConnection(url, method);
+    public static HttpsURLConnection createGetConnectionWithMendeleyAuthToken(String url, String method, AuthTokenManager accessTokenProvider) throws IOException {
+        final HttpsURLConnection con = createGetConnection(url, method);
         con.addRequestProperty("Authorization", "Bearer " + accessTokenProvider.getAccessToken());
-
+        con.setInstanceFollowRedirects(false);
         return con;
     }
 
@@ -93,7 +93,7 @@ public class NetworkUtils {
      * @return the HttpsURLConnection object
      * @throws IOException
      */
-    public static HttpsURLConnection getDownloadConnection(String url, String method) throws IOException {
+    public static HttpsURLConnection createGetConnection(String url, String method) throws IOException {
         final URL callUrl = new URL(url);
         final HttpsURLConnection con = (HttpsURLConnection) callUrl.openConnection();
         con.setConnectTimeout(CONNECTION_TIMEOUT);

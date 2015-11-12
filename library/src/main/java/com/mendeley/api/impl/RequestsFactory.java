@@ -283,14 +283,6 @@ public interface RequestsFactory {
      */
     Request<List<UserRole>> getGroupMembers(Page next);
 
-    /**
-     * Return group image
-     * @param url image url
-     * @return bytes array of the image
-     * @
-     */
-    Request<byte[]> getImage(String url);
-
     /* TRASH */
 
     /**

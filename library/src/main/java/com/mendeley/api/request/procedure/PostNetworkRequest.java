@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 
-import static com.mendeley.api.request.NetworkUtils.getConnection;
+import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
 import static com.mendeley.api.request.NetworkUtils.readInputStream;
 
 public abstract class PostNetworkRequest<ResultType> extends NetworkRequest<ResultType> {
@@ -28,7 +28,7 @@ public abstract class PostNetworkRequest<ResultType> extends NetworkRequest<Resu
         this.contentType = contentType;
     }
 
-    @Override
+
     protected int getExpectedResponse() {
         return 201;
     }
@@ -37,7 +37,7 @@ public abstract class PostNetworkRequest<ResultType> extends NetworkRequest<Resu
     protected RequestResponse<ResultType> doRun() throws MendeleyException {
         try {
             final String json = obtainJsonToPost();
-            con = getConnection(url, "POST", authTokenManager);
+            con = createGetConnectionWithMendeleyAuthToken(url, "POST", authTokenManager);
             con.addRequestProperty("Content-type", contentType);
             con.setFixedLengthStreamingMode(json.getBytes().length);
             con.connect();

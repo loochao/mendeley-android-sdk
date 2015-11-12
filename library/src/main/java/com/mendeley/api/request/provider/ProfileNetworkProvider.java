@@ -6,7 +6,7 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Profile;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.procedure.GetNetworkRequest;
+import com.mendeley.api.request.GetNetworkRequest;
 
 import org.json.JSONException;
 

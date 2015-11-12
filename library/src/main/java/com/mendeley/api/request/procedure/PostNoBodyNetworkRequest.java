@@ -9,7 +9,7 @@ import com.mendeley.api.model.RequestResponse;
 import java.io.IOException;
 import java.text.ParseException;
 
-import static com.mendeley.api.request.NetworkUtils.getConnection;
+import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
 
 // FIXME get rid of this class by using an inputstream instead of a String to post data
 /**
@@ -23,7 +23,6 @@ public class PostNoBodyNetworkRequest extends NetworkRequest<Void> {
         this.url = url;
     }
 
-    @Override
     protected int getExpectedResponse() {
         return 204;
     }
@@ -31,7 +30,7 @@ public class PostNoBodyNetworkRequest extends NetworkRequest<Void> {
     @Override
     protected RequestResponse<Void> doRun() throws MendeleyException {
         try {
-            con = getConnection(url, "POST", authTokenManager);
+            con = createGetConnectionWithMendeleyAuthToken(url, "POST", authTokenManager);
             con.connect();
 
             getResponseHeaders();
