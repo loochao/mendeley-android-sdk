@@ -47,7 +47,7 @@ abstract class ProgressPublisherInputStream extends InputStream {
 
     @Override
     public int read(byte[] buffer) throws IOException {
-        return delegate.read(buffer);
+        return read(buffer, 0, buffer.length);
     }
 
     @Override

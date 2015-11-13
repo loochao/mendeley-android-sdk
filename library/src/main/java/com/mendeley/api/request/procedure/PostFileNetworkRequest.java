@@ -21,7 +21,7 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
-import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
+import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthTokenInHeader;
 
 public class PostFileNetworkRequest extends NetworkRequest<File> {
     private final String contentType;
@@ -54,7 +54,7 @@ public class PostFileNetworkRequest extends NetworkRequest<File> {
             final int bufferSize = 65536;
             final byte[] buffer = new byte[bufferSize];
 
-            con = createGetConnectionWithMendeleyAuthToken(filesUrl, "POST", authTokenManager);
+            con = createGetConnectionWithMendeleyAuthTokenInHeader(filesUrl, "POST", authTokenManager);
             con.setDoOutput(true);
 
             con.addRequestProperty("Content-Disposition", contentDisposition);

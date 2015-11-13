@@ -77,8 +77,8 @@ public class NetworkUtils {
      * @return the HttpsURLConnection object
      * @throws IOException
      */
-    public static HttpsURLConnection createGetConnectionWithMendeleyAuthToken(String url, String method, AuthTokenManager accessTokenProvider) throws IOException {
-        final HttpsURLConnection con = createGetConnection(url, method);
+    public static HttpsURLConnection createGetConnectionWithMendeleyAuthTokenInHeader(String url, String method, AuthTokenManager accessTokenProvider) throws IOException {
+        final HttpsURLConnection con = createHttpsGetConnection(url, method);
         con.addRequestProperty("Authorization", "Bearer " + accessTokenProvider.getAccessToken());
         con.setInstanceFollowRedirects(false);
         return con;
@@ -93,22 +93,24 @@ public class NetworkUtils {
      * @return the HttpsURLConnection object
      * @throws IOException
      */
-    public static HttpsURLConnection createGetConnection(String url, String method) throws IOException {
+    public static HttpsURLConnection createHttpsGetConnection(String url, String method) throws IOException {
         final URL callUrl = new URL(url);
         final HttpsURLConnection con = (HttpsURLConnection) callUrl.openConnection();
         con.setConnectTimeout(CONNECTION_TIMEOUT);
         con.setReadTimeout(READ_TIMEOUT);
         con.setRequestMethod(method);
+        con.setInstanceFollowRedirects(true);
 
         return con;
     }
 
-    public static HttpURLConnection getHttpDownloadConnection(String url, String method) throws IOException {
+    public static HttpURLConnection createHttpGetConnection(String url, String method) throws IOException {
         final URL callUrl = new URL(url);
         final HttpURLConnection con = (HttpURLConnection) callUrl.openConnection();
         con.setConnectTimeout(CONNECTION_TIMEOUT);
         con.setReadTimeout(READ_TIMEOUT);
         con.setRequestMethod(method);
+        con.setInstanceFollowRedirects(true);
 
         return con;
     }

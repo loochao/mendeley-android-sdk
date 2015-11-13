@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 
-import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
+import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthTokenInHeader;
 
 // FIXME: I'm not sure we need this class
 public abstract class PostNoResponseNetworkRequest extends NetworkRequest<Void> {
@@ -37,7 +37,7 @@ public abstract class PostNoResponseNetworkRequest extends NetworkRequest<Void> 
     protected RequestResponse<Void> doRun() throws MendeleyException {
         try {
             final String json = obtainJsonToPost();
-            con = createGetConnectionWithMendeleyAuthToken(url, "POST", authTokenManager);
+            con = createGetConnectionWithMendeleyAuthTokenInHeader(url, "POST", authTokenManager);
             con.addRequestProperty("Content-type", contentType);
             con.setFixedLengthStreamingMode(json.getBytes().length);
             con.connect();

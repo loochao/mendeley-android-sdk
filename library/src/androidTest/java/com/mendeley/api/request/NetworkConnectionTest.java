@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
+import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthTokenInHeader;
 import static com.mendeley.api.request.NetworkUtils.readInputStream;
 
 public class NetworkConnectionTest extends AndroidTestCase {
@@ -75,7 +75,7 @@ public class NetworkConnectionTest extends AndroidTestCase {
 	
 	private HttpsURLConnection getHttpsURLConnection(String testUrl, String endPoint, boolean doOutput)
 			throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
-		HttpsURLConnection con = createGetConnectionWithMendeleyAuthToken(testUrl, endPoint, accessTokenManager);
+		HttpsURLConnection con = createGetConnectionWithMendeleyAuthTokenInHeader(testUrl, endPoint, accessTokenManager);
 		con.setDoOutput(doOutput);
 		con.addRequestProperty("Content-type", "application/vnd.mendeley-document.1+json");
 		

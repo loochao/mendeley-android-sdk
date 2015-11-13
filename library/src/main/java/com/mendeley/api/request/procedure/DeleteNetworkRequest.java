@@ -9,7 +9,7 @@ import com.mendeley.api.model.RequestResponse;
 import java.io.IOException;
 import java.text.ParseException;
 
-import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
+import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthTokenInHeader;
 
 /**
  * A NetworkProcedure specialised for making HTTP DELETE requests.
@@ -30,7 +30,7 @@ public class DeleteNetworkRequest extends NetworkRequest<Void> {
     @Override
     protected RequestResponse<Void> doRun() throws MendeleyException {
         try {
-            con = createGetConnectionWithMendeleyAuthToken(url, "DELETE", authTokenManager);
+            con = createGetConnectionWithMendeleyAuthTokenInHeader(url, "DELETE", authTokenManager);
             con.connect();
 
             getResponseHeaders();

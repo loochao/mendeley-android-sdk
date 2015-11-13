@@ -1,5 +1,6 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.mendeley.api.AuthTokenManager;
@@ -13,8 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 
-import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
-import static com.mendeley.api.request.NetworkUtils.createGetConnection;
+import static com.mendeley.api.request.NetworkUtils.createHttpsGetConnection;
 
 /**
  * A NetworkProcedure specialised for making HTTP GET requests.
@@ -45,17 +45,9 @@ public abstract class GetNetworkRequest<ResultType> extends NetworkRequest<Resul
     }
 
     private RequestResponse<ResultType> doRun(final int currentRetry) throws MendeleyException {
-        return doRun(currentRetry, url, true);
-    }
-
-    private RequestResponse<ResultType> doRun(final int currentRetry, String url, boolean addMendeleyAuthToken) throws MendeleyException {
+        final Uri uri = Uri.parse(url).buildUpon().appendQueryParameter("access_token", authTokenManager.getAccessToken()).build();
         try {
-
-            if (addMendeleyAuthToken) {
-                con = createGetConnectionWithMendeleyAuthToken(url, "GET", authTokenManager);
-            } else {
-                con = createGetConnection(url, "GET");
-            }
+            con = createHttpsGetConnection(uri.toString(), "GET");
 
             if (contentType != null) {
                 con.addRequestProperty("Content-type", contentType);
@@ -63,11 +55,6 @@ public abstract class GetNetworkRequest<ResultType> extends NetworkRequest<Resul
             con.connect();
 
             final int responseCode = con.getResponseCode();
-
-            if (responseCode >= 300 && responseCode < 400) {
-                final String redirectionUrl = con.getHeaderField("location");
-                return doRun(0, redirectionUrl, false);
-            }
 
             if (responseCode < 200 && responseCode >= 300) {
                 throw HttpResponseException.create(con);
@@ -78,7 +65,8 @@ public abstract class GetNetworkRequest<ResultType> extends NetworkRequest<Resul
             // wrapping the input stream of the connection in one ProgressPublisherInputStream
             // to publish progress as the file is being read
             is = new MyProgressPublisherInputStream(con.getInputStream(), con.getContentLength());
-            return new RequestResponse(manageResponse(is), serverDate, next);
+            return new RequestResponse<>(manageResponse(is), serverDate, next);
+
         } catch (MendeleyException me) {
             throw me;
         } catch (ParseException pe) {
@@ -108,6 +96,10 @@ public abstract class GetNetworkRequest<ResultType> extends NetworkRequest<Resul
 
     protected abstract ResultType manageResponse(InputStream is) throws Exception;
 
+    /**
+     * Implementation of {@link ProgressPublisherInputStream} that pipes the progress to the
+     * {@link RequestProgressListener}
+     */
     private class MyProgressPublisherInputStream extends ProgressPublisherInputStream {
         public MyProgressPublisherInputStream(InputStream inputStream, int contentLength) {
             super(inputStream, contentLength);

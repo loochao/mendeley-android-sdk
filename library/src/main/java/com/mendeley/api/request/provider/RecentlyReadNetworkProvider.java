@@ -27,7 +27,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
-import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthToken;
+import static com.mendeley.api.request.NetworkUtils.createGetConnectionWithMendeleyAuthTokenInHeader;
 
 /**
  * NetworkProvider class for Recently read API calls
@@ -99,7 +99,7 @@ public class RecentlyReadNetworkProvider {
             InputStream is = null;
             try {
                 final String postingJson = JsonParser.jsonFromReadPosition(readPosition);
-                con = createGetConnectionWithMendeleyAuthToken(url, "POST", authTokenManager);
+                con = createGetConnectionWithMendeleyAuthTokenInHeader(url, "POST", authTokenManager);
                 con.addRequestProperty("Content-type", "application/vnd.mendeley-recently-read.1+json");
                 con.setFixedLengthStreamingMode(postingJson.getBytes().length);
                 con.connect();
