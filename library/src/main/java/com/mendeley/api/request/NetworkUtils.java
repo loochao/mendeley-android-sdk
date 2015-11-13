@@ -99,7 +99,6 @@ public class NetworkUtils {
         con.setConnectTimeout(CONNECTION_TIMEOUT);
         con.setReadTimeout(READ_TIMEOUT);
         con.setRequestMethod(method);
-        con.setInstanceFollowRedirects(true);
 
         return con;
     }
@@ -110,7 +109,6 @@ public class NetworkUtils {
         con.setConnectTimeout(CONNECTION_TIMEOUT);
         con.setReadTimeout(READ_TIMEOUT);
         con.setRequestMethod(method);
-        con.setInstanceFollowRedirects(true);
 
         return con;
     }

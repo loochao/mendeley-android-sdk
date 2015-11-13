@@ -9,6 +9,7 @@ import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.NetworkUtils;
 import com.mendeley.api.request.ProgressPublisherInputStream;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.util.DateUtils;
@@ -39,11 +40,10 @@ public abstract class HttpUrlConnectionRequest<ResultType> extends Request<Resul
 
     @Override
     public final RequestResponse<ResultType> doRun() throws MendeleyException {
-        return doRun(0);
+        return doRun(Uri.parse(url), 0, true);
     }
 
-    private RequestResponse<ResultType> doRun(final int currentRetry) throws MendeleyException {
-        final Uri uri = Uri.parse(url).buildUpon().appendQueryParameter("access_token", authTokenManager.getAccessToken()).build();
+    private RequestResponse<ResultType> doRun(Uri uri, int currentRetry, boolean addOauthToken) throws MendeleyException {
 
         InputStream is = null;
         HttpURLConnection con = null;
@@ -51,25 +51,37 @@ public abstract class HttpUrlConnectionRequest<ResultType> extends Request<Resul
         try {
             con = createConnection(uri);
 
-            final Map<String, String> requestHeaders = new HashMap<String, String>();
-            appendHeaders(requestHeaders);
-            for (String key: requestHeaders.keySet()) {
-                con.addRequestProperty(key, requestHeaders.get(key));
+            // the redirection in implemented by us
+            con.setInstanceFollowRedirects(false);
+
+            if (addOauthToken) {
+                con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
             }
 
             if (contentType != null) {
                 con.addRequestProperty("Content-type", contentType);
             }
 
+            final Map<String, String> requestHeaders = new HashMap<String, String>();
+            appendHeaders(requestHeaders);
+            for (String key: requestHeaders.keySet()) {
+                con.addRequestProperty(key, requestHeaders.get(key));
+            }
             con.connect();
 
             onConnected(con);
 
             final int responseCode = con.getResponseCode();
 
+            // Implementation of HTTP redirection.
+            if (responseCode >= 300 && responseCode < 400) {
+                return followRedirection(con);
+            }
+
             if (responseCode < 200 && responseCode >= 300) {
                 throw HttpResponseException.create(con);
             }
+
 
             // wrapping the input stream of the connection in one ProgressPublisherInputStream
             // to publish progress as the file is being read
@@ -86,7 +98,7 @@ public abstract class HttpUrlConnectionRequest<ResultType> extends Request<Resul
             // If the issue is due to IOException, retry up to MAX_HTTP_RETRIES times
             if (currentRetry <  MAX_HTTP_RETRIES) {
                 Log.w(TAG, "Problem connecting to " + url + ": " + ioe.getMessage() + ". Retrying (" + (currentRetry + 1) + "/" + MAX_HTTP_RETRIES + ")");
-                return doRun(currentRetry + 1);
+                return doRun(uri, currentRetry + 1, addOauthToken);
             } else {
                 throw new MendeleyException("IO error in GET request " + url + ": " + ioe.toString(), ioe);
             }
@@ -103,6 +115,18 @@ public abstract class HttpUrlConnectionRequest<ResultType> extends Request<Resul
                 con.disconnect();
             }
         }
+    }
+
+    /*
+     * We implement the redirection by hand because:
+     * - we don't want to send the auth token in the query string, but as a HTTP header
+     * - if redirected to Amazon or other server, we don't want to forward the Mendeley auth jeader
+     * - ... but the redirection that HttpUrlConnection does forwards the header
+     */
+    private RequestResponse<ResultType> followRedirection(HttpURLConnection con) throws MendeleyException {
+        final Uri redirectionUri = Uri.parse(con.getHeaderField("location"));
+        final boolean addOauthToken = redirectionUri.getHost().equals(Uri.parse(NetworkUtils.API_URL).getHost());
+        return doRun(redirectionUri, 0, addOauthToken);
     }
 
     /**

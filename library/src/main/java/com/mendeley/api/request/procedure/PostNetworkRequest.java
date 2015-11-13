@@ -21,44 +21,6 @@ public abstract class PostNetworkRequest<ResultType> extends HttpUrlConnectionRe
     }
 
 
-//    @Override
-//    protected RequestResponse<ResultType> doRun() throws MendeleyException {
-//        try {
-//            con = createGetConnectionWithMendeleyAuthTokenInHeader(url, "POST", authTokenManager);
-//            con.addRequestProperty("Content-type", contentType);
-//
-//            //TODO: do we need this?
-////            con.setFixedLengthStreamingMode(json.getBytes().length);
-//            con.connect();
-//
-//            os = con.getOutputStream();
-//            writePostBody(os);
-//            os.close();
-//
-//            getResponseHeaders();
-//
-//            final int responseCode = con.getResponseCode();
-//            if (responseCode != getExpectedResponse()) {
-//                throw HttpResponseException.create(con);
-//            } else {
-//                is = con.getInputStream();
-//                String responseString = readInputStream(is);
-//                return new RequestResponse<ResultType>(parseJsonString(responseString), serverDate);
-//            }
-//        } catch (ParseException pe) {
-//            throw new JsonParsingException("Could not parse web API headers for " + url, pe);
-//        } catch (IOException e) {
-//            throw new MendeleyException(e.getMessage(), e);
-//        } catch (JSONException e) {
-//            throw new JsonParsingException(e.getMessage(), e);
-//        } catch (Exception e) {
-//            throw new MendeleyException(e.getMessage(), e);
-//        } finally {
-//            closeConnection();
-//        }
-//    }
-
-
     @Override
     protected HttpsURLConnection createConnection(Uri uri) throws IOException {
         HttpsURLConnection connection = NetworkUtils.createHttpsGetConnection(uri.toString(), "POST");
