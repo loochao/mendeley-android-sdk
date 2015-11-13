@@ -14,10 +14,13 @@ import com.mendeley.api.request.procedure.PostNetworkRequest;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -116,13 +119,14 @@ public class AnnotationsNetworkProvider {
         }
 
         @Override
-        protected String obtainJsonToPost() throws JSONException {
-            return JsonParser.jsonFromAnnotation(annotation);
+        protected void writePostBody(OutputStream os) throws Exception {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(JsonParser.jsonFromAnnotation(annotation));
+            writer.flush();
         }
-
         @Override
-        protected Annotation parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected Annotation manageResponse(InputStream is) throws Exception {
+            final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseAnnotation(reader);
         }
     }

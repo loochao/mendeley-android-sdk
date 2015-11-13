@@ -7,6 +7,7 @@ import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.request.NetworkUtils;
+import com.mendeley.api.util.Utils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -19,11 +20,13 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import static com.mendeley.api.request.NetworkUtils.getHttpPatch;
 import static com.mendeley.api.request.NetworkUtils.readInputStream;
 
-public abstract class PatchNetworkRequest<ResultType> extends NetworkRequest<ResultType> {
+// TODO try to eliminate Apache HTTP
+public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType> {
     private final String url;
     private final String contentType;
     private final String date;
@@ -49,6 +52,7 @@ public abstract class PatchNetworkRequest<ResultType> extends NetworkRequest<Res
 
         NetworkUtils.HttpPatch httpPatch = getHttpPatch(url, date, contentType, authTokenManager);
 
+        InputStream is = null;
         try {
             final String json = obtainJsonToPost();
             httpPatch.setEntity(new StringEntity(json, "UTF-8"));
@@ -61,14 +65,15 @@ public abstract class PatchNetworkRequest<ResultType> extends NetworkRequest<Res
                 HttpEntity responseEntity = response.getEntity();
                 is = responseEntity.getContent();
                 String responseString = readInputStream(is);
-                return new RequestResponse<ResultType>(processJsonString(responseString), serverDate);
+                // TODO: get the server date
+                return new RequestResponse<ResultType>(processJsonString(responseString), null);
             }
         } catch (IOException e) {
             throw new JsonParsingException(e.getMessage(), e);
         } catch (JSONException e) {
             throw new MendeleyException(e.getMessage(), e);
         } finally {
-            closeConnection();
+            Utils.closeQuietly(is);
         }
     }
 

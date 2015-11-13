@@ -5,20 +5,22 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Folder;
+import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.FolderRequestParameters;
-import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.procedure.PatchNetworkRequest;
 import com.mendeley.api.request.procedure.PostNetworkRequest;
-import com.mendeley.api.request.procedure.PostNoResponseNetworkRequest;
 
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
@@ -160,13 +162,15 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected String obtainJsonToPost() throws JSONException {
-            return  JsonParser.jsonFromFolder(folder);
+        protected void writePostBody(OutputStream os) throws Exception {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(JsonParser.jsonFromFolder(folder));
+            writer.flush();
         }
 
         @Override
-        protected Folder parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected Folder manageResponse(InputStream is) throws Exception {
+            final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseFolder(reader);
         }
     }
@@ -191,7 +195,7 @@ public class FolderNetworkProvider {
         }
     }
 
-    public static class PostDocumentToFolderRequest extends PostNoResponseNetworkRequest {
+    public static class PostDocumentToFolderRequest extends PostNetworkRequest<Void> {
         private final String documentId;
 
         public PostDocumentToFolderRequest(String url, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
@@ -200,8 +204,15 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected String obtainJsonToPost() throws JSONException {
-            return JsonParser.jsonFromDocumentId(documentId);
+        protected Void manageResponse(InputStream is) throws Exception {
+            return null;
+        }
+
+        @Override
+        protected void writePostBody(OutputStream os) throws Exception {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(JsonParser.jsonFromDocumentId(documentId));
+            writer.flush();
         }
     }
 

@@ -7,7 +7,7 @@ import java.io.InputStream;
 /**
  * Wrapper over {@link InputStream} to publish report the progress of reading through it
  */
-abstract class ProgressPublisherInputStream extends InputStream {
+public abstract class ProgressPublisherInputStream extends InputStream {
 
     private final InputStream delegate;
     private final int length;

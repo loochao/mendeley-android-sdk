@@ -20,7 +20,7 @@ public abstract class Request<ResultType> {
     protected final ClientCredentials clientCredentials;
 
     // Number of times to retry failed HTTP requests due to IOExceptions.
-    protected static final int MAX_HTTP_RETRIES = 3;
+    protected static final int MAX_HTTP_RETRIES = 0;
 
 
     private boolean cancelled;

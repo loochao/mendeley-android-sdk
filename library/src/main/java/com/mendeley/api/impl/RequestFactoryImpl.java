@@ -22,7 +22,7 @@ import com.mendeley.api.request.procedure.ApplicationFeaturesNetworkProvider;
 import com.mendeley.api.request.procedure.DeleteNetworkRequest;
 import com.mendeley.api.request.procedure.GetFileNetworkRequest;
 import com.mendeley.api.request.procedure.PostFileNetworkRequest;
-import com.mendeley.api.request.procedure.PostNoBodyNetworkRequest;
+import com.mendeley.api.request.procedure.PostNetworkRequest;
 import com.mendeley.api.request.procedure.Request;
 import com.mendeley.api.request.provider.AnnotationsNetworkProvider;
 import com.mendeley.api.request.provider.CatalogDocumentNetworkProvider;
@@ -35,6 +35,7 @@ import com.mendeley.api.request.provider.RecentlyReadNetworkProvider;
 import com.mendeley.api.request.provider.TrashNetworkProvider;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
@@ -130,7 +131,17 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Void> trashDocument(String documentId) {
-        return new PostNoBodyNetworkRequest(getTrashDocumentUrl(documentId), authTokenManager, clientCredentials);
+        return new PostNetworkRequest<Void>(getTrashDocumentUrl(documentId), null, authTokenManager, clientCredentials) {
+            @Override
+            protected Void manageResponse(InputStream is) throws Exception {
+                return null;
+            }
+
+            @Override
+            protected void writePostBody(OutputStream os) throws Exception {
+
+            }
+        };
     }
 
     @Override
@@ -362,8 +373,17 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Void> restoreDocument(String documentId) {
-        String url = TrashNetworkProvider.getRecoverUrl(documentId);
-        return new PostNoBodyNetworkRequest(url, authTokenManager, clientCredentials);
+        return new PostNetworkRequest<Void>(TrashNetworkProvider.getRecoverUrl(documentId), null, authTokenManager, clientCredentials) {
+            @Override
+            protected Void manageResponse(InputStream is) throws Exception {
+                return null;
+            }
+
+            @Override
+            protected void writePostBody(OutputStream os) throws Exception {
+
+            }
+        };
     }
 
     /* CATALOG BLOCKING */

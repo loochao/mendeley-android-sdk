@@ -5,20 +5,23 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
+import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.procedure.PatchNetworkRequest;
 import com.mendeley.api.request.procedure.PostNetworkRequest;
 
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -231,13 +234,15 @@ public class DocumentNetworkProvider {
         }
 
         @Override
-        protected String obtainJsonToPost() throws JSONException {
-            return JsonParser.jsonFromDocument(doc);
+        protected void writePostBody(OutputStream os) throws Exception {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(JsonParser.jsonFromDocument(doc));
+            writer.flush();
         }
 
         @Override
-        protected Document parseJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
+        protected Document manageResponse(InputStream is) throws Exception {
+            final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseDocument(reader);
         }
     }
