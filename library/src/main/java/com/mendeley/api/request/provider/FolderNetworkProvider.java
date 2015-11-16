@@ -11,11 +11,12 @@ import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.procedure.PatchNetworkRequest;
 import com.mendeley.api.request.procedure.PostNetworkRequest;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -200,20 +201,22 @@ public class FolderNetworkProvider {
         }
 
         @Override
-        protected String obtainJsonToPost() throws JSONException {
-            return JsonParser.jsonFromFolder(folder);
-        }
-
-        @Override
-        protected Folder processJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
-            return JsonParser.parseFolder(reader);
-        }
-
-        @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
         }
+
+        @Override
+        protected HttpEntity createPatchingEntity() throws Exception {
+            final String json = JsonParser.jsonFromFolder(folder);
+            return new StringEntity(json, "UTF-8");
+        }
+
+        @Override
+        protected Folder manageResponse(InputStream is) throws Exception {
+            final JsonReader reader = new JsonReader(new InputStreamReader(is));
+            return JsonParser.parseFolder(reader);
+        }
+
     }
 
     public static class PostDocumentToFolderRequest extends PostNetworkRequest<Void> {

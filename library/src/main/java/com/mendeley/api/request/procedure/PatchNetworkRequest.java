@@ -7,25 +7,26 @@ import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.request.NetworkUtils;
+import com.mendeley.api.util.DateUtils;
 import com.mendeley.api.util.Utils;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.mendeley.api.request.NetworkUtils.getHttpPatch;
-import static com.mendeley.api.request.NetworkUtils.readInputStream;
 
 // TODO try to eliminate Apache HTTP
 public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType> {
@@ -38,11 +39,6 @@ public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType
         this.date = date;
     }
 
-
-    protected int getExpectedResponse() {
-        return 200;
-    }
-
     @Override
     protected RequestResponse<ResultType> doRun() throws MendeleyException {
         final HttpParams httpParameters = new BasicHttpParams();
@@ -52,7 +48,7 @@ public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType
 
         NetworkUtils.HttpPatch httpPatch = getHttpPatch(url, date, authTokenManager);
 
-        final Map<String, String> requestHeaders = new HashMap<String, String>();
+        final Map<String, String> requestHeaders = new HashMap<>();
         appendHeaders(requestHeaders);
         for (String key: requestHeaders.keySet()) {
             httpPatch.setHeader(key, requestHeaders.get(key));
@@ -60,33 +56,41 @@ public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType
 
         InputStream is = null;
         try {
-            final String json = obtainJsonToPost();
-            httpPatch.setEntity(new StringEntity(json, "UTF-8"));
+            httpPatch.setEntity(createPatchingEntity());
+
             HttpResponse response = httpclient.execute(httpPatch);
 
             final int responseCode = response.getStatusLine().getStatusCode();
-            if (responseCode != getExpectedResponse()) {
+
+            if (responseCode < 200 && responseCode >= 300) {
                 throw HttpResponseException.create(response, url);
-            } else {
-                HttpEntity responseEntity = response.getEntity();
-                is = responseEntity.getContent();
-                String responseString = readInputStream(is);
-                // TODO: get the server date
-                return new RequestResponse<ResultType>(processJsonString(responseString), null);
             }
-        } catch (IOException e) {
-            throw new JsonParsingException(e.getMessage(), e);
+
+            final HttpEntity responseEntity = response.getEntity();
+            return new RequestResponse<>(manageResponse(responseEntity.getContent()), getServerDate(response));
+
         } catch (JSONException e) {
+            throw new JsonParsingException("Error parsing model to patch", e);
+        } catch (Exception e) {
             throw new MendeleyException(e.getMessage(), e);
         } finally {
             Utils.closeQuietly(is);
         }
     }
 
+    private Date getServerDate(HttpResponse response) throws ParseException {
+        final Header date = response.getFirstHeader("Date");
+        if (date == null) {
+            return null;
+        }
+        return DateUtils.parseDateInHeader(date.getValue());
+    }
+
     protected void appendHeaders(Map<String, String> headers) {
     }
 
-    protected abstract String obtainJsonToPost() throws JSONException;
+    protected abstract HttpEntity createPatchingEntity() throws Exception;
 
-    protected abstract ResultType processJsonString(String jsonString) throws JSONException, IOException;
+    protected abstract ResultType manageResponse(InputStream is) throws Exception;
+
 }

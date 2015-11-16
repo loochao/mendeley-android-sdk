@@ -12,11 +12,12 @@ import com.mendeley.api.request.params.View;
 import com.mendeley.api.request.procedure.PatchNetworkRequest;
 import com.mendeley.api.request.procedure.PostNetworkRequest;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -281,19 +282,20 @@ public class DocumentNetworkProvider {
         }
 
         @Override
-        protected String obtainJsonToPost() throws JSONException {
-            return JsonParser.jsonFromDocument(document);
-        }
-
-        @Override
-        protected Document processJsonString(String jsonString) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
-            return JsonParser.parseDocument(reader);
-        }
-
-        @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+        }
+
+        @Override
+        protected HttpEntity createPatchingEntity() throws Exception {
+            final String json = JsonParser.jsonFromDocument(document);
+            return new StringEntity(json, "UTF-8");
+        }
+
+        @Override
+        protected Document manageResponse(InputStream is) throws Exception {
+            final JsonReader reader = new JsonReader(new InputStreamReader(is));
+            return JsonParser.parseDocument(reader);
         }
     }
 }
