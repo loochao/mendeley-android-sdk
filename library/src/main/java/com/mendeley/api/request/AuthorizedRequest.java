@@ -1,4 +1,4 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request;
 
 import android.text.TextUtils;
 

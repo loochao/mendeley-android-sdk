@@ -3,11 +3,11 @@ package com.mendeley.api.request.provider;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.mendeley.api.request.NetworkUtils;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.Order;
 import com.mendeley.api.request.params.Sort;
 import com.mendeley.api.request.params.View;
+import com.mendeley.api.request.Request;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +19,7 @@ public class DocumentNetworkProviderTest  extends AndroidTestCase {
 	
 	@Override
 	protected void setUp() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		String apiUrl = NetworkUtils.API_URL;
+		String apiUrl = Request.API_URL;
 		documentsUrl = apiUrl+"documents";
     }
 	

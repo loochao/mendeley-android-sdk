@@ -18,12 +18,12 @@ import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.params.GroupRequestParameters;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.procedure.ApplicationFeaturesNetworkProvider;
-import com.mendeley.api.request.procedure.DeleteNetworkRequest;
-import com.mendeley.api.request.procedure.GetFileNetworkRequest;
-import com.mendeley.api.request.procedure.PostFileNetworkRequest;
-import com.mendeley.api.request.procedure.PostNetworkRequest;
-import com.mendeley.api.request.procedure.Request;
+import com.mendeley.api.request.provider.ApplicationFeaturesNetworkProvider;
+import com.mendeley.api.request.DeleteAuthorizedRequest;
+import com.mendeley.api.request.GetFileNetworkRequest;
+import com.mendeley.api.request.PostFileAuthorizedRequest;
+import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.provider.AnnotationsNetworkProvider;
 import com.mendeley.api.request.provider.CatalogDocumentNetworkProvider;
 import com.mendeley.api.request.provider.DocumentNetworkProvider;
@@ -126,7 +126,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Document> patchDocument(String documentId, Date date, Document document) {
-        return new DocumentNetworkProvider.PatchDocumentRequest(documentId, document, date, authTokenManager, clientCredentials);
+        return new DocumentNetworkProvider.PatchDocumentAuthorizedRequest(documentId, document, date, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -146,12 +146,12 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Void> deleteDocument(String documentId) {
-        return new DeleteNetworkRequest(DocumentNetworkProvider.getDeleteDocumentUrl(documentId), authTokenManager, clientCredentials);
+        return new DeleteAuthorizedRequest(DocumentNetworkProvider.getDeleteDocumentUrl(documentId), authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Void> deleteTrashedDocument(String documentId) {
-        return new DeleteNetworkRequest(TrashNetworkProvider.getDeleteUrl(documentId), authTokenManager, clientCredentials);
+        return new DeleteAuthorizedRequest(TrashNetworkProvider.getDeleteUrl(documentId), authTokenManager, clientCredentials);
     }
 
     @Override
@@ -199,12 +199,12 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Annotation>  patchAnnotation(String annotationId, Annotation annotation) {
-       return new AnnotationsNetworkProvider.PatchAnnotationRequest(annotationId, annotation, authTokenManager, clientCredentials);
+       return new AnnotationsNetworkProvider.PatchAnnotationAuthorizedRequest(annotationId, annotation, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Void> deleteAnnotation(String annotationId) {
-        return new DeleteNetworkRequest(deleteAnnotationUrl(annotationId), authTokenManager, clientCredentials);
+        return new DeleteAuthorizedRequest(deleteAnnotationUrl(annotationId), authTokenManager, clientCredentials);
     }
 
     /* FILES BLOCKING */
@@ -236,12 +236,12 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<File> postFileBinary(String contentType, String documentId, InputStream inputStream, String fileName) {
-        return new PostFileNetworkRequest(contentType, documentId, fileName, inputStream, authTokenManager, clientCredentials);
+        return new PostFileAuthorizedRequest(contentType, documentId, fileName, inputStream, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Void> deleteFile(String fileId) {
-        return new DeleteNetworkRequest(FileNetworkProvider.getDeleteFileUrl(fileId), authTokenManager, clientCredentials);
+        return new DeleteAuthorizedRequest(FileNetworkProvider.getDeleteFileUrl(fileId), authTokenManager, clientCredentials);
     }
 
     /* FOLDERS BLOCKING */
@@ -277,7 +277,7 @@ public class RequestFactoryImpl implements RequestsFactory {
     @Override
     public Request<Folder> patchFolder(String folderId, Folder folder) {
         String url = FolderNetworkProvider.getPatchFolderUrl(folderId);
-        return new FolderNetworkProvider.PatchFolderRequest(url, folder, authTokenManager, clientCredentials);
+        return new FolderNetworkProvider.PatchFolderAuthorizedRequest(url, folder, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -300,13 +300,13 @@ public class RequestFactoryImpl implements RequestsFactory {
     @Override
     public Request<Void> deleteFolder(String folderId) {
         String url = getDeleteFolderUrl(folderId);
-        return new DeleteNetworkRequest(url, authTokenManager, clientCredentials);
+        return new DeleteAuthorizedRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Void> deleteDocumentFromFolder(String folderId, String documentId) {
         String url = FolderNetworkProvider.getDeleteDocumentFromFolderUrl(folderId, documentId);
-        return new DeleteNetworkRequest(url, authTokenManager, clientCredentials);
+        return new DeleteAuthorizedRequest(url, authTokenManager, clientCredentials);
     }
 
 

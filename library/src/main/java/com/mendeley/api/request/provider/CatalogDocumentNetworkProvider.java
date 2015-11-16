@@ -5,7 +5,7 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
 import com.mendeley.api.request.params.View;
@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
+import static com.mendeley.api.request.Request.API_URL;
 
 /**
  * NetworkProvider class for Documents API calls
@@ -101,7 +101,7 @@ public class CatalogDocumentNetworkProvider {
         return url.toString();
     }
 
-    public static class GetCatalogDocumentsRequest extends GetNetworkRequest<List<Document>> {
+    public static class GetCatalogDocumentsRequest extends GetAuthorizedRequest<List<Document>> {
         public GetCatalogDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -118,7 +118,7 @@ public class CatalogDocumentNetworkProvider {
         }
     }
 
-    public static class GetCatalogDocumentRequest extends GetNetworkRequest<Document> {
+    public static class GetCatalogDocumentRequest extends GetAuthorizedRequest<Document> {
         public GetCatalogDocumentRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }

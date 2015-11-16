@@ -1,15 +1,15 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import com.mendeley.api.exceptions.MendeleyException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class IdentifierTypesEndpointBlockingTest extends EndpointBlockingTest {
+public class IdentifierTypesRequestTest extends RequestTest {
 
     private final Map<String,String> expectedIdentifierTypes;
 
-    public IdentifierTypesEndpointBlockingTest() {
+    public IdentifierTypesRequestTest() {
         super();
         expectedIdentifierTypes = new HashMap<String, String>();
 

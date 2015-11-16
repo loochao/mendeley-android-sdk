@@ -5,11 +5,11 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Folder;
-import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.FolderRequestParameters;
-import com.mendeley.api.request.procedure.PatchNetworkRequest;
-import com.mendeley.api.request.procedure.PostNetworkRequest;
+import com.mendeley.api.request.PatchAuthorizedRequest;
+import com.mendeley.api.request.PostNetworkRequest;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -25,7 +25,7 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
+import static com.mendeley.api.request.Request.API_URL;
 
 /**
  * NetworkProvider class for Folder API calls
@@ -131,7 +131,7 @@ public class FolderNetworkProvider {
 	
     /* PROCEDURES */
 
-    public static class GetFoldersRequest extends GetNetworkRequest<List<Folder>> {
+    public static class GetFoldersRequest extends GetAuthorizedRequest<List<Folder>> {
         public GetFoldersRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -148,7 +148,7 @@ public class FolderNetworkProvider {
         }
     }
 
-    public static class GetFolderRequest extends GetNetworkRequest<Folder> {
+    public static class GetFolderRequest extends GetAuthorizedRequest<Folder> {
         public GetFolderRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -192,10 +192,10 @@ public class FolderNetworkProvider {
         }
     }
 
-    public static class PatchFolderRequest extends PatchNetworkRequest<Folder> {
+    public static class PatchFolderAuthorizedRequest extends PatchAuthorizedRequest<Folder> {
         private final Folder folder;
 
-        public PatchFolderRequest(String url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public PatchFolderAuthorizedRequest(String url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, null, authTokenManager, clientCredentials);
             this.folder = folder;
         }
@@ -245,7 +245,7 @@ public class FolderNetworkProvider {
         }
     }
 
-    public static class GetFolderDocumentIdsRequest extends GetNetworkRequest<List<String>> {
+    public static class GetFolderDocumentIdsRequest extends GetAuthorizedRequest<List<String>> {
         public GetFolderDocumentIdsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }

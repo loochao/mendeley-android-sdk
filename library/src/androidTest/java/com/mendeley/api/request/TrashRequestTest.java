@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 
 import com.mendeley.api.model.Document;
@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TrashEndpointBlockingTest extends EndpointBlockingTest {
+public class TrashRequestTest extends RequestTest {
 
     public void test_trashDocument_trashDocumentInServer() throws Exception {
         // GIVEN some documents in the server

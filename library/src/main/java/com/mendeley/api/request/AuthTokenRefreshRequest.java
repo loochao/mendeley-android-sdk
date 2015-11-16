@@ -1,4 +1,4 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request;
 
 import android.util.Log;
 
@@ -8,7 +8,6 @@ import com.mendeley.api.exceptions.AuthenticationException;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.RequestResponse;
-import com.mendeley.api.request.NetworkUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

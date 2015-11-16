@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.RequestResponse;
@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class DocumentEndpointBlockingTest extends EndpointBlockingTest {
+public class DocumentRequestTest extends RequestTest {
 
     public void test_getDocuments_withoutParameters_receivesCorrectDocuments() throws Exception {
         // GIVEN some documents

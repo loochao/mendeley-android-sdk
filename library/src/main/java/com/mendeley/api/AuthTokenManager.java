@@ -16,7 +16,7 @@
 
 package com.mendeley.api;
 
-import com.mendeley.api.request.NetworkUtils;
+import com.mendeley.api.request.Request;
 
 import java.util.Date;
 
@@ -25,7 +25,7 @@ import java.util.Date;
  */
 public interface AuthTokenManager {
 
-    String TOKENS_URL = NetworkUtils.API_URL + "/oauth/token";
+    String TOKENS_URL = Request.API_URL + "/oauth/token";
     String GRANT_TYPE_AUTH = "authorization_code";
     String GRANT_TYPE_REFRESH = "refresh_token";
     String SCOPE = "all";

@@ -1,4 +1,4 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
@@ -6,7 +6,6 @@ import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.RequestResponse;
-import com.mendeley.api.request.NetworkUtils;
 import com.mendeley.api.util.DateUtils;
 import com.mendeley.api.util.Utils;
 
@@ -14,6 +13,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -24,17 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Date;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.getHttpPatch;
-
 // TODO try to eliminate Apache HTTP
-public abstract class PatchNetworkRequest<ResultType> extends AuthorizedRequest<ResultType> {
+public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedRequest<ResultType> {
     private final String url;
     private final String date;
 
-    public PatchNetworkRequest(String url, String date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public PatchAuthorizedRequest(String url, String date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(authTokenManager, clientCredentials);
         this.url = url;
         this.date = date;
@@ -43,11 +42,15 @@ public abstract class PatchNetworkRequest<ResultType> extends AuthorizedRequest<
     @Override
     protected RequestResponse<ResultType> doRun() throws MendeleyException {
         final HttpParams httpParameters = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParameters, NetworkUtils.CONNECTION_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParameters, NetworkUtils.READ_TIMEOUT);
-        HttpClient httpclient = new DefaultHttpClient(httpParameters);
+        HttpConnectionParams.setConnectionTimeout(httpParameters, CONNECTION_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParameters, READ_TIMEOUT);
+        final HttpClient httpclient = new DefaultHttpClient(httpParameters);
 
-        NetworkUtils.HttpPatch httpPatch = getHttpPatch(url, date, authTokenManager);
+        final HttpPatch httpPatch = new HttpPatch(url);
+        httpPatch.setHeader("Authorization", "Bearer " + authTokenManager.getAccessToken());
+        if (date != null) {
+            httpPatch.setHeader("If-Unmodified-Since", date);
+        }
 
         final Map<String, String> requestHeaders = new HashMap<>();
         appendHeaders(requestHeaders);
@@ -99,4 +102,30 @@ public abstract class PatchNetworkRequest<ResultType> extends AuthorizedRequest<
 
     protected abstract ResultType manageResponse(InputStream is) throws Exception;
 
+
+    /**
+     * Extends HttpEntityEnclosingRequestBase to provide PATCH request method.
+     */
+    static class HttpPatch extends HttpEntityEnclosingRequestBase {
+        public final static String METHOD_NAME = "PATCH";
+
+        public HttpPatch() {
+            super();
+        }
+
+        public HttpPatch(final URI uri) {
+            super();
+            setURI(uri);
+        }
+
+        public HttpPatch(final String uri) {
+            super();
+            setURI(URI.create(uri));
+        }
+
+        @Override
+        public String getMethod() {
+            return METHOD_NAME;
+        }
+    }
 }

@@ -4,21 +4,19 @@ import android.net.Uri;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.request.procedure.HttpUrlConnectionRequest;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
-
-import static com.mendeley.api.request.NetworkUtils.createHttpsGetConnection;
 
 /**
  * A NetworkProcedure specialised for making HTTP GET requests.
  */
-public abstract class GetNetworkRequest<ResultType> extends HttpUrlConnectionRequest<ResultType> {
+public abstract class GetAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
-    protected GetNetworkRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    protected GetAuthorizedRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(url, authTokenManager, clientCredentials);
     }
 
@@ -28,7 +26,13 @@ public abstract class GetNetworkRequest<ResultType> extends HttpUrlConnectionReq
 
     @Override
     protected final HttpsURLConnection createConnection(Uri uri) throws IOException {
-        return createHttpsGetConnection(uri.toString(), "GET");
+        final URL url = new URL(uri.toString());
+        final HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        con.setConnectTimeout(CONNECTION_TIMEOUT);
+        con.setReadTimeout(READ_TIMEOUT);
+        con.setRequestMethod("GET");
+
+        return con;
     }
 
 }

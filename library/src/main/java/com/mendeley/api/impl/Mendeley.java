@@ -27,8 +27,8 @@ import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.params.GroupRequestParameters;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.procedure.GetFileNetworkRequest;
-import com.mendeley.api.request.procedure.Request;
+import com.mendeley.api.request.GetFileNetworkRequest;
+import com.mendeley.api.request.Request;
 
 import org.json.JSONException;
 import org.json.JSONObject;

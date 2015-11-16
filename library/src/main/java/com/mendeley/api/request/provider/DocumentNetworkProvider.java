@@ -5,12 +5,12 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
-import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.procedure.PatchNetworkRequest;
-import com.mendeley.api.request.procedure.PostNetworkRequest;
+import com.mendeley.api.request.PatchAuthorizedRequest;
+import com.mendeley.api.request.PostNetworkRequest;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
+import static com.mendeley.api.request.Request.API_URL;
 
 /**
  * NetworkProvider class for Documents API calls
@@ -177,7 +177,7 @@ public class DocumentNetworkProvider {
 
     /* PROCEDURES */
 
-    public static class GetDocumentsRequest extends GetNetworkRequest<List<Document>> {
+    public static class GetDocumentsRequest extends GetAuthorizedRequest<List<Document>> {
         public GetDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -194,7 +194,7 @@ public class DocumentNetworkProvider {
         }
    }
 
-    public static class GetDeletedDocumentsRequest extends GetNetworkRequest<List<String>> {
+    public static class GetDeletedDocumentsRequest extends GetAuthorizedRequest<List<String>> {
         public GetDeletedDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -212,7 +212,7 @@ public class DocumentNetworkProvider {
     }
 
 
-    public static class GetDocumentRequest extends GetNetworkRequest<Document> {
+    public static class GetDocumentRequest extends GetAuthorizedRequest<Document> {
         public GetDocumentRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -229,7 +229,7 @@ public class DocumentNetworkProvider {
         }
     }
 
-    public static class GetDocumentTypesRequest extends GetNetworkRequest<Map<String, String>> {
+    public static class GetDocumentTypesRequest extends GetAuthorizedRequest<Map<String, String>> {
         public GetDocumentTypesRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -273,10 +273,10 @@ public class DocumentNetworkProvider {
         }
     }
 
-    public static class PatchDocumentRequest extends PatchNetworkRequest<Document> {
+    public static class PatchDocumentAuthorizedRequest extends PatchAuthorizedRequest<Document> {
         private final Document document;
 
-        public PatchDocumentRequest(String documentId, Document document, Date date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public PatchDocumentAuthorizedRequest(String documentId, Document document, Date date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(getPatchDocumentUrl(documentId), formatDate(date), authTokenManager, clientCredentials);
             this.document = document;
         }

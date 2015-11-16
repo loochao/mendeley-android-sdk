@@ -1,21 +1,17 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request;
 
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.File;
-import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.NetworkUtils;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
-
-public class PostFileNetworkRequest extends PostNetworkRequest<File> {
+public class PostFileAuthorizedRequest extends PostNetworkRequest<File> {
     private final String contentType;
     private final String documentId;
     private final String fileName;
@@ -23,7 +19,7 @@ public class PostFileNetworkRequest extends PostNetworkRequest<File> {
 
     private static String filesUrl = API_URL + "files";
 
-    public PostFileNetworkRequest(String contentType, String documentId, String fileName,  InputStream inputStream, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public PostFileAuthorizedRequest(String contentType, String documentId, String fileName, InputStream inputStream, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(filesUrl, authTokenManager, clientCredentials);
         this.contentType = contentType;
         this.documentId = documentId;
@@ -35,7 +31,7 @@ public class PostFileNetworkRequest extends PostNetworkRequest<File> {
     protected void appendHeaders(Map<String, String> headers) {
         headers.put("Content-Disposition", "attachment; filename*=UTF-8\'\'"+fileName);
         headers.put("Content-type", contentType);
-        headers.put("Link", "<" + NetworkUtils.API_URL+"documents/"+documentId+">; rel=\"document\"");
+        headers.put("Link", "<" + API_URL+"documents/"+documentId+">; rel=\"document\"");
     }
 
     @Override

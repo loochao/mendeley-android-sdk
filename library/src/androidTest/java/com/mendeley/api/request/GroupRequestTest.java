@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import com.mendeley.api.model.Group;
 import com.mendeley.api.model.RequestResponse;
@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GroupEndpointBlockingTest extends EndpointBlockingTest {
+public class GroupRequestTest extends RequestTest {
 
     private static final String[] GROUPS = {
             "Artificial Neural Networks",

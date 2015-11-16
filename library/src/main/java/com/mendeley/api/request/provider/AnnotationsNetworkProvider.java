@@ -5,11 +5,11 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
-import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.AnnotationRequestParameters;
-import com.mendeley.api.request.procedure.PatchNetworkRequest;
-import com.mendeley.api.request.procedure.PostNetworkRequest;
+import com.mendeley.api.request.PatchAuthorizedRequest;
+import com.mendeley.api.request.PostNetworkRequest;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
+import static com.mendeley.api.request.Request.API_URL;
 
 /**
  * NetworkProvider for Annotations API calls.
@@ -88,7 +88,7 @@ public class AnnotationsNetworkProvider {
 
     /* PROCEDURES */
 
-    public static class GetAnnotationRequest extends GetNetworkRequest<Annotation> {
+    public static class GetAnnotationRequest extends GetAuthorizedRequest<Annotation> {
         public GetAnnotationRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -105,7 +105,7 @@ public class AnnotationsNetworkProvider {
         }
     }
 
-    public static class GetAnnotationsRequest extends GetNetworkRequest<List<Annotation>> {
+    public static class GetAnnotationsRequest extends GetAuthorizedRequest<List<Annotation>> {
         public GetAnnotationsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -148,10 +148,10 @@ public class AnnotationsNetworkProvider {
         }
     }
 
-    public static class PatchAnnotationRequest extends PatchNetworkRequest<Annotation> {
+    public static class PatchAnnotationAuthorizedRequest extends PatchAuthorizedRequest<Annotation> {
         private final Annotation annotation;
 
-        public PatchAnnotationRequest(String annotationId, Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public PatchAnnotationAuthorizedRequest(String annotationId, Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(getUrl(annotationId), null, authTokenManager, clientCredentials);
             this.annotation = annotation;
         }

@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 
 import android.test.suitebuilder.annotation.SmallTest;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ApplicationFeaturesEndpointBlockingTest extends EndpointBlockingTest {
+public class ApplicationFeaturesRequestTest extends RequestTest {
 
     @SmallTest
     public void test_getApplicationFeatures_receivesCorrectItems() throws Exception {

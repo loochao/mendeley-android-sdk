@@ -8,7 +8,7 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.File;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.FileRequestParameters;
-import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.GetAuthorizedRequest;
 
 import org.json.JSONException;
 
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
+import static com.mendeley.api.request.Request.API_URL;
 
 /**
  * NetworkProvider class for Files API calls
@@ -101,7 +101,7 @@ public class FileNetworkProvider {
 
     /* PROCEDURES */
 
-    public static class GetFilesRequest extends GetNetworkRequest<List<File>> {
+    public static class GetFilesRequest extends GetAuthorizedRequest<List<File>> {
         public GetFilesRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }

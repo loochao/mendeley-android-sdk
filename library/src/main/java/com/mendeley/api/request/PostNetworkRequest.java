@@ -1,20 +1,20 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request;
 
 import android.net.Uri;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.request.NetworkUtils;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public abstract class PostNetworkRequest<ResultType> extends HttpUrlConnectionRequest<ResultType> {
+public abstract class PostNetworkRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
     public PostNetworkRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(url, authTokenManager, clientCredentials);
@@ -23,10 +23,13 @@ public abstract class PostNetworkRequest<ResultType> extends HttpUrlConnectionRe
 
     @Override
     protected HttpsURLConnection createConnection(Uri uri) throws IOException {
-        HttpsURLConnection connection = NetworkUtils.createHttpsGetConnection(uri.toString(), "POST");
-        connection.setDoOutput(true);
-        connection.setChunkedStreamingMode(0);
-        return connection;
+        final URL url = new URL(uri.toString());
+        final HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        con.setConnectTimeout(CONNECTION_TIMEOUT);
+        con.setReadTimeout(READ_TIMEOUT);
+        con.setRequestMethod("POST");
+
+        return con;
     }
 
     @Override

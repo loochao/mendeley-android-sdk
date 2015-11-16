@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Document;
@@ -11,7 +11,7 @@ import java.util.List;
  * These tests are using a file hash of an existing document file, MENDELEY: Getting Started with Mendeley
  * If this file will change the file hash will not return the catalog document id and the test will fail.
  */
-public class CatalogEndpointBlockingTest extends EndpointBlockingTest {
+public class CatalogRequestTest extends RequestTest {
 
     public void test_getCatalogDocuments_receivesCorrectCatalogDocuments() throws MendeleyException, IOException {
         //GIVEN a file hash

@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FileEndpointBlockingTest extends EndpointBlockingTest {
+public class FileRequestTest extends RequestTest {
 
     public void test_getFiles_withoutParameters_receivesCorrectFiles() throws Exception {
         // GIVEN a document with files

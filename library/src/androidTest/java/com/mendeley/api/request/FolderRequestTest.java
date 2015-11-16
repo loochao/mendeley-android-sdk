@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Folder;
@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class FolderEndpointBlockingTest extends EndpointBlockingTest {
+public class FolderRequestTest extends RequestTest {
 
     public void test_getFolders_withoutParameters_receivesCorrectFolders() throws Exception {
         // GIVEN some folders

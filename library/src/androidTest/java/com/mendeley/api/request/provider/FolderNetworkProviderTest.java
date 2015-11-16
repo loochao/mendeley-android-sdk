@@ -3,8 +3,8 @@ package com.mendeley.api.request.provider;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.mendeley.api.request.NetworkUtils;
 import com.mendeley.api.request.params.FolderRequestParameters;
+import com.mendeley.api.request.Request;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -18,7 +18,7 @@ public class FolderNetworkProviderTest extends AndroidTestCase {
 
         provider = new FolderNetworkProvider();
 		
-		String apiUrl = NetworkUtils.API_URL;
+		String apiUrl = Request.API_URL;
 		
 		foldersUrl = apiUrl+"folders";
     }

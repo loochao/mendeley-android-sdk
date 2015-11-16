@@ -1,9 +1,9 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import java.util.Map;
 import java.util.Set;
 
-public class DocumentTypesEndpointBlockingTest extends EndpointBlockingTest {
+public class DocumentTypesRequestTest extends RequestTest {
 
     public void test_getDocumentTypes_receivesCorrectDocumentTypes() throws Exception {
         final Map<String, String> types = getSdk().getDocumentTypes().run().resource;

@@ -5,9 +5,9 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.ReadPosition;
-import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.procedure.PostNetworkRequest;
+import com.mendeley.api.request.PostNetworkRequest;
 
 import org.json.JSONException;
 
@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
+import static com.mendeley.api.request.Request.API_URL;
 
 /**
  * NetworkProvider class for Recently read API calls
@@ -60,7 +60,7 @@ public class RecentlyReadNetworkProvider {
 
     /* PROCEDURES */
 
-    public static class GetRecentlyReadRequest extends GetNetworkRequest<List<ReadPosition>> {
+    public static class GetRecentlyReadRequest extends GetAuthorizedRequest<List<ReadPosition>> {
         public GetRecentlyReadRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url,  authTokenManager, clientCredentials);
         }

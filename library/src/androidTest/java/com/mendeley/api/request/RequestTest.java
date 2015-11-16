@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import android.content.res.AssetManager;
 import android.test.AndroidTestCase;
@@ -16,7 +16,7 @@ import com.mendeley.api.testUtils.UsernameAndPasswordSessionManagerFactory;
 import java.util.Date;
 import java.util.Random;
 
-public abstract class EndpointBlockingTest extends AndroidTestCase {
+public abstract class RequestTest extends AndroidTestCase {
 
     private RequestsFactory requestsFactory;
     private ClientCredentials clientCredentials;

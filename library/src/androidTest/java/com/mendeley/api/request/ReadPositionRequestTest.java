@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 
 import android.test.suitebuilder.annotation.LargeTest;
@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ReadPositionEndpointBlockingTest extends EndpointBlockingTest {
+public class ReadPositionRequestTest extends RequestTest {
 
 
     @LargeTest

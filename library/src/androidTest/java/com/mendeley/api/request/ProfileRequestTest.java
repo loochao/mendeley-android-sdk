@@ -1,9 +1,9 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import com.mendeley.api.model.Profile;
 import com.mendeley.api.testUtils.AssertUtils;
 
-public class ProfileEndpointBlockingTest extends EndpointBlockingTest {
+public class ProfileRequestTest extends RequestTest {
 
     /**
      * As we don't have an API to setup profiles for the test,

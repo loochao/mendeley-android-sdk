@@ -1,10 +1,10 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request.provider;
 
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 
 import org.json.JSONException;
@@ -22,9 +22,9 @@ import java.util.Map;
  */
 public class ApplicationFeaturesNetworkProvider {
 
-    public static class GetApplicationFeaturesProcedure extends GetNetworkRequest<List<String>> {
+    public static class GetApplicationFeaturesProcedure extends GetAuthorizedRequest<List<String>> {
         public GetApplicationFeaturesProcedure(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(com.mendeley.api.request.NetworkUtils.API_URL + "/application_features", authTokenManager, clientCredentials);
+            super(API_URL + "/application_features", authTokenManager, clientCredentials);
         }
 
         @Override

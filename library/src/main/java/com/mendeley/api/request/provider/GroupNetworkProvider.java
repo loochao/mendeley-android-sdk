@@ -6,7 +6,7 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
-import com.mendeley.api.request.GetNetworkRequest;
+import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.GroupRequestParameters;
 
@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
+import static com.mendeley.api.request.Request.API_URL;
 
 /**
  * NetworkProvider class for Group API calls
@@ -82,7 +82,7 @@ public class GroupNetworkProvider {
 
     /* PROCEDURES */
 
-    public static class GetGroupsRequest extends GetNetworkRequest<List<Group>> {
+    public static class GetGroupsRequest extends GetAuthorizedRequest<List<Group>> {
         public GetGroupsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -99,7 +99,7 @@ public class GroupNetworkProvider {
         }
     }
 
-    public static class GetGroupRequest extends GetNetworkRequest<Group> {
+    public static class GetGroupRequest extends GetAuthorizedRequest<Group> {
         public GetGroupRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -116,7 +116,7 @@ public class GroupNetworkProvider {
         }
     }
 
-    public static class GetGroupMembersRequest extends GetNetworkRequest<List<UserRole>> {
+    public static class GetGroupMembersRequest extends GetAuthorizedRequest<List<UserRole>> {
         public GetGroupMembersRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }

@@ -1,14 +1,13 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.model.Profile;
-import com.mendeley.api.request.procedure.AuthTokenRefreshRequest;
 import com.mendeley.api.testUtils.AssertUtils;
 
-public class AuthTokenRefreshRequestTest extends EndpointBlockingTest {
+public class AuthTokenRefreshRequestTest extends RequestTest {
 
     @SmallTest
     public void test_AuthTokenRefreshRequest_updatesTheAccessToken() throws Exception {

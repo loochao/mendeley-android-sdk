@@ -1,16 +1,12 @@
 package com.mendeley.api.request;
 
 import com.mendeley.api.AuthTokenManager;
-import com.mendeley.api.BuildConfig;
-
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -19,53 +15,6 @@ import javax.net.ssl.HttpsURLConnection;
  * Utilities for the NetworkProviders.
  */
 public class NetworkUtils {
-    public static final String API_URL = BuildConfig.WEB_API_BASE_URL;
-
-    public static final int CONNECTION_TIMEOUT = 1500;
-    public static final int READ_TIMEOUT = 15000 ;
-
-    static {
-        HttpsURLConnection.setDefaultSSLSocketFactory(new NoSSLv3Factory());
-    }
-
-    /**
-     * Extends HttpEntityEnclosingRequestBase to provide PATCH request method.
-     */
-    public static class HttpPatch extends HttpEntityEnclosingRequestBase {
-        public final static String METHOD_NAME = "PATCH";
-
-        public HttpPatch() {
-            super();
-        }
-
-        public HttpPatch(final URI uri) {
-            super();
-            setURI(uri);
-        }
-
-        public HttpPatch(final String uri) {
-            super();
-            setURI(URI.create(uri));
-        }
-
-        @Override
-        public String getMethod() {
-            return METHOD_NAME;
-        }
-    }
-
-    /**
-     * @param date if-Unmodified-Since date, or null
-     */
-    public static HttpPatch getHttpPatch(String url, String date, AuthTokenManager accessTokenProvider) {
-        HttpPatch httpPatch = new HttpPatch(url);
-        httpPatch.setHeader("Authorization", "Bearer " + accessTokenProvider.getAccessToken());
-        if (date != null) {
-            httpPatch.setHeader("If-Unmodified-Since", date);
-        }
-
-        return httpPatch;
-    }
 
     /**
      * Creating HttpsURLConnection object with the given url and request method.
@@ -95,8 +44,8 @@ public class NetworkUtils {
     public static HttpsURLConnection createHttpsGetConnection(String url, String method) throws IOException {
         final URL callUrl = new URL(url);
         final HttpsURLConnection con = (HttpsURLConnection) callUrl.openConnection();
-        con.setConnectTimeout(CONNECTION_TIMEOUT);
-        con.setReadTimeout(READ_TIMEOUT);
+        con.setConnectTimeout(Request.CONNECTION_TIMEOUT);
+        con.setReadTimeout(Request.READ_TIMEOUT);
         con.setRequestMethod(method);
 
         return con;
@@ -105,8 +54,8 @@ public class NetworkUtils {
     public static HttpURLConnection createHttpGetConnection(String url, String method) throws IOException {
         final URL callUrl = new URL(url);
         final HttpURLConnection con = (HttpURLConnection) callUrl.openConnection();
-        con.setConnectTimeout(CONNECTION_TIMEOUT);
-        con.setReadTimeout(READ_TIMEOUT);
+        con.setConnectTimeout(Request.CONNECTION_TIMEOUT);
+        con.setReadTimeout(Request.READ_TIMEOUT);
         con.setRequestMethod(method);
 
         return con;

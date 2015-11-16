@@ -1,4 +1,4 @@
-package com.mendeley.api.integration;
+package com.mendeley.api.request;
 
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AnnotationEndpointBlockingTest extends EndpointBlockingTest {
+public class AnnotationRequestTest extends RequestTest {
 
     public void test_getAnnotations_withoutParameters_receivesCorrectAnnotations() throws Exception {
         // GIVEN some annotations

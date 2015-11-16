@@ -3,8 +3,8 @@ package com.mendeley.api.request.provider;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.mendeley.api.request.NetworkUtils;
 import com.mendeley.api.request.params.FileRequestParameters;
+import com.mendeley.api.request.Request;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +20,7 @@ public class FileNetworkProviderTest extends AndroidTestCase {
 
         provider = new FileNetworkProvider();
 		
-		String apiUrl = NetworkUtils.API_URL;
+		String apiUrl = Request.API_URL;
 		
 		filesUrl = apiUrl+"files";
     }

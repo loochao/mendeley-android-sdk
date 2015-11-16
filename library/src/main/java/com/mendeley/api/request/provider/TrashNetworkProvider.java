@@ -1,6 +1,6 @@
 package com.mendeley.api.request.provider;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
+import static com.mendeley.api.request.Request.API_URL;
 
 public class TrashNetworkProvider {
     public static String BASE_URL = API_URL + "trash";

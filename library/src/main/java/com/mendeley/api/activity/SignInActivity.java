@@ -17,6 +17,7 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.R;
 import com.mendeley.api.impl.Mendeley;
 import com.mendeley.api.request.NetworkUtils;
+import com.mendeley.api.request.Request;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -41,7 +42,7 @@ public class SignInActivity extends Activity {
 	public final static int AUTH_REQUEST_CODE = 31231;
 	public static final String EXTRA_JSON_TOKENS = "returned_json_tokens";
 
-    private static final String OAUTH2_URL = NetworkUtils.API_URL + "oauth/authorize";
+    private static final String OAUTH2_URL = Request.API_URL + "oauth/authorize";
 
 	private static final double SMALL_SCREEN_SIZE = 6.0;
 	private static final String FORGOT_PASSWORD_URL = "http://www.mendeley.com/forgot/";

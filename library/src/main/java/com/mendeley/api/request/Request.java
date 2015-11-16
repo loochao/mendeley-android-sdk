@@ -1,6 +1,7 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request;
 
 import com.mendeley.api.AuthTokenManager;
+import com.mendeley.api.BuildConfig;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.RequestResponse;
@@ -13,6 +14,10 @@ import com.mendeley.api.model.RequestResponse;
 public abstract class Request<ResultType> {
 
     protected static final String TAG = Request.class.getSimpleName();
+
+    public static final int CONNECTION_TIMEOUT = 1500;
+    public static final int READ_TIMEOUT = 15000 ;
+    public static final String API_URL = BuildConfig.WEB_API_BASE_URL;
 
     protected final AuthTokenManager authTokenManager;
     protected final ClientCredentials clientCredentials;

@@ -1,21 +1,18 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.FileDownloadException;
-import com.mendeley.api.request.GetNetworkRequest;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.mendeley.api.request.NetworkUtils.API_URL;
-
 /**
  * {@link Request} to download the binary of a file (usually the pdf file)
  */
-public class GetFileNetworkRequest extends GetNetworkRequest<Long> {
+public class GetFileNetworkRequest extends GetAuthorizedRequest<Long> {
 
     private static String filesUrl = API_URL + "files";
 

@@ -1,4 +1,4 @@
-package com.mendeley.api.request.procedure;
+package com.mendeley.api.request;
 
 import android.net.Uri;
 import android.util.Log;
@@ -8,9 +8,6 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.RequestResponse;
-import com.mendeley.api.request.GetNetworkRequest;
-import com.mendeley.api.request.NetworkUtils;
-import com.mendeley.api.request.ProgressPublisherInputStream;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.util.DateUtils;
 
@@ -23,15 +20,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * Base class for all synchronous network calls.
  */
-public abstract class HttpUrlConnectionRequest<ResultType> extends AuthorizedRequest<ResultType> {
+public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends AuthorizedRequest<ResultType> {
+
+    static {
+        HttpsURLConnection.setDefaultSSLSocketFactory(new NoSSLv3Factory());
+    }
 
     private final String url;
     private RequestProgressListener progressListener;
 
-    public HttpUrlConnectionRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public HttpUrlConnectionAuthorizedRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(authTokenManager, clientCredentials);
         this.url = url;
     }
@@ -124,7 +127,7 @@ public abstract class HttpUrlConnectionRequest<ResultType> extends AuthorizedReq
      */
     private RequestResponse<ResultType> followRedirection(HttpURLConnection con) throws MendeleyException {
         final Uri redirectionUri = Uri.parse(con.getHeaderField("location"));
-        final boolean addOauthToken = redirectionUri.getHost().equals(Uri.parse(NetworkUtils.API_URL).getHost());
+        final boolean addOauthToken = redirectionUri.getHost().equals(Uri.parse(API_URL).getHost());
         return doRun(redirectionUri, 0, addOauthToken);
     }
 
@@ -132,7 +135,7 @@ public abstract class HttpUrlConnectionRequest<ResultType> extends AuthorizedReq
      * Sets a listener to be notified of progress
      * @param progressListener
      */
-    public final void setProgressListener(GetNetworkRequest.RequestProgressListener progressListener) {
+    public final void setProgressListener(GetAuthorizedRequest.RequestProgressListener progressListener) {
         this.progressListener = progressListener;
     }
 
