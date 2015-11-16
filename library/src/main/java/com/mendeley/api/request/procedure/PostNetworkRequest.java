@@ -16,8 +16,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public abstract class PostNetworkRequest<ResultType> extends HttpUrlConnectionRequest<ResultType> {
 
-    public PostNetworkRequest(String url, String contentType, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(url, contentType, authTokenManager, clientCredentials);
+    public PostNetworkRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        super(url, authTokenManager, clientCredentials);
     }
 
 

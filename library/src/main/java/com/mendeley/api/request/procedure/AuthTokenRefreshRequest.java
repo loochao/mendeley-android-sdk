@@ -67,7 +67,6 @@ public class AuthTokenRefreshRequest extends Request<Void> {
         }
     }
 
-    // TODO: convert this to a request
     /**
      * Helper method for executing http post request for token refresh.
      */

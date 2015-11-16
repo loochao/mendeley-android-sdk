@@ -5,10 +5,10 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
+import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.GetNetworkRequest;
 
 import org.json.JSONException;
 
@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
 
@@ -102,7 +103,7 @@ public class CatalogDocumentNetworkProvider {
 
     public static class GetCatalogDocumentsRequest extends GetNetworkRequest<List<Document>> {
         public GetCatalogDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -110,17 +111,27 @@ public class CatalogDocumentNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentList(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+        }
     }
 
     public static class GetCatalogDocumentRequest extends GetNetworkRequest<Document> {
         public GetCatalogDocumentRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
         protected Document manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocument(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
         }
     }
 }

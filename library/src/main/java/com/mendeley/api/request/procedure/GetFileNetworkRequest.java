@@ -24,7 +24,7 @@ public class GetFileNetworkRequest extends GetNetworkRequest<Long> {
     private final File targetFile;
 
     public GetFileNetworkRequest(String fileId, File targetFile, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(filesUrl + "/" + fileId, null, authTokenManager, clientCredentials);
+        super(filesUrl + "/" + fileId, authTokenManager, clientCredentials);
         this.fileId = fileId;
         this.targetFile = targetFile;
     }

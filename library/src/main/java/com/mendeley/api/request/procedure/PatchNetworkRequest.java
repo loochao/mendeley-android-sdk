@@ -21,6 +21,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.mendeley.api.request.NetworkUtils.getHttpPatch;
 import static com.mendeley.api.request.NetworkUtils.readInputStream;
@@ -28,13 +30,11 @@ import static com.mendeley.api.request.NetworkUtils.readInputStream;
 // TODO try to eliminate Apache HTTP
 public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType> {
     private final String url;
-    private final String contentType;
     private final String date;
 
-    public PatchNetworkRequest(String url, String contentType, String date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public PatchNetworkRequest(String url, String date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(authTokenManager, clientCredentials);
         this.url = url;
-        this.contentType = contentType;
         this.date = date;
     }
 
@@ -50,7 +50,13 @@ public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType
         HttpConnectionParams.setSoTimeout(httpParameters, NetworkUtils.READ_TIMEOUT);
         HttpClient httpclient = new DefaultHttpClient(httpParameters);
 
-        NetworkUtils.HttpPatch httpPatch = getHttpPatch(url, date, contentType, authTokenManager);
+        NetworkUtils.HttpPatch httpPatch = getHttpPatch(url, date, authTokenManager);
+
+        final Map<String, String> requestHeaders = new HashMap<String, String>();
+        appendHeaders(requestHeaders);
+        for (String key: requestHeaders.keySet()) {
+            httpPatch.setHeader(key, requestHeaders.get(key));
+        }
 
         InputStream is = null;
         try {
@@ -75,6 +81,9 @@ public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType
         } finally {
             Utils.closeQuietly(is);
         }
+    }
+
+    protected void appendHeaders(Map<String, String> headers) {
     }
 
     protected abstract String obtainJsonToPost() throws JSONException;

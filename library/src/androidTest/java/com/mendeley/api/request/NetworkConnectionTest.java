@@ -83,7 +83,7 @@ public class NetworkConnectionTest extends AndroidTestCase {
 	}
 	
 	private NetworkUtils.HttpPatch getHttpPatch(String url, String date) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return NetworkUtils.getHttpPatch(url, date, null, accessTokenManager);
+		return NetworkUtils.getHttpPatch(url, date, accessTokenManager);
 	}
 	
 	public void testPreconditions() {

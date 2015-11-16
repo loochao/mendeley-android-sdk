@@ -6,9 +6,9 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
+import com.mendeley.api.request.GetNetworkRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.GroupRequestParameters;
-import com.mendeley.api.request.GetNetworkRequest;
 
 import org.json.JSONException;
 
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
 
@@ -83,7 +84,7 @@ public class GroupNetworkProvider {
 
     public static class GetGroupsRequest extends GetNetworkRequest<List<Group>> {
         public GetGroupsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-group.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -91,11 +92,16 @@ public class GroupNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseGroupList(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-group.1+json");
+        }
     }
 
     public static class GetGroupRequest extends GetNetworkRequest<Group> {
         public GetGroupRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-group.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -103,17 +109,27 @@ public class GroupNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseGroup(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-group.1+json");
+        }
     }
 
     public static class GetGroupMembersRequest extends GetNetworkRequest<List<UserRole>> {
         public GetGroupMembersRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-membership.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
         protected List<UserRole> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseUserRoleList(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-membership.1+json");
         }
     }
 }

@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
+import java.util.Map;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
 
@@ -131,7 +132,7 @@ public class FolderNetworkProvider {
 
     public static class GetFoldersRequest extends GetNetworkRequest<List<Folder>> {
         public GetFoldersRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-folder.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -139,11 +140,16 @@ public class FolderNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseFolderList(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
+        }
     }
 
     public static class GetFolderRequest extends GetNetworkRequest<Folder> {
         public GetFolderRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-folder.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -151,13 +157,18 @@ public class FolderNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseFolder(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
+        }
     }
 
     public static class PostFolderRequest extends PostNetworkRequest<Folder> {
         private final Folder folder;
 
         public PostFolderRequest(String url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-folder.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
             this.folder = folder;
         }
 
@@ -173,13 +184,18 @@ public class FolderNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseFolder(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
+        }
     }
 
     public static class PatchFolderRequest extends PatchNetworkRequest<Folder> {
         private final Folder folder;
 
         public PatchFolderRequest(String url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-folder.1+json", null, authTokenManager, clientCredentials);
+            super(url, null, authTokenManager, clientCredentials);
             this.folder = folder;
         }
 
@@ -193,13 +209,18 @@ public class FolderNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
             return JsonParser.parseFolder(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
+        }
     }
 
     public static class PostDocumentToFolderRequest extends PostNetworkRequest<Void> {
         private final String documentId;
 
         public PostDocumentToFolderRequest(String url, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
             this.documentId = documentId;
         }
 
@@ -214,17 +235,27 @@ public class FolderNetworkProvider {
             writer.write(JsonParser.jsonFromDocumentId(documentId));
             writer.flush();
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+        }
     }
 
     public static class GetFolderDocumentIdsRequest extends GetNetworkRequest<List<String>> {
         public GetFolderDocumentIdsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
         protected List<String> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentIds(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
         }
     }
 }

@@ -57,10 +57,9 @@ public class NetworkUtils {
     /**
      * @param date if-Unmodified-Since date, or null
      */
-    public static HttpPatch getHttpPatch(String url, String date, String contentType, AuthTokenManager accessTokenProvider) {
+    public static HttpPatch getHttpPatch(String url, String date, AuthTokenManager accessTokenProvider) {
         HttpPatch httpPatch = new HttpPatch(url);
         httpPatch.setHeader("Authorization", "Bearer " + accessTokenProvider.getAccessToken());
-        httpPatch.setHeader("Content-type", contentType);
         if (date != null) {
             httpPatch.setHeader("If-Unmodified-Since", date);
         }

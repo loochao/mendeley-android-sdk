@@ -29,13 +29,11 @@ import java.util.Map;
 public abstract class HttpUrlConnectionRequest<ResultType> extends Request<ResultType> {
 
     private final String url;
-    private final String contentType;
     private RequestProgressListener progressListener;
 
-    public HttpUrlConnectionRequest(String url, String contentType, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public HttpUrlConnectionRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(authTokenManager, clientCredentials);
         this.url = url;
-        this.contentType = contentType;
     }
 
     @Override
@@ -58,15 +56,12 @@ public abstract class HttpUrlConnectionRequest<ResultType> extends Request<Resul
                 con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
             }
 
-            if (contentType != null) {
-                con.addRequestProperty("Content-type", contentType);
-            }
-
             final Map<String, String> requestHeaders = new HashMap<String, String>();
             appendHeaders(requestHeaders);
             for (String key: requestHeaders.keySet()) {
                 con.addRequestProperty(key, requestHeaders.get(key));
             }
+
             con.connect();
 
             onConnected(con);

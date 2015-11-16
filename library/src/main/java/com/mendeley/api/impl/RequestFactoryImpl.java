@@ -131,7 +131,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Void> trashDocument(String documentId) {
-        return new PostNetworkRequest<Void>(getTrashDocumentUrl(documentId), null, authTokenManager, clientCredentials) {
+        return new PostNetworkRequest<Void>(getTrashDocumentUrl(documentId), authTokenManager, clientCredentials) {
             @Override
             protected Void manageResponse(InputStream is) throws Exception {
                 return null;
@@ -373,7 +373,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Void> restoreDocument(String documentId) {
-        return new PostNetworkRequest<Void>(TrashNetworkProvider.getRecoverUrl(documentId), null, authTokenManager, clientCredentials) {
+        return new PostNetworkRequest<Void>(TrashNetworkProvider.getRecoverUrl(documentId), authTokenManager, clientCredentials) {
             @Override
             protected Void manageResponse(InputStream is) throws Exception {
                 return null;

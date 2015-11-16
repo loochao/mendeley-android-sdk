@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
 
@@ -61,13 +62,18 @@ public class RecentlyReadNetworkProvider {
 
     public static class GetRecentlyReadRequest extends GetNetworkRequest<List<ReadPosition>> {
         public GetRecentlyReadRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-recently-read.1+json", authTokenManager, clientCredentials);
+            super(url,  authTokenManager, clientCredentials);
         }
 
         @Override
         protected List<ReadPosition> manageResponse(InputStream is) throws JSONException, ParseException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseReadPositionList(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-recently-read.1+json");
         }
     }
 
@@ -79,7 +85,7 @@ public class RecentlyReadNetworkProvider {
         private final ReadPosition readPosition;
 
         public PostRecentlyReadRequest(ReadPosition readPosition, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(RECENTLY_READ_BASE_URL, "application/vnd.mendeley-recently-read.1+json", authTokenManager, clientCredentials);
+            super(RECENTLY_READ_BASE_URL, authTokenManager, clientCredentials);
             this.readPosition = readPosition;
         }
 
@@ -97,6 +103,10 @@ public class RecentlyReadNetworkProvider {
             return JsonParser.parseReadPosition(reader);
         }
 
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-recently-read.1+json");
+        }
     }
 
 }

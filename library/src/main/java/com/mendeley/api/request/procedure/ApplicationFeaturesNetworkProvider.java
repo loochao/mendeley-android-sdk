@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * NetworkProvider class for Application features API call
@@ -23,13 +24,18 @@ public class ApplicationFeaturesNetworkProvider {
 
     public static class GetApplicationFeaturesProcedure extends GetNetworkRequest<List<String>> {
         public GetApplicationFeaturesProcedure(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(com.mendeley.api.request.NetworkUtils.API_URL + "/application_features", "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(com.mendeley.api.request.NetworkUtils.API_URL + "/application_features", authTokenManager, clientCredentials);
         }
 
         @Override
         protected List<String> manageResponse(InputStream is) throws JSONException, ParseException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseApplicationFeatures(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
         }
     }
 }

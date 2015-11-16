@@ -178,7 +178,7 @@ public class DocumentNetworkProvider {
 
     public static class GetDocumentsRequest extends GetNetworkRequest<List<Document>> {
         public GetDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -186,11 +186,16 @@ public class DocumentNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentList(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+        }
    }
 
     public static class GetDeletedDocumentsRequest extends GetNetworkRequest<List<String>> {
         public GetDeletedDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -198,12 +203,17 @@ public class DocumentNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentIds(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+        }
     }
 
 
     public static class GetDocumentRequest extends GetNetworkRequest<Document> {
         public GetDocumentRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -211,16 +221,26 @@ public class DocumentNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocument(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+        }
     }
 
     public static class GetDocumentTypesRequest extends GetNetworkRequest<Map<String, String>> {
         public GetDocumentTypesRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, "application/vnd.mendeley-document-type.1+json", authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         protected Map<String, String> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentTypes(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type","application/vnd.mendeley-document-type.1+json");
         }
     }
 
@@ -229,7 +249,7 @@ public class DocumentNetworkProvider {
         final private Document doc;
 
         public PostDocumentRequest(Document doc, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(DOCUMENTS_BASE_URL, "application/vnd.mendeley-document.1+json", authTokenManager, clientCredentials);
+            super(DOCUMENTS_BASE_URL, authTokenManager, clientCredentials);
             this.doc = doc;
         }
 
@@ -245,13 +265,18 @@ public class DocumentNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseDocument(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+        }
     }
 
     public static class PatchDocumentRequest extends PatchNetworkRequest<Document> {
         private final Document document;
 
         public PatchDocumentRequest(String documentId, Document document, Date date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getPatchDocumentUrl(documentId), "application/vnd.mendeley-document.1+json", formatDate(date), authTokenManager, clientCredentials);
+            super(getPatchDocumentUrl(documentId), formatDate(date), authTokenManager, clientCredentials);
             this.document = document;
         }
 
@@ -264,6 +289,11 @@ public class DocumentNetworkProvider {
         protected Document processJsonString(String jsonString) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new ByteArrayInputStream(jsonString.getBytes())));
             return JsonParser.parseDocument(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
         }
     }
 }

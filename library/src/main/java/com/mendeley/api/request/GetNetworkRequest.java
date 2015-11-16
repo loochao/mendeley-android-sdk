@@ -18,8 +18,8 @@ import static com.mendeley.api.request.NetworkUtils.createHttpsGetConnection;
  */
 public abstract class GetNetworkRequest<ResultType> extends HttpUrlConnectionRequest<ResultType> {
 
-    protected GetNetworkRequest(String url, String contentType, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(url, contentType, authTokenManager, clientCredentials);
+    protected GetNetworkRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        super(url, authTokenManager, clientCredentials);
     }
 
     @Override

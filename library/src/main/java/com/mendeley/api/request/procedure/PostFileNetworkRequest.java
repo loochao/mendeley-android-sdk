@@ -24,7 +24,7 @@ public class PostFileNetworkRequest extends PostNetworkRequest<File> {
     private static String filesUrl = API_URL + "files";
 
     public PostFileNetworkRequest(String contentType, String documentId, String fileName,  InputStream inputStream, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(filesUrl, contentType, authTokenManager, clientCredentials);
+        super(filesUrl, authTokenManager, clientCredentials);
         this.contentType = contentType;
         this.documentId = documentId;
         this.fileName = fileName;

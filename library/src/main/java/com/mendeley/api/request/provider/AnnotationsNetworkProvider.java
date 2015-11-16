@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 import static com.mendeley.api.request.NetworkUtils.API_URL;
 
@@ -88,7 +89,7 @@ public class AnnotationsNetworkProvider {
 
     public static class GetAnnotationRequest extends GetNetworkRequest<Annotation> {
         public GetAnnotationRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, CONTENT_TYPE, authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -96,11 +97,16 @@ public class AnnotationsNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseAnnotation(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", CONTENT_TYPE);
+        }
     }
 
     public static class GetAnnotationsRequest extends GetNetworkRequest<List<Annotation>> {
         public GetAnnotationsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, CONTENT_TYPE, authTokenManager, clientCredentials);
+            super(url, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -108,13 +114,18 @@ public class AnnotationsNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseAnnotationList(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", CONTENT_TYPE);
+        }
    }
 
     public static class PostAnnotationRequest extends PostNetworkRequest<Annotation> {
         private final Annotation annotation;
 
         public PostAnnotationRequest(Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials){
-            super(ANNOTATIONS_BASE_URL, CONTENT_TYPE, authTokenManager, clientCredentials);
+            super(ANNOTATIONS_BASE_URL, authTokenManager, clientCredentials);
             this.annotation = annotation;
         }
 
@@ -129,18 +140,28 @@ public class AnnotationsNetworkProvider {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseAnnotation(reader);
         }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", CONTENT_TYPE);
+        }
     }
 
     public static class PatchAnnotationRequest extends PatchNetworkRequest<Annotation> {
         private final Annotation annotation;
 
         public PatchAnnotationRequest(String annotationId, Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getUrl(annotationId), CONTENT_TYPE, null, authTokenManager, clientCredentials);
+            super(getUrl(annotationId), null, authTokenManager, clientCredentials);
             this.annotation = annotation;
         }
 
         private static String getUrl(String annotationId) {
             return ANNOTATIONS_BASE_URL + "/" + annotationId;
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", CONTENT_TYPE);
         }
 
         @Override

@@ -16,7 +16,7 @@ import java.net.HttpURLConnection;
 public class DeleteNetworkRequest extends HttpUrlConnectionRequest<Void> {
 
     public DeleteNetworkRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(url, null, authTokenManager, clientCredentials);
+        super(url, authTokenManager, clientCredentials);
     }
 
     @Override
