@@ -65,6 +65,11 @@ class SharedPreferencesAuthTokenManager implements AuthTokenManager {
         return preferences.getString(ACCESS_TOKEN_KEY, null);
     }
 
+    @Override
+    public String getTokenType() {
+        return preferences.getString(TOKEN_TYPE_KEY, null);
+    }
+
     private Date generateExpiresAtFromExpiresIn(int expiresIn) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.SECOND, expiresIn);

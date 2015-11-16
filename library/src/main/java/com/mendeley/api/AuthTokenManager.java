@@ -41,6 +41,8 @@ public interface AuthTokenManager {
 
     Date getAuthTenExpiresAt();
 
+    String getTokenType();
+
     /**
      * Stores the token details in shared preferences.
      *

@@ -19,6 +19,9 @@ import java.util.Random;
 public abstract class EndpointBlockingTest extends AndroidTestCase {
 
     private RequestsFactory requestsFactory;
+    private ClientCredentials clientCredentials;
+    private AuthTokenManager authTokenManager;
+
     private TestAccountSetupUtils testAccountSetupUtils;
     private Random random;
 
@@ -27,13 +30,11 @@ public abstract class EndpointBlockingTest extends AndroidTestCase {
         random = new Random();
 
         final AssetManager assetManager =  getContext().getAssets();
-        ClientCredentials clientCredentials = ClientCredentialsFromAssetsFactory.create(assetManager);
-        AuthTokenManager authTokenManager = new InMemoryAuthTokenManager();
+        clientCredentials = ClientCredentialsFromAssetsFactory.create(assetManager);
+        authTokenManager = new InMemoryAuthTokenManager();
         UsernameAndPasswordSessionManagerFactory.create(assetManager, clientCredentials, authTokenManager).signIn();
 
-
         requestsFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
-
         testAccountSetupUtils = new TestAccountSetupUtils(authTokenManager, requestsFactory);
 
         // reset account
@@ -43,6 +44,14 @@ public abstract class EndpointBlockingTest extends AndroidTestCase {
 
     protected final RequestsFactory getSdk() {
         return requestsFactory;
+    }
+
+    protected final AuthTokenManager getAuthTokenManager() {
+        return authTokenManager;
+    }
+
+    protected final ClientCredentials getClientCredentials() {
+        return clientCredentials;
     }
 
     protected final TestAccountSetupUtils getTestAccountSetupUtils() {

@@ -18,12 +18,14 @@ public class InMemoryAuthTokenManager implements AuthTokenManager {
     private String accessToken; // null if not set
     private String refreshToken;
     private Date expiresAt;
+    private String tokenType;
 
     @Override
     public void saveTokens(String accessToken, String refreshToken, String tokenType, int expiresIn) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresAt = generateExpiresAtFromExpiresIn(expiresIn);
+        this.tokenType = tokenType;
     }
 
     @Override
@@ -35,6 +37,11 @@ public class InMemoryAuthTokenManager implements AuthTokenManager {
     @Override
     public Date getAuthTenExpiresAt() {
         return expiresAt;
+    }
+
+    @Override
+    public String getTokenType() {
+        return tokenType;
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Date;
@@ -29,7 +30,7 @@ import java.util.Map;
 import static com.mendeley.api.request.NetworkUtils.getHttpPatch;
 
 // TODO try to eliminate Apache HTTP
-public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType> {
+public abstract class PatchNetworkRequest<ResultType> extends AuthorizedRequest<ResultType> {
     private final String url;
     private final String date;
 
@@ -63,7 +64,12 @@ public abstract class PatchNetworkRequest<ResultType> extends Request<ResultType
             final int responseCode = response.getStatusLine().getStatusCode();
 
             if (responseCode < 200 && responseCode >= 300) {
-                throw HttpResponseException.create(response, url);
+                String responseString = null;
+                try {
+                    responseString = NetworkUtils.readInputStream(response.getEntity().getContent());
+                } catch (IOException ignored) {
+                }
+                throw new HttpResponseException(responseCode, response.getStatusLine().getReasonPhrase(), url, responseString);
             }
 
             final HttpEntity responseEntity = response.getEntity();

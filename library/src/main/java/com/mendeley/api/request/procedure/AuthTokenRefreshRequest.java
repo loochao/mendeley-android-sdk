@@ -31,18 +31,36 @@ public class AuthTokenRefreshRequest extends Request<Void> {
     }
 
     @Override
-    protected RequestResponse<Void> doRun() throws MendeleyException {
+    public RequestResponse<Void> run() throws MendeleyException {
         try {
-            final HttpResponse response = doRefreshPost();
+            final HttpClient httpclient = new DefaultHttpClient();
+            final HttpPost httppost = new HttpPost(AuthTokenManager.TOKENS_URL);
+
+            final List<NameValuePair> nameValuePairs = new ArrayList<>();
+            nameValuePairs.add(new BasicNameValuePair("grant_type", AuthTokenManager.GRANT_TYPE_REFRESH));
+            nameValuePairs.add(new BasicNameValuePair("redirect_uri", clientCredentials.redirectUri));
+            nameValuePairs.add(new BasicNameValuePair("client_id", clientCredentials.clientId));
+            nameValuePairs.add(new BasicNameValuePair("client_secret", clientCredentials.clientSecret));
+            nameValuePairs.add(new BasicNameValuePair("refresh_token", authTokenManager.getRefreshToken()));
+
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+            final HttpResponse response = httpclient.execute(httppost);
             final int statusCode = response.getStatusLine().getStatusCode();
+
             if (statusCode != 200) {
-                final HttpResponseException cause = HttpResponseException.create(response, AuthTokenManager.TOKENS_URL);
-                throw new AuthenticationException("Cannot refresh token", cause);
+                String responseString = null;
+                try {
+                    responseString = NetworkUtils.readInputStream(response.getEntity().getContent());
+                } catch (IOException ignored) {
+                }
+                throw new HttpResponseException(statusCode, response.getStatusLine().getReasonPhrase(), AuthTokenManager.TOKENS_URL, responseString);
             }
+
             final String responseString = NetworkUtils.readInputStream(response.getEntity().getContent());
             onJsonStringResult(responseString);
-        } catch (IOException e) {
-            throw new MendeleyException("Cannot refresh token", e);
+        } catch (Exception e) {
+            throw new AuthenticationException("Cannot refresh token", e);
         }
 
         return null;
@@ -51,12 +69,12 @@ public class AuthTokenRefreshRequest extends Request<Void> {
 
     private boolean onJsonStringResult(String jsonTokenString) {
         try {
-            JSONObject tokenObject = new JSONObject(jsonTokenString);
+            final JSONObject tokenObject = new JSONObject(jsonTokenString);
 
-            String accessToken = tokenObject.getString("access_token");
-            String refreshToken = tokenObject.getString("refresh_token");
-            String tokenType = tokenObject.getString("token_type");
-            int expiresIn = tokenObject.getInt("expires_in");
+            final String accessToken = tokenObject.getString("access_token");
+            final String refreshToken = tokenObject.getString("refresh_token");
+            final String tokenType = tokenObject.getString("token_type");
+            final int expiresIn = tokenObject.getInt("expires_in");
 
             authTokenManager.saveTokens(accessToken, refreshToken, tokenType, expiresIn);
             return true;
@@ -67,24 +85,4 @@ public class AuthTokenRefreshRequest extends Request<Void> {
         }
     }
 
-    /**
-     * Helper method for executing http post request for token refresh.
-     */
-    private HttpResponse doRefreshPost() throws IOException {
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(AuthTokenManager.TOKENS_URL);
-
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("grant_type", AuthTokenManager.GRANT_TYPE_REFRESH));
-        nameValuePairs.add(new BasicNameValuePair("redirect_uri", clientCredentials.redirectUri));
-        nameValuePairs.add(new BasicNameValuePair("client_id", clientCredentials.clientId));
-        nameValuePairs.add(new BasicNameValuePair("client_secret", clientCredentials.clientSecret));
-        nameValuePairs.add(new BasicNameValuePair("refresh_token", authTokenManager.getRefreshToken()));
-
-        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-        HttpResponse response = httpclient.execute(httppost);
-
-        return response;
-    }
 }

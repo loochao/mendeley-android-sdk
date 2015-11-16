@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Base class for all synchronous network calls.
  */
-public abstract class HttpUrlConnectionRequest<ResultType> extends Request<ResultType> {
+public abstract class HttpUrlConnectionRequest<ResultType> extends AuthorizedRequest<ResultType> {
 
     private final String url;
     private RequestProgressListener progressListener;
@@ -74,9 +74,13 @@ public abstract class HttpUrlConnectionRequest<ResultType> extends Request<Resul
             }
 
             if (responseCode < 200 && responseCode >= 300) {
-                throw HttpResponseException.create(con);
-            }
+                String responseString = null;
+                try {
+                    responseString = NetworkUtils.readInputStream(con.getInputStream());
+                } catch (IOException ignored) {}
 
+                throw new HttpResponseException(responseCode, con.getResponseMessage(), url, responseString);
+            }
 
             // wrapping the input stream of the connection in one ProgressPublisherInputStream
             // to publish progress as the file is being read
