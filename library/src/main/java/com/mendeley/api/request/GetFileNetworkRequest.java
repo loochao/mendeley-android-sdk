@@ -1,5 +1,7 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.FileDownloadException;
@@ -21,7 +23,7 @@ public class GetFileNetworkRequest extends GetAuthorizedRequest<Long> {
     private final File targetFile;
 
     public GetFileNetworkRequest(String fileId, File targetFile, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(filesUrl + "/" + fileId, authTokenManager, clientCredentials);
+        super(Uri.parse(filesUrl + "/" + fileId), authTokenManager, clientCredentials);
         this.fileId = fileId;
         this.targetFile = targetFile;
     }

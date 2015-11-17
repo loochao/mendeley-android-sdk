@@ -1,5 +1,6 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -28,7 +29,7 @@ public class ProfileNetworkProvider {
     }
 
     public static class GetProfileRequest extends GetAuthorizedRequest<Profile> {
-        public GetProfileRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetProfileRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 

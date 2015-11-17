@@ -1,5 +1,7 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
+
 import static com.mendeley.api.request.Request.API_URL;
 
 public class TrashNetworkProvider {
@@ -10,12 +12,12 @@ public class TrashNetworkProvider {
 
     /* URLS */
 
-    public static String getRecoverUrl(String documentId) {
-        return BASE_URL + "/" + documentId + "/restore";
+    public static Uri getRecoverUrl(String documentId) {
+        return Uri.parse(BASE_URL + "/" + documentId + "/restore");
     }
 
-    public static String getDeleteUrl(String documentId) {
-        return BASE_URL + "/" + documentId;
+    public static Uri getDeleteUrl(String documentId) {
+        return Uri.parse( BASE_URL + "/" + documentId);
     }
 
 

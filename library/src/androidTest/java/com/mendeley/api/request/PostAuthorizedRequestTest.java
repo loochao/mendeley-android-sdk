@@ -1,5 +1,6 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import com.mendeley.api.testUtils.SignInException;
@@ -26,7 +27,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
 
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
-        return new PostNetworkRequest<JSONObject>("https://httpbin.org/post", getAuthTokenManager(), getClientCredentials()) {
+        return new PostNetworkRequest<JSONObject>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getClientCredentials()) {
             @Override
             protected void writePostBody(OutputStream os) throws Exception {
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));

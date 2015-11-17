@@ -1,5 +1,6 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.mendeley.api.AuthTokenManager;
@@ -53,7 +54,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
                     responseString = NetworkUtils.readInputStream(response.getEntity().getContent());
                 } catch (IOException ignored) {
                 }
-                throw new HttpResponseException(statusCode, response.getStatusLine().getReasonPhrase(), AuthTokenManager.TOKENS_URL, responseString);
+                throw new HttpResponseException(statusCode, response.getStatusLine().getReasonPhrase(), Uri.parse(AuthTokenManager.TOKENS_URL), responseString);
             }
 
             final String responseString = NetworkUtils.readInputStream(response.getEntity().getContent());

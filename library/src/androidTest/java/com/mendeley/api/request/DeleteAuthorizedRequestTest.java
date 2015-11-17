@@ -1,5 +1,7 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
+
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -10,7 +12,7 @@ public class DeleteAuthorizedRequestTest extends AuthorizedRequestTest {
 
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
-        return new DeleteAuthorizedRequest<JSONObject>("https://httpbin.org/delete", getAuthTokenManager(), getClientCredentials()) {
+        return new DeleteAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/delete"), getAuthTokenManager(), getClientCredentials()) {
             @Override
             protected JSONObject manageResponse(InputStream is) throws Exception {
                 String responseString = readInputStream(is);

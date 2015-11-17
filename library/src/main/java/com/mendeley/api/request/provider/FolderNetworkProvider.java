@@ -1,5 +1,6 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -7,9 +8,9 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.PatchAuthorizedRequest;
 import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.params.FolderRequestParameters;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -45,7 +46,7 @@ public class FolderNetworkProvider {
      * @param params folder request parameters object
      * @return the url string
      */
-    public static String getGetFoldersUrl(FolderRequestParameters params, String requestUrl) {
+    public static Uri getGetFoldersUrl(FolderRequestParameters params, String requestUrl) {
         StringBuilder url = new StringBuilder();
 
         url.append(requestUrl==null? FOLDERS_URL :requestUrl);
@@ -62,10 +63,10 @@ public class FolderNetworkProvider {
             }
         }
 
-        return url.toString();
+        return Uri.parse(url.toString());
     }
 
-    public static String getGetFoldersUrl(FolderRequestParameters params) {
+    public static Uri getGetFoldersUrl(FolderRequestParameters params) {
         return getGetFoldersUrl(params, null);
     }
 
@@ -75,8 +76,8 @@ public class FolderNetworkProvider {
      * @param folderId the folder id to get
      * @return the url string
      */
-    public static String getGetFolderUrl(String folderId) {
-        return FOLDERS_URL + "/" + folderId;
+    public static Uri getGetFolderUrl(String folderId) {
+        return Uri.parse(FOLDERS_URL + "/" + folderId);
     }
 
     /**
@@ -85,8 +86,8 @@ public class FolderNetworkProvider {
      * @param folderId the folder id to patch
      * @return the url string
      */
-    public static String getPatchFolderUrl(String folderId) {
-        return FOLDERS_URL + "/" + folderId;
+    public static Uri getPatchFolderUrl(String folderId) {
+        return Uri.parse(FOLDERS_URL + "/" + folderId);
     }
 
     /**
@@ -95,8 +96,8 @@ public class FolderNetworkProvider {
 	 * @param folderId the folder id
 	 * @return the url string
 	 */
-    public static String getDeleteFolderUrl(String folderId) {
-		return FOLDERS_URL + "/" + folderId;
+    public static Uri getDeleteFolderUrl(String folderId) {
+		return Uri.parse(FOLDERS_URL + "/" + folderId);
 	}
 
     /**
@@ -115,8 +116,8 @@ public class FolderNetworkProvider {
      * @param folderId the folder id
      * @return the url string
      */
-    public static String getPostDocumentToFolderUrl(String folderId) {
-        return FOLDERS_URL + "/" + folderId + "/documents";
+    public static Uri getPostDocumentToFolderUrl(String folderId) {
+        return Uri.parse(FOLDERS_URL + "/" + folderId + "/documents");
     }
 
     /**
@@ -125,14 +126,14 @@ public class FolderNetworkProvider {
 	 * @param folderId the id of the folder
 	 * @param documentId the id of the document to delete
 	 */
-    public static String getDeleteDocumentFromFolderUrl(String folderId, String documentId) {
-		return FOLDERS_URL + "/" + folderId + "/documents/" + documentId;
+    public static Uri getDeleteDocumentFromFolderUrl(String folderId, String documentId) {
+		return Uri.parse(FOLDERS_URL + "/" + folderId + "/documents/" + documentId);
 	}
 	
     /* PROCEDURES */
 
     public static class GetFoldersRequest extends GetAuthorizedRequest<List<Folder>> {
-        public GetFoldersRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetFoldersRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -149,7 +150,7 @@ public class FolderNetworkProvider {
     }
 
     public static class GetFolderRequest extends GetAuthorizedRequest<Folder> {
-        public GetFolderRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetFolderRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -168,7 +169,7 @@ public class FolderNetworkProvider {
     public static class PostFolderRequest extends PostNetworkRequest<Folder> {
         private final Folder folder;
 
-        public PostFolderRequest(String url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public PostFolderRequest(Uri url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
             this.folder = folder;
         }
@@ -195,7 +196,7 @@ public class FolderNetworkProvider {
     public static class PatchFolderAuthorizedRequest extends PatchAuthorizedRequest<Folder> {
         private final Folder folder;
 
-        public PatchFolderAuthorizedRequest(String url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public PatchFolderAuthorizedRequest(Uri url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, null, authTokenManager, clientCredentials);
             this.folder = folder;
         }
@@ -222,7 +223,7 @@ public class FolderNetworkProvider {
     public static class PostDocumentToFolderRequest extends PostNetworkRequest<Void> {
         private final String documentId;
 
-        public PostDocumentToFolderRequest(String url, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public PostDocumentToFolderRequest(Uri url, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
             this.documentId = documentId;
         }
@@ -246,7 +247,7 @@ public class FolderNetworkProvider {
     }
 
     public static class GetFolderDocumentIdsRequest extends GetAuthorizedRequest<List<String>> {
-        public GetFolderDocumentIdsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetFolderDocumentIdsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 

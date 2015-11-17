@@ -1,5 +1,7 @@
 package com.mendeley.api.impl;
 
+import android.net.Uri;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
@@ -10,6 +12,11 @@ import com.mendeley.api.model.Group;
 import com.mendeley.api.model.Profile;
 import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.model.UserRole;
+import com.mendeley.api.request.DeleteAuthorizedRequest;
+import com.mendeley.api.request.GetFileNetworkRequest;
+import com.mendeley.api.request.PostFileAuthorizedRequest;
+import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.params.AnnotationRequestParameters;
 import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
 import com.mendeley.api.request.params.DocumentRequestParameters;
@@ -18,13 +25,8 @@ import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.params.GroupRequestParameters;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.provider.ApplicationFeaturesNetworkProvider;
-import com.mendeley.api.request.DeleteAuthorizedRequest;
-import com.mendeley.api.request.GetFileNetworkRequest;
-import com.mendeley.api.request.PostFileAuthorizedRequest;
-import com.mendeley.api.request.PostNetworkRequest;
-import com.mendeley.api.request.Request;
 import com.mendeley.api.request.provider.AnnotationsNetworkProvider;
+import com.mendeley.api.request.provider.ApplicationFeaturesNetworkProvider;
 import com.mendeley.api.request.provider.CatalogDocumentNetworkProvider;
 import com.mendeley.api.request.provider.DocumentNetworkProvider;
 import com.mendeley.api.request.provider.FileNetworkProvider;
@@ -92,7 +94,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<Document>> getDocuments(DocumentRequestParameters parameters) {
-        String url = getGetDocumentsUrl(parameters, null);
+        Uri url = getGetDocumentsUrl(parameters, null);
         return new DocumentNetworkProvider.GetDocumentsRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -103,13 +105,13 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Document> getDocument(String documentId, View view) {
-        String url = getGetDocumentUrl(documentId, view);
+        Uri url = getGetDocumentUrl(documentId, view);
         return new DocumentNetworkProvider.GetDocumentRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<List<String>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters)  {
-        String url = getGetDocumentsUrl(parameters, deletedSince);
+        Uri url = getGetDocumentsUrl(parameters, deletedSince);
         return new DocumentNetworkProvider.GetDeletedDocumentsRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -156,12 +158,12 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Map<String, String>> getDocumentTypes()  {
-        return new DocumentNetworkProvider.GetDocumentTypesRequest(DocumentNetworkProvider.DOCUMENT_TYPES_BASE_URL, authTokenManager, clientCredentials);
+        return new DocumentNetworkProvider.GetDocumentTypesRequest(Uri.parse(DocumentNetworkProvider.DOCUMENT_TYPES_BASE_URL), authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Map<String, String>> getIdentifierTypes() {
-        return new DocumentNetworkProvider.GetDocumentTypesRequest(DocumentNetworkProvider.IDENTIFIER_TYPES_BASE_URL, authTokenManager, clientCredentials);
+        return new DocumentNetworkProvider.GetDocumentTypesRequest(Uri.parse(DocumentNetworkProvider.IDENTIFIER_TYPES_BASE_URL), authTokenManager, clientCredentials);
     }
 
     /* ANNOTATIONS BLOCKING */
@@ -174,7 +176,7 @@ public class RequestFactoryImpl implements RequestsFactory {
     @Override
     public Request<List<Annotation>> getAnnotations(AnnotationRequestParameters parameters) {
         try {
-            String url = getAnnotationsUrl(parameters);
+            Uri url = getAnnotationsUrl(parameters);
             return new AnnotationsNetworkProvider.GetAnnotationsRequest(url, authTokenManager, clientCredentials);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Could not encode the URL for getting annotations", e);
@@ -188,7 +190,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Annotation> getAnnotation(String annotationId) {
-        String url = getAnnotationUrl(annotationId);
+        Uri url = getAnnotationUrl(annotationId);
         return new AnnotationsNetworkProvider.GetAnnotationRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -217,7 +219,7 @@ public class RequestFactoryImpl implements RequestsFactory {
     @Override
     public Request<List<File>> getFiles(FileRequestParameters parameters) {
         try {
-            String url = FileNetworkProvider.getGetFilesUrl(parameters);
+            Uri url = FileNetworkProvider.getGetFilesUrl(parameters);
             return new FileNetworkProvider.GetFilesRequest(url, authTokenManager, clientCredentials);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -253,7 +255,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<Folder>> getFolders(FolderRequestParameters parameters) {
-        String url = getGetFoldersUrl(parameters);
+        Uri url = getGetFoldersUrl(parameters);
         return new FolderNetworkProvider.GetFoldersRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -264,25 +266,25 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Folder> getFolder(String folderId) {
-        String url = getGetFolderUrl(folderId);
+        Uri url = getGetFolderUrl(folderId);
         return new FolderNetworkProvider.GetFolderRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Folder> postFolder(Folder folder) {
-        String url = FolderNetworkProvider.FOLDERS_URL;
+        Uri url = Uri.parse(FolderNetworkProvider.FOLDERS_URL);
         return new FolderNetworkProvider.PostFolderRequest(url, folder, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Folder> patchFolder(String folderId, Folder folder) {
-        String url = FolderNetworkProvider.getPatchFolderUrl(folderId);
+        Uri url = FolderNetworkProvider.getPatchFolderUrl(folderId);
         return new FolderNetworkProvider.PatchFolderAuthorizedRequest(url, folder, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<List<String>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId) {
-        String url = getGetFoldersUrl(parameters, getGetFolderDocumentIdsUrl(folderId));
+        Uri url = getGetFoldersUrl(parameters, getGetFolderDocumentIdsUrl(folderId));
         return new FolderNetworkProvider.GetFolderDocumentIdsRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -293,19 +295,19 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Void> postDocumentToFolder(String folderId, String documentId) {
-        String url = getPostDocumentToFolderUrl(folderId);
+        Uri url = getPostDocumentToFolderUrl(folderId);
         return new FolderNetworkProvider.PostDocumentToFolderRequest(url, documentId, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Void> deleteFolder(String folderId) {
-        String url = getDeleteFolderUrl(folderId);
+        Uri url = getDeleteFolderUrl(folderId);
         return new DeleteAuthorizedRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Void> deleteDocumentFromFolder(String folderId, String documentId) {
-        String url = FolderNetworkProvider.getDeleteDocumentFromFolderUrl(folderId, documentId);
+        Uri url = FolderNetworkProvider.getDeleteDocumentFromFolderUrl(folderId, documentId);
         return new DeleteAuthorizedRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -314,19 +316,19 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Profile> getMyProfile() {
-        return new ProfileNetworkProvider.GetProfileRequest(ProfileNetworkProvider.PROFILES_URL + "me", authTokenManager, clientCredentials);
+        return new ProfileNetworkProvider.GetProfileRequest(Uri.parse(ProfileNetworkProvider.PROFILES_URL + "me"), authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Profile> getProfile(final String profileId) {
-        return new ProfileNetworkProvider.GetProfileRequest(ProfileNetworkProvider.PROFILES_URL + profileId, authTokenManager, clientCredentials);
+        return new ProfileNetworkProvider.GetProfileRequest(Uri.parse(ProfileNetworkProvider.PROFILES_URL + profileId), authTokenManager, clientCredentials);
     }
 
     /* GROUPS BLOCKING */
 
     @Override
     public Request<List<Group>> getGroups(GroupRequestParameters parameters) {
-        String url = getGetGroupsUrl(parameters);
+        Uri url = getGetGroupsUrl(parameters);
         return new GroupNetworkProvider.GetGroupsRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -337,13 +339,13 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Group> getGroup(String groupId) {
-        String url = GroupNetworkProvider.getGetGroupUrl(groupId);
+        Uri url = GroupNetworkProvider.getGetGroupUrl(groupId);
         return new GroupNetworkProvider.GetGroupRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<List<UserRole>> getGroupMembers(GroupRequestParameters parameters, String groupId) {
-        String url = getGetGroupsUrl(parameters, getGetGroupMembersUrl(groupId));
+        Uri url = getGetGroupsUrl(parameters, getGetGroupMembersUrl(groupId));
         return new GroupNetworkProvider.GetGroupMembersRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -362,7 +364,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<Document>> getTrashedDocuments(DocumentRequestParameters parameters) {
-        String url = DocumentNetworkProvider.getTrashDocumentsUrl(parameters, null);
+        Uri url = DocumentNetworkProvider.getTrashDocumentsUrl(parameters, null);
         return new DocumentNetworkProvider.GetDocumentsRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -390,13 +392,13 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<Document>> getCatalogDocuments(CatalogDocumentRequestParameters parameters) {
-        String url = CatalogDocumentNetworkProvider.getGetCatalogDocumentsUrl(parameters);
+        Uri url = CatalogDocumentNetworkProvider.getGetCatalogDocumentsUrl(parameters);
         return new CatalogDocumentNetworkProvider.GetCatalogDocumentsRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
     public Request<Document> getCatalogDocument(String catalogId, View view) {
-        String url = CatalogDocumentNetworkProvider.getGetCatalogDocumentUrl(catalogId, view);
+        Uri url = CatalogDocumentNetworkProvider.getGetCatalogDocumentUrl(catalogId, view);
         return new CatalogDocumentNetworkProvider.GetCatalogDocumentRequest(url, authTokenManager, clientCredentials);
     }
 
@@ -405,7 +407,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<ReadPosition>> getRecentlyRead(String groupId, String fileId, int limit) {
-        String url = RecentlyReadNetworkProvider.getGetRecentlyReadUrl(groupId, fileId, limit);
+        Uri url = RecentlyReadNetworkProvider.getGetRecentlyReadUrl(groupId, fileId, limit);
         return new RecentlyReadNetworkProvider.GetRecentlyReadRequest(url, authTokenManager, clientCredentials);
     }
 

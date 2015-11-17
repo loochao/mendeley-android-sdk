@@ -16,7 +16,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public abstract class GetAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
-    protected GetAuthorizedRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    protected GetAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(url, authTokenManager, clientCredentials);
     }
 

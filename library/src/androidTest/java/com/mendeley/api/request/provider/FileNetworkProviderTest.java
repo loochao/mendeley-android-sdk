@@ -1,10 +1,11 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.mendeley.api.request.params.FileRequestParameters;
 import com.mendeley.api.request.Request;
+import com.mendeley.api.request.params.FileRequestParameters;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -38,7 +39,7 @@ public class FileNetworkProviderTest extends AndroidTestCase {
 				"&added_since=" +  URLEncoder.encode(addedSince, "ISO-8859-1") + 
 				"&deleted_since=" + URLEncoder.encode(deletedSince, "ISO-8859-1");
 		
-		String expectedUrl = filesUrl+paramsString;
+		Uri expectedUrl = Uri.parse(filesUrl+paramsString);
 
 		FileRequestParameters params = new FileRequestParameters();
 		params.documentId = documentId;		
@@ -46,11 +47,11 @@ public class FileNetworkProviderTest extends AndroidTestCase {
 		params.addedSince = addedSince;
 		params.deletedSince = deletedSince;
 
-		String url = FileNetworkProvider.getGetFilesUrl(params);
+		Uri url = FileNetworkProvider.getGetFilesUrl(params);
 		
 		assertEquals("Get files url with parameters is wrong", expectedUrl, url);
 		
-		expectedUrl = filesUrl;
+		expectedUrl = Uri.parse(filesUrl);
 		params = new FileRequestParameters();
 		url = FileNetworkProvider.getGetFilesUrl(params);
 		
@@ -69,8 +70,8 @@ public class FileNetworkProviderTest extends AndroidTestCase {
 	@SmallTest
 	public void test_getDeleteFileUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 	
-		String expectedUrl = filesUrl+"/"+fileId;		
-		String url = provider.getDeleteFileUrl(fileId);
+		Uri expectedUrl = Uri.parse(filesUrl+"/"+fileId);
+		Uri url = provider.getDeleteFileUrl(fileId);
 		
 		assertEquals("Delete file url is wrong", expectedUrl, url);
 	}

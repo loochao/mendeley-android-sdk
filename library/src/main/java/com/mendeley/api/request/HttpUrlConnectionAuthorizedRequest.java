@@ -31,17 +31,17 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         HttpsURLConnection.setDefaultSSLSocketFactory(new NoSSLv3Factory());
     }
 
-    private final String url;
+    private final Uri url;
     private RequestProgressListener progressListener;
 
-    public HttpUrlConnectionAuthorizedRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public HttpUrlConnectionAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(authTokenManager, clientCredentials);
         this.url = url;
     }
 
     @Override
     public final RequestResponse<ResultType> doRun() throws MendeleyException {
-        return doRun(Uri.parse(url), 0, true);
+        return doRun(url, 0, true);
     }
 
     private RequestResponse<ResultType> doRun(Uri uri, int currentRetry, boolean addOauthToken) throws MendeleyException {

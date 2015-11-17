@@ -1,5 +1,6 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -36,7 +37,7 @@ public class RecentlyReadNetworkProvider {
         this.accessTokenProvider = accessTokenProvider;
     }
 
-    public static String getGetRecentlyReadUrl(String groupId, String fileId, int limit) {
+    public static Uri getGetRecentlyReadUrl(String groupId, String fileId, int limit) {
         StringBuilder url = new StringBuilder();
         url.append(RECENTLY_READ_BASE_URL);
 
@@ -55,13 +56,13 @@ public class RecentlyReadNetworkProvider {
         // limit
         url.append(firstParam ? "?" : "&").append("limit=" + limit);
 
-        return url.toString();
+        return Uri.parse(url.toString());
     }
 
     /* PROCEDURES */
 
     public static class GetRecentlyReadRequest extends GetAuthorizedRequest<List<ReadPosition>> {
-        public GetRecentlyReadRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetRecentlyReadRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url,  authTokenManager, clientCredentials);
         }
 
@@ -85,7 +86,7 @@ public class RecentlyReadNetworkProvider {
         private final ReadPosition readPosition;
 
         public PostRecentlyReadRequest(ReadPosition readPosition, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(RECENTLY_READ_BASE_URL, authTokenManager, clientCredentials);
+            super(Uri.parse(RECENTLY_READ_BASE_URL), authTokenManager, clientCredentials);
             this.readPosition = readPosition;
         }
 

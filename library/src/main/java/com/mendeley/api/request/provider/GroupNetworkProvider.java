@@ -1,5 +1,6 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -34,7 +35,7 @@ public class GroupNetworkProvider {
 
     /* URLS */
 
-    public static String getGetGroupsUrl(GroupRequestParameters params) {
+    public static Uri getGetGroupsUrl(GroupRequestParameters params) {
         return getGetGroupsUrl(params, null);
     }
 
@@ -44,7 +45,7 @@ public class GroupNetworkProvider {
      * @param params group request parameters object
      * @return the url string
      */
-    public static String getGetGroupsUrl(GroupRequestParameters params, String requestUrl) {
+    public static Uri getGetGroupsUrl(GroupRequestParameters params, String requestUrl) {
         StringBuilder url = new StringBuilder();
 
         url.append(requestUrl == null ? groupsUrl : requestUrl);
@@ -56,7 +57,7 @@ public class GroupNetworkProvider {
                 firstParam = false;
             }
         }
-        return url.toString();
+        return Uri.parse(url.toString());
     }
 
     /**
@@ -65,8 +66,8 @@ public class GroupNetworkProvider {
      * @param groupId the group id to get
      * @return the url string
      */
-    public static String getGetGroupUrl(String groupId) {
-        return groupsUrl + "/" + groupId;
+    public static Uri getGetGroupUrl(String groupId) {
+        return Uri.parse(groupsUrl + "/" + groupId);
     }
 
     /**
@@ -83,7 +84,7 @@ public class GroupNetworkProvider {
     /* PROCEDURES */
 
     public static class GetGroupsRequest extends GetAuthorizedRequest<List<Group>> {
-        public GetGroupsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetGroupsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -100,7 +101,7 @@ public class GroupNetworkProvider {
     }
 
     public static class GetGroupRequest extends GetAuthorizedRequest<Group> {
-        public GetGroupRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetGroupRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -117,7 +118,7 @@ public class GroupNetworkProvider {
     }
 
     public static class GetGroupMembersRequest extends GetAuthorizedRequest<List<UserRole>> {
-        public GetGroupMembersRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetGroupMembersRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 

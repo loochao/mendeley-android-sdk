@@ -1,5 +1,6 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -24,7 +25,7 @@ public class ApplicationFeaturesNetworkProvider {
 
     public static class GetApplicationFeaturesProcedure extends GetAuthorizedRequest<List<String>> {
         public GetApplicationFeaturesProcedure(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(API_URL + "/application_features", authTokenManager, clientCredentials);
+            super(Uri.parse(API_URL + "/application_features"), authTokenManager, clientCredentials);
         }
 
         @Override

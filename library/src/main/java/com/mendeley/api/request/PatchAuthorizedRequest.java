@@ -1,5 +1,7 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
@@ -22,18 +24,18 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 // TODO try to eliminate Apache HTTP
 public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedRequest<ResultType> {
-    private final String url;
+    private final Uri url;
     private final String date;
 
-    public PatchAuthorizedRequest(String url, String date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public PatchAuthorizedRequest(Uri url, String date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(authTokenManager, clientCredentials);
         this.url = url;
         this.date = date;
@@ -46,7 +48,7 @@ public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedReque
         HttpConnectionParams.setSoTimeout(httpParameters, READ_TIMEOUT);
         final HttpClient httpclient = new DefaultHttpClient(httpParameters);
 
-        final HttpPatch httpPatch = new HttpPatch(url);
+        final HttpPatch httpPatch = new HttpPatch(url.toString());
         httpPatch.setHeader("Authorization", "Bearer " + authTokenManager.getAccessToken());
         if (date != null) {
             httpPatch.setHeader("If-Unmodified-Since", date);

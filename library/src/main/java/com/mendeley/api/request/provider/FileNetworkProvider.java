@@ -1,14 +1,15 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.File;
+import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.FileRequestParameters;
-import com.mendeley.api.request.GetAuthorizedRequest;
 
 import org.json.JSONException;
 
@@ -44,7 +45,7 @@ public class FileNetworkProvider {
      * @return the url string
      * @throws UnsupportedEncodingException
      */
-    public static String getGetFilesUrl(FileRequestParameters params) throws UnsupportedEncodingException {
+    public static Uri getGetFilesUrl(FileRequestParameters params) throws UnsupportedEncodingException {
         StringBuilder url = new StringBuilder();
         url.append(filesUrl);
 
@@ -76,7 +77,7 @@ public class FileNetworkProvider {
             }
         }
 
-        return url.toString();
+        return Uri.parse(url.toString());
     }
 
     /**
@@ -95,14 +96,14 @@ public class FileNetworkProvider {
      * @param fileId the id of the file to delete
      * @return the url string
      */
-    public static String getDeleteFileUrl(String fileId) {
-        return filesUrl + "/" + fileId;
+    public static Uri getDeleteFileUrl(String fileId) {
+        return Uri.parse(filesUrl + "/" + fileId);
     }
 
     /* PROCEDURES */
 
     public static class GetFilesRequest extends GetAuthorizedRequest<List<File>> {
-        public GetFilesRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetFilesRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 

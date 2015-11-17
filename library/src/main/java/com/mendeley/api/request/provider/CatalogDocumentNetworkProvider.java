@@ -1,5 +1,6 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -37,7 +38,7 @@ public class CatalogDocumentNetworkProvider {
         this.accessTokenProvider = accessTokenProvider;
     }
 
-    public static String getGetCatalogDocumentUrl(String catalogId, View view) {
+    public static Uri getGetCatalogDocumentUrl(String catalogId, View view) {
         StringBuilder url = new StringBuilder();
         url.append(CATALOG_BASE_URL);
         url.append("/").append(catalogId);
@@ -46,7 +47,7 @@ public class CatalogDocumentNetworkProvider {
             url.append("?").append("view=" + view);
         }
 
-        return url.toString();
+        return Uri.parse(url.toString());
     }
 
 
@@ -55,11 +56,11 @@ public class CatalogDocumentNetworkProvider {
      *
      * @return the url string
      */
-    public static String getGetCatalogDocumentsUrl(CatalogDocumentRequestParameters params) {
+    public static Uri getGetCatalogDocumentsUrl(CatalogDocumentRequestParameters params) {
         return getCatalogGetDocumentsUrl(CATALOG_BASE_URL, params);
     }
 
-    private static String getCatalogGetDocumentsUrl(String baseUrl, CatalogDocumentRequestParameters params) {
+    private static Uri getCatalogGetDocumentsUrl(String baseUrl, CatalogDocumentRequestParameters params) {
         StringBuilder url = new StringBuilder();
         url.append(baseUrl);
         StringBuilder paramsString = new StringBuilder();
@@ -98,11 +99,11 @@ public class CatalogDocumentNetworkProvider {
         }
 
         url.append(paramsString.toString());
-        return url.toString();
+        return Uri.parse(url.toString());
     }
 
     public static class GetCatalogDocumentsRequest extends GetAuthorizedRequest<List<Document>> {
-        public GetCatalogDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetCatalogDocumentsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -119,7 +120,7 @@ public class CatalogDocumentNetworkProvider {
     }
 
     public static class GetCatalogDocumentRequest extends GetAuthorizedRequest<Document> {
-        public GetCatalogDocumentRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetCatalogDocumentRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 

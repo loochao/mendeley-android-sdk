@@ -1,5 +1,6 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -7,10 +8,10 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.params.DocumentRequestParameters;
-import com.mendeley.api.request.params.View;
 import com.mendeley.api.request.PatchAuthorizedRequest;
 import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.params.DocumentRequestParameters;
+import com.mendeley.api.request.params.View;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -54,8 +55,8 @@ public class DocumentNetworkProvider {
      * @param documentId the id of the document to delete
      * @return the url string
      */
-    public static String getDeleteDocumentUrl(String documentId) {
-        return DOCUMENTS_BASE_URL + "/" + documentId;
+    public static Uri getDeleteDocumentUrl(String documentId) {
+        return Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId);
     }
 
     /**
@@ -64,8 +65,8 @@ public class DocumentNetworkProvider {
      * @param documentId the id of the document to trash
      * @return the url string
      */
-    public static String getTrashDocumentUrl(String documentId) {
-        return DOCUMENTS_BASE_URL + "/" + documentId + "/trash";
+    public static Uri getTrashDocumentUrl(String documentId) {
+        return Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId + "/trash");
     }
 
     /**
@@ -74,7 +75,7 @@ public class DocumentNetworkProvider {
      * @param documentId the document id
      * @return the url string
      */
-    public static String getGetDocumentUrl(String documentId, View view) {
+    public static Uri getGetDocumentUrl(String documentId, View view) {
         StringBuilder url = new StringBuilder();
         url.append(DOCUMENTS_BASE_URL);
         url.append("/").append(documentId);
@@ -83,7 +84,7 @@ public class DocumentNetworkProvider {
             url.append("?").append("view=" + view);
         }
 
-        return url.toString();
+        return Uri.parse(url.toString());
     }
 
     /**
@@ -91,7 +92,7 @@ public class DocumentNetworkProvider {
 	 * 
 	 * @return the url string
 	 */
-    public static String getGetDocumentsUrl(DocumentRequestParameters params, String deletedSince) {
+    public static Uri getGetDocumentsUrl(DocumentRequestParameters params, String deletedSince) {
     	return getGetDocumentsUrl(DOCUMENTS_BASE_URL, params, deletedSince);
     }
     
@@ -100,11 +101,11 @@ public class DocumentNetworkProvider {
 	 * 
 	 * @return the url string
 	 */
-    public static String getTrashDocumentsUrl(DocumentRequestParameters params, String deletedSince) {
+    public static Uri getTrashDocumentsUrl(DocumentRequestParameters params, String deletedSince) {
     	return getGetDocumentsUrl(TrashNetworkProvider.BASE_URL, params, deletedSince);
     }
     
-	private static String getGetDocumentsUrl(String baseUrl, DocumentRequestParameters params, String deletedSince)  {
+	private static Uri getGetDocumentsUrl(String baseUrl, DocumentRequestParameters params, String deletedSince)  {
         try {
             StringBuilder url = new StringBuilder();
             url.append(baseUrl);
@@ -145,7 +146,7 @@ public class DocumentNetworkProvider {
             }
 
             url.append(paramsString.toString());
-            return url.toString();
+            return Uri.parse(url.toString());
 
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(e);
@@ -158,8 +159,8 @@ public class DocumentNetworkProvider {
 	 * @param documentId the id of the document to patch
 	 * @return the url string
 	 */
-	public static String getPatchDocumentUrl(String documentId) {
-		return DOCUMENTS_BASE_URL + "/" + documentId;
+	public static Uri getPatchDocumentUrl(String documentId) {
+		return Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId);
 	}
 
     /**
@@ -178,7 +179,7 @@ public class DocumentNetworkProvider {
     /* PROCEDURES */
 
     public static class GetDocumentsRequest extends GetAuthorizedRequest<List<Document>> {
-        public GetDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetDocumentsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -195,7 +196,7 @@ public class DocumentNetworkProvider {
    }
 
     public static class GetDeletedDocumentsRequest extends GetAuthorizedRequest<List<String>> {
-        public GetDeletedDocumentsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetDeletedDocumentsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -213,7 +214,7 @@ public class DocumentNetworkProvider {
 
 
     public static class GetDocumentRequest extends GetAuthorizedRequest<Document> {
-        public GetDocumentRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetDocumentRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -230,7 +231,7 @@ public class DocumentNetworkProvider {
     }
 
     public static class GetDocumentTypesRequest extends GetAuthorizedRequest<Map<String, String>> {
-        public GetDocumentTypesRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetDocumentTypesRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -250,7 +251,7 @@ public class DocumentNetworkProvider {
         final private Document doc;
 
         public PostDocumentRequest(Document doc, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(DOCUMENTS_BASE_URL, authTokenManager, clientCredentials);
+            super(Uri.parse(DOCUMENTS_BASE_URL), authTokenManager, clientCredentials);
             this.doc = doc;
         }
 

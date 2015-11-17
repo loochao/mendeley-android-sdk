@@ -1,5 +1,6 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.api.testUtils.SignInException;
@@ -24,7 +25,7 @@ public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
 
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
-        return new PatchAuthorizedRequest<JSONObject>("https://httpbin.org/patch", null, getAuthTokenManager(), getClientCredentials()) {
+        return new PatchAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/patch"), null, getAuthTokenManager(), getClientCredentials()) {
             @Override
             protected HttpEntity createPatchingEntity() throws Exception {
                 return new StringEntity(patchedBody);

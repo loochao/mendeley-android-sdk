@@ -1,5 +1,6 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -7,9 +8,9 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.params.AnnotationRequestParameters;
 import com.mendeley.api.request.PatchAuthorizedRequest;
 import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.params.AnnotationRequestParameters;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -39,15 +40,15 @@ public class AnnotationsNetworkProvider {
 
     /* URLS */
 
-    public static String deleteAnnotationUrl(String documentId) {
-        return ANNOTATIONS_BASE_URL + "/" + documentId;
+    public static Uri deleteAnnotationUrl(String documentId) {
+        return Uri.parse(ANNOTATIONS_BASE_URL + "/" + documentId);
     }
 
-    public static String getAnnotationUrl(String documentId) {
-        return ANNOTATIONS_BASE_URL + "/" + documentId;
+    public static Uri getAnnotationUrl(String documentId) {
+        return Uri.parse(ANNOTATIONS_BASE_URL + "/" + documentId);
     }
 
-	public static String getAnnotationsUrl(AnnotationRequestParameters params) throws UnsupportedEncodingException {
+	public static Uri getAnnotationsUrl(AnnotationRequestParameters params) throws UnsupportedEncodingException {
 		StringBuilder url = new StringBuilder();
 		url.append(ANNOTATIONS_BASE_URL);
 
@@ -83,13 +84,13 @@ public class AnnotationsNetworkProvider {
             url.append(paramsString.toString());
 		}
 		
-		return url.toString();
+		return Uri.parse(url.toString());
 	}
 
     /* PROCEDURES */
 
     public static class GetAnnotationRequest extends GetAuthorizedRequest<Annotation> {
-        public GetAnnotationRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetAnnotationRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -106,7 +107,7 @@ public class AnnotationsNetworkProvider {
     }
 
     public static class GetAnnotationsRequest extends GetAuthorizedRequest<List<Annotation>> {
-        public GetAnnotationsRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetAnnotationsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
@@ -126,7 +127,7 @@ public class AnnotationsNetworkProvider {
         private final Annotation annotation;
 
         public PostAnnotationRequest(Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials){
-            super(ANNOTATIONS_BASE_URL, authTokenManager, clientCredentials);
+            super(Uri.parse(ANNOTATIONS_BASE_URL), authTokenManager, clientCredentials);
             this.annotation = annotation;
         }
 
@@ -156,8 +157,8 @@ public class AnnotationsNetworkProvider {
             this.annotation = annotation;
         }
 
-        private static String getUrl(String annotationId) {
-            return ANNOTATIONS_BASE_URL + "/" + annotationId;
+        private static Uri getUrl(String annotationId) {
+            return Uri.parse(ANNOTATIONS_BASE_URL + "/" + annotationId);
         }
 
         @Override

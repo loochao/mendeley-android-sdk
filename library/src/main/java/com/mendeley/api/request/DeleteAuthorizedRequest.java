@@ -17,7 +17,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class DeleteAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
-    public DeleteAuthorizedRequest(String url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public DeleteAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(url, authTokenManager, clientCredentials);
     }
 

@@ -1,5 +1,7 @@
 package com.mendeley.api.exceptions;
 
+import android.net.Uri;
+
 /**
  * General exception type that is thrown whenever server returns an error code.
  * <p>
@@ -8,19 +10,19 @@ package com.mendeley.api.exceptions;
  */
 public class HttpResponseException extends MendeleyException {
 
-    public final String url;
+    public final Uri url;
     public final int httpReturnCode;
     private final String response;
 
 
-    public HttpResponseException(int httpReturnCode, String message, String url, String response) {
+    public HttpResponseException(int httpReturnCode, String message, Uri url, String response) {
 		super(message);
         this.url = url;
         this.httpReturnCode = httpReturnCode;
         this.response = response;
 	}
 
-    public HttpResponseException(int httpReturnCode, String message, String url) {
+    public HttpResponseException(int httpReturnCode, String message, Uri url) {
         this(httpReturnCode, message, url, "");
     }
 

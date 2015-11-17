@@ -1,10 +1,11 @@
 package com.mendeley.api.request.provider;
 
+import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.Request;
+import com.mendeley.api.request.params.FolderRequestParameters;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -29,16 +30,16 @@ public class FolderNetworkProviderTest extends AndroidTestCase {
 		String groupId = "test-group_id";
 				
 		String paramsString = "?group_id=" + groupId;; 
-		String expectedUrl = foldersUrl+paramsString;
+		Uri expectedUrl = Uri.parse(foldersUrl+paramsString);
 
 		FolderRequestParameters params = new FolderRequestParameters();
 		params.groupId = groupId;
 		
-		String url = FolderNetworkProvider.getGetFoldersUrl(params);
+		Uri url = FolderNetworkProvider.getGetFoldersUrl(params);
 		
 		assertEquals("Get folders url with parameters is wrong", expectedUrl, url);
 		
-		expectedUrl = foldersUrl;
+		expectedUrl = Uri.parse(foldersUrl);
 		params = new FolderRequestParameters();
 		url = FolderNetworkProvider.getGetFoldersUrl(params);
 		
@@ -48,8 +49,8 @@ public class FolderNetworkProviderTest extends AndroidTestCase {
 	@SmallTest
 	public void test_getGetFolderUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
-		String expectedUrl = foldersUrl+"/"+folderId;
-		String url = FolderNetworkProvider.getGetFolderUrl(folderId);
+		Uri expectedUrl = Uri.parse(foldersUrl+"/"+folderId);
+		Uri url = FolderNetworkProvider.getGetFolderUrl(folderId);
 
 		assertEquals("Get folder url is wrong", expectedUrl, url);
 	}
@@ -66,8 +67,8 @@ public class FolderNetworkProviderTest extends AndroidTestCase {
 	@SmallTest
 	public void test_getPostDocumentToFolderUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
-		String expectedUrl = foldersUrl+"/"+folderId+"/documents";
-		String url = FolderNetworkProvider.getPostDocumentToFolderUrl(folderId);
+		Uri expectedUrl = Uri.parse(foldersUrl+"/"+folderId+"/documents");
+		Uri url = FolderNetworkProvider.getPostDocumentToFolderUrl(folderId);
 
 		assertEquals("Post document to folder url is wrong", expectedUrl, url);
 	}
@@ -75,8 +76,8 @@ public class FolderNetworkProviderTest extends AndroidTestCase {
 	@SmallTest
 	public void test_getDeleteFolderUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
-		String expectedUrl = foldersUrl+"/"+folderId;
-		String url = FolderNetworkProvider.getDeleteFolderUrl(folderId);
+		Uri expectedUrl = Uri.parse(foldersUrl+"/"+folderId);
+		Uri url = FolderNetworkProvider.getDeleteFolderUrl(folderId);
 
 		assertEquals("Delete folder url is wrong", expectedUrl, url);
 	}
@@ -85,8 +86,8 @@ public class FolderNetworkProviderTest extends AndroidTestCase {
 	public void test_getDeleteDocumentFromFolderUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
 		String documentId = "test-document_id";
-		String expectedUrl = foldersUrl+"/"+folderId+"/documents/"+documentId;
-		String url = FolderNetworkProvider.getDeleteDocumentFromFolderUrl(folderId, documentId);
+		Uri expectedUrl = Uri.parse(foldersUrl+"/"+folderId+"/documents/"+documentId);
+		Uri url = FolderNetworkProvider.getDeleteDocumentFromFolderUrl(folderId, documentId);
 
 		assertEquals("Delete document from folder url is wrong", expectedUrl, url);
 	}
@@ -94,8 +95,8 @@ public class FolderNetworkProviderTest extends AndroidTestCase {
 	@SmallTest
 	public void test_getPatchFolderUrlUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
-		String expectedUrl = foldersUrl + "/"+folderId;
-		String url = FolderNetworkProvider.getPatchFolderUrl(folderId);
+		Uri expectedUrl = Uri.parse(foldersUrl + "/"+folderId);
+		Uri url = FolderNetworkProvider.getPatchFolderUrl(folderId);
 
 		assertEquals("Patch folder url is wrong", expectedUrl, url);
 	}

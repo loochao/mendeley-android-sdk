@@ -1,5 +1,6 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -20,7 +21,7 @@ public class PostFileAuthorizedRequest extends PostNetworkRequest<File> {
     private static String filesUrl = API_URL + "files";
 
     public PostFileAuthorizedRequest(String contentType, String documentId, String fileName, InputStream inputStream, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(filesUrl, authTokenManager, clientCredentials);
+        super(Uri.parse(filesUrl), authTokenManager, clientCredentials);
         this.contentType = contentType;
         this.documentId = documentId;
         this.fileName = fileName;
