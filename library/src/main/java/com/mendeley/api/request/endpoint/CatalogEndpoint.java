@@ -17,6 +17,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -98,7 +99,7 @@ public class CatalogEndpoint {
         }
 
         @Override
-        protected List<Document> manageResponse(InputStream is) throws JSONException, IOException {
+        protected List<Document> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentList(reader);
         }
@@ -115,7 +116,7 @@ public class CatalogEndpoint {
         }
 
         @Override
-        protected Document manageResponse(InputStream is) throws JSONException, IOException {
+        protected Document manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocument(reader);
         }

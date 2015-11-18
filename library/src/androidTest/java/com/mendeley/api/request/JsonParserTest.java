@@ -53,7 +53,7 @@ public class JsonParserTest extends InstrumentationTestCase {
     final String annotationWithNullValuesFile = "test_annotation_null_values.json";
     final String readPositionFile =  "test_read_position.json";
 
-    private Document getTestDocumentWithNonNotNullCollections() {
+    private Document getTestDocumentWithNonNotNullCollections() throws ParseException {
         HashMap<String,String> identifiers = new HashMap<String, String>();
 
         Person author = new Person("test-first_name", "test-last_name");
@@ -77,7 +77,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 	    return getTestDocument(authorsList, editorsList, keywords, tags, websites, identifiers);
 	}
 
-    private Document getTestDocument(ArrayList<Person> authorsList, ArrayList<Person> editorsList, ArrayList<String> keywords, ArrayList<String> tags, ArrayList<String> websites, HashMap<String, String> identifiers) {
+    private Document getTestDocument(ArrayList<Person> authorsList, ArrayList<Person> editorsList, ArrayList<String> keywords, ArrayList<String> tags, ArrayList<String> websites, HashMap<String, String> identifiers) throws ParseException {
         Document.Builder testDocument = new Document.Builder();
 
         testDocument.setTitle("test-title");
@@ -89,7 +89,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         testDocument.setWebsites(websites);
         testDocument.setIdentifiers(identifiers);
 
-        testDocument.setLastModified("2014-02-28T11:52:30.000Z");
+        testDocument.setLastModified(DateUtils.parseMendeleyApiTimestamp("2014-02-28T11:52:30.000Z"));
         testDocument.setGroupId("test-group_id");
         testDocument.setProfileId("test-profile_id");
         testDocument.setRead(false);
@@ -103,7 +103,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         testDocument.setDay(0);
         testDocument.setSource("test-source");
         testDocument.setRevision("test-revision");
-        testDocument.setCreated("2014-02-20T16:53:25.000Z");
+        testDocument.setCreated(DateUtils.parseMendeleyApiTimestamp("2014-02-20T16:53:25.000Z"));
         testDocument.setAbstractString("test-abstract");
         testDocument.setPages("1-9");
         testDocument.setVolume("1");
@@ -277,7 +277,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
 	@SmallTest
     public void test_parseDocument_withNotNullCollections()
-            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
 
         // GIVEN the JSON representation of a document where its collections (authors, editors...) are NOT null
         Document expectedDocument = getTestDocumentWithNonNotNullCollections();
@@ -303,7 +303,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
     @SmallTest
     public void test_parseDocument_withNullCollections()
-            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
 
         // GIVEN the JSON representation of a document where its collections (authors, editors...) ARE null
         Document expectedDocument = getTestDocument(null, null, null, null, null, null);
@@ -436,7 +436,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
     @SmallTest
 	public void test_jsonFromDocument_withNotNullCollections()
-			throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException {
+            throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException, ParseException {
 
         // GIVEN a document where its collections (authors, editors...) are NOT null
         String expectedJson = getJsonStringFromAssetsFile(documentWithNotNullCollectionsFile);
@@ -451,7 +451,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
     @SmallTest
     public void test_jsonFromDocument_withNullCollections()
-            throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException {
+            throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException, ParseException {
 
         // GIVEN a document where its collections (authors, editors...) ARE null
         String expectedJson = getJsonStringFromAssetsFile(documentWithNullCollectionsFile);

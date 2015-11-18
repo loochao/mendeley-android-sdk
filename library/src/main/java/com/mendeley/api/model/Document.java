@@ -4,6 +4,7 @@ import com.mendeley.api.util.NullableList;
 import com.mendeley.api.util.NullableMap;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class Document {
 		
-	public final String lastModified;
+	public final Date lastModified;
 	public final String groupId;
 	public final String profileId;
 	public final Boolean read;
@@ -30,7 +31,7 @@ public class Document {
 	public final String source;
 	public final String title;
 	public final String revision;
-	public final String created;
+	public final Date created;
 	public final NullableMap<String, String> identifiers;
 	public final String abstractString;
 	public final NullableList<Person> authors;
@@ -55,7 +56,7 @@ public class Document {
 	final static String ET_EL = "et. al";
 		
 	private Document(
-			String lastModified,
+			Date lastModified,
 			String groupId,
 			String profileId,
 			Boolean read,
@@ -71,7 +72,7 @@ public class Document {
 			String source,
 			String title,
 			String revision,
-			String created,
+			Date created,
 			Map<String, String> identifiers,
 			String abstractString,
             List<Person> authors,
@@ -136,7 +137,7 @@ public class Document {
         private String title;
         private String type;
 
-		private String lastModified;
+		private Date lastModified;
 		private String groupId;
 		private String profileId;
 		private Boolean read;
@@ -150,7 +151,7 @@ public class Document {
 		private Integer day;	
 		private String source;
 		private String revision;
-		private String created;
+		private Date created;
 		private Map<String, String> identifiers;
 		private String abstractString;
 		private List<Person> authors;
@@ -226,7 +227,7 @@ public class Document {
             return this;
         }
 
-		public Builder setLastModified(String lastModified) {
+		public Builder setLastModified(Date lastModified) {
 			this.lastModified = lastModified;
 			return this;
 		}
@@ -341,7 +342,7 @@ public class Document {
 			return this;
 		}
 		
-		public Builder setCreated(String created) {
+		public Builder setCreated(Date created) {
 			this.created = created;
 			return this;
 		}

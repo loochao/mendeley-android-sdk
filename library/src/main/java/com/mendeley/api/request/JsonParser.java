@@ -163,8 +163,10 @@ public class JsonParser {
 		jDocument.put("title", document.title);
 		jDocument.put("type", document.type);
 		jDocument.put("id", document.id);
-		
-		jDocument.put("last_modified", document.lastModified);
+
+		if (document.lastModified != null) {
+            jDocument.put("last_modified", DateUtils.formatMendeleyApiTimestamp(document.lastModified));
+        }
 		jDocument.put("group_id", document.groupId);
 		jDocument.put("profile_id", document.profileId);
 		jDocument.put("read", document.read);
@@ -178,7 +180,9 @@ public class JsonParser {
 		jDocument.put("source", document.source);
 		jDocument.put("revision", document.revision);
 		jDocument.put("abstract", document.abstractString);
-		jDocument.put("created", document.created);
+        if (document.created != null) {
+            jDocument.put("created", DateUtils.formatMendeleyApiTimestamp(document.created));
+        }
 		jDocument.put("pages", document.pages);
 		jDocument.put("volume", document.volume);
 		jDocument.put("issue", document.issue);
@@ -849,7 +853,7 @@ public class JsonParser {
 	 * @return the Document object
 	 * @throws JSONException
 	 */
-    public static Document parseDocument(JsonReader reader) throws JSONException, IOException {
+    public static Document parseDocument(JsonReader reader) throws JSONException, IOException, ParseException {
 
 		final Document.Builder bld = new Document.Builder();
 
@@ -864,7 +868,7 @@ public class JsonParser {
                 bld.setType(reader.nextString());
 
             } else if (key.equals("last_modified")) {
-                bld.setLastModified(reader.nextString());
+                bld.setLastModified(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
             } else if (key.equals("group_id")) {
                 bld.setGroupId(reader.nextString());
@@ -906,7 +910,7 @@ public class JsonParser {
                 bld.setRevision(reader.nextString());
 
             } else if (key.equals("created")) {
-                bld.setCreated(reader.nextString());
+                bld.setCreated(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
             } else if (key.equals("abstract")) {
                 bld.setAbstractString(reader.nextString());
@@ -1062,7 +1066,7 @@ public class JsonParser {
 	 * @return the list of Document objects
 	 * @throws JSONException
 	 */
-    public static List<Document> parseDocumentList(JsonReader reader) throws JSONException, IOException {
+    public static List<Document> parseDocumentList(JsonReader reader) throws JSONException, IOException, ParseException {
         final List<Document> documents = new ArrayList<Document>();
         reader.beginArray();
 

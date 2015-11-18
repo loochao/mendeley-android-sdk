@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -169,7 +170,7 @@ public class DocumentEndpoint {
         }
 
         @Override
-        protected List<Document> manageResponse(InputStream is) throws JSONException, IOException {
+        protected List<Document> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocumentList(reader);
         }
@@ -209,7 +210,7 @@ public class DocumentEndpoint {
         }
 
         @Override
-        protected Document manageResponse(InputStream is) throws JSONException, IOException {
+        protected Document manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseDocument(reader);
         }
