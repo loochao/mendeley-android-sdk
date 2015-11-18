@@ -6,7 +6,10 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.request.params.Page;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * HTTP request launched against the Mendeley Web API.
@@ -49,18 +52,36 @@ public abstract class Request<ResultType> {
      * @param <T>
      */
     public static class Response<T> {
+        // RFC 7231 format, used for Dates in HTTP headers.
+        public final static SimpleDateFormat httpHeaderDateFormat;
+
+        static {
+            httpHeaderDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss 'GMT'", Locale.US);
+            httpHeaderDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        }
+
         public final T resource;
         public final Page next;
+
         public final Date serverDate;
 
-        public Response(T resource, Date serverDate, Page next) {
+        public Response(T resource, String serverDateStr, Page next) {
             this.resource = resource;
             this.next = next;
-            this.serverDate = serverDate;
+            this.serverDate = parseHeaderDate(serverDateStr);
         }
 
-        public Response(T resource, Date serverDate) {
-            this(resource, serverDate, null);
+        public Response(T resource, String serverDateStr) {
+            this(resource, serverDateStr, null);
         }
+
+        private static Date parseHeaderDate(String serverDateStr) {
+            try {
+                return httpHeaderDateFormat.parse(serverDateStr);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("", e);
+            }
+        }
+
     }
 }

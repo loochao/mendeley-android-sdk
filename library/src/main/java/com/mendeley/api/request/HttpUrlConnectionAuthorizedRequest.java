@@ -8,13 +8,11 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.request.params.Page;
-import com.mendeley.api.util.DateUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +87,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
             is = new MyProgressPublisherInputStream(con.getInputStream(), con.getContentLength());
 
             final Map<String, List<String>> responseHeaders = con.getHeaderFields();
-            return new Response<>(manageResponse(is), getServerDate(responseHeaders), getNextPage(responseHeaders));
+            return new Response<>(manageResponse(is), getServerDateString(responseHeaders), getNextPage(responseHeaders));
 
         } catch (MendeleyException me) {
             throw me;
@@ -148,13 +146,10 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
     protected abstract ResultType manageResponse(InputStream is) throws Exception;
 
 
-    private Date getServerDate(Map<String, List<String>> headersMap ) throws IOException, ParseException {
+    private String getServerDateString(Map<String, List<String>> headersMap) throws IOException {
         final List<String> dateHeaders = headersMap.get("Date");
         if (dateHeaders != null) {
-            final String dateHeader = headersMap.get("Date").get(0);
-            if (dateHeader != null) {
-                return DateUtils.parseDateInHeader(dateHeader);
-            }
+            return headersMap.get("Date").get(0);
         }
         return null;
     }

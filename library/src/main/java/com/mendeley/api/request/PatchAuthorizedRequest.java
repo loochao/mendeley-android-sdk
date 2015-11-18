@@ -88,12 +88,12 @@ public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedReque
         }
     }
 
-    private Date getServerDate(HttpResponse response) throws ParseException {
+    private String getServerDate(HttpResponse response) throws ParseException {
         final Header date = response.getFirstHeader("Date");
         if (date == null) {
             return null;
         }
-        return DateUtils.parseDateInHeader(date.getValue());
+        return date.getValue();
     }
 
     protected void appendHeaders(Map<String, String> headers) {
