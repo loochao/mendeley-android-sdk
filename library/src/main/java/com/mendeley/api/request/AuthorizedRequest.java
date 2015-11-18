@@ -7,7 +7,6 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.exceptions.NotSignedInException;
-import com.mendeley.api.model.RequestResponse;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +22,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         super(authTokenManager, clientCredentials);
     }
 
-    public final RequestResponse<ResultType> run() throws MendeleyException {
+    public final Response<ResultType> run() throws MendeleyException {
         if (TextUtils.isEmpty(authTokenManager.getAccessToken())) {
             // Must call startSignInProcess first - caller error!
             throw new NotSignedInException();
@@ -49,7 +48,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         new AuthTokenRefreshRequest(authTokenManager, clientCredentials).run();
     }
 
-    protected abstract RequestResponse<ResultType> doRun() throws MendeleyException;
+    protected abstract Response<ResultType> doRun() throws MendeleyException;
 
     // TODO: consider dropping this to reduce complexity
     /**

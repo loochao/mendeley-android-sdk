@@ -12,6 +12,7 @@ import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
 import com.mendeley.api.request.PostAuthorizedRequest;
 import com.mendeley.api.request.params.AnnotationRequestParameters;
+import com.mendeley.api.util.DateUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -67,12 +68,12 @@ public class AnnotationsEndpoint {
                 }
                 if (params.modifiedSince != null) {
                     paramsString.append(firstParam ? "?" : "&").append("modified_since="
-                            + URLEncoder.encode(params.modifiedSince, "ISO-8859-1"));
+                            + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.modifiedSince), "ISO-8859-1"));
                     firstParam = false;
                 }
                 if (params.deletedSince != null) {
                     paramsString.append(firstParam ? "?" : "&").append("deleted_since="
-                            + URLEncoder.encode(params.deletedSince, "ISO-8859-1"));
+                            + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.deletedSince), "ISO-8859-1"));
                     firstParam = false;
                 }
                 if (params.limit != null) {

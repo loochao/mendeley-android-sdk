@@ -53,11 +53,10 @@ public interface RequestsFactory {
 
     /**
      * Retrieve a list of deleted documents in the user's library.
-     *
-     * @param deletedSince only return documents deleted since this timestamp. Should be supplied in ISO 8601 format.
+     *  @param deletedSince only return documents deleted since this timestamp. Should be supplied in ISO 8601 format.
      * @param parameters holds optional query parameters, will be ignored if null
      */
-    Request<List<String>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters);
+    Request<List<String>> getDeletedDocuments(Date deletedSince, DocumentRequestParameters parameters);
 
     /**
      * Retrieve subsequent pages of deleted documents in the user's library.

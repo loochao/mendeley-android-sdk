@@ -4,15 +4,18 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.Order;
 import com.mendeley.api.request.params.Sort;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.Request;
+import com.mendeley.api.util.DateUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.util.Date;
 
 public class DocumentEndpointTest extends AndroidTestCase {
     private String documentsUrl;
@@ -58,46 +61,48 @@ public class DocumentEndpointTest extends AndroidTestCase {
 	}
 	
 	@SmallTest
-	public void test_getGetDocumentsUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, UnsupportedEncodingException {
+	public void test_getGetDocumentsUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, UnsupportedEncodingException, ParseException {
+
 		View view = View.ALL;
 		String groupId = "test-group_id";
-		String modifiedSince = "2014-02-28T11:52:30.000Z";
-		String deletedSince = "2014-01-21T11:52:30.000Z";
+		Date modifiedSince = DateUtils.parseMendeleyApiTimestamp("2014-02-28T11:52:30.000Z");
+		Date deletedSince = DateUtils.parseMendeleyApiTimestamp("2014-01-21T11:52:30.000Z");
 		int limit = 7;
 		String marker = "12";
 		boolean reverse = true;
 		Order order = Order.DESC;
 		Sort sort = Sort.MODIFIED;
-		
+
 		String paramsString = "?view=" + view +
-				"&group_id=" + groupId + 
-				"&modified_since=" + URLEncoder.encode(modifiedSince, "ISO-8859-1") + 
+				"&group_id=" + groupId +
+				"&modified_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(modifiedSince), "ISO-8859-1") +
 				"&limit=" + limit +
 				"&reverse=" + reverse +
-				"&order=" + order + 
+				"&order=" + order +
 				"&sort=" + sort +
-                "&deleted_since=" + URLEncoder.encode(deletedSince, "ISO-8859-1");
+                "&deleted_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(deletedSince), "ISO-8859-1");
                 Uri expectedUrl = Uri.parse(documentsUrl+paramsString);
 
 		DocumentRequestParameters params = new DocumentRequestParameters();
-		params.view = view;		
+		params.view = view;
 		params.groupId = groupId;
 		params.modifiedSince = modifiedSince;
 		params.limit = 7;
 		params.reverse = true;
 		params.order = order;
 		params.sort = sort;
-		
+
 		Uri url = DocumentEndpoint.getGetDocumentsUrl(params, deletedSince);
-		
+
 		assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
-		
+
 		expectedUrl = Uri.parse(documentsUrl+"?view=" + view);
 		params = new DocumentRequestParameters();
 		params.view = View.ALL;
 		url = DocumentEndpoint.getGetDocumentsUrl(params, null);
-		
+
 		assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
+
 	}
 	
 	@SmallTest

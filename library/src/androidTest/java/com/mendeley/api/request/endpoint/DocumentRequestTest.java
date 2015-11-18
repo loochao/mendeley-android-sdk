@@ -1,17 +1,17 @@
 package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.model.Document;
-import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.request.params.Sort;
 import com.mendeley.api.request.params.View;
 import com.mendeley.api.testUtils.AssertUtils;
-import com.mendeley.api.util.DateUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,7 +83,7 @@ public class DocumentRequestTest extends SignedInTest {
         params.limit = pageSize;
         params.sort = Sort.TITLE;
 
-        RequestResponse<List<Document>> response = getRequestFactory().getDocuments(params).run();
+        Request.Response<List<Document>> response = getRequestFactory().getDocuments(params).run();
 
         // THEN we receive a document list...
         for (int page = 0; page < pageCount; page++) {
@@ -208,7 +208,7 @@ public class DocumentRequestTest extends SignedInTest {
 
     public void test_getDeletedDocuments_receivesCorrectDocuments() throws Exception {
         // GIVEN some documents deleted after one date
-        final String deletedSince = DateUtils.formatMendeleyApiTimestamp(getServerDate());
+        final Date deletedSince = getServerDate();
         final List<Document> existingDocs = setUpDocumentsInServer(6);
 
         final Set<String> expectedDeletedDocIds = new HashSet<String>();

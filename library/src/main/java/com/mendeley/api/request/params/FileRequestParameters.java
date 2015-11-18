@@ -1,5 +1,7 @@
 package com.mendeley.api.request.params;
 
+import java.util.Date;
+
 /**
  * This class represents parameters for file SDK requests.
  * <p>
@@ -19,12 +21,12 @@ public class FileRequestParameters {
 	/**
 	 * Returns only files added since this timestamp. Should be supplied in ISO 8601 format.
 	 */
-	public String addedSince;
+	public Date addedSince;
 	
 	/**
 	 * Returns files deleted since this timestamp. Should be supplied in ISO 8601 format.
 	 */
-	public String deletedSince;
+	public Date deletedSince;
 	
 	/**
 	 * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.

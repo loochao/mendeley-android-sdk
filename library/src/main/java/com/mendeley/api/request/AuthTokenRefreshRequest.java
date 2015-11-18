@@ -8,7 +8,6 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.AuthenticationException;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.model.RequestResponse;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -31,7 +30,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
     }
 
     @Override
-    public RequestResponse<Void> run() throws MendeleyException {
+    public Response<Void> run() throws MendeleyException {
         try {
             final HttpClient httpclient = new DefaultHttpClient();
             final HttpPost httppost = new HttpPost(AuthTokenManager.TOKENS_URL);

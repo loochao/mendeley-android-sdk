@@ -1,8 +1,8 @@
 package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.model.Group;
-import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.model.UserRole;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.GroupRequestParameters;
 import com.mendeley.api.request.params.Page;
@@ -70,7 +70,7 @@ public class GroupRequestTest extends SignedInTest {
         params.limit = pageSize;
 
         final List<Group> actual = new LinkedList<Group>();
-        RequestResponse<List<Group>> response = getRequestFactory().getGroups(params).run();
+        Request.Response<List<Group>> response = getRequestFactory().getGroups(params).run();
 
 
         // THEN we receive a group list...

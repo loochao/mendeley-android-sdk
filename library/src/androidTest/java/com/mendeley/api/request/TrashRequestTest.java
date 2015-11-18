@@ -4,11 +4,11 @@ package com.mendeley.api.request;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.testUtils.AssertUtils;
-import com.mendeley.api.util.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,7 +80,7 @@ public class TrashRequestTest extends SignedInTest {
 
     public void test_deleteTrashedDocument_deletesDocumentFromServer() throws Exception {
         // GIVEN one trashed document in the server
-        final String deletedSince = DateUtils.formatMendeleyApiTimestamp(getServerDate());
+        final Date deletedSince = getServerDate();
         final Document deletingDoc = setUpDocumentsInServer(1).get(0);
         getRequestFactory().trashDocument(deletingDoc.id).run();
 

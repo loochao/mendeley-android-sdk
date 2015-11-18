@@ -13,6 +13,7 @@ import com.mendeley.api.request.PatchAuthorizedRequest;
 import com.mendeley.api.request.PostAuthorizedRequest;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.View;
+import com.mendeley.api.util.DateUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -27,7 +28,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +38,6 @@ public class DocumentEndpoint {
 
 	public static String DOCUMENTS_BASE_URL = MENDELEY_API_BASE_URL + "documents";
     public static String  DOCUMENTS_CONTENT_TYPE = "application/vnd.mendeley-document.1+json";
-
-    public static SimpleDateFormat patchDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT' Z");
 
     /* URLS */
 
@@ -86,7 +84,7 @@ public class DocumentEndpoint {
 	 * 
 	 * @return the url string
 	 */
-    public static Uri getGetDocumentsUrl(DocumentRequestParameters params, String deletedSince) {
+    public static Uri getGetDocumentsUrl(DocumentRequestParameters params, Date deletedSince) {
     	return getGetDocumentsUrl(DOCUMENTS_BASE_URL, params, deletedSince);
     }
     
@@ -95,11 +93,11 @@ public class DocumentEndpoint {
 	 * 
 	 * @return the url string
 	 */
-    public static Uri getTrashDocumentsUrl(DocumentRequestParameters params, String deletedSince) {
+    public static Uri getTrashDocumentsUrl(DocumentRequestParameters params, Date deletedSince) {
     	return getGetDocumentsUrl(TrashEndpoint.BASE_URL, params, deletedSince);
     }
     
-	private static Uri getGetDocumentsUrl(String baseUrl, DocumentRequestParameters params, String deletedSince)  {
+	private static Uri getGetDocumentsUrl(String baseUrl, DocumentRequestParameters params, Date deletedSince)  {
         try {
             StringBuilder url = new StringBuilder();
             url.append(baseUrl);
@@ -116,7 +114,7 @@ public class DocumentEndpoint {
                     firstParam = false;
                 }
                 if (params.modifiedSince != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("modified_since=").append(URLEncoder.encode(params.modifiedSince, "ISO-8859-1"));
+                    paramsString.append(firstParam ? "?" : "&").append("modified_since=").append(URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.modifiedSince), "ISO-8859-1"));
                     firstParam = false;
                 }
                 if (params.limit != null) {
@@ -135,7 +133,8 @@ public class DocumentEndpoint {
                     paramsString.append(firstParam ? "?" : "&").append("sort=").append(params.sort);
                 }
                 if (deletedSince != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("deleted_since=").append(URLEncoder.encode(deletedSince, "ISO-8859-1"));
+                    final String deletedSinceStr = DateUtils.formatMendeleyApiTimestamp(deletedSince);
+                    paramsString.append(firstParam ? "?" : "&").append("deleted_since=").append(URLEncoder.encode(deletedSinceStr, "ISO-8859-1"));
                 }
             }
 
@@ -156,19 +155,6 @@ public class DocumentEndpoint {
 	public static Uri getPatchDocumentUrl(String documentId) {
 		return Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId);
 	}
-
-    /**
-     * @param date the date to format
-     * @return date string in the specified format
-     */
-    private static String formatDate(Date date) {
-        if (date == null) {
-            return null;
-        } else {
-            return patchDateFormat.format(date);
-        }
-    }
-
 
     /* PROCEDURES */
 
@@ -199,7 +185,7 @@ public class DocumentEndpoint {
             super(url, authTokenManager, clientCredentials);
         }
 
-        public GetDeletedDocumentsRequest(DocumentRequestParameters parameters, String deletedSince, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetDeletedDocumentsRequest(DocumentRequestParameters parameters, Date deletedSince, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             this(getGetDocumentsUrl(parameters, deletedSince), authTokenManager, clientCredentials);
         }
 
@@ -266,7 +252,7 @@ public class DocumentEndpoint {
         private final Document document;
 
         public PatchDocumentAuthorizedRequest(String documentId, Document document, Date date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getPatchDocumentUrl(documentId), formatDate(date), authTokenManager, clientCredentials);
+            super(getPatchDocumentUrl(documentId), date, authTokenManager, clientCredentials);
             this.document = document;
         }
 

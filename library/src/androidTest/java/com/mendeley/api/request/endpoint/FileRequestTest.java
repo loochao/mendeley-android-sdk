@@ -2,15 +2,15 @@ package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
-import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.FileRequestParameters;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;
-import com.mendeley.api.util.DateUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class FileRequestTest extends SignedInTest {
     public void test_getFiles_withParameters_receivesCorrectFiles() throws Exception {
         // GIVEN a document with files
         final Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title"));
-        final String currentDate = DateUtils.formatMendeleyApiTimestamp(getServerDate());
+        final Date currentDate = getServerDate();
 
         final List<File> expected = new LinkedList<File>();
         String[] fileNames = new String[]{"android.pdf", "api.pdf", "contact.pdf", "google.pdf"};
@@ -92,7 +92,7 @@ public class FileRequestTest extends SignedInTest {
         final FileRequestParameters params = new FileRequestParameters();
         params.limit = pageSize;
 
-        RequestResponse<List<File>> response = getRequestFactory().getFiles(params).run();
+        Request.Response<List<File>> response = getRequestFactory().getFiles(params).run();
 
         final List<File> actual = new LinkedList<File>();
         // THEN we receive a files list...

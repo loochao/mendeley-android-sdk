@@ -2,7 +2,7 @@ package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Folder;
-import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.params.Page;
@@ -96,7 +96,7 @@ public class FolderRequestTest extends SignedInTest {
         params.limit = pageSize;
 
         final List<Folder> actual = new LinkedList<Folder>();
-        RequestResponse<List<Folder>> response = getRequestFactory().getFolders(params).run();
+        Request.Response<List<Folder>> response = getRequestFactory().getFolders(params).run();
 
         // THEN we receive a folder list...
         for (int page = 0; page < pageCount; page++) {
@@ -192,7 +192,7 @@ public class FolderRequestTest extends SignedInTest {
         // WHEN getting the documents in the folder
         final List<String> actualDocIds = getRequestFactory().getFolderDocumentIds(null, folder.id).run().resource;
 
-        RequestResponse<List<String>> response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        Request.Response<List<String>> response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
         final Set<String> actualDeletedDocIds = new HashSet<String>(response.resource);
 
         // THEN we have received the documents in that folder
@@ -225,7 +225,7 @@ public class FolderRequestTest extends SignedInTest {
             getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
         }
 
-        RequestResponse<List<String>> response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        Request.Response<List<String>> response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
         final Set<String> actualDocIds = new HashSet<String>(response.resource);
 
         Comparator<String> comparator = new Comparator<String>() {

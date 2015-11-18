@@ -4,7 +4,9 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.BuildConfig;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.params.Page;
+
+import java.util.Date;
 
 /**
  * HTTP request launched against the Mendeley Web API.
@@ -25,7 +27,7 @@ public abstract class Request<ResultType> {
     // Number of times to retry failed HTTP requests due to IOExceptions.
     protected static final int MAX_HTTP_RETRIES = 0;
 
-    public abstract RequestResponse<ResultType> run() throws MendeleyException;
+    public abstract Response<ResultType> run() throws MendeleyException;
 
     private boolean cancelled;
 
@@ -42,4 +44,23 @@ public abstract class Request<ResultType> {
         return cancelled;
     }
 
+    /**
+     * Response of the @{link Request}
+     * @param <T>
+     */
+    public static class Response<T> {
+        public final T resource;
+        public final Page next;
+        public final Date serverDate;
+
+        public Response(T resource, Date serverDate, Page next) {
+            this.resource = resource;
+            this.next = next;
+            this.serverDate = serverDate;
+        }
+
+        public Response(T resource, Date serverDate) {
+            this(resource, serverDate, null);
+        }
+    }
 }

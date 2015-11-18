@@ -7,7 +7,6 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.util.DateUtils;
 
@@ -40,11 +39,11 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
     }
 
     @Override
-    public final RequestResponse<ResultType> doRun() throws MendeleyException {
+    public final Response<ResultType> doRun() throws MendeleyException {
         return doRun(url, 0, true);
     }
 
-    private RequestResponse<ResultType> doRun(Uri uri, int currentRetry, boolean addOauthToken) throws MendeleyException {
+    private Response<ResultType> doRun(Uri uri, int currentRetry, boolean addOauthToken) throws MendeleyException {
 
         InputStream is = null;
         HttpURLConnection con = null;
@@ -90,7 +89,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
             is = new MyProgressPublisherInputStream(con.getInputStream(), con.getContentLength());
 
             final Map<String, List<String>> responseHeaders = con.getHeaderFields();
-            return new RequestResponse<>(manageResponse(is), getServerDate(responseHeaders), getNextPage(responseHeaders));
+            return new Response<>(manageResponse(is), getServerDate(responseHeaders), getNextPage(responseHeaders));
 
         } catch (MendeleyException me) {
             throw me;
@@ -125,7 +124,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
      * - if redirected to Amazon or other server, we don't want to forward the Mendeley auth jeader
      * - ... but the redirection that HttpUrlConnection does forwards the header
      */
-    private RequestResponse<ResultType> followRedirection(HttpURLConnection con) throws MendeleyException {
+    private Response<ResultType> followRedirection(HttpURLConnection con) throws MendeleyException {
         final Uri redirectionUri = Uri.parse(con.getHeaderField("location"));
         final boolean addOauthToken = redirectionUri.getHost().equals(Uri.parse(MENDELEY_API_BASE_URL).getHost());
         return doRun(redirectionUri, 0, addOauthToken);

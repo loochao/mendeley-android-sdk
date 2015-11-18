@@ -77,7 +77,7 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<String>> getDeletedDocuments(String deletedSince, DocumentRequestParameters parameters)  {
+    public Request<List<String>> getDeletedDocuments(Date deletedSince, DocumentRequestParameters parameters)  {
         return new DocumentEndpoint.GetDeletedDocumentsRequest(parameters, deletedSince, authTokenManager, clientCredentials);
     }
 

@@ -7,7 +7,6 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.util.DateUtils;
 import com.mendeley.api.util.Utils;
 
@@ -33,16 +32,16 @@ import java.util.Map;
 // TODO try to eliminate Apache HTTP
 public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedRequest<ResultType> {
     private final Uri url;
-    private final String date;
+    private final Date date;
 
-    public PatchAuthorizedRequest(Uri url, String date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public PatchAuthorizedRequest(Uri url, Date date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(authTokenManager, clientCredentials);
         this.url = url;
         this.date = date;
     }
 
     @Override
-    protected RequestResponse<ResultType> doRun() throws MendeleyException {
+    protected Response<ResultType> doRun() throws MendeleyException {
         final HttpParams httpParameters = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParameters, CONNECTION_TIMEOUT);
         HttpConnectionParams.setSoTimeout(httpParameters, READ_TIMEOUT);
@@ -51,7 +50,7 @@ public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedReque
         final HttpPatch httpPatch = new HttpPatch(url.toString());
         httpPatch.setHeader("Authorization", "Bearer " + authTokenManager.getAccessToken());
         if (date != null) {
-            httpPatch.setHeader("If-Unmodified-Since", date);
+            httpPatch.setHeader("If-Unmodified-Since", DateUtils.formatMendeleyApiTimestamp(date));
         }
 
         final Map<String, String> requestHeaders = new HashMap<>();
@@ -78,7 +77,7 @@ public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedReque
             }
 
             final HttpEntity responseEntity = response.getEntity();
-            return new RequestResponse<>(manageResponse(responseEntity.getContent()), getServerDate(response));
+            return new Response<>(manageResponse(responseEntity.getContent()), getServerDate(response));
 
         } catch (JSONException e) {
             throw new JsonParsingException("Error parsing model to patch", e);

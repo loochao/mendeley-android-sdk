@@ -3,7 +3,7 @@ package com.mendeley.api.request.endpoint;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Point;
-import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.AnnotationRequestParameters;
 import com.mendeley.api.request.params.Page;
@@ -89,7 +89,7 @@ public class AnnotationRequestTest extends SignedInTest {
         params.limit = pageSize;
 
         final List<Annotation> actual = new LinkedList<Annotation>();
-        RequestResponse<List<Annotation>> response = getRequestFactory().getAnnotations(params).run();
+        Request.Response<List<Annotation>> response = getRequestFactory().getAnnotations(params).run();
 
         // THEN we receive an annotations list...
         for (int page = 0; page < pageCount; page++) {

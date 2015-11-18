@@ -1,5 +1,7 @@
 package com.mendeley.api.request.params;
 
+import java.util.Date;
+
 /**
  * Parameters for requests to retrieve documents.
  * <p>
@@ -19,7 +21,7 @@ public class DocumentRequestParameters {
 	/**
 	 * Returns only documents modified since this timestamp. Should be supplied in ISO 8601 format.
 	 */
-	public String modifiedSince;
+	public Date modifiedSince;
 	
 	/**
 	 * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.

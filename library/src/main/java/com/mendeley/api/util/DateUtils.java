@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-// TODO: encapsulate the parsing/formatting of the dates in the classes that perform it
 // https://jira.mendeley.com/browse/AND-345
 public class DateUtils {
     // ISO 8601 format, used by the Mendeley web API for timestamps.

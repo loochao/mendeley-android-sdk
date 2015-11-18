@@ -10,6 +10,7 @@ import com.mendeley.api.request.DeleteAuthorizedRequest;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.FileRequestParameters;
+import com.mendeley.api.util.DateUtils;
 
 import org.json.JSONException;
 
@@ -53,11 +54,11 @@ public class FilesEndpoint {
                     firstParam = false;
                 }
                 if (params.addedSince != null) {
-                    url.append(firstParam ? "?" : "&").append("added_since=" + URLEncoder.encode(params.addedSince, "ISO-8859-1"));
+                    url.append(firstParam ? "?" : "&").append("added_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.addedSince), "ISO-8859-1"));
                     firstParam = false;
                 }
                 if (params.deletedSince != null) {
-                    url.append(firstParam ? "?" : "&").append("deleted_since=" + URLEncoder.encode(params.deletedSince, "ISO-8859-1"));
+                    url.append(firstParam ? "?" : "&").append("deleted_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.deletedSince), "ISO-8859-1"));
                     firstParam = false;
                 }
                 if (params.limit != null) {
