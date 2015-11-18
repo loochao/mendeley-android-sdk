@@ -135,37 +135,6 @@ public class FolderRequestTest extends SignedInTest {
         AssertUtils.assertFolders(getRequestFactory().getFolders().run().resource, Arrays.asList(postingFolder));
     }
 
-    public void test_postDocumentsToFolder_createsDocumentsInTheFolderInServer() throws Exception {
-
-        // GIVEN a folder
-        final Folder folder = getTestAccountSetupUtils().setupFolder(createParentFolder());
-
-        // AND documents
-        List<Document> documents = new LinkedList<Document>();
-        final Set<String> expectedDeletedDocIds = new HashSet<String>();
-        for (int i = 0; i < 4; i++) {
-            Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title" + i));
-            documents.add(document);
-            expectedDeletedDocIds.add(document.id);
-        }
-
-        // WHEN posting the documents to the folder
-        for (Document document : documents) {
-            getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
-        }
-
-        RequestResponse<List<String>> response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
-        final Set<String> actualDeletedDocIds = new HashSet<String>(response.resource);
-
-        Comparator<String> comparator = new Comparator<String>() {
-            @Override
-            public int compare(String lhs, String rhs) {
-                return lhs.compareTo(rhs);
-            }
-        };
-        AssertUtils.assertSameElementsInCollection(expectedDeletedDocIds, actualDeletedDocIds, comparator);
-    }
-
     public void test_deleteFolder_removesTheFolderFromServer() throws Exception {
         // GIVEN some folders
         final List<Folder> serverFoldersBefore = new LinkedList<Folder>();
@@ -203,6 +172,68 @@ public class FolderRequestTest extends SignedInTest {
         // ...and the server has updated the folder
         final Folder folderAfter = getRequestFactory().getFolder(folderPatched.id).run().resource;
         AssertUtils.assertFolder(folderPatched, folderAfter);
+    }
+
+    public void test_getDocumentsInFolder_receivesTheCorrectDocumentIds() throws Exception {
+
+        // GIVEN a folder
+        final Folder folder = getTestAccountSetupUtils().setupFolder(createParentFolder());
+
+        // AND documents in that folder
+        final List<String> expectedDocIds = new LinkedList<String>();
+
+        for (int i = 0; i < 4; i++) {
+            Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title" + i));
+            getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
+            expectedDocIds.add(document.id);
+        }
+
+        // WHEN getting the documents in the folder
+        final List<String> actualDocIds = getRequestFactory().getFolderDocumentIds(null, folder.id).run().resource;
+
+        RequestResponse<List<String>> response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        final Set<String> actualDeletedDocIds = new HashSet<String>(response.resource);
+
+        // THEN we have received the documents in that folder
+        Comparator<String> comparator = new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);
+            }
+        };
+        AssertUtils.assertSameElementsInCollection(expectedDocIds, actualDocIds, comparator);
+    }
+
+
+    public void test_postDocumentsToFolder_createsDocumentsInTheFolderInServer() throws Exception {
+
+        // GIVEN a folder
+        final Folder folder = getTestAccountSetupUtils().setupFolder(createParentFolder());
+
+        // AND documents
+        List<Document> documents = new LinkedList<Document>();
+        final Set<String> expectedDocIds = new HashSet<String>();
+        for (int i = 0; i < 4; i++) {
+            Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title" + i));
+            documents.add(document);
+            expectedDocIds.add(document.id);
+        }
+
+        // WHEN posting the documents to the folder
+        for (Document document : documents) {
+            getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
+        }
+
+        RequestResponse<List<String>> response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        final Set<String> actualDocIds = new HashSet<String>(response.resource);
+
+        Comparator<String> comparator = new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);
+            }
+        };
+        AssertUtils.assertSameElementsInCollection(expectedDocIds, actualDocIds, comparator);
     }
 
     private Folder createParentFolder() {

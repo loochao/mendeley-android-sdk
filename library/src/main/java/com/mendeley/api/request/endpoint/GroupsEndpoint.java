@@ -86,6 +86,10 @@ public class GroupsEndpoint {
             super(url, authTokenManager, clientCredentials);
         }
 
+        public GetGroupsRequest(GroupRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(getGetGroupsUrl(parameters), authTokenManager, clientCredentials);
+        }
+
         @Override
         protected List<Group> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
@@ -103,6 +107,10 @@ public class GroupsEndpoint {
             super(url, authTokenManager, clientCredentials);
         }
 
+        public GetGroupRequest(String groupId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(GroupsEndpoint.getGetGroupUrl(groupId), authTokenManager, clientCredentials);
+        }
+
         @Override
         protected Group manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
@@ -118,6 +126,10 @@ public class GroupsEndpoint {
     public static class GetGroupMembersRequest extends GetAuthorizedRequest<List<UserRole>> {
         public GetGroupMembersRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
+        }
+
+        public GetGroupMembersRequest(GroupRequestParameters parameters, String groupId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(getGetGroupsUrl(parameters, getGetGroupMembersUrl(groupId)), authTokenManager, clientCredentials);
         }
 
         @Override

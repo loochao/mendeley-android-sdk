@@ -6,6 +6,7 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Folder;
+import com.mendeley.api.request.DeleteAuthorizedRequest;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
@@ -132,6 +133,10 @@ public class FolderEndpoint {
             super(url, authTokenManager, clientCredentials);
         }
 
+        public GetFoldersRequest(FolderRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(getGetFoldersUrl(parameters), authTokenManager, clientCredentials);
+        }
+
         @Override
         protected List<Folder> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
@@ -145,8 +150,8 @@ public class FolderEndpoint {
     }
 
     public static class GetFolderRequest extends GetAuthorizedRequest<Folder> {
-        public GetFolderRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        public GetFolderRequest(String folderId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(getGetFolderUrl(folderId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -164,8 +169,8 @@ public class FolderEndpoint {
     public static class PostFolderRequest extends PostAuthorizedRequest<Folder> {
         private final Folder folder;
 
-        public PostFolderRequest(Uri url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        public PostFolderRequest(Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(FolderEndpoint.FOLDERS_BASE_URL), authTokenManager, clientCredentials);
             this.folder = folder;
         }
 
@@ -191,8 +196,8 @@ public class FolderEndpoint {
     public static class PatchFolderAuthorizedRequest extends PatchAuthorizedRequest<Folder> {
         private final Folder folder;
 
-        public PatchFolderAuthorizedRequest(Uri url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, null, authTokenManager, clientCredentials);
+        public PatchFolderAuthorizedRequest(String folderId, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(FolderEndpoint.getPatchFolderUrl(folderId), null, authTokenManager, clientCredentials);
             this.folder = folder;
         }
 
@@ -218,8 +223,8 @@ public class FolderEndpoint {
     public static class PostDocumentToFolderRequest extends PostAuthorizedRequest<Void> {
         private final String documentId;
 
-        public PostDocumentToFolderRequest(Uri url, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        public PostDocumentToFolderRequest(String folderId, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(getPostDocumentToFolderUrl(folderId), authTokenManager, clientCredentials);
             this.documentId = documentId;
         }
 
@@ -237,13 +242,17 @@ public class FolderEndpoint {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", DocumentEndpoint.DOCUMENT_TYPES_BASE_URL);
+            headers.put("Content-type", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
         }
     }
 
     public static class GetFolderDocumentIdsRequest extends GetAuthorizedRequest<List<String>> {
         public GetFolderDocumentIdsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
+        }
+
+        public GetFolderDocumentIdsRequest(FolderRequestParameters parameters, String folderId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(getGetFoldersUrl(parameters, getGetFolderDocumentIdsUrl(folderId)), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -254,7 +263,19 @@ public class FolderEndpoint {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", DocumentEndpoint.DOCUMENT_TYPES_BASE_URL);
+            headers.put("Content-type", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
+        }
+    }
+
+    public static class DeleteFolderRequest extends DeleteAuthorizedRequest<Void> {
+        public DeleteFolderRequest(String folderId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(getDeleteFolderUrl(folderId), authTokenManager, clientCredentials);
+        }
+    }
+
+    public static class DeleteDocumentFromFolder extends DeleteAuthorizedRequest<Void> {
+        public DeleteDocumentFromFolder(String folderId, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(FolderEndpoint.getDeleteDocumentFromFolderUrl(folderId, documentId), authTokenManager, clientCredentials);
         }
     }
 }

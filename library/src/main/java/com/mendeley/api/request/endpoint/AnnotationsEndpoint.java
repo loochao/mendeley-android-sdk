@@ -6,6 +6,7 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
+import com.mendeley.api.request.DeleteAuthorizedRequest;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
@@ -44,49 +45,53 @@ public class AnnotationsEndpoint {
         return Uri.parse(ANNOTATIONS_BASE_URL + "/" + documentId);
     }
 
-	public static Uri getAnnotationsUrl(AnnotationRequestParameters params) throws UnsupportedEncodingException {
+	public static Uri getAnnotationsUrl(AnnotationRequestParameters params) {
 		StringBuilder url = new StringBuilder();
 		url.append(ANNOTATIONS_BASE_URL);
 
-		if (params != null) {
-            StringBuilder paramsString = new StringBuilder();
-			boolean firstParam = true;
-            if (params.documentId != null) {
-                paramsString.append(firstParam ? "?" : "&").append("document_id=" + params.documentId);
-                firstParam = false;
+        try {
+            if (params != null) {
+                StringBuilder paramsString = new StringBuilder();
+                boolean firstParam = true;
+                if (params.documentId != null) {
+                    paramsString.append(firstParam ? "?" : "&").append("document_id=" + params.documentId);
+                    firstParam = false;
+                }
+                if (params.groupId != null) {
+                    paramsString.append(firstParam ? "?" : "&").append("group_id=" + params.groupId);
+                    firstParam = false;
+                }
+                if (params.includeTrashed != null) {
+                    paramsString.append(firstParam ? "?" : "&").append("include_trashed=" + params.includeTrashed);
+                    firstParam = false;
+                }
+                if (params.modifiedSince != null) {
+                    paramsString.append(firstParam ? "?" : "&").append("modified_since="
+                            + URLEncoder.encode(params.modifiedSince, "ISO-8859-1"));
+                    firstParam = false;
+                }
+                if (params.deletedSince != null) {
+                    paramsString.append(firstParam ? "?" : "&").append("deleted_since="
+                            + URLEncoder.encode(params.deletedSince, "ISO-8859-1"));
+                    firstParam = false;
+                }
+                if (params.limit != null) {
+                    paramsString.append(firstParam ? "?" : "&").append("limit=" + params.limit);
+                    firstParam = false;
+                }
+                url.append(paramsString.toString());
             }
-			if (params.groupId != null) {
-				paramsString.append(firstParam ? "?" : "&").append("group_id=" + params.groupId);
-				firstParam = false;
-			}
-            if (params.includeTrashed != null) {
-                paramsString.append(firstParam ? "?" : "&").append("include_trashed=" + params.includeTrashed);
-                firstParam = false;
-            }
-			if (params.modifiedSince != null) {
-				paramsString.append(firstParam ? "?" : "&").append("modified_since="
-                        + URLEncoder.encode(params.modifiedSince, "ISO-8859-1"));
-				firstParam = false;
-			}
-            if (params.deletedSince != null) {
-                paramsString.append(firstParam ? "?" : "&").append("deleted_since="
-                        + URLEncoder.encode(params.deletedSince, "ISO-8859-1"));
-                firstParam = false;
-            }
-			if (params.limit != null) {
-				paramsString.append(firstParam ? "?" : "&").append("limit=" + params.limit);
-				firstParam = false;
-			}
-            url.append(paramsString.toString());
-		}
-		
-		return Uri.parse(url.toString());
+
+            return Uri.parse(url.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Could not parse date", e);
+        }
 	}
 
 
     public static class GetAnnotationRequest extends GetAuthorizedRequest<Annotation> {
-        public GetAnnotationRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        public GetAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(getAnnotationUrl(annotationId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -104,6 +109,10 @@ public class AnnotationsEndpoint {
     public static class GetAnnotationsRequest extends GetAuthorizedRequest<List<Annotation>> {
         public GetAnnotationsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
+        }
+
+        public GetAnnotationsRequest(AnnotationRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(getAnnotationsUrl(parameters), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -171,6 +180,12 @@ public class AnnotationsEndpoint {
         protected Annotation manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseAnnotation(reader);
+        }
+    }
+
+    public static class DeleteAnnotationRequest extends DeleteAuthorizedRequest<Void> {
+        public DeleteAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(deleteAnnotationUrl(annotationId), authTokenManager, clientCredentials);
         }
     }
 }

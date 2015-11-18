@@ -259,7 +259,7 @@ public class JsonParser {
 		return documentIds;
 	}
 
-    public static Map<String, String> parseDocumentTypes(JsonReader reader) throws JSONException, IOException {
+    public static Map<String, String> parseStringsMap(JsonReader reader) throws JSONException, IOException {
 		final Map<String, String> typesMap = new HashMap<String, String>();
 
         reader.beginArray();

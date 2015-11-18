@@ -56,8 +56,8 @@ public class RecentlyReadEndpoint {
     }
 
     public static class GetRecentlyReadRequest extends GetAuthorizedRequest<List<ReadPosition>> {
-        public GetRecentlyReadRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url,  authTokenManager, clientCredentials);
+        public GetRecentlyReadRequest(String groupId, String fileId, int limit, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(RecentlyReadEndpoint.getGetRecentlyReadUrl(groupId, fileId, limit), authTokenManager, clientCredentials);
         }
 
         @Override

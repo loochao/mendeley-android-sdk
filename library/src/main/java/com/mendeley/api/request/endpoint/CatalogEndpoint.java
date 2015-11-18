@@ -93,6 +93,10 @@ public class CatalogEndpoint {
             super(url, authTokenManager, clientCredentials);
         }
 
+        public GetCatalogDocumentsRequest(CatalogDocumentRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(CatalogEndpoint.getGetCatalogDocumentsUrl(parameters), authTokenManager, clientCredentials);
+        }
+
         @Override
         protected List<Document> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
@@ -106,8 +110,8 @@ public class CatalogEndpoint {
     }
 
     public static class GetCatalogDocumentRequest extends GetAuthorizedRequest<Document> {
-        public GetCatalogDocumentRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        public GetCatalogDocumentRequest(String catalogId, View view, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(CatalogEndpoint.getGetCatalogDocumentUrl(catalogId, view), authTokenManager, clientCredentials);
         }
 
         @Override

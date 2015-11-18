@@ -99,13 +99,13 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         } catch (IOException ioe) {
             // If the issue is due to IOException, retry up to MAX_HTTP_RETRIES times
             if (currentRetry <  MAX_HTTP_RETRIES) {
-                Log.w(TAG, "Problem connecting to " + url + ": " + ioe.getMessage() + ". Retrying (" + (currentRetry + 1) + "/" + MAX_HTTP_RETRIES + ")");
+                Log.w(TAG, "Problem connecting to " + url+ ". Retrying (" + (currentRetry + 1) + "/" + MAX_HTTP_RETRIES + ")");
                 return doRun(uri, currentRetry + 1, addOauthToken);
             } else {
-                throw new MendeleyException("IO error in GET request " + url + ": " + ioe.toString(), ioe);
+                throw new MendeleyException("IO error in GET request " + url, ioe);
             }
         } catch (Exception e) {
-            throw new MendeleyException("Error in GET request " + url + ": " + e.toString(), e);
+            throw new MendeleyException("Error in GET request " + url, e);
         } finally {
             if (is != null) {
                 try {

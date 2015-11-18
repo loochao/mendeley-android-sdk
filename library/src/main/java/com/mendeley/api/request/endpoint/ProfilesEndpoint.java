@@ -29,8 +29,8 @@ public class ProfilesEndpoint {
     }
 
     public static class GetProfileRequest extends GetAuthorizedRequest<Profile> {
-        public GetProfileRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        public GetProfileRequest(String profileId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(ProfilesEndpoint.PROFILES_URL + profileId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -44,4 +44,5 @@ public class ProfilesEndpoint {
             headers.put("Content-type", "application/vnd.mendeley-profiles.1+json");
         }
     }
+
 }

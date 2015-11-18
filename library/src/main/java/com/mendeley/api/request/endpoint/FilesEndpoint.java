@@ -6,6 +6,7 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.File;
+import com.mendeley.api.request.DeleteAuthorizedRequest;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.params.FileRequestParameters;
@@ -36,39 +37,43 @@ public class FilesEndpoint {
      * @return the url string
      * @throws UnsupportedEncodingException
      */
-    public static Uri getGetFilesUrl(FileRequestParameters params) throws UnsupportedEncodingException {
-        StringBuilder url = new StringBuilder();
-        url.append(FILES_BASE_URL);
+    public static Uri getGetFilesUrl(FileRequestParameters params) {
+        try {
+            StringBuilder url = new StringBuilder();
+            url.append(FILES_BASE_URL);
 
-        if (params != null) {
-            boolean firstParam = true;
-            if (params.documentId != null) {
-                url.append(firstParam?"?":"&").append("document_id="+params.documentId);
-                firstParam = false;
+            if (params != null) {
+                boolean firstParam = true;
+                if (params.documentId != null) {
+                    url.append(firstParam ? "?" : "&").append("document_id=" + params.documentId);
+                    firstParam = false;
+                }
+                if (params.groupId != null) {
+                    url.append(firstParam ? "?" : "&").append("group_id=" + params.groupId);
+                    firstParam = false;
+                }
+                if (params.addedSince != null) {
+                    url.append(firstParam ? "?" : "&").append("added_since=" + URLEncoder.encode(params.addedSince, "ISO-8859-1"));
+                    firstParam = false;
+                }
+                if (params.deletedSince != null) {
+                    url.append(firstParam ? "?" : "&").append("deleted_since=" + URLEncoder.encode(params.deletedSince, "ISO-8859-1"));
+                    firstParam = false;
+                }
+                if (params.limit != null) {
+                    url.append(firstParam ? "?" : "&").append("limit=" + params.limit);
+                    firstParam = false;
+                }
+                if (params.catalogId != null) {
+                    url.append(firstParam ? "?" : "&").append("catalog_id=" + params.catalogId);
+                    firstParam = false;
+                }
             }
-            if (params.groupId != null) {
-                url.append(firstParam?"?":"&").append("group_id="+params.groupId);
-                firstParam = false;
-            }
-            if (params.addedSince != null) {
-                url.append(firstParam?"?":"&").append("added_since="+URLEncoder.encode(params.addedSince, "ISO-8859-1"));
-                firstParam = false;
-            }
-            if (params.deletedSince != null) {
-                url.append(firstParam?"?":"&").append("deleted_since="+URLEncoder.encode(params.deletedSince, "ISO-8859-1"));
-                firstParam = false;
-            }
-            if (params.limit != null) {
-                url.append(firstParam?"?":"&").append("limit="+params.limit);
-                firstParam = false;
-            }
-            if (params.catalogId != null) {
-                url.append(firstParam?"?":"&").append("catalog_id="+params.catalogId);
-                firstParam = false;
-            }
+
+            return Uri.parse(url.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Could not parse date", e);
         }
-
-        return Uri.parse(url.toString());
     }
 
     /**
@@ -98,6 +103,10 @@ public class FilesEndpoint {
             super(url, authTokenManager, clientCredentials);
         }
 
+        public GetFilesRequest(FileRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(FilesEndpoint.getGetFilesUrl(parameters), authTokenManager, clientCredentials);
+        }
+
         @Override
         protected List<File> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
@@ -107,6 +116,12 @@ public class FilesEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", FILES_CONTENT_TYPE);
+        }
+    }
+
+    public static class DeleteFileRequest extends DeleteAuthorizedRequest<Void> {
+        public DeleteFileRequest(String fileId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(FilesEndpoint.getDeleteFileUrl(fileId), authTokenManager, clientCredentials);
         }
     }
 
