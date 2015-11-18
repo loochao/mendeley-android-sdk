@@ -442,7 +442,7 @@ public class JsonParser {
         return mendeleyUserRole.build();
     }
 
-    public static Annotation parseAnnotation(JsonReader reader) throws JSONException, IOException {
+    public static Annotation parseAnnotation(JsonReader reader) throws JSONException, IOException, ParseException {
         final Annotation.Builder builder = new Annotation.Builder();
 
         reader.beginObject();
@@ -472,10 +472,10 @@ public class JsonParser {
                 builder.setPositions(parseBoundingPositions(reader));
 
             } else if (key.equals("created")) {
-                builder.setCreated(reader.nextString());
+                builder.setCreated(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
             } else if (key.equals("last_modified")) {
-                builder.setLastModified(reader.nextString());
+                builder.setLastModified(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
             } else if (key.equals("privacy_level")) {
                 builder.setPrivacyLevel(PrivacyLevel.fromName(reader.nextString()));
@@ -1078,7 +1078,7 @@ public class JsonParser {
         return documents;
     }
 
-    public static List<Annotation> parseAnnotationList(JsonReader reader) throws JSONException, IOException {
+    public static List<Annotation> parseAnnotationList(JsonReader reader) throws JSONException, IOException, ParseException {
         final List<Annotation> annotations = new ArrayList<Annotation>();
         reader.beginArray();
 

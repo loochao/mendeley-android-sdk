@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.mendeley.api.util.NullableList;
 
+import java.util.Date;
 import java.util.List;
 
 public class Annotation {
@@ -50,8 +51,8 @@ public class Annotation {
     public final String text;
     public final String profileId;
     public final NullableList<Position> positions;
-    public final String created;
-    public final String lastModified;
+    public final Date created;
+    public final Date lastModified;
     public final PrivacyLevel privacyLevel;
     public final String fileHash;
     public final String documentId;
@@ -64,8 +65,8 @@ public class Annotation {
             String text,
             String profileId,
             List<Position> positions,
-            String created,
-            String lastModified,
+            Date created,
+            Date lastModified,
             PrivacyLevel privacyLevel,
             String fileHash,
             String documentId) {
@@ -129,8 +130,8 @@ public class Annotation {
         private String text;
         private String profileId;
         private List<Position> positions;
-        private String created;
-        private String lastModified;
+        private Date created;
+        private Date lastModified;
         private PrivacyLevel privacyLevel;
         private String fileHash;
         private String documentId;
@@ -188,12 +189,12 @@ public class Annotation {
             return this;
         }
 
-        public Builder setCreated(String created) {
+        public Builder setCreated(Date created) {
             this.created = created;
             return this;
         }
 
-        public Builder setLastModified(String lastModified) {
+        public Builder setLastModified(Date lastModified) {
             this.lastModified = lastModified;
             return this;
         }

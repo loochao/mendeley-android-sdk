@@ -225,7 +225,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 	    return testProfile.build();
 	}
 
-    private Annotation getTestAnnotationWithNonNotNullValues() {
+    private Annotation getTestAnnotationWithNonNotNullValues() throws ParseException {
         ArrayList<Annotation.Position> positions = new ArrayList<Annotation.Position>();
         positions.add(new Annotation.Position(new Point(1, 2), new Point(3, 4), 5));
         Integer color = Color.argb(255, 255, 0, 0);
@@ -235,7 +235,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         return getTestAnnotation(positions, color, privacyLevel, type);
     }
 
-    private Annotation getTestAnnotation(ArrayList<Annotation.Position> positions, Integer color, Annotation.PrivacyLevel privacyLevel, Annotation.Type type) {
+    private Annotation getTestAnnotation(ArrayList<Annotation.Position> positions, Integer color, Annotation.PrivacyLevel privacyLevel, Annotation.Type type) throws ParseException {
         Annotation.Builder bld = new Annotation.Builder();
 
         bld.setId("test-id");
@@ -244,10 +244,10 @@ public class JsonParserTest extends InstrumentationTestCase {
         if (color != null) {
             bld.setColor(color);
         }
-        bld.setCreated("2014-02-20T16:53:25.000Z");
+        bld.setCreated(DateUtils.parseMendeleyApiTimestamp("2014-02-20T16:53:25.000Z"));
         bld.setDocumentId("test-doc-id");
         bld.setFileHash("test-hash");
-        bld.setLastModified("2015-02-20T16:53:25.000Z");
+        bld.setLastModified(DateUtils.parseMendeleyApiTimestamp("2015-02-20T16:53:25.000Z"));
         bld.setPreviousId("test-prev-id");
         bld.setPrivacyLevel(privacyLevel);
         bld.setProfileId("test-profile-id");
@@ -558,7 +558,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
     @SmallTest
     public void test_parseAnnotation_withNotNullValues()
-            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
 
         // GIVEN the JSON representation of an annotation where its values (boxes, color) are NOT null
         final Annotation expectedAnnotation = getTestAnnotationWithNonNotNullValues();
@@ -579,7 +579,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
     @SmallTest
     public void test_parseAnotation_withNullValues()
-            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
 
         // GIVEN the JSON representation of an annotation where its values (boxes, color) are null
         final Annotation expectedAnnotation = getTestAnnotation(null, null, null, null);

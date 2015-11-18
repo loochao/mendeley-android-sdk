@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +97,7 @@ public class AnnotationsEndpoint {
         }
 
         @Override
-        protected Annotation manageResponse(InputStream is) throws JSONException, IOException {
+        protected Annotation manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseAnnotation(reader);
         }
@@ -117,7 +118,7 @@ public class AnnotationsEndpoint {
         }
 
         @Override
-        protected List<Annotation> manageResponse(InputStream is) throws JSONException, IOException {
+        protected List<Annotation> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseAnnotationList(reader);
         }
