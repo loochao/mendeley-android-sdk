@@ -7,7 +7,6 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.request.params.Page;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +91,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         } catch (MendeleyException me) {
             throw me;
         } catch (ParseException pe) {
-            throw new MendeleyException("Could not parse web API headers for " + url, pe);
+            throw new MendeleyException("Could not parse a date in the JSON response " + url, pe);
         } catch (IOException ioe) {
             // If the issue is due to IOException, retry up to MAX_HTTP_RETRIES times
             if (currentRetry <  MAX_HTTP_RETRIES) {
@@ -154,14 +153,14 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         return null;
     }
 
-    private Page getNextPage(Map<String, List<String>> responseHeaders) {
+    private Uri getNextPage(Map<String, List<String>> responseHeaders) {
         final List<String> links = responseHeaders.get("Link");
         if (links != null) {
             for (String link : links) {
                 try {
                     String linkString = link.substring(link.indexOf("<") + 1, link.indexOf(">"));
                     if (link.contains("next")) {
-                        return new Page(linkString);
+                        return Uri.parse(linkString);
                     }
                 } catch (IndexOutOfBoundsException ignored) {
                 }

@@ -185,8 +185,8 @@ public class JsonParserTest extends InstrumentationTestCase {
                 setId("ff316338-86b7-4363-9721-education").
                 setInstitution("test-education_institution").
                 setDegree("test-degree").
-                setStartDate(DateUtils.parseMendeleyApiTimestamp("2014-12-22T13:18:43.000Z")).
-                setEndDate(DateUtils.parseMendeleyApiTimestamp("2014-12-22T13:18:43.000Z")).
+                setStartDate("2014-12-22").
+                setEndDate("2014-12-22").
                 setWebsite("www.test.education.website");
 
         Employment.Builder testEmploymentBuilder = new Employment.Builder();
@@ -195,8 +195,8 @@ public class JsonParserTest extends InstrumentationTestCase {
                 setId("ff316338-86b7-4363-9721-employment").
                 setInstitution("test-employment_institution").
                 setPosition("test-position").
-                setStartDate(DateUtils.parseMendeleyApiTimestamp("2014-12-22T13:18:43.000Z")).
-                setEndDate(DateUtils.parseMendeleyApiTimestamp("2014-12-22T13:18:43.000Z")).
+                setStartDate("2014-12-22").
+                setEndDate("2014-12-22").
                 setWebsite("www.test.employment.website").
                 setClasses(Arrays.asList("Psychology", "Violin")).
                 setIsMainEmployment(true);

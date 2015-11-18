@@ -1,5 +1,7 @@
 package com.mendeley.api.impl;
 
+import android.net.Uri;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Annotation;
@@ -31,7 +33,6 @@ import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.FileRequestParameters;
 import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.params.GroupRequestParameters;
-import com.mendeley.api.request.params.Page;
 import com.mendeley.api.request.params.View;
 
 import java.io.InputStream;
@@ -67,8 +68,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<Document>> getDocuments(Page next) {
-        return new DocumentEndpoint.GetDocumentsRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<Document>> getDocuments(Uri url) {
+        return new DocumentEndpoint.GetDocumentsRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -82,8 +83,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<String>> getDeletedDocuments(Page next) {
-        return new DocumentEndpoint.GetDeletedDocumentsRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<String>> getDeletedDocuments(Uri uri) {
+        return new DocumentEndpoint.GetDeletedDocumentsRequest(uri, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -135,8 +136,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<Annotation>> getAnnotations(Page next) {
-        return new AnnotationsEndpoint.GetAnnotationsRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<Annotation>> getAnnotations(Uri url) {
+        return new AnnotationsEndpoint.GetAnnotationsRequest(url, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -172,8 +173,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<File>> getFiles(Page next) {
-        return new FilesEndpoint.GetFilesRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<File>> getFiles(Uri uri) {
+        return new FilesEndpoint.GetFilesRequest(uri, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -204,8 +205,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<Folder>> getFolders(Page next) {
-        return new FolderEndpoint.GetFoldersRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<Folder>> getFolders(Uri uri) {
+        return new FolderEndpoint.GetFoldersRequest(uri, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -229,8 +230,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<String>> getFolderDocumentIds(Page next) {
-        return new FolderEndpoint.GetFolderDocumentIdsRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<String>> getFolderDocumentIds(Uri uri) {
+        return new FolderEndpoint.GetFolderDocumentIdsRequest(uri, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -269,8 +270,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<Group>>  getGroups(Page next) {
-        return new GroupsEndpoint.GetGroupsRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<Group>>  getGroups(Uri uri) {
+        return new GroupsEndpoint.GetGroupsRequest(uri, authTokenManager, clientCredentials);
     }
 
     @Override
@@ -284,8 +285,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<UserRole>> getGroupMembers(Page next){
-        return new GroupsEndpoint.GetGroupMembersRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<UserRole>> getGroupMembers(Uri url){
+        return new GroupsEndpoint.GetGroupMembersRequest(url, authTokenManager, clientCredentials);
 
     }
 
@@ -302,8 +303,8 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<Document>> getTrashedDocuments(Page next) {
-        return new DocumentEndpoint.GetDocumentsRequest(next.link, authTokenManager, clientCredentials);
+    public Request<List<Document>> getTrashedDocuments(Uri uri) {
+        return new DocumentEndpoint.GetDocumentsRequest(uri, authTokenManager, clientCredentials);
     }
 
     @Override

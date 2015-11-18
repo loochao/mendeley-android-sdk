@@ -727,10 +727,10 @@ public class JsonParser {
                 builder.setPosition(reader.nextString());
 
             } else if (key.equals("start_date")) {
-                builder.setStartDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
+                builder.setStartDate(reader.nextString());
 
             } else if (key.equals("end_date")) {
-                builder.setEndDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
+                builder.setEndDate(reader.nextString());
 
             } else if (key.equals("website")) {
                 builder.setWebsite(reader.nextString());
@@ -777,9 +777,9 @@ public class JsonParser {
             } else if (key.equals("institution")) {
                 builder.setInstitution(reader.nextString());
             } else if (key.equals("start_date")) {
-                builder.setStartDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
+                builder.setStartDate(reader.nextString());
             } else if (key.equals("end_date")) {
-                builder.setEndDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
+                builder.setEndDate(reader.nextString());
             } else if (key.equals("website")) {
                 builder.setWebsite(reader.nextString());
             } else {

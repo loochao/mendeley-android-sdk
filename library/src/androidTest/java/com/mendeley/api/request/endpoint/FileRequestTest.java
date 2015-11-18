@@ -5,7 +5,6 @@ import com.mendeley.api.model.File;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.FileRequestParameters;
-import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Arrays;
@@ -101,7 +100,7 @@ public class FileRequestTest extends SignedInTest {
 
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
-                assertTrue("page must be valid", Page.isValidPage(response.next));
+                assertTrue("page must be valid", response.next != null);
                 response = getRequestFactory().getFiles(response.next).run();
             }
         }

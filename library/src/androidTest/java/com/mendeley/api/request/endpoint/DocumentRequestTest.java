@@ -4,7 +4,6 @@ import com.mendeley.api.model.Document;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.DocumentRequestParameters;
-import com.mendeley.api.request.params.Page;
 import com.mendeley.api.request.params.Sort;
 import com.mendeley.api.request.params.View;
 import com.mendeley.api.testUtils.AssertUtils;
@@ -97,7 +96,7 @@ public class DocumentRequestTest extends SignedInTest {
 
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
-                assertTrue("page must be valid", Page.isValidPage(response.next));
+                assertTrue("page must be valid", response.next != null);
                 response = getRequestFactory().getDocuments(response.next).run();
             }
         }

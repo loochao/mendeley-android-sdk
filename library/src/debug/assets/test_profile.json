@@ -31,8 +31,8 @@
         "unexpected_attribute": "void"
       },
       "degree": "test-degree",
-      "start_date": "2014-12-22T13:18:43.000Z",
-      "end_date": "2014-12-22T13:18:43.000Z",
+      "start_date": "2014-12-22",
+      "end_date": "2014-12-22",
       "website": "www.test.education.website",
       "unexpected_attribute": "void"
     }
@@ -49,8 +49,8 @@
         "unexpected_attribute": "void"
       },
       "position": "test-position",
-      "start_date": "2014-12-22T13:18:43.000Z",
-      "end_date": "2014-12-22T13:18:43.000Z",
+      "start_date": "2014-12-22",
+      "end_date": "2014-12-22",
       "website": "www.test.employment.website",
       "classes": [
         "Psychology",

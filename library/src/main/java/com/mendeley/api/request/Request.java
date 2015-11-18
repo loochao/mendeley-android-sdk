@@ -1,10 +1,11 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
+
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.BuildConfig;
 import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.request.params.Page;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,7 +54,7 @@ public abstract class Request<ResultType> {
      */
     public static class Response<T> {
         // RFC 7231 format, used for Dates in HTTP headers.
-        public final static SimpleDateFormat httpHeaderDateFormat;
+        private final static SimpleDateFormat httpHeaderDateFormat;
 
         static {
             httpHeaderDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss 'GMT'", Locale.US);
@@ -61,14 +62,18 @@ public abstract class Request<ResultType> {
         }
 
         public final T resource;
-        public final Page next;
+        public final Uri next;
 
         public final Date serverDate;
 
-        public Response(T resource, String serverDateStr, Page next) {
+        public Response(T resource, Date serverDate, Uri next) {
             this.resource = resource;
             this.next = next;
-            this.serverDate = parseHeaderDate(serverDateStr);
+            this.serverDate = serverDate;
+        }
+
+        public Response(T resource, String serverDateStr, Uri next) {
+            this(resource, parseHeaderDate(serverDateStr), next);
         }
 
         public Response(T resource, String serverDateStr) {
@@ -79,7 +84,7 @@ public abstract class Request<ResultType> {
             try {
                 return httpHeaderDateFormat.parse(serverDateStr);
             } catch (Exception e) {
-                throw new IllegalArgumentException("", e);
+                throw new IllegalArgumentException("Could not parse server date header", e);
             }
         }
 

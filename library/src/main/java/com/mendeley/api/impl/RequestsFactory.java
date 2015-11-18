@@ -1,5 +1,7 @@
 package com.mendeley.api.impl;
 
+import android.net.Uri;
+
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
@@ -8,16 +10,15 @@ import com.mendeley.api.model.Group;
 import com.mendeley.api.model.Profile;
 import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.model.UserRole;
+import com.mendeley.api.request.GetFileNetworkRequest;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.params.AnnotationRequestParameters;
 import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.FileRequestParameters;
 import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.request.params.GroupRequestParameters;
-import com.mendeley.api.request.params.Page;
 import com.mendeley.api.request.params.View;
-import com.mendeley.api.request.GetFileNetworkRequest;
-import com.mendeley.api.request.Request;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -39,9 +40,9 @@ public interface RequestsFactory {
     /**
      * Retrieve subsequent pages of documents in the user's library.
      *
-     * @param next reference to next page returned in a previous DocumentList.
+     * @param url reference to next page returned in a previous DocumentList.
      */
-    Request<List<Document>> getDocuments(Page next);
+    Request<List<Document>> getDocuments(Uri url);
 
     /**
      * Retrieve a single document, specified by ID.
@@ -61,9 +62,9 @@ public interface RequestsFactory {
     /**
      * Retrieve subsequent pages of deleted documents in the user's library.
      *
-     * @param next reference to next page returned in a previous DocumentIdList.
+     * @param uri reference to next page returned in a previous DocumentIdList.
      */
-    Request<List<String>> getDeletedDocuments(Page next);
+    Request<List<String>> getDeletedDocuments(Uri uri);
 
     /**
      * Add a new document to the user's library.
@@ -128,9 +129,9 @@ public interface RequestsFactory {
     /**
      * Return the next page of file metadata entries.
      *
-     * @param next returned from previous getFiles() call.
+     * @param uri returned from previous getFiles() call.
      */
-    Request<List<File>> getFiles(Page next);
+    Request<List<File>> getFiles(Uri uri);
 
 
     /**
@@ -177,9 +178,9 @@ public interface RequestsFactory {
     /**
      * Returns the next page of folder metadata entries.
      *
-     * @param next returned from a previous getFolders() call.
+     * @param uri returned from a previous getFolders() call.
      */
-    Request<List<Folder>> getFolders(Page next);
+    Request<List<Folder>> getFolders(Uri uri);
 
     /**
      * Returns metadata for a single folder, specified by ID.
@@ -215,10 +216,10 @@ public interface RequestsFactory {
 
     /**
      * Returns the next page of document IDs stored in a particular folder.
-     * @param next returned by a previous call to getFolderDocumentIds().
+     * @param uri returned by a previous call to getFolderDocumentIds().
      *
      */
-    Request<List<String>> getFolderDocumentIds(Page next);
+    Request<List<String>> getFolderDocumentIds(Uri uri);
 
     /**
      * Add a document to a folder.
@@ -257,9 +258,9 @@ public interface RequestsFactory {
     /**
      * Returns the next page of group metadata entries.
      *
-     * @param next returned from a previous getGroups() call.
+     * @param uri returned from a previous getGroups() call.
      */
-    Request<List<Group>> getGroups(Page next);
+    Request<List<Group>> getGroups(Uri uri);
 
     /**
      * Returns metadata for a single group, specified by ID.
@@ -278,9 +279,9 @@ public interface RequestsFactory {
     /**
      * Return a list of members user roles of a particular group.
      *
-     * @param next returned from a previous getGroupMembers() call.
+     * @param url returned from a previous getGroupMembers() call.
      */
-    Request<List<UserRole>> getGroupMembers(Page next);
+    Request<List<UserRole>> getGroupMembers(Uri url);
 
     /* TRASH */
 
@@ -297,9 +298,9 @@ public interface RequestsFactory {
     /**
      * Retrieve subsequent pages of documents from the user's trash.
      *
-     * @param next reference to next page returned by a previous DocumentList from getTrashedDocuments().
+     * @param uri reference to next page returned by a previous DocumentList from getTrashedDocuments().
      */
-    Request<List<Document>> getTrashedDocuments(Page next);
+    Request<List<Document>> getTrashedDocuments(Uri uri);
 
     /**
      * Move a document from trash into the user's library.
@@ -345,7 +346,7 @@ public interface RequestsFactory {
 
     Request<List<Annotation>> getAnnotations(AnnotationRequestParameters parameters);
 
-    Request<List<Annotation>> getAnnotations(Page next);
+    Request<List<Annotation>> getAnnotations(Uri url);
 
     Request<Annotation> getAnnotation(String annotationId);
 
