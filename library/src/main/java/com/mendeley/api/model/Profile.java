@@ -1,6 +1,7 @@
 package com.mendeley.api.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public class Profile {
 	public final String researchInterests;
 	public final String academicStatus;
 	public final Boolean verified;
-	public final String createdAt;
+	public final Date createdAt;
 	
 	public final Discipline discipline;
 	public final Photo photo;
@@ -40,7 +41,7 @@ public class Profile {
 			String researchInterests,
 			String academicStatus,
 			Boolean verified,
-			String createdAt,
+			Date createdAt,
 			Discipline discipline,
 			Photo photo,
 			List<Education> education,
@@ -108,7 +109,7 @@ public class Profile {
 		private String researchInterests;
 		private String academicStatus;
 		private Boolean verified;
-		private String createdAt;		
+		private Date createdAt;
 		private Discipline discipline;
 		private Photo photo;		
 		private List<Education> education;
@@ -190,7 +191,7 @@ public class Profile {
 			return this;
 		}
 		
-		public Builder setCreatedAt(String createdAt) {
+		public Builder setCreatedAt(Date createdAt) {
 			this.createdAt = createdAt;
 			return this;
 		}

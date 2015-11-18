@@ -15,6 +15,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.Map;
 
 import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
@@ -31,7 +32,7 @@ public class ProfilesEndpoint {
         }
 
         @Override
-        protected Profile manageResponse(InputStream is) throws JSONException, IOException {
+        protected Profile manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseProfile(reader);
         }

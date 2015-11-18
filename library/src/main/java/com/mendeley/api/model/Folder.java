@@ -1,5 +1,7 @@
 package com.mendeley.api.model;
 
+import java.util.Date;
+
 /**
  * Model class representing folder json object.
  */
@@ -8,9 +10,9 @@ public class Folder {
 	public final String id;
 	public final String parentId;
 	public final String groupId;
-	public final String added;
+	public final Date added;
 	
-	private Folder(String name, String id, String parentId, String groupId, String added) {
+	private Folder(String name, String id, String parentId, String groupId, Date added) {
         this.name = name;
         this.id = id;
         this.parentId = parentId;
@@ -23,7 +25,7 @@ public class Folder {
         private String id;
         private String parentId;
         private String groupId;
-        private String added;
+        private Date added;
 
         public Builder() {
         }
@@ -56,7 +58,7 @@ public class Folder {
             return this;
         }
 
-        public Builder setAdded(String added) {
+        public Builder setAdded(Date added) {
             this.added = added;
             return this;
         }

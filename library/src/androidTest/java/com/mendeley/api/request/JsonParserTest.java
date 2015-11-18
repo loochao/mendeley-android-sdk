@@ -114,7 +114,6 @@ public class JsonParserTest extends InstrumentationTestCase {
         testDocument.setInstitution("test-institution");
         testDocument.setSeries("1");
         testDocument.setChapter("1");
-        testDocument.setAccessed("2014-02-28");
         testDocument.setFileAttached(false);
         testDocument.setFileAttached(false);
         testDocument.setClientData("test-client_data");
@@ -123,13 +122,13 @@ public class JsonParserTest extends InstrumentationTestCase {
         return testDocument.build();
     }
 
-    private Group getTestGroup() {
+    private Group getTestGroup() throws ParseException {
 
         Group.Builder testGroup = new Group.Builder();
         testGroup.setName("test-group-name");
         testGroup.setDescription("test-group-description");
         testGroup.setId("test-group-id");
-        testGroup.setCreated("2014-07-29T11:22:55.000Z");
+        testGroup.setCreated(DateUtils.parseMendeleyApiTimestamp("2014-07-29T11:22:55.000Z"));
         testGroup.setOwningProfileId("test-group-owing-profile-id");
         testGroup.setAccessLevel(Group.AccessLevel.PUBLIC);
         testGroup.setRole(Group.Role.OWNER);
@@ -154,11 +153,11 @@ public class JsonParserTest extends InstrumentationTestCase {
         return testUserRole.build();
     }
 
-    private Folder getTestFolder() {
+    private Folder getTestFolder() throws ParseException {
 		Folder.Builder mendeleyFolder = new Folder.Builder();
         mendeleyFolder.setName("test-name");
 		mendeleyFolder.setId("test-id");
-		mendeleyFolder.setAdded("2014-02-20T16:53:25.000Z");
+		mendeleyFolder.setAdded(DateUtils.parseMendeleyApiTimestamp("2014-02-20T16:53:25.000Z"));
 	    
 	    return mendeleyFolder.build();
 	}
@@ -175,7 +174,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 	    return testFile.build();
 	}
 
-    private Profile getTestProfile() {
+    private Profile getTestProfile() throws ParseException {
 		
 		Discipline testDiscipline = new Discipline();
 		testDiscipline.name = "test-name";
@@ -186,8 +185,8 @@ public class JsonParserTest extends InstrumentationTestCase {
                 setId("ff316338-86b7-4363-9721-education").
                 setInstitution("test-education_institution").
                 setDegree("test-degree").
-                setStartDate("2002-01-01").
-		        setEndDate("2004-01-01").
+                setStartDate(DateUtils.parseMendeleyApiTimestamp("2014-12-22T13:18:43.000Z")).
+                setEndDate(DateUtils.parseMendeleyApiTimestamp("2014-12-22T13:18:43.000Z")).
                 setWebsite("www.test.education.website");
 
         Employment.Builder testEmploymentBuilder = new Employment.Builder();
@@ -196,8 +195,8 @@ public class JsonParserTest extends InstrumentationTestCase {
                 setId("ff316338-86b7-4363-9721-employment").
                 setInstitution("test-employment_institution").
                 setPosition("test-position").
-                setStartDate("2008-06-01").
-                setEndDate("2010-06-01").
+                setStartDate(DateUtils.parseMendeleyApiTimestamp("2014-12-22T13:18:43.000Z")).
+                setEndDate(DateUtils.parseMendeleyApiTimestamp("2014-12-22T13:18:43.000Z")).
                 setWebsite("www.test.employment.website").
                 setClasses(Arrays.asList("Psychology", "Violin")).
                 setIsMainEmployment(true);
@@ -212,7 +211,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 		testProfile.setAcademicStatus("test-academic_status");
 		testProfile.setVerified(true);
 		testProfile.setUserType("test-user_type");
-		testProfile.setCreatedAt("2014-04-28T15:37:51.000Z");
+		testProfile.setCreatedAt(DateUtils.parseMendeleyApiTimestamp("2014-04-28T15:37:51.000Z"));
 		testProfile.setDiscipline(testDiscipline);
 		testProfile.setPhoto(testPhoto);
       	ArrayList<Education> educationList = new ArrayList<Education>();
@@ -337,7 +336,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
 	@SmallTest
 	public void test_parseFolder()
-			throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
 		Folder expectedFolder = getTestFolder();
 		JsonReader reader = getJsonReaderFromAssetsFile(folderFile);
 
@@ -379,7 +378,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
     @SmallTest
 	public void test_parseProfile()
-			throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
 		Profile expectedProfile = getTestProfile();
 		JsonReader reader = getJsonReaderFromAssetsFile(profileFile);
 
@@ -481,7 +480,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
 	@SmallTest
 	public void test_jsonFromFolder()
-			throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException {
+            throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException, ParseException {
 		Folder parsingFolder = getTestFolder();
 		
 		String actualJson = JsonParser.jsonFromFolder(parsingFolder);
@@ -522,7 +521,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
     @SmallTest
     public void test_parseGroup()
-            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
 
         final Group expectedGroup = getTestGroup();
         final JsonReader reader = getJsonReaderFromAssetsFile(groupFile);
@@ -656,7 +655,6 @@ public class JsonParserTest extends InstrumentationTestCase {
         assertEquals("institution", doc1.institution, doc2.institution);
         assertEquals("series", doc1.series, doc2.series);
         assertEquals("chapter", doc1.chapter, doc2.chapter);
-        assertEquals("accessed", doc1.accessed, doc2.accessed);
         assertEquals("fileAttached", doc1.fileAttached, doc2.fileAttached);
 
         assertEquals("identifiers size", doc1.identifiers.size(), doc2.identifiers.size());

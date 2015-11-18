@@ -1,6 +1,7 @@
 package com.mendeley.api.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,8 +13,8 @@ public class Employment {
 	public final String id;
 	public final String institution;
 	public final String position;
-	public final String startDate;
-	public final String endDate;
+	public final Date startDate;
+	public final Date endDate;
 	public final String website;
 	public final List<String> classes;
 	public final Boolean isMainEmployment;
@@ -22,8 +23,8 @@ public class Employment {
 			String id,
 			String institution,
 			String position,
-			String startDate,
-			String endDate,
+			Date startDate,
+			Date endDate,
 			String website,
 			List<String> classes,
 			Boolean isMainEmployment) {
@@ -42,8 +43,8 @@ public class Employment {
 		private String id;
 		private String institution;
 		private String position;
-		private String startDate;
-		private String endDate;
+		private Date startDate;
+		private Date endDate;
 		private String website;
 		private List<String> classes;
 		private Boolean isMainEmployment;
@@ -76,12 +77,12 @@ public class Employment {
 			return this;
 		}
 
-		public Builder setStartDate(String startDate) {
+		public Builder setStartDate(Date startDate) {
 			this.startDate = startDate;
 			return this;
 		}
 
-		public Builder setEndDate(String endDate) {
+		public Builder setEndDate(Date endDate) {
 			this.endDate = endDate;
 			return this;
 		}

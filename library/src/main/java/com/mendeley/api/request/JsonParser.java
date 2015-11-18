@@ -62,8 +62,12 @@ public class JsonParser {
             jAnnotation.put("positions", positions);
         }
 
-        jAnnotation.put("created", annotation.created);
-        jAnnotation.put("last_modified", annotation.lastModified);
+        if (annotation.created != null) {
+            jAnnotation.put("created", DateUtils.formatMendeleyApiTimestamp(annotation.created));
+        }
+        if (annotation.lastModified != null) {
+            jAnnotation.put("last_modified", DateUtils.formatMendeleyApiTimestamp(annotation.lastModified));
+        }
         if (annotation.privacyLevel != null) {
             jAnnotation.put("privacy_level", annotation.privacyLevel.name);
         }
@@ -192,7 +196,6 @@ public class JsonParser {
 		jDocument.put("institution", document.institution);
 		jDocument.put("series", document.series);
 		jDocument.put("chapter", document.chapter);
-        jDocument.put("accessed", document.accessed);
         jDocument.put("file_attached", document.fileAttached);
         jDocument.put("client_data", document.clientData);
         jDocument.put("unique_id", document.uniqueId);
@@ -226,7 +229,9 @@ public class JsonParser {
 		jFolder.put("parent_id", folder.parentId);
 		jFolder.put("id", folder.id);
 		jFolder.put("group_id", folder.groupId);
-		jFolder.put("added", folder.added);
+        if (folder.added != null) {
+            jFolder.put("added", DateUtils.formatMendeleyApiTimestamp(folder.added));
+        }
 		
 		return jFolder.toString();
 	}
@@ -366,7 +371,7 @@ public class JsonParser {
 	 * @return the list of Folder objects
 	 * @throws JSONException
 	 */
-    public static List<Folder> parseFolderList(JsonReader reader) throws JSONException, IOException {
+    public static List<Folder> parseFolderList(JsonReader reader) throws JSONException, IOException, ParseException {
 		
 		final List<Folder> folders = new ArrayList<Folder>();
 		
@@ -386,7 +391,7 @@ public class JsonParser {
 	 * @return the Folder object
 	 * @throws JSONException
 	 */
-    public static Folder parseFolder(JsonReader reader) throws JSONException, IOException {
+    public static Folder parseFolder(JsonReader reader) throws JSONException, IOException, ParseException {
         final Folder.Builder bld = new Folder.Builder();
 
         reader.beginObject();
@@ -402,7 +407,7 @@ public class JsonParser {
             } else if (key.equals("group_id")) {
                 bld.setGroupId(reader.nextString());
             } else if (key.equals("added")) {
-                bld.setAdded(reader.nextString());
+                bld.setAdded(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
             } else {
                 reader.skipValue();
             }
@@ -584,7 +589,7 @@ public class JsonParser {
 	 * @return the Profile object
 	 * @throws JSONException
 	 */
-    public static Profile parseProfile(JsonReader reader) throws JSONException, IOException {
+    public static Profile parseProfile(JsonReader reader) throws JSONException, IOException, ParseException {
 		final Profile.Builder builder = new Profile.Builder();
 
         reader.beginObject();
@@ -626,7 +631,7 @@ public class JsonParser {
                 builder.setVerified(reader.nextBoolean());
 
             } else if (key.equals("created_at")) {
-                builder.setCreatedAt(reader.nextString());
+                builder.setCreatedAt(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
             } else if (key.equals("discipline")) {
                 builder.setDiscipline(parseDiscipline(reader));
@@ -691,7 +696,7 @@ public class JsonParser {
         return new Photo(original, standard, square);
     }
 
-    private static List<Employment> paserEmploymentList(JsonReader reader) throws IOException, JSONException {
+    private static List<Employment> paserEmploymentList(JsonReader reader) throws IOException, JSONException, ParseException {
         final List<Employment> list = new LinkedList<>();
         reader.beginArray();
 
@@ -704,7 +709,7 @@ public class JsonParser {
     }
 
 
-    private static Employment parseEmployment(JsonReader reader) throws JSONException, IOException {
+    private static Employment parseEmployment(JsonReader reader) throws JSONException, IOException, ParseException {
         final Employment.Builder builder = new Employment.Builder();
         reader.beginObject();
 
@@ -722,10 +727,10 @@ public class JsonParser {
                 builder.setPosition(reader.nextString());
 
             } else if (key.equals("start_date")) {
-                builder.setStartDate(reader.nextString());
+                builder.setStartDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
             } else if (key.equals("end_date")) {
-                builder.setEndDate(reader.nextString());
+                builder.setEndDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
             } else if (key.equals("website")) {
                 builder.setWebsite(reader.nextString());
@@ -746,7 +751,7 @@ public class JsonParser {
     }
 
 
-    private static List<Education> parseEducationList(JsonReader reader) throws IOException, JSONException {
+    private static List<Education> parseEducationList(JsonReader reader) throws IOException, JSONException, ParseException {
         final List<Education> list = new LinkedList<>();
         reader.beginArray();
 
@@ -758,7 +763,7 @@ public class JsonParser {
         return list;
     }
 
-    private static Education parseEducation(JsonReader reader) throws JSONException, IOException {
+    private static Education parseEducation(JsonReader reader) throws JSONException, IOException, ParseException {
         final Education.Builder builder = new Education.Builder();
 
         reader.beginObject();
@@ -772,9 +777,9 @@ public class JsonParser {
             } else if (key.equals("institution")) {
                 builder.setInstitution(reader.nextString());
             } else if (key.equals("start_date")) {
-                builder.setStartDate(reader.nextString());
+                builder.setStartDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
             } else if (key.equals("end_date")) {
-                builder.setEndDate(reader.nextString());
+                builder.setEndDate(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
             } else if (key.equals("website")) {
                 builder.setWebsite(reader.nextString());
             } else {
@@ -793,7 +798,7 @@ public class JsonParser {
      * @return the Group object
      * @throws JSONException
      */
-    public static Group parseGroup(JsonReader reader) throws JSONException, IOException {
+    public static Group parseGroup(JsonReader reader) throws JSONException, IOException, ParseException {
         final Group.Builder builder = new Group.Builder();
         reader.beginObject();
 
@@ -805,7 +810,7 @@ public class JsonParser {
                 builder.setId(reader.nextString());
 
             } else if (key.equals("created")) {
-                builder.setCreated(reader.nextString());
+                builder.setCreated(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
             } else if (key.equals("owning_profile_id")) {
                 builder.setOwningProfileId(reader.nextString());
@@ -958,9 +963,6 @@ public class JsonParser {
                 bld.setIdentifiers(parseStringMap(reader));
             } else if (key.equals("tags")) {
                 bld.setTags(parseStringList(reader));
-
-            } else if (key.equals("accessed")) {
-                bld.setAccessed(reader.nextString());
 
             } else if (key.equals("file_attached")) {
                 bld.setFileAttached(reader.nextBoolean());
@@ -1116,7 +1118,7 @@ public class JsonParser {
      * @return the list of Group objects
      * @throws JSONException
      */
-    public static List<Group> parseGroupList(JsonReader reader) throws JSONException, IOException {
+    public static List<Group> parseGroupList(JsonReader reader) throws JSONException, IOException, ParseException {
         final List<Group> groups = new ArrayList<Group>();
         reader.beginArray();
 

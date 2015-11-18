@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -138,7 +139,7 @@ public class FolderEndpoint {
         }
 
         @Override
-        protected List<Folder> manageResponse(InputStream is) throws JSONException, IOException {
+        protected List<Folder> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseFolderList(reader);
         }
@@ -155,7 +156,7 @@ public class FolderEndpoint {
         }
 
         @Override
-        protected Folder manageResponse(InputStream is) throws JSONException, IOException {
+        protected Folder manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseFolder(reader);
         }

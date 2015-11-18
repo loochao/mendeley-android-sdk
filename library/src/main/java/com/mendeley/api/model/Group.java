@@ -1,6 +1,7 @@
 package com.mendeley.api.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -64,7 +65,7 @@ public class Group {
     }
 
     public final String id;
-    public final String created;
+    public final Date created;
     public final String owningProfileId;
     public final String link;
     public final Role role;
@@ -78,7 +79,7 @@ public class Group {
 
     private Group(
             String id,
-            String created,
+            Date created,
             String owningProfileId,
             String link,
             Role role,
@@ -105,7 +106,7 @@ public class Group {
 
     public static class Builder {
             private String id;
-            private String created;
+            private Date created;
             private String owningProfileId;
             private String link;
             private Role role;
@@ -139,7 +140,7 @@ public class Group {
             return this;
         }
 
-        public Builder setCreated(String created) {
+        public Builder setCreated(Date created) {
             this.created = created;
             return this;
         }

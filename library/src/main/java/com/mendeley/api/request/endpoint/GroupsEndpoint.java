@@ -17,6 +17,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -89,7 +90,7 @@ public class GroupsEndpoint {
         }
 
         @Override
-        protected List<Group> manageResponse(InputStream is) throws JSONException, IOException {
+        protected List<Group> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseGroupList(reader);
         }
@@ -106,7 +107,7 @@ public class GroupsEndpoint {
         }
 
         @Override
-        protected Group manageResponse(InputStream is) throws JSONException, IOException {
+        protected Group manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
             return JsonParser.parseGroup(reader);
         }

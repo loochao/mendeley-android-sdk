@@ -46,7 +46,6 @@ public class Document {
 	public final String chapter;
 	public final NullableList<Person> editors;
     public final NullableList<String> tags;
-    public final String accessed;
     public final Boolean fileAttached;
     public final NullableList<String> keywords;
     public final NullableList<String> websites;
@@ -79,7 +78,6 @@ public class Document {
 			String pages,
 			String volume,
 			String issue,
-			String website,
 			String publisher,
 			String city,
 			String edition,
@@ -88,7 +86,6 @@ public class Document {
 			String chapter,
             List<Person> editors,
             List<String> tags,
-            String accessed,
             Boolean fileAttached,
             List<String> keywords,
             List<String> websites,
@@ -125,7 +122,6 @@ public class Document {
 		this.chapter = chapter;
 		this.editors = new NullableList<Person>(editors);
         this.tags = new NullableList<String>(tags);
-        this.accessed = accessed;
         this.fileAttached = fileAttached;
         this.keywords = new NullableList<String>(keywords);
         this.websites = new NullableList<String>(websites);
@@ -158,7 +154,6 @@ public class Document {
 		private String pages;
 		private String volume;
 		private String issue;
-		private String website;
 		private String publisher;
 		private String city;
 		private String edition;
@@ -167,7 +162,6 @@ public class Document {
 		private String chapter;
 		private List<Person> editors;
         private List<String> tags;
-        private String accessed;
         private Boolean fileAttached;
         private List<String> keywords;
         private List<String> websites;
@@ -209,7 +203,6 @@ public class Document {
 			this.chapter = from.chapter;
 			this.editors =  from.editors==null?new ArrayList<Person>():from.editors;
             this.tags = from.tags==null?new ArrayList<String>():from.tags;
-            this.accessed = from.accessed;
             this.fileAttached = from.fileAttached;
             this.keywords = from.keywords==null?new ArrayList<String>():from.keywords;
             this.websites = from.websites==null?new ArrayList<String>():from.websites;
@@ -372,10 +365,6 @@ public class Document {
             return this;
         }
 
-        public Builder setAccessed(String accessed) {
-            this.accessed = accessed;
-            return this;
-        }
 
         public Builder setFileAttached(Boolean fileAttached) {
             this.fileAttached = fileAttached;
@@ -427,7 +416,6 @@ public class Document {
 					pages,
 					volume,
 					issue,
-					website,
 					publisher,
 					city,
 					edition,
@@ -436,7 +424,6 @@ public class Document {
 					chapter,
 					editors,
                     tags,
-                    accessed,
                     fileAttached,
                     keywords,
                     websites,
