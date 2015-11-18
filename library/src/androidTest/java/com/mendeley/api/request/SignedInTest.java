@@ -16,7 +16,7 @@ import com.mendeley.api.testUtils.UsernameAndPasswordSessionManagerFactory;
 import java.util.Date;
 import java.util.Random;
 
-public abstract class RequestTest extends AndroidTestCase {
+public abstract class SignedInTest extends AndroidTestCase {
 
     private RequestsFactory requestsFactory;
     private ClientCredentials clientCredentials;
@@ -42,7 +42,7 @@ public abstract class RequestTest extends AndroidTestCase {
     }
 
 
-    protected final RequestsFactory getSdk() {
+    protected final RequestsFactory getRequestFactory() {
         return requestsFactory;
     }
 
@@ -58,6 +58,7 @@ public abstract class RequestTest extends AndroidTestCase {
         return testAccountSetupUtils;
     }
 
+
     protected final Random getRandom() {
         return random;
     }
@@ -65,6 +66,6 @@ public abstract class RequestTest extends AndroidTestCase {
     protected Date getServerDate() throws Exception {
         // wait a bit, so we get a "fresh" date
         Thread.sleep(1000);
-        return getSdk().getDocuments().run().serverDate;
+        return getRequestFactory().getDocuments().run().serverDate;
     }
 }

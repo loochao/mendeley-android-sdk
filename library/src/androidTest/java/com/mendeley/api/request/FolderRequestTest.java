@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class FolderRequestTest extends RequestTest {
+public class FolderRequestTest extends SignedInTest {
 
     public void test_getFolders_withoutParameters_receivesCorrectFolders() throws Exception {
         // GIVEN some folders
@@ -30,7 +30,7 @@ public class FolderRequestTest extends RequestTest {
         }
 
         // WHEN getting folders
-        final List<Folder> actual = getSdk().getFolders().run().resource;
+        final List<Folder> actual = getRequestFactory().getFolders().run().resource;
 
         Comparator<Folder> comparator = new Comparator<Folder>() {
             @Override
@@ -60,7 +60,7 @@ public class FolderRequestTest extends RequestTest {
         FolderRequestParameters params = new FolderRequestParameters();
         params.groupId = null;
         params.limit = 10;
-        final List<Folder> actual = getSdk().getFolders(params).run().resource;
+        final List<Folder> actual = getRequestFactory().getFolders(params).run().resource;
 
         Comparator<Folder> comparator = new Comparator<Folder>() {
             @Override
@@ -95,7 +95,7 @@ public class FolderRequestTest extends RequestTest {
         params.limit = pageSize;
 
         final List<Folder> actual = new LinkedList<Folder>();
-        RequestResponse<List<Folder>> response = getSdk().getFolders(params).run();
+        RequestResponse<List<Folder>> response = getRequestFactory().getFolders(params).run();
 
         // THEN we receive a folder list...
         for (int page = 0; page < pageCount; page++) {
@@ -104,7 +104,7 @@ public class FolderRequestTest extends RequestTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getFolders(response.next).run();
+                response = getRequestFactory().getFolders(response.next).run();
             }
         }
 
@@ -125,14 +125,14 @@ public class FolderRequestTest extends RequestTest {
         final Folder postingFolder = createParentFolder();
 
         // WHEN posting it
-        final Folder returnedFolder = getSdk().postFolder(postingFolder).run().resource;
+        final Folder returnedFolder = getRequestFactory().postFolder(postingFolder).run().resource;
 
         // THEN we receive the same folder back, with id filled
         AssertUtils.assertFolder(postingFolder, returnedFolder);
         assertNotNull(returnedFolder.id);
 
         // ...and the folder exists in the server
-        AssertUtils.assertFolders(getSdk().getFolders().run().resource, Arrays.asList(postingFolder));
+        AssertUtils.assertFolders(getRequestFactory().getFolders().run().resource, Arrays.asList(postingFolder));
     }
 
     public void test_postDocumentsToFolder_createsDocumentsInTheFolderInServer() throws Exception {
@@ -151,10 +151,10 @@ public class FolderRequestTest extends RequestTest {
 
         // WHEN posting the documents to the folder
         for (Document document : documents) {
-            getSdk().postDocumentToFolder(folder.id, document.id).run();
+            getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
         }
 
-        RequestResponse<List<String>> response = getSdk().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        RequestResponse<List<String>> response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
         final Set<String> actualDeletedDocIds = new HashSet<String>(response.resource);
 
         Comparator<String> comparator = new Comparator<String>() {
@@ -177,10 +177,10 @@ public class FolderRequestTest extends RequestTest {
 
         // WHEN deleting one of them
         final String deletingFolderId = serverFoldersBefore.get(0).id;
-        getSdk().deleteFolder(deletingFolderId).run();
+        getRequestFactory().deleteFolder(deletingFolderId).run();
 
         // THEN the server does not have the deleted folder any more
-        final List<Folder> serverFoldersAfter = getSdk().getFolders().run().resource;
+        final List<Folder> serverFoldersAfter = getRequestFactory().getFolders().run().resource;
         for (Folder folder : serverFoldersAfter) {
             assertFalse(deletingFolderId.equals(folder.id));
         }
@@ -195,13 +195,13 @@ public class FolderRequestTest extends RequestTest {
                 .setName(folder.name + "updated")
                 .build();
 
-        final Folder returnedFolder = getSdk().patchFolder(folder.id, folderPatched).run().resource;
+        final Folder returnedFolder = getRequestFactory().patchFolder(folder.id, folderPatched).run().resource;
 
         // THEN we receive the patched folder
         AssertUtils.assertFolder(folderPatched, returnedFolder);
 
         // ...and the server has updated the folder
-        final Folder folderAfter = getSdk().getFolder(folderPatched.id).run().resource;
+        final Folder folderAfter = getRequestFactory().getFolder(folderPatched.id).run().resource;
         AssertUtils.assertFolder(folderPatched, folderAfter);
     }
 

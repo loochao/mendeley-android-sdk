@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ReadPositionRequestTest extends RequestTest {
+public class ReadPositionRequestTest extends SignedInTest {
 
 
     @LargeTest
@@ -29,7 +29,7 @@ public class ReadPositionRequestTest extends RequestTest {
         }
 
         // WHEN getting recently read positions
-        final List<ReadPosition> actual = getSdk().getRecentlyRead(null, null, 20).run().resource;
+        final List<ReadPosition> actual = getRequestFactory().getRecentlyRead(null, null, 20).run().resource;
 
         // THEN we have the expected recently read positions
         AssertUtils.assertReadPositions(expected, actual);
@@ -48,7 +48,7 @@ public class ReadPositionRequestTest extends RequestTest {
                 .setDate(new Date())
                 .build();
 
-        getSdk().postRecentlyRead(expected).run();
+        getRequestFactory().postRecentlyRead(expected).run();
 
         // THEN we have successfully posted it
         final List<ReadPosition> actual = getTestAccountSetupUtils().getAllReadingPositions();
@@ -68,7 +68,7 @@ public class ReadPositionRequestTest extends RequestTest {
                 .setDate(new Date())
                 .build();
 
-        getSdk().postRecentlyRead(firstReadPostion).run();
+        getRequestFactory().postRecentlyRead(firstReadPostion).run();
 
         // WHEN updating (posting for second time) the read position for the same file
 
@@ -80,7 +80,7 @@ public class ReadPositionRequestTest extends RequestTest {
                 .setDate(new Date())
                 .build();
 
-        getSdk().postRecentlyRead(secondReadPostion).run();
+        getRequestFactory().postRecentlyRead(secondReadPostion).run();
 
         // THEN we have successfully posted it
         final List<ReadPosition> actual = getTestAccountSetupUtils().getAllReadingPositions();

@@ -7,12 +7,12 @@ import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.model.Profile;
 import com.mendeley.api.testUtils.AssertUtils;
 
-public class AuthTokenRefreshRequestTest extends RequestTest {
+public class AuthTokenRefreshRequestTest extends SignedInTest {
 
     @SmallTest
     public void test_AuthTokenRefreshRequest_updatesTheAccessToken() throws Exception {
 
-        final Profile expected = getSdk().getMyProfile().run().resource;
+        final Profile expected = getRequestFactory().getMyProfile().run().resource;
 
         // GIVEN an invalid access token
         final String invalidAccessToken = "invalid";
@@ -29,7 +29,7 @@ public class AuthTokenRefreshRequestTest extends RequestTest {
         assertNotSame("Access token updated", invalidAccessToken, authTokenManager.getAccessToken());
 
         // ...that indeed allows as to perform valid request
-        final Profile actual = getSdk().getMyProfile().run().resource;
+        final Profile actual = getRequestFactory().getMyProfile().run().resource;
         AssertUtils.assertProfile(expected, actual);
     }
 

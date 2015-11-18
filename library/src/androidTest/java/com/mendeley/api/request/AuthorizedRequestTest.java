@@ -9,7 +9,7 @@ import com.mendeley.api.testUtils.SignInException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public abstract class AuthorizedRequestTest extends RequestTest {
+public abstract class AuthorizedRequestTest extends SignedInTest {
 
     private AuthorizedRequest<JSONObject> request;
 

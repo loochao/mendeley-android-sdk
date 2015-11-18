@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class DocumentRequestTest extends RequestTest {
+public class DocumentRequestTest extends SignedInTest {
 
     public void test_getDocuments_withoutParameters_receivesCorrectDocuments() throws Exception {
         // GIVEN some documents
@@ -30,7 +30,7 @@ public class DocumentRequestTest extends RequestTest {
         }
 
         // WHEN getting documents
-        final List<Document> actual = getSdk().getDocuments().run().resource;
+        final List<Document> actual = getRequestFactory().getDocuments().run().resource;
 
         Comparator<Document> comparator = new Comparator<Document>() {
             @Override
@@ -57,7 +57,7 @@ public class DocumentRequestTest extends RequestTest {
         final DocumentRequestParameters params = new DocumentRequestParameters();
         params.sort = Sort.TITLE;
 
-        final List<Document> actual = getSdk().getDocuments(params).run().resource;
+        final List<Document> actual = getRequestFactory().getDocuments(params).run().resource;
 
         // THEN we have the expected documents
         AssertUtils.assertDocuments(expected, actual);
@@ -82,7 +82,7 @@ public class DocumentRequestTest extends RequestTest {
         params.limit = pageSize;
         params.sort = Sort.TITLE;
 
-        RequestResponse<List<Document>> response = getSdk().getDocuments(params).run();
+        RequestResponse<List<Document>> response = getRequestFactory().getDocuments(params).run();
 
         // THEN we receive a document list...
         for (int page = 0; page < pageCount; page++) {
@@ -97,7 +97,7 @@ public class DocumentRequestTest extends RequestTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getDocuments(response.next).run();
+                response = getRequestFactory().getDocuments(response.next).run();
             }
         }
     }
@@ -111,14 +111,14 @@ public class DocumentRequestTest extends RequestTest {
         final Document postingDoc = createDocument("posting document");
 
         // WHEN posting it
-        final Document returnedDoc = getSdk().postDocument(postingDoc).run().resource;
+        final Document returnedDoc = getRequestFactory().postDocument(postingDoc).run().resource;
 
         // THEN we receive the same document back, with id filled
         AssertUtils.assertDocument(postingDoc, returnedDoc);
         assertNotNull(returnedDoc.id);
 
         // ...and the document exists in the server
-        AssertUtils.assertDocuments(getSdk().getDocuments().run().resource, Arrays.asList(postingDoc));
+        AssertUtils.assertDocuments(getRequestFactory().getDocuments().run().resource, Arrays.asList(postingDoc));
     }
 
     public void test_postDocument_withStrangeCharacters_createsDocumentInServer() throws Exception {
@@ -132,14 +132,14 @@ public class DocumentRequestTest extends RequestTest {
                 build();
 
         // WHEN posting it
-        final Document returnedDoc = getSdk().postDocument(postingDoc).run().resource;
+        final Document returnedDoc = getRequestFactory().postDocument(postingDoc).run().resource;
 
         // THEN we receive the same document back, with id filled
         AssertUtils.assertDocument(postingDoc, returnedDoc);
         assertNotNull(returnedDoc.id);
 
         // ...and the document exists in the server
-        AssertUtils.assertDocuments(getSdk().getDocuments().run().resource, Arrays.asList(postingDoc));
+        AssertUtils.assertDocuments(getRequestFactory().getDocuments().run().resource, Arrays.asList(postingDoc));
     }
 
 
@@ -149,10 +149,10 @@ public class DocumentRequestTest extends RequestTest {
 
         // WHEN deleting one of them
         final String deletingDocId = serverDocsBefore.get(0).id;
-        getSdk().deleteDocument(deletingDocId).run();
+        getRequestFactory().deleteDocument(deletingDocId).run();
 
         // THEN the server does not have the deleted document any more
-        final List<Document> serverDocsAfter= getSdk().getDocuments().run().resource;
+        final List<Document> serverDocsAfter= getRequestFactory().getDocuments().run().resource;
         for (Document doc : serverDocsAfter) {
             assertFalse(deletingDocId.equals(doc.id));
         }
@@ -171,13 +171,13 @@ public class DocumentRequestTest extends RequestTest {
                 .build();
 
 
-        final Document returnedDoc = getSdk().patchDocument(docPatching.id, null, docPatching).run().resource;
+        final Document returnedDoc = getRequestFactory().patchDocument(docPatching.id, null, docPatching).run().resource;
 
         // THEN we receive the patched document
         AssertUtils.assertDocument(docPatching, returnedDoc);
 
         // ...and the server has updated the doc
-        final Document docAfter = getSdk().getDocument(docPatching.id, View.ALL).run().resource;
+        final Document docAfter = getRequestFactory().getDocument(docPatching.id, View.ALL).run().resource;
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
@@ -194,13 +194,13 @@ public class DocumentRequestTest extends RequestTest {
                 .build();
 
 
-        final Document returnedDoc = getSdk().patchDocument(docPatching.id, null, docPatching).run().resource;
+        final Document returnedDoc = getRequestFactory().patchDocument(docPatching.id, null, docPatching).run().resource;
 
         // THEN we receive the patched document
         AssertUtils.assertDocument(docPatching, returnedDoc);
 
         // ...and the server has updated the doc
-        final Document docAfter = getSdk().getDocument(docPatching.id, View.ALL).run().resource;
+        final Document docAfter = getRequestFactory().getDocument(docPatching.id, View.ALL).run().resource;
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
@@ -213,13 +213,13 @@ public class DocumentRequestTest extends RequestTest {
         final Set<String> expectedDeletedDocIds = new HashSet<String>();
         for (int i = 0; i < existingDocs.size() / 2; i++) {
             final Document doc = existingDocs.get(i);
-            getSdk().deleteDocument(doc.id).run();;
+            getRequestFactory().deleteDocument(doc.id).run();;
             expectedDeletedDocIds.add(doc.id);
         }
 
         // WHEN requesting deleted doc since that date
         DocumentRequestParameters params = new DocumentRequestParameters();
-        List<String> deletedDocsIdList = getSdk().getDeletedDocuments(deletedSince, params).run().resource;
+        List<String> deletedDocsIdList = getRequestFactory().getDeletedDocuments(deletedSince, params).run().resource;
 
 
         // THEN we receive the deleted docs
@@ -255,6 +255,6 @@ public class DocumentRequestTest extends RequestTest {
             docs.add(doc);
         }
 
-        return getSdk().getDocuments().run().resource;
+        return getRequestFactory().getDocuments().run().resource;
     }
 }

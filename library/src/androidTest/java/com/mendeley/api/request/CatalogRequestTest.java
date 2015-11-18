@@ -11,7 +11,7 @@ import java.util.List;
  * These tests are using a file hash of an existing document file, MENDELEY: Getting Started with Mendeley
  * If this file will change the file hash will not return the catalog document id and the test will fail.
  */
-public class CatalogRequestTest extends RequestTest {
+public class CatalogRequestTest extends SignedInTest {
 
     public void test_getCatalogDocuments_receivesCorrectCatalogDocuments() throws MendeleyException, IOException {
         //GIVEN a file hash
@@ -21,7 +21,7 @@ public class CatalogRequestTest extends RequestTest {
         catalogueParams.filehash = fileHash;
 
         //WHEN getting a catalog document with this file hash
-        List<Document> receivedDocs = getSdk().getCatalogDocuments(catalogueParams).run().resource;
+        List<Document> receivedDocs = getRequestFactory().getCatalogDocuments(catalogueParams).run().resource;
 
         //THEN the correct catalog document received
         Document catalogDocument = receivedDocs.get(0);
@@ -33,7 +33,7 @@ public class CatalogRequestTest extends RequestTest {
         final String catalogDocumentId = "bcded033-52b5-370d-ac27-a3ec23146f88";
 
         //WHEN getting a catalog document with this id
-        Document receivedDoc = getSdk().getCatalogDocument(catalogDocumentId, null).run().resource;
+        Document receivedDoc = getRequestFactory().getCatalogDocument(catalogDocumentId, null).run().resource;
 
         //THEN the correct catalog document received
         assertEquals("wrong catalog document", catalogDocumentId, receivedDoc.id);

@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FileRequestTest extends RequestTest {
+public class FileRequestTest extends SignedInTest {
 
     public void test_getFiles_withoutParameters_receivesCorrectFiles() throws Exception {
         // GIVEN a document with files
@@ -28,7 +28,7 @@ public class FileRequestTest extends RequestTest {
         }
 
         // WHEN getting files
-        final List<File> actual = getSdk().getFiles().run().resource;
+        final List<File> actual = getRequestFactory().getFiles().run().resource;
 
         Comparator<File> comparator = new Comparator<File>() {
             @Override
@@ -59,7 +59,7 @@ public class FileRequestTest extends RequestTest {
         params.addedSince = currentDate;
         params.documentId = document.id;
 
-        final List<File> actual = getSdk().getFiles(params).run().resource;
+        final List<File> actual = getRequestFactory().getFiles(params).run().resource;
 
         Comparator<File> comparator = new Comparator<File>() {
             @Override
@@ -91,7 +91,7 @@ public class FileRequestTest extends RequestTest {
         final FileRequestParameters params = new FileRequestParameters();
         params.limit = pageSize;
 
-        RequestResponse<List<File>> response = getSdk().getFiles(params).run();
+        RequestResponse<List<File>> response = getRequestFactory().getFiles(params).run();
 
         final List<File> actual = new LinkedList<File>();
         // THEN we receive a files list...
@@ -101,7 +101,7 @@ public class FileRequestTest extends RequestTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getFiles(response.next).run();
+                response = getRequestFactory().getFiles(response.next).run();
             }
         }
 
@@ -125,14 +125,14 @@ public class FileRequestTest extends RequestTest {
         File postingFile = createFile(document.id);
 
         // WHEN posting it
-        final File returnedFile = getSdk().postFileBinary(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName).run().resource;
+        final File returnedFile = getRequestFactory().postFileBinary(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName).run().resource;
 
         // THEN we receive the same file back, with id filled
         AssertUtils.assertFile(postingFile, returnedFile);
         assertNotNull(returnedFile.id);
 
         // ...and the file exists in the server
-        AssertUtils.assertFiles(getSdk().getFiles().run().resource, Arrays.asList(postingFile));
+        AssertUtils.assertFiles(getRequestFactory().getFiles().run().resource, Arrays.asList(postingFile));
     }
 
     public void test_deleteFile_removesTheFileFromServer() throws Exception {
@@ -149,10 +149,10 @@ public class FileRequestTest extends RequestTest {
 
         // WHEN deleting one of them
         final String deletingFileId = serverFilesBefore.get(0).id;
-        getSdk().deleteFile(deletingFileId).run();;
+        getRequestFactory().deleteFile(deletingFileId).run();;
 
         // THEN the server does not have the deleted file any more
-        final List<File> serverFilesAfter = getSdk().getFiles().run().resource;
+        final List<File> serverFilesAfter = getRequestFactory().getFiles().run().resource;
         for (File file : serverFilesAfter) {
             assertFalse(deletingFileId.equals(file.id));
         }

@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AnnotationRequestTest extends RequestTest {
+public class AnnotationRequestTest extends SignedInTest {
 
     public void test_getAnnotations_withoutParameters_receivesCorrectAnnotations() throws Exception {
         // GIVEN some annotations
@@ -27,7 +27,7 @@ public class AnnotationRequestTest extends RequestTest {
         }
 
         // WHEN getting annotations
-        final List<Annotation> actual = getSdk().getAnnotations().run().resource;
+        final List<Annotation> actual = getRequestFactory().getAnnotations().run().resource;
 
         Comparator<Annotation> comparator = new Comparator<Annotation>() {
             @Override
@@ -55,7 +55,7 @@ public class AnnotationRequestTest extends RequestTest {
         AnnotationRequestParameters params = new AnnotationRequestParameters();
         params.documentId = postedDocument.id;
         params.limit = 12;
-        final List<Annotation> actual = getSdk().getAnnotations(params).run().resource;
+        final List<Annotation> actual = getRequestFactory().getAnnotations(params).run().resource;
 
         Comparator<Annotation> comparator = new Comparator<Annotation>() {
             @Override
@@ -88,7 +88,7 @@ public class AnnotationRequestTest extends RequestTest {
         params.limit = pageSize;
 
         final List<Annotation> actual = new LinkedList<Annotation>();
-        RequestResponse<List<Annotation>> response = getSdk().getAnnotations(params).run();
+        RequestResponse<List<Annotation>> response = getRequestFactory().getAnnotations(params).run();
 
         // THEN we receive an annotations list...
         for (int page = 0; page < pageCount; page++) {
@@ -97,7 +97,7 @@ public class AnnotationRequestTest extends RequestTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getAnnotations(response.next).run();
+                response = getRequestFactory().getAnnotations(response.next).run();
             }
         }
 
@@ -119,14 +119,14 @@ public class AnnotationRequestTest extends RequestTest {
         final Annotation postingAnnotation = createAnnotation(postedDocument.id);
 
         // WHEN posting it
-        final Annotation returnedAnnotation = getSdk().postAnnotation(postingAnnotation).run().resource;
+        final Annotation returnedAnnotation = getRequestFactory().postAnnotation(postingAnnotation).run().resource;
 
         // THEN we receive the same annotation back, with id filled
         AssertUtils.assertAnnotation(postingAnnotation, returnedAnnotation);
         assertNotNull(returnedAnnotation.id);
 
         // ...and the annotation exists in the server
-        AssertUtils.assertAnnotations(getSdk().getAnnotations().run().resource, Arrays.asList(postingAnnotation));
+        AssertUtils.assertAnnotations(getRequestFactory().getAnnotations().run().resource, Arrays.asList(postingAnnotation));
     }
 
     public void test_deleteAnnotation_removesTheAnnotationFromServer() throws Exception {
@@ -136,10 +136,10 @@ public class AnnotationRequestTest extends RequestTest {
 
         // WHEN deleting one of them
         final String deletingAnnotationId = serverAnnotationsBefore.get(0).id;
-        getSdk().deleteAnnotation(deletingAnnotationId).run();
+        getRequestFactory().deleteAnnotation(deletingAnnotationId).run();
 
         // THEN the server does not have the deleted annotation any more
-        final List<Annotation> serverAnnotationsAfter = getSdk().getAnnotations().run().resource;
+        final List<Annotation> serverAnnotationsAfter = getRequestFactory().getAnnotations().run().resource;
         assertEquals("Annotation deleted", serverAnnotationsBefore.size() - 1, serverAnnotationsAfter.size());
 
         for (Annotation annotation : serverAnnotationsAfter) {
@@ -157,13 +157,13 @@ public class AnnotationRequestTest extends RequestTest {
                 .setText(annotation.text + "updated")
                 .build();
 
-        final Annotation returnedAnnotation = getSdk().patchAnnotation(annotation.id, annotationPatched).run().resource;
+        final Annotation returnedAnnotation = getRequestFactory().patchAnnotation(annotation.id, annotationPatched).run().resource;
 
         // THEN we receive the patched annotation
         AssertUtils.assertAnnotation(annotationPatched, returnedAnnotation);
 
         // ...and the server has updated the annotation
-        final Annotation annotationAfter = getSdk().getAnnotation(annotationPatched.id).run().resource;
+        final Annotation annotationAfter = getRequestFactory().getAnnotation(annotationPatched.id).run().resource;
         AssertUtils.assertAnnotation(annotationPatched, annotationAfter);
     }
 
@@ -198,7 +198,7 @@ public class AnnotationRequestTest extends RequestTest {
             annotations.add(annotation);
         }
 
-        return getSdk().getAnnotations().run().resource;
+        return getRequestFactory().getAnnotations().run().resource;
     }
 
 }

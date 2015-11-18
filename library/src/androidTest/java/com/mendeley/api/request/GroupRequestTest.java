@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GroupRequestTest extends RequestTest {
+public class GroupRequestTest extends SignedInTest {
 
     private static final String[] GROUPS = {
             "Artificial Neural Networks",
@@ -40,7 +40,7 @@ public class GroupRequestTest extends RequestTest {
         }
 
         // WHEN getting groups
-        final List<Group> actual = getSdk().getGroups(new GroupRequestParameters()).run().resource;
+        final List<Group> actual = getRequestFactory().getGroups(new GroupRequestParameters()).run().resource;
 
         Comparator<Group> comparator = new Comparator<Group>() {
             @Override
@@ -69,7 +69,7 @@ public class GroupRequestTest extends RequestTest {
         params.limit = pageSize;
 
         final List<Group> actual = new LinkedList<Group>();
-        RequestResponse<List<Group>> response = getSdk().getGroups(params).run();
+        RequestResponse<List<Group>> response = getRequestFactory().getGroups(params).run();
 
 
         // THEN we receive a group list...
@@ -79,7 +79,7 @@ public class GroupRequestTest extends RequestTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", Page.isValidPage(response.next));
-                response = getSdk().getGroups(response.next).run();
+                response = getRequestFactory().getGroups(response.next).run();
             }
         }
 
@@ -99,7 +99,7 @@ public class GroupRequestTest extends RequestTest {
         Group expected = getTestAccountSetupUtils().getGroups().get(0);
 
         // WHEN getting the group by id
-        final Group actual = getSdk().getGroup(expected.id).run().resource;
+        final Group actual = getRequestFactory().getGroup(expected.id).run().resource;
 
         // THEN we have the expected group
         AssertUtils.assertGroup(expected, actual);
@@ -125,7 +125,7 @@ public class GroupRequestTest extends RequestTest {
         }
 
         // WHEN getting the group members
-        List<UserRole> actual = getSdk().getGroupMembers(new GroupRequestParameters(), group.id).run().resource;
+        List<UserRole> actual = getRequestFactory().getGroupMembers(new GroupRequestParameters(), group.id).run().resource;
 
         // THEN we have the expected members
         Comparator<UserRole> userRoleComparator = new Comparator<UserRole>() {

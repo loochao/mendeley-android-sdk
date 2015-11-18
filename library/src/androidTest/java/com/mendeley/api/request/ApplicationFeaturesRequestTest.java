@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ApplicationFeaturesRequestTest extends RequestTest {
+public class ApplicationFeaturesRequestTest extends SignedInTest {
 
     @SmallTest
     public void test_getApplicationFeatures_receivesCorrectItems() throws Exception {
@@ -42,7 +42,7 @@ public class ApplicationFeaturesRequestTest extends RequestTest {
             assertTrue("no features posted", expected.size() > 0);
 
             // WHEN getting application features
-            final List<String> actual = getSdk().getApplicationFeatures().run().resource;
+            final List<String> actual = getRequestFactory().getApplicationFeatures().run().resource;
 
             // THEN we have the expected application features
             for (String feature : expected) {

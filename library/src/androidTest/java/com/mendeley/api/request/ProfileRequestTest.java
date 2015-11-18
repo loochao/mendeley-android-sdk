@@ -3,7 +3,7 @@ package com.mendeley.api.request;
 import com.mendeley.api.model.Profile;
 import com.mendeley.api.testUtils.AssertUtils;
 
-public class ProfileRequestTest extends RequestTest {
+public class ProfileRequestTest extends SignedInTest {
 
     /**
      * As we don't have an API to setup profiles for the test,
@@ -16,7 +16,7 @@ public class ProfileRequestTest extends RequestTest {
         Profile expected = createTestProfile();
 
         // WHEN getting the profile
-        final Profile actual = getSdk().getProfile(expected.id).run().resource;
+        final Profile actual = getRequestFactory().getProfile(expected.id).run().resource;
 
         // THEN we have the expected profile
         AssertUtils.assertProfile(expected, actual);
@@ -27,7 +27,7 @@ public class ProfileRequestTest extends RequestTest {
         Profile expected = createTestProfile();
 
         // WHEN getting the profile
-        final Profile actual = getSdk().getMyProfile().run().resource;
+        final Profile actual = getRequestFactory().getMyProfile().run().resource;
 
         // THEN we have the expected profile
         AssertUtils.assertProfile(expected, actual);
