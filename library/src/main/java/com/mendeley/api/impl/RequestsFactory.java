@@ -112,7 +112,7 @@ public interface RequestsFactory {
     /**
      * Return a list of valid identifiers types.
      */
-    Request<Map<String, String>> getIdentifierTypes();
+    Request<Map<String, String>> getDocumentIdentifierTypes();
 
     /* FILES */
 

@@ -1,8 +1,9 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.model.Group;
 import com.mendeley.api.model.RequestResponse;
 import com.mendeley.api.model.UserRole;
+import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.GroupRequestParameters;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;

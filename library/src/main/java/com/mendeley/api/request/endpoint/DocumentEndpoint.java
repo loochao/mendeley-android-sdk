@@ -39,18 +39,7 @@ public class DocumentEndpoint {
 	public static String DOCUMENTS_BASE_URL = MENDELEY_API_BASE_URL + "documents";
     public static String  DOCUMENTS_CONTENT_TYPE = "application/vnd.mendeley-document.1+json";
 
-    public static String DOCUMENT_TYPES_BASE_URL = MENDELEY_API_BASE_URL + "document_types";
-    private static final String DOCUMENT_TYPES_CONTENT_TYPE = "application/vnd.mendeley-document-type.1+json";
-
-    public static String DOCUMENT_IDENTIFIER_TYPES_BASE_URL = MENDELEY_API_BASE_URL + "identifier_types";
-    private static final String DOCUMENT_IDENTIFIER_CONTENT_TYPE = "application/vnd.mendeley-document-identifier.1+json";
-
-
     public static SimpleDateFormat patchDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT' Z");
-
-    public DocumentEndpoint() {
-    }
-
 
     /* URLS */
 
@@ -242,38 +231,6 @@ public class DocumentEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
-        }
-    }
-
-    public static class GetDocumentTypesRequest extends GetAuthorizedRequest<Map<String, String>> {
-        public GetDocumentTypesRequest(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(Uri.parse(DocumentEndpoint.DOCUMENT_TYPES_BASE_URL), authTokenManager, clientCredentials);
-        }
-
-        protected Map<String, String> manageResponse(InputStream is) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseStringsMap(reader);
-        }
-
-        @Override
-        protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", DOCUMENT_TYPES_CONTENT_TYPE);
-        }
-    }
-
-    public static class GetDocumentIdentifiersRequest extends GetAuthorizedRequest<Map<String, String>> {
-        public GetDocumentIdentifiersRequest(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(Uri.parse(DocumentEndpoint.DOCUMENT_IDENTIFIER_TYPES_BASE_URL), authTokenManager, clientCredentials);
-        }
-
-        protected Map<String, String> manageResponse(InputStream is) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseStringsMap(reader);
-        }
-
-        @Override
-        protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", DOCUMENT_IDENTIFIER_CONTENT_TYPE);
         }
     }
 

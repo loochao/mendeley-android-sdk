@@ -17,6 +17,8 @@ import com.mendeley.api.request.endpoint.AnnotationsEndpoint;
 import com.mendeley.api.request.endpoint.ApplicationFeaturesEndpoint;
 import com.mendeley.api.request.endpoint.CatalogEndpoint;
 import com.mendeley.api.request.endpoint.DocumentEndpoint;
+import com.mendeley.api.request.endpoint.DocumentIdentifiersEndpoint;
+import com.mendeley.api.request.endpoint.DocumentTypesEndpoint;
 import com.mendeley.api.request.endpoint.FilesEndpoint;
 import com.mendeley.api.request.endpoint.FolderEndpoint;
 import com.mendeley.api.request.endpoint.GroupsEndpoint;
@@ -112,12 +114,12 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<Map<String, String>> getDocumentTypes()  {
-        return new DocumentEndpoint.GetDocumentTypesRequest(authTokenManager, clientCredentials);
+        return new DocumentTypesEndpoint.GetDocumentTypesRequest(authTokenManager, clientCredentials);
     }
 
     @Override
-    public Request<Map<String, String>> getIdentifierTypes() {
-        return new DocumentEndpoint.GetDocumentIdentifiersRequest(authTokenManager, clientCredentials);
+    public Request<Map<String, String>> getDocumentIdentifierTypes() {
+        return new DocumentIdentifiersEndpoint.GetDocumentIdentifiersRequest(authTokenManager, clientCredentials);
     }
 
     /* ANNOTATIONS */

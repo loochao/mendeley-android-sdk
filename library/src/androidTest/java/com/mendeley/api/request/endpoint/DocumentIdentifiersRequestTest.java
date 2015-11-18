@@ -1,15 +1,16 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.exceptions.MendeleyException;
+import com.mendeley.api.request.SignedInTest;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class IdentifierTypesRequestTest extends SignedInTest {
+public class DocumentIdentifiersRequestTest extends SignedInTest {
 
     private final Map<String,String> expectedIdentifierTypes;
 
-    public IdentifierTypesRequestTest() {
+    public DocumentIdentifiersRequestTest() {
         super();
         expectedIdentifierTypes = new HashMap<String, String>();
 
@@ -24,7 +25,7 @@ public class IdentifierTypesRequestTest extends SignedInTest {
 
     public void test_getIdentifierTypes_receivesCorrectIdentifierTypes() throws MendeleyException {
 
-        Map<String, String> actualIdTypes = getRequestFactory().getIdentifierTypes().run().resource;
+        Map<String, String> actualIdTypes = getRequestFactory().getDocumentIdentifierTypes().run().resource;
 
         // we test that the API returns at least the identifiers that existed when writing this test
         for (String key : expectedIdentifierTypes.keySet()) {

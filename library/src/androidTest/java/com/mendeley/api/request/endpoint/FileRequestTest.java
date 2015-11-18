@@ -1,8 +1,9 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.FileRequestParameters;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;

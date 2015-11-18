@@ -1,9 +1,10 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Point;
 import com.mendeley.api.model.RequestResponse;
+import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.AnnotationRequestParameters;
 import com.mendeley.api.request.params.Page;
 import com.mendeley.api.testUtils.AssertUtils;

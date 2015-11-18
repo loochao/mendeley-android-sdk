@@ -1,4 +1,6 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
+
+import com.mendeley.api.request.SignedInTest;
 
 import java.util.Map;
 import java.util.Set;

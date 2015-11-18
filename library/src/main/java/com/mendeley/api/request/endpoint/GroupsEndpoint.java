@@ -79,8 +79,6 @@ public class GroupsEndpoint {
     }
 
 
-    /* PROCEDURES */
-
     public static class GetGroupsRequest extends GetAuthorizedRequest<List<Group>> {
         public GetGroupsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
@@ -103,10 +101,6 @@ public class GroupsEndpoint {
     }
 
     public static class GetGroupRequest extends GetAuthorizedRequest<Group> {
-        public GetGroupRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
-        }
-
         public GetGroupRequest(String groupId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(GroupsEndpoint.getGetGroupUrl(groupId), authTokenManager, clientCredentials);
         }

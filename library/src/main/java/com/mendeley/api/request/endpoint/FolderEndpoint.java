@@ -126,7 +126,7 @@ public class FolderEndpoint {
 		return Uri.parse(FOLDERS_BASE_URL + "/" + folderId + "/documents/" + documentId);
 	}
 	
-    /* PROCEDURES */
+
 
     public static class GetFoldersRequest extends GetAuthorizedRequest<List<Folder>> {
         public GetFoldersRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {

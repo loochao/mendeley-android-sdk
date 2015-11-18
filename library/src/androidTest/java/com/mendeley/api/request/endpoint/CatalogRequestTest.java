@@ -1,7 +1,8 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Document;
+import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
 
 import java.io.IOException;

@@ -1,10 +1,11 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
 
 
 import android.test.suitebuilder.annotation.SmallTest;
 import android.util.Log;
 
 import com.mendeley.api.BuildConfig;
+import com.mendeley.api.request.SignedInTest;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

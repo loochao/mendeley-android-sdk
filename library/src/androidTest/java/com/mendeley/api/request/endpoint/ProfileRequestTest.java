@@ -1,6 +1,7 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
 
 import com.mendeley.api.model.Profile;
+import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.testUtils.AssertUtils;
 
 public class ProfileRequestTest extends SignedInTest {

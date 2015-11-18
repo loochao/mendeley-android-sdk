@@ -19,9 +19,6 @@ import java.util.Map;
 
 import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
-/**
- * NetworkProvider class for Profile API calls
- */
 public class ProfilesEndpoint {
 	public static String PROFILES_URL = MENDELEY_API_BASE_URL + "profiles/";
 

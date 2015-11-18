@@ -1,4 +1,4 @@
-package com.mendeley.api.request;
+package com.mendeley.api.request.endpoint;
 
 
 import android.test.suitebuilder.annotation.LargeTest;
@@ -7,6 +7,7 @@ import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.ReadPosition;
+import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.io.IOException;
