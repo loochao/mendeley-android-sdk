@@ -16,7 +16,7 @@ import java.io.InputStream;
  */
 public class GetFileNetworkRequest extends GetAuthorizedRequest<Long> {
 
-    private static String filesUrl = API_URL + "files";
+    private static String filesUrl = MENDELEY_API_BASE_URL + "files";
 
     private static final String PARTIALLY_DOWNLOADED_EXTENSION = ".part";
     private final String fileId;

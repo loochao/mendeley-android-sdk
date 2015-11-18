@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.util.JsonReader;
@@ -18,14 +18,17 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * NetworkProvider class for Application features API call
- */
-public class ApplicationFeaturesNetworkProvider {
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
+
+public class ApplicationFeaturesEndpoint {
+
+    private final static String APPLICATION_FEATURES_BASE_URL = MENDELEY_API_BASE_URL + "/application_features";
+    private static String APPLICATION_FEATURES_CONTENT_TYPE;
 
     public static class GetApplicationFeaturesProcedure extends GetAuthorizedRequest<List<String>> {
+
         public GetApplicationFeaturesProcedure(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(Uri.parse(API_URL + "/application_features"), authTokenManager, clientCredentials);
+            super(Uri.parse(APPLICATION_FEATURES_BASE_URL), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -36,7 +39,8 @@ public class ApplicationFeaturesNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            APPLICATION_FEATURES_CONTENT_TYPE = "application/vnd.mendeley-features.1+json";
+            headers.put("Content-type", APPLICATION_FEATURES_CONTENT_TYPE);
         }
     }
 }

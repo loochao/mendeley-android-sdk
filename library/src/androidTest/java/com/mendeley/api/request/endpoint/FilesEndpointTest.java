@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
@@ -11,17 +11,17 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 
-public class FileNetworkProviderTest extends AndroidTestCase {
-	private FileNetworkProvider provider;
+public class FilesEndpointTest extends AndroidTestCase {
+	private FilesEndpoint provider;
     private String filesUrl;
     private final String fileId = "test-file_id";
 	
 	@Override
 	protected void setUp() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
-        provider = new FileNetworkProvider();
+        provider = new FilesEndpoint();
 		
-		String apiUrl = Request.API_URL;
+		String apiUrl = Request.MENDELEY_API_BASE_URL;
 		
 		filesUrl = apiUrl+"files";
     }
@@ -47,13 +47,13 @@ public class FileNetworkProviderTest extends AndroidTestCase {
 		params.addedSince = addedSince;
 		params.deletedSince = deletedSince;
 
-		Uri url = FileNetworkProvider.getGetFilesUrl(params);
+		Uri url = FilesEndpoint.getGetFilesUrl(params);
 		
 		assertEquals("Get files url with parameters is wrong", expectedUrl, url);
 		
 		expectedUrl = Uri.parse(filesUrl);
 		params = new FileRequestParameters();
-		url = FileNetworkProvider.getGetFilesUrl(params);
+		url = FilesEndpoint.getGetFilesUrl(params);
 		
 		assertEquals("Get files url without parameters is wrong", expectedUrl, url);
 	}

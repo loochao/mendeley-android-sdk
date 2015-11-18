@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.util.JsonReader;
@@ -9,7 +9,7 @@ import com.mendeley.api.model.Document;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
-import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.PostAuthorizedRequest;
 import com.mendeley.api.request.params.DocumentRequestParameters;
 import com.mendeley.api.request.params.View;
 
@@ -31,19 +31,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.Request.API_URL;
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
-/**
- * NetworkProvider class for Documents API calls
- */
-public class DocumentNetworkProvider {
-	public static String DOCUMENTS_BASE_URL = API_URL + "documents";
-	public static String DOCUMENT_TYPES_BASE_URL = API_URL + "document_types";
-    public static String IDENTIFIER_TYPES_BASE_URL = API_URL + "identifier_types";
-	
-	public static SimpleDateFormat patchDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT' Z");
+public class DocumentEndpoint {
 
-    public DocumentNetworkProvider() {
+	public static String DOCUMENTS_BASE_URL = MENDELEY_API_BASE_URL + "documents";
+	public static String DOCUMENT_TYPES_BASE_URL = MENDELEY_API_BASE_URL + "document_types";
+    public static String IDENTIFIER_TYPES_BASE_URL = MENDELEY_API_BASE_URL + "identifier_types";
+
+    public static String  DOCUMENTS_CONTENT_TYPE = "application/vnd.mendeley-document.1+json";
+
+    public static SimpleDateFormat patchDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT' Z");
+
+    public DocumentEndpoint() {
     }
 
 
@@ -102,7 +102,7 @@ public class DocumentNetworkProvider {
 	 * @return the url string
 	 */
     public static Uri getTrashDocumentsUrl(DocumentRequestParameters params, String deletedSince) {
-    	return getGetDocumentsUrl(TrashNetworkProvider.BASE_URL, params, deletedSince);
+    	return getGetDocumentsUrl(TrashEndpoint.BASE_URL, params, deletedSince);
     }
     
 	private static Uri getGetDocumentsUrl(String baseUrl, DocumentRequestParameters params, String deletedSince)  {
@@ -191,7 +191,7 @@ public class DocumentNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
         }
    }
 
@@ -208,7 +208,7 @@ public class DocumentNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
         }
     }
 
@@ -226,7 +226,7 @@ public class DocumentNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
         }
     }
 
@@ -242,11 +242,11 @@ public class DocumentNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type","application/vnd.mendeley-document-type.1+json");
+            headers.put("Content-type", "application/vnd.mendeley-document-type.1+json");
         }
     }
 
-    public static class PostDocumentRequest extends PostNetworkRequest<Document> {
+    public static class PostDocumentRequest extends PostAuthorizedRequest<Document> {
 
         final private Document doc;
 
@@ -284,7 +284,7 @@ public class DocumentNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
         }
 
         @Override

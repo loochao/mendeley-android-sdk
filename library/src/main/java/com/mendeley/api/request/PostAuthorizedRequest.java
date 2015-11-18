@@ -14,9 +14,10 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public abstract class PostNetworkRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
-    public PostNetworkRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+public abstract class PostAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
+
+    public PostAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(url, authTokenManager, clientCredentials);
     }
 

@@ -12,13 +12,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Map;
 
-public class PostFileAuthorizedRequest extends PostNetworkRequest<File> {
+public class PostFileAuthorizedRequest extends PostAuthorizedRequest<File> {
     private final String contentType;
     private final String documentId;
     private final String fileName;
     private final InputStream inputStream;
 
-    private static String filesUrl = API_URL + "files";
+    private static String filesUrl = MENDELEY_API_BASE_URL + "files";
 
     public PostFileAuthorizedRequest(String contentType, String documentId, String fileName, InputStream inputStream, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(Uri.parse(filesUrl), authTokenManager, clientCredentials);
@@ -32,7 +32,7 @@ public class PostFileAuthorizedRequest extends PostNetworkRequest<File> {
     protected void appendHeaders(Map<String, String> headers) {
         headers.put("Content-Disposition", "attachment; filename*=UTF-8\'\'"+fileName);
         headers.put("Content-type", contentType);
-        headers.put("Link", "<" + API_URL+"documents/"+documentId+">; rel=\"document\"");
+        headers.put("Link", "<" + MENDELEY_API_BASE_URL +"documents/"+documentId+">; rel=\"document\"");
     }
 
     @Override

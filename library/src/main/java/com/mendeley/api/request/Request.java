@@ -17,7 +17,7 @@ public abstract class Request<ResultType> {
 
     public static final int CONNECTION_TIMEOUT = 1500;
     public static final int READ_TIMEOUT = 15000 ;
-    public static final String API_URL = BuildConfig.WEB_API_BASE_URL;
+    public static final String MENDELEY_API_BASE_URL = BuildConfig.WEB_API_BASE_URL;
 
     protected final AuthTokenManager authTokenManager;
     protected final ClientCredentials clientCredentials;

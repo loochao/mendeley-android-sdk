@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.util.JsonReader;
@@ -9,7 +9,7 @@ import com.mendeley.api.model.Annotation;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
-import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.PostAuthorizedRequest;
 import com.mendeley.api.request.params.AnnotationRequestParameters;
 
 import org.apache.http.HttpEntity;
@@ -28,17 +28,13 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.Request.API_URL;
-
-/**
- * NetworkProvider for Annotations API calls.
- */
-public class AnnotationsNetworkProvider {
-    public static String ANNOTATIONS_BASE_URL = API_URL + "annotations";
-    private static String CONTENT_TYPE = "application/vnd.mendeley-annotation.1+json";
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
 
-    /* URLS */
+public class AnnotationsEndpoint {
+
+    public static String ANNOTATIONS_BASE_URL = MENDELEY_API_BASE_URL + "annotations";
+    private static String ANNOTATIONS_CONTENT_TYPE = "application/vnd.mendeley-annotation.1+json";
 
     public static Uri deleteAnnotationUrl(String documentId) {
         return Uri.parse(ANNOTATIONS_BASE_URL + "/" + documentId);
@@ -87,7 +83,6 @@ public class AnnotationsNetworkProvider {
 		return Uri.parse(url.toString());
 	}
 
-    /* PROCEDURES */
 
     public static class GetAnnotationRequest extends GetAuthorizedRequest<Annotation> {
         public GetAnnotationRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
@@ -102,7 +97,7 @@ public class AnnotationsNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", CONTENT_TYPE);
+            headers.put("Content-type", ANNOTATIONS_CONTENT_TYPE);
         }
     }
 
@@ -119,11 +114,11 @@ public class AnnotationsNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", CONTENT_TYPE);
+            headers.put("Content-type", ANNOTATIONS_CONTENT_TYPE);
         }
    }
 
-    public static class PostAnnotationRequest extends PostNetworkRequest<Annotation> {
+    public static class PostAnnotationRequest extends PostAuthorizedRequest<Annotation> {
         private final Annotation annotation;
 
         public PostAnnotationRequest(Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials){
@@ -145,14 +140,14 @@ public class AnnotationsNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", CONTENT_TYPE);
+            headers.put("Content-type", ANNOTATIONS_CONTENT_TYPE);
         }
     }
 
-    public static class PatchAnnotationAuthorizedRequest extends PatchAuthorizedRequest<Annotation> {
+    public static class PatchAnnotationRequest extends PatchAuthorizedRequest<Annotation> {
         private final Annotation annotation;
 
-        public PatchAnnotationAuthorizedRequest(String annotationId, Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public PatchAnnotationRequest(String annotationId, Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(getUrl(annotationId), null, authTokenManager, clientCredentials);
             this.annotation = annotation;
         }
@@ -163,7 +158,7 @@ public class AnnotationsNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", CONTENT_TYPE);
+            headers.put("Content-type", ANNOTATIONS_CONTENT_TYPE);
         }
 
         @Override

@@ -1,7 +1,6 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.JsonReader;
 
 import com.mendeley.api.AuthTokenManager;
@@ -19,24 +18,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.Request.API_URL;
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
-/**
- * NetworkProvider class for Files API calls
- */
-public class FileNetworkProvider {
-	private Map<String, AsyncTask> fileTaskMap = new HashMap<String, AsyncTask>();
 
-	private static String filesUrl = API_URL + "files";
-	private static final String TAG = FileNetworkProvider.class.getSimpleName();
+public class FilesEndpoint {
 
-    public FileNetworkProvider() {
-    }
-
+    public final static String FILES_BASE_URL = MENDELEY_API_BASE_URL + "files";
+    public static final String FILES_CONTENT_TYPE = "application/vnd.mendeley-file.1+json";
 
     /**
      * Building the url for get files
@@ -47,7 +38,7 @@ public class FileNetworkProvider {
      */
     public static Uri getGetFilesUrl(FileRequestParameters params) throws UnsupportedEncodingException {
         StringBuilder url = new StringBuilder();
-        url.append(filesUrl);
+        url.append(FILES_BASE_URL);
 
         if (params != null) {
             boolean firstParam = true;
@@ -87,7 +78,7 @@ public class FileNetworkProvider {
      * @return the url string
      */
     String getGetFileUrl(String fileId) {
-        return filesUrl+"/"+fileId;
+        return FILES_BASE_URL +"/"+fileId;
     }
 
     /**
@@ -97,7 +88,7 @@ public class FileNetworkProvider {
      * @return the url string
      */
     public static Uri getDeleteFileUrl(String fileId) {
-        return Uri.parse(filesUrl + "/" + fileId);
+        return Uri.parse(FILES_BASE_URL + "/" + fileId);
     }
 
     /* PROCEDURES */
@@ -115,7 +106,7 @@ public class FileNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-file.1+json");
+            headers.put("Content-type", FILES_CONTENT_TYPE);
         }
     }
 

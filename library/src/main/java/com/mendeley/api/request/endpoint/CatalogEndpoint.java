@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.util.JsonReader;
@@ -17,26 +17,16 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.Request.API_URL;
-
-/**
- * NetworkProvider class for Documents API calls
- */
-public class CatalogDocumentNetworkProvider {
-    public static String CATALOG_BASE_URL = API_URL + "catalog";
-
-    public static SimpleDateFormat patchDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT' Z");
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
 
-    private final AuthTokenManager accessTokenProvider;
+public class CatalogEndpoint {
 
-    public CatalogDocumentNetworkProvider(AuthTokenManager accessTokenProvider) {
-        this.accessTokenProvider = accessTokenProvider;
-    }
+    public static String CATALOG_BASE_URL = MENDELEY_API_BASE_URL + "catalog";
+    private static String CATALOG_CONTENT_TYPE = DocumentEndpoint.DOCUMENTS_CONTENT_TYPE;
 
     public static Uri getGetCatalogDocumentUrl(String catalogId, View view) {
         StringBuilder url = new StringBuilder();
@@ -51,11 +41,7 @@ public class CatalogDocumentNetworkProvider {
     }
 
 
-    /**
-     * Building the url for get catalog document
-     *
-     * @return the url string
-     */
+
     public static Uri getGetCatalogDocumentsUrl(CatalogDocumentRequestParameters params) {
         return getCatalogGetDocumentsUrl(CATALOG_BASE_URL, params);
     }
@@ -115,7 +101,7 @@ public class CatalogDocumentNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", CATALOG_CONTENT_TYPE);
         }
     }
 
@@ -132,7 +118,7 @@ public class CatalogDocumentNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", CATALOG_CONTENT_TYPE);
         }
     }
 }

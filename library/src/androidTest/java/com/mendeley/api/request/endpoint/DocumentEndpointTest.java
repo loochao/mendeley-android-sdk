@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
@@ -14,20 +14,20 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 
-public class DocumentNetworkProviderTest  extends AndroidTestCase {
+public class DocumentEndpointTest extends AndroidTestCase {
     private String documentsUrl;
     private final String documentId = "test-document_id";
 	
 	@Override
 	protected void setUp() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		String apiUrl = Request.API_URL;
+		String apiUrl = Request.MENDELEY_API_BASE_URL;
 		documentsUrl = apiUrl+"documents";
     }
 	
 	@SmallTest
 	public void test_getDeleteDocumentUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Uri expectedUrl = Uri.parse(documentsUrl + "/" + documentId);
-		Uri url = DocumentNetworkProvider.getDeleteDocumentUrl(documentId);
+		Uri url = DocumentEndpoint.getDeleteDocumentUrl(documentId);
 		
 		assertEquals("Documents url is wrong", expectedUrl, url);
 	}
@@ -36,7 +36,7 @@ public class DocumentNetworkProviderTest  extends AndroidTestCase {
 	public void test_getTrashDocumentUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 	
 		Uri expectedUrl = Uri.parse(documentsUrl+"/"+documentId+"/trash");
-		Uri url = DocumentNetworkProvider.getTrashDocumentUrl(documentId);
+		Uri url = DocumentEndpoint.getTrashDocumentUrl(documentId);
 		
 		assertEquals("Post trash url is wrong", expectedUrl, url);
 	}
@@ -47,12 +47,12 @@ public class DocumentNetworkProviderTest  extends AndroidTestCase {
 		String paramsString = "?view=client";
 		Uri expectedUrl = Uri.parse(documentsUrl+"/"+documentId+paramsString);
 
-		Uri url = DocumentNetworkProvider.getGetDocumentUrl(documentId, View.CLIENT);
+		Uri url = DocumentEndpoint.getGetDocumentUrl(documentId, View.CLIENT);
 		
 		assertEquals("Get document url with parameters is wrong", expectedUrl, url);
 		
 		expectedUrl = Uri.parse(documentsUrl+"/"+documentId);
-		url = DocumentNetworkProvider.getGetDocumentUrl(documentId, null);
+		url = DocumentEndpoint.getGetDocumentUrl(documentId, null);
 		
 		assertEquals("Get document url without parameters is wrong", expectedUrl, url);
 	}
@@ -88,14 +88,14 @@ public class DocumentNetworkProviderTest  extends AndroidTestCase {
 		params.order = order;
 		params.sort = sort;
 		
-		Uri url = DocumentNetworkProvider.getGetDocumentsUrl(params, deletedSince);
+		Uri url = DocumentEndpoint.getGetDocumentsUrl(params, deletedSince);
 		
 		assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
 		
 		expectedUrl = Uri.parse(documentsUrl+"?view=" + view);
 		params = new DocumentRequestParameters();
 		params.view = View.ALL;
-		url = DocumentNetworkProvider.getGetDocumentsUrl(params, null);
+		url = DocumentEndpoint.getGetDocumentsUrl(params, null);
 		
 		assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
 	}
@@ -104,7 +104,7 @@ public class DocumentNetworkProviderTest  extends AndroidTestCase {
 	public void test_getPatchDocumentUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 	
 		Uri expectedUrl = Uri.parse(documentsUrl+"/"+documentId);
-		Uri url = DocumentNetworkProvider.getPatchDocumentUrl(documentId);
+		Uri url = DocumentEndpoint.getPatchDocumentUrl(documentId);
 		
 		assertEquals("Patch document url is wrong", expectedUrl, url);
 	}

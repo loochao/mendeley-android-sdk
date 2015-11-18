@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.util.JsonReader;
@@ -20,18 +20,16 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.Request.API_URL;
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
 /**
  * NetworkProvider class for Group API calls
  */
 
-public class GroupNetworkProvider {
-    private static String groupsUrl = API_URL + "groups";
-
-
-
-
+public class GroupsEndpoint {
+    private static final String GROUP_BASE_URL = MENDELEY_API_BASE_URL + "groups";
+    public static final String GROUP_CONTENT_TYPE = "application/vnd.mendeley-group.1+json";
+    public static final String MEMBERSHIP_CONTENT_TYPE = "application/vnd.mendeley-membership.1+json";
 
     /* URLS */
 
@@ -48,7 +46,7 @@ public class GroupNetworkProvider {
     public static Uri getGetGroupsUrl(GroupRequestParameters params, String requestUrl) {
         StringBuilder url = new StringBuilder();
 
-        url.append(requestUrl == null ? groupsUrl : requestUrl);
+        url.append(requestUrl == null ? GROUP_BASE_URL : requestUrl);
 
         if (params != null) {
             boolean firstParam = true;
@@ -67,7 +65,7 @@ public class GroupNetworkProvider {
      * @return the url string
      */
     public static Uri getGetGroupUrl(String groupId) {
-        return Uri.parse(groupsUrl + "/" + groupId);
+        return Uri.parse(GROUP_BASE_URL + "/" + groupId);
     }
 
     /**
@@ -77,7 +75,7 @@ public class GroupNetworkProvider {
      * @return the url string
      */
     public static String getGetGroupMembersUrl(String groupId) {
-        return groupsUrl + "/" + groupId + "/members";
+        return GROUP_BASE_URL + "/" + groupId + "/members";
     }
 
 
@@ -96,7 +94,7 @@ public class GroupNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-group.1+json");
+            headers.put("Content-type", GROUP_CONTENT_TYPE);
         }
     }
 
@@ -113,7 +111,7 @@ public class GroupNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-group.1+json");
+            headers.put("Content-type", GROUP_CONTENT_TYPE);
         }
     }
 
@@ -130,7 +128,7 @@ public class GroupNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-membership.1+json");
+            headers.put("Content-type", MEMBERSHIP_CONTENT_TYPE);
         }
     }
 }

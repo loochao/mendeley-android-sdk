@@ -127,7 +127,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
      */
     private RequestResponse<ResultType> followRedirection(HttpURLConnection con) throws MendeleyException {
         final Uri redirectionUri = Uri.parse(con.getHeaderField("location"));
-        final boolean addOauthToken = redirectionUri.getHost().equals(Uri.parse(API_URL).getHost());
+        final boolean addOauthToken = redirectionUri.getHost().equals(Uri.parse(MENDELEY_API_BASE_URL).getHost());
         return doRun(redirectionUri, 0, addOauthToken);
     }
 

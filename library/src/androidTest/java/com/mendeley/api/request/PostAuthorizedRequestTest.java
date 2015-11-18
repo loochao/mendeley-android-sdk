@@ -27,7 +27,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
 
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
-        return new PostNetworkRequest<JSONObject>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getClientCredentials()) {
+        return new PostAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getClientCredentials()) {
             @Override
             protected void writePostBody(OutputStream os) throws Exception {
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));

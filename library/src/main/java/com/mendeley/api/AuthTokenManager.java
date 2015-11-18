@@ -25,7 +25,7 @@ import java.util.Date;
  */
 public interface AuthTokenManager {
 
-    String TOKENS_URL = Request.API_URL + "/oauth/token";
+    String TOKENS_URL = Request.MENDELEY_API_BASE_URL + "/oauth/token";
     String GRANT_TYPE_AUTH = "authorization_code";
     String GRANT_TYPE_REFRESH = "refresh_token";
     String SCOPE = "all";

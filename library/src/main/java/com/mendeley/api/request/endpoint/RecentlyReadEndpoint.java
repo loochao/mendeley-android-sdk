@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.util.JsonReader;
@@ -8,7 +8,7 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.PostAuthorizedRequest;
 
 import org.json.JSONException;
 
@@ -23,19 +23,15 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.Request.API_URL;
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
 /**
  * NetworkProvider class for Recently read API calls
  */
-public class RecentlyReadNetworkProvider {
-	public static final String RECENTLY_READ_BASE_URL = API_URL + "recently_read";
+public class RecentlyReadEndpoint {
+	public static final String RECENTLY_READ_BASE_URL = MENDELEY_API_BASE_URL + "recently_read";
+    public static final String RECENTLY_READ_CONTENT_TYPE = "application/vnd.mendeley-recently-read.1+json";
 
-    private final AuthTokenManager accessTokenProvider;
-
-    public RecentlyReadNetworkProvider(AuthTokenManager accessTokenProvider) {
-        this.accessTokenProvider = accessTokenProvider;
-    }
 
     public static Uri getGetRecentlyReadUrl(String groupId, String fileId, int limit) {
         StringBuilder url = new StringBuilder();
@@ -59,8 +55,6 @@ public class RecentlyReadNetworkProvider {
         return Uri.parse(url.toString());
     }
 
-    /* PROCEDURES */
-
     public static class GetRecentlyReadRequest extends GetAuthorizedRequest<List<ReadPosition>> {
         public GetRecentlyReadRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url,  authTokenManager, clientCredentials);
@@ -74,12 +68,12 @@ public class RecentlyReadNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-recently-read.1+json");
+            headers.put("Content-type", RECENTLY_READ_CONTENT_TYPE);
         }
     }
 
 
-    public static class PostRecentlyReadRequest extends PostNetworkRequest<ReadPosition> {
+    public static class PostRecentlyReadRequest extends PostAuthorizedRequest<ReadPosition> {
         // we need to crate a new procedure as this endpoint returns 200 or 201
         // depending on whether the read position existed or not
 
@@ -106,7 +100,7 @@ public class RecentlyReadNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-recently-read.1+json");
+            headers.put("Content-type", RECENTLY_READ_CONTENT_TYPE);
         }
     }
 

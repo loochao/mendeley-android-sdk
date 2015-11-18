@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.util.JsonReader;
@@ -9,7 +9,7 @@ import com.mendeley.api.model.Folder;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
-import com.mendeley.api.request.PostNetworkRequest;
+import com.mendeley.api.request.PostAuthorizedRequest;
 import com.mendeley.api.request.params.FolderRequestParameters;
 
 import org.apache.http.HttpEntity;
@@ -26,17 +26,12 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.api.request.Request.API_URL;
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
-/**
- * NetworkProvider class for Folder API calls
- */
-public class FolderNetworkProvider {
-	public static final String FOLDERS_URL = API_URL + "folders";
+public class FolderEndpoint {
 
-
-
-
+	public static final String FOLDERS_BASE_URL = MENDELEY_API_BASE_URL + "folders";
+    public static final String FOLDER_CONTENT_TYPE = "application/vnd.mendeley-folder.1+json";
 
     /* URLS */
 
@@ -49,7 +44,7 @@ public class FolderNetworkProvider {
     public static Uri getGetFoldersUrl(FolderRequestParameters params, String requestUrl) {
         StringBuilder url = new StringBuilder();
 
-        url.append(requestUrl==null? FOLDERS_URL :requestUrl);
+        url.append(requestUrl==null? FOLDERS_BASE_URL :requestUrl);
 
         if (params != null) {
             boolean firstParam = true;
@@ -77,7 +72,7 @@ public class FolderNetworkProvider {
      * @return the url string
      */
     public static Uri getGetFolderUrl(String folderId) {
-        return Uri.parse(FOLDERS_URL + "/" + folderId);
+        return Uri.parse(FOLDERS_BASE_URL + "/" + folderId);
     }
 
     /**
@@ -87,7 +82,7 @@ public class FolderNetworkProvider {
      * @return the url string
      */
     public static Uri getPatchFolderUrl(String folderId) {
-        return Uri.parse(FOLDERS_URL + "/" + folderId);
+        return Uri.parse(FOLDERS_BASE_URL + "/" + folderId);
     }
 
     /**
@@ -97,7 +92,7 @@ public class FolderNetworkProvider {
 	 * @return the url string
 	 */
     public static Uri getDeleteFolderUrl(String folderId) {
-		return Uri.parse(FOLDERS_URL + "/" + folderId);
+		return Uri.parse(FOLDERS_BASE_URL + "/" + folderId);
 	}
 
     /**
@@ -107,7 +102,7 @@ public class FolderNetworkProvider {
      * @return the url string
      */
     public static String getGetFolderDocumentIdsUrl(String folderId) {
-        return FOLDERS_URL + "/" + folderId + "/documents";
+        return FOLDERS_BASE_URL + "/" + folderId + "/documents";
     }
 
     /**
@@ -117,7 +112,7 @@ public class FolderNetworkProvider {
      * @return the url string
      */
     public static Uri getPostDocumentToFolderUrl(String folderId) {
-        return Uri.parse(FOLDERS_URL + "/" + folderId + "/documents");
+        return Uri.parse(FOLDERS_BASE_URL + "/" + folderId + "/documents");
     }
 
     /**
@@ -127,7 +122,7 @@ public class FolderNetworkProvider {
 	 * @param documentId the id of the document to delete
 	 */
     public static Uri getDeleteDocumentFromFolderUrl(String folderId, String documentId) {
-		return Uri.parse(FOLDERS_URL + "/" + folderId + "/documents/" + documentId);
+		return Uri.parse(FOLDERS_BASE_URL + "/" + folderId + "/documents/" + documentId);
 	}
 	
     /* PROCEDURES */
@@ -145,7 +140,7 @@ public class FolderNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
+            headers.put("Content-type", FOLDER_CONTENT_TYPE);
         }
     }
 
@@ -162,11 +157,11 @@ public class FolderNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
+            headers.put("Content-type", FOLDER_CONTENT_TYPE);
         }
     }
 
-    public static class PostFolderRequest extends PostNetworkRequest<Folder> {
+    public static class PostFolderRequest extends PostAuthorizedRequest<Folder> {
         private final Folder folder;
 
         public PostFolderRequest(Uri url, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
@@ -189,7 +184,7 @@ public class FolderNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
+            headers.put("Content-type", FOLDER_CONTENT_TYPE);
         }
     }
 
@@ -203,7 +198,7 @@ public class FolderNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-folder.1+json");
+            headers.put("Content-type", FOLDER_CONTENT_TYPE);
         }
 
         @Override
@@ -220,7 +215,7 @@ public class FolderNetworkProvider {
 
     }
 
-    public static class PostDocumentToFolderRequest extends PostNetworkRequest<Void> {
+    public static class PostDocumentToFolderRequest extends PostAuthorizedRequest<Void> {
         private final String documentId;
 
         public PostDocumentToFolderRequest(Uri url, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
@@ -242,7 +237,7 @@ public class FolderNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", DocumentEndpoint.DOCUMENT_TYPES_BASE_URL);
         }
     }
 
@@ -259,7 +254,7 @@ public class FolderNetworkProvider {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", DocumentEndpoint.DOCUMENT_TYPES_BASE_URL);
         }
     }
 }

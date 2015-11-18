@@ -1,4 +1,4 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 import android.util.JsonReader;
@@ -17,15 +17,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
-import static com.mendeley.api.request.Request.API_URL;
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
 /**
  * NetworkProvider class for Profile API calls
  */
-public class ProfileNetworkProvider {
-	public static String PROFILES_URL = API_URL + "profiles/";
+public class ProfilesEndpoint {
+	public static String PROFILES_URL = MENDELEY_API_BASE_URL + "profiles/";
 
-    public ProfileNetworkProvider() {
+    public ProfilesEndpoint() {
     }
 
     public static class GetProfileRequest extends GetAuthorizedRequest<Profile> {

@@ -42,7 +42,7 @@ public class SignInActivity extends Activity {
 	public final static int AUTH_REQUEST_CODE = 31231;
 	public static final String EXTRA_JSON_TOKENS = "returned_json_tokens";
 
-    private static final String OAUTH2_URL = Request.API_URL + "oauth/authorize";
+    private static final String OAUTH2_URL = Request.MENDELEY_API_BASE_URL + "oauth/authorize";
 
 	private static final double SMALL_SCREEN_SIZE = 6.0;
 	private static final String FORGOT_PASSWORD_URL = "http://www.mendeley.com/forgot/";

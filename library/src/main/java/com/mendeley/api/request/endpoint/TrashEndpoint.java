@@ -1,14 +1,11 @@
-package com.mendeley.api.request.provider;
+package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
 
-import static com.mendeley.api.request.Request.API_URL;
+import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
-public class TrashNetworkProvider {
-    public static String BASE_URL = API_URL + "trash";
-
-
-
+public class TrashEndpoint {
+    public static String BASE_URL = MENDELEY_API_BASE_URL + "trash";
 
     /* URLS */
 
