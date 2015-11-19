@@ -52,20 +52,6 @@ public interface RequestsFactory {
     Request<Document> getDocument(String documentId, DocumentEndpoint.DocumentRequestParameters.View view);
 
     /**
-     * Retrieve a list of deleted documents in the user's library.
-     *  @param deletedSince only return documents deleted since this timestamp. Should be supplied in ISO 8601 format.
-     * @param parameters holds optional query parameters, will be ignored if null
-     */
-    Request<List<String>> getDeletedDocuments(Date deletedSince, DocumentEndpoint.DocumentRequestParameters parameters);
-
-    /**
-     * Retrieve subsequent pages of deleted documents in the user's library.
-     *
-     * @param uri reference to next page returned in a previous DocumentIdList.
-     */
-    Request<List<String>> getDeletedDocuments(Uri uri);
-
-    /**
      * Add a new document to the user's library.
      *
      * @param document the document object to be added.

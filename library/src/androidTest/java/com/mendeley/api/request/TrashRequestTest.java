@@ -7,6 +7,7 @@ import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
@@ -89,14 +90,15 @@ public class TrashRequestTest extends SignedInTest {
 
         // THEN the document is permanently deleted
         final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
+        params.deletedSince = deletedSince;
 
-        final List<String> expectedDeletedDocIds = Arrays.asList(deletingDoc.id);
-        final List<String> actualDeletedDocIds = getRequestFactory().getDeletedDocuments(deletedSince, params).run().resource;
+        final List<Document> expectedDeletedDocIds = Collections.singletonList(deletingDoc);
+        final List<Document> actualDeletedDocIds = getRequestFactory().getDocuments(params).run().resource;
 
-        Comparator<String> comparator = new Comparator<String>() {
+        Comparator<Document> comparator = new Comparator<Document>() {
             @Override
-            public int compare(String lhs, String rhs) {
-                return lhs.compareTo(rhs);
+            public int compare(Document lhs, Document rhs) {
+                return lhs.id.compareTo(rhs.id);
             }
         };
         AssertUtils.assertSameElementsInCollection(expectedDeletedDocIds, actualDeletedDocIds, comparator);

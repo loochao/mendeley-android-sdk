@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +34,10 @@ public class TrashEndpoint {
      *
      * @return the url string
      */
-    public static Uri getTrashDocumentsUrl(DocumentEndpoint.DocumentRequestParameters params, Date deletedSince) {
+    public static Uri getTrashDocumentsUrl(DocumentEndpoint.DocumentRequestParameters params) {
         Uri uri = Uri.parse(TrashEndpoint.BASE_URL);
         if (params != null) {
-            uri = params.appendToUi(uri, deletedSince);
+            uri = params.appendToUi(uri);
         }
         return uri;
     }
@@ -57,7 +56,7 @@ public class TrashEndpoint {
         }
 
         public GetTrashedDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getTrashDocumentsUrl(parameters, null), authTokenManager, clientCredentials);
+            super(getTrashDocumentsUrl(parameters), authTokenManager, clientCredentials);
         }
 
         @Override

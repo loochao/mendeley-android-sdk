@@ -44,7 +44,7 @@ public class DocumentEndpoint {
         }
 
         public GetDocumentsRequest(DocumentEndpoint.DocumentRequestParameters params, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(params != null ? params.appendToUi(Uri.parse(DOCUMENTS_BASE_URL), null) : Uri.parse(DOCUMENTS_BASE_URL), authTokenManager, clientCredentials);
+            super(params != null ? params.appendToUi(Uri.parse(DOCUMENTS_BASE_URL)) : Uri.parse(DOCUMENTS_BASE_URL), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -58,29 +58,6 @@ public class DocumentEndpoint {
             headers.put("Content-type", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
         }
     }
-
-    // TODO: put this a case of GetDocumentsRequest with one parameter
-    public static class GetDeletedDocumentsRequest extends GetAuthorizedRequest<List<String>> {
-        public GetDeletedDocumentsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
-        }
-
-        public GetDeletedDocumentsRequest(DocumentRequestParameters params, Date deletedSince, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(params != null ? params.appendToUi(Uri.parse(DOCUMENTS_BASE_URL), deletedSince) : Uri.parse(DOCUMENTS_BASE_URL), authTokenManager, clientCredentials);
-        }
-
-        @Override
-        protected List<String> manageResponse(InputStream is) throws JSONException, IOException {
-            final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseDocumentIds(reader);
-        }
-
-        @Override
-        protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
-        }
-    }
-
 
     public static class GetDocumentRequest extends GetAuthorizedRequest<Document> {
 
@@ -212,6 +189,11 @@ public class DocumentEndpoint {
         public Date modifiedSince;
 
         /**
+         * Returns only documents deleted since this timestamp. Should be supplied in ISO 8601 format.
+         */
+        public Date deletedSince;
+
+        /**
          * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
          */
         public Integer limit;
@@ -232,7 +214,7 @@ public class DocumentEndpoint {
         public Sort sort;
 
 
-        Uri appendToUi(Uri uri, Date deletedSince) {
+        Uri appendToUi(Uri uri) {
             final Uri.Builder bld = uri.buildUpon();
 
             if (view != null) {

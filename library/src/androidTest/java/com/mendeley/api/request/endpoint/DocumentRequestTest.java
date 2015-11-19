@@ -75,8 +75,9 @@ public class DocumentRequestTest extends SignedInTest {
         params.reverse = true;
         params.order = order;
         params.sort = sort;
+        params.deletedSince = deletedSince;
 
-        final Uri url = getRequestFactory().getDeletedDocuments(deletedSince, params).getUrl();
+        final Uri url = getRequestFactory().getDocuments(params).getUrl();
 
         assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
     }
@@ -303,27 +304,29 @@ public class DocumentRequestTest extends SignedInTest {
         final Date deletedSince = getServerDate();
         final List<Document> existingDocs = setUpDocumentsInServer(6);
 
-        final Set<String> expectedDeletedDocIds = new HashSet<String>();
+        final Set<Document> expectedDeletedDocs = new HashSet<>();
         for (int i = 0; i < existingDocs.size() / 2; i++) {
             final Document doc = existingDocs.get(i);
-            getRequestFactory().deleteDocument(doc.id).run();;
-            expectedDeletedDocIds.add(doc.id);
+            getRequestFactory().deleteDocument(doc.id).run();
+            expectedDeletedDocs.add(doc);
         }
 
         // WHEN requesting deleted doc since that date
         DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
-        List<String> deletedDocsIdList = getRequestFactory().getDeletedDocuments(deletedSince, params).run().resource;
+        params.deletedSince = deletedSince;
+
+        List<Document> deletedDocsList = getRequestFactory().getDocuments(params).run().resource;
 
 
         // THEN we receive the deleted docs
-        final Set<String> actualDeletedDocIds = new HashSet<String>(deletedDocsIdList);
-        Comparator<String> comparator = new Comparator<String>() {
+        final Set<Document> actualDeletedDocs = new HashSet<>(deletedDocsList);
+        Comparator<Document> comparator = new Comparator<Document>() {
             @Override
-            public int compare(String lhs, String rhs) {
-                return lhs.compareTo(rhs);
+            public int compare(Document lhs, Document rhs) {
+                return lhs.id.compareTo(rhs.id);
             }
         };
-        AssertUtils.assertSameElementsInCollection(expectedDeletedDocIds, actualDeletedDocIds, comparator);
+        AssertUtils.assertSameElementsInCollection(expectedDeletedDocs, actualDeletedDocs, comparator);
     }
 
     // TODO: create test for trash document

@@ -193,16 +193,6 @@ public class Mendeley {
         }
 
         @Override
-        public Request<List<String>> getDeletedDocuments(Date deletedSince, DocumentEndpoint.DocumentRequestParameters parameters)  {
-            return new DocumentEndpoint.GetDeletedDocumentsRequest(parameters, deletedSince, authTokenManager, clientCredentials);
-        }
-
-        @Override
-        public Request<List<String>> getDeletedDocuments(Uri uri) {
-            return new DocumentEndpoint.GetDeletedDocumentsRequest(uri, authTokenManager, clientCredentials);
-        }
-
-        @Override
         public Request<Document> postDocument(Document document) {
             return new DocumentEndpoint.PostDocumentRequest(document, authTokenManager, clientCredentials);
         }
