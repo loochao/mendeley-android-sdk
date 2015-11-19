@@ -3,7 +3,6 @@ package com.mendeley.api.request.endpoint;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.request.SignedInTest;
-import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +17,7 @@ public class CatalogRequestTest extends SignedInTest {
         //GIVEN a file hash
         final String fileHash = "2064e86683343709cc3ff535587a4580bbb1b251";
         final String catalogDocumentId = "bcded033-52b5-370d-ac27-a3ec23146f88";
-        CatalogDocumentRequestParameters catalogueParams = new CatalogDocumentRequestParameters();
+        CatalogEndpoint.CatalogDocumentRequestParameters catalogueParams = new CatalogEndpoint.CatalogDocumentRequestParameters();
         catalogueParams.filehash = fileHash;
 
         //WHEN getting a catalog document with this file hash

@@ -11,7 +11,6 @@ import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
 import com.mendeley.api.request.PostAuthorizedRequest;
-import com.mendeley.api.request.params.AnnotationRequestParameters;
 import com.mendeley.api.util.DateUtils;
 
 import org.apache.http.HttpEntity;
@@ -28,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -189,5 +189,33 @@ public class AnnotationsEndpoint {
         public DeleteAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(deleteAnnotationUrl(annotationId), authTokenManager, clientCredentials);
         }
+    }
+
+    /**
+     * Parameters for requests to retrieve annotations.
+     * <p>
+     * Uninitialised properties will be ignored.
+     */
+    public static class AnnotationRequestParameters {
+        public String documentId;
+
+        public String groupId;
+
+        public Boolean includeTrashed;
+
+        /**
+         * Returns only annotations modified since this timestamp. Should be supplied in ISO 8601 format.
+         */
+        public Date modifiedSince;
+
+        /**
+         * Returns only annotations deleted since this timestamp. Should be supplied in ISO 8601 format.
+         */
+        public Date deletedSince;
+
+        /**
+         * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
+         */
+        public Integer limit;
     }
 }

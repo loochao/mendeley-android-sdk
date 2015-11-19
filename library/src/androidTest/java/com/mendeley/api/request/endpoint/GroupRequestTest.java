@@ -4,7 +4,6 @@ import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
-import com.mendeley.api.request.params.GroupRequestParameters;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Collections;
@@ -40,7 +39,7 @@ public class GroupRequestTest extends SignedInTest {
         }
 
         // WHEN getting groups
-        final List<Group> actual = getRequestFactory().getGroups(new GroupRequestParameters()).run().resource;
+        final List<Group> actual = getRequestFactory().getGroups(new GroupsEndpoint.GroupRequestParameters()).run().resource;
 
         Comparator<Group> comparator = new Comparator<Group>() {
             @Override
@@ -65,7 +64,7 @@ public class GroupRequestTest extends SignedInTest {
         }
 
         // WHEN getting groups
-        final GroupRequestParameters params = new GroupRequestParameters();
+        final GroupsEndpoint.GroupRequestParameters params = new GroupsEndpoint.GroupRequestParameters();
         params.limit = pageSize;
 
         final List<Group> actual = new LinkedList<Group>();
@@ -125,7 +124,7 @@ public class GroupRequestTest extends SignedInTest {
         }
 
         // WHEN getting the group members
-        List<UserRole> actual = getRequestFactory().getGroupMembers(new GroupRequestParameters(), group.id).run().resource;
+        List<UserRole> actual = getRequestFactory().getGroupMembers(new GroupsEndpoint.GroupRequestParameters(), group.id).run().resource;
 
         // THEN we have the expected members
         Comparator<UserRole> userRoleComparator = new Comparator<UserRole>() {

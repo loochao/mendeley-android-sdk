@@ -14,7 +14,7 @@ import com.mendeley.api.model.Group;
 import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.NetworkUtils;
-import com.mendeley.api.request.params.GroupRequestParameters;
+import com.mendeley.api.request.endpoint.GroupsEndpoint;
 import com.mendeley.api.util.DateUtils;
 
 import junit.framework.Assert;
@@ -119,7 +119,7 @@ public class TestAccountSetupUtils{
 
     public List<Group> getGroups() throws MendeleyException {
         // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
-        return requestFactory.getGroups(new GroupRequestParameters()).run().resource;
+        return requestFactory.getGroups(new GroupsEndpoint.GroupRequestParameters()).run().resource;
     }
 
     public ReadPosition setupReadingPosition(String fileId, int page, int verticalPosition, Date date) throws Exception{

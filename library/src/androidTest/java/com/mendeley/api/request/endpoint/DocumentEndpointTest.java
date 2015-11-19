@@ -5,10 +5,6 @@ import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.api.request.Request;
-import com.mendeley.api.request.params.DocumentRequestParameters;
-import com.mendeley.api.request.params.Order;
-import com.mendeley.api.request.params.Sort;
-import com.mendeley.api.request.params.View;
 import com.mendeley.api.util.DateUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -50,7 +46,7 @@ public class DocumentEndpointTest extends AndroidTestCase {
 		String paramsString = "?view=client";
 		Uri expectedUrl = Uri.parse(documentsUrl+"/"+documentId+paramsString);
 
-		Uri url = DocumentEndpoint.getGetDocumentUrl(documentId, View.CLIENT);
+		Uri url = DocumentEndpoint.getGetDocumentUrl(documentId, DocumentEndpoint.DocumentRequestParameters.View.CLIENT);
 		
 		assertEquals("Get document url with parameters is wrong", expectedUrl, url);
 		
@@ -63,15 +59,15 @@ public class DocumentEndpointTest extends AndroidTestCase {
 	@SmallTest
 	public void test_getGetDocumentsUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, UnsupportedEncodingException, ParseException {
 
-		View view = View.ALL;
+		DocumentEndpoint.DocumentRequestParameters.View view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
 		String groupId = "test-group_id";
 		Date modifiedSince = DateUtils.parseMendeleyApiTimestamp("2014-02-28T11:52:30.000Z");
 		Date deletedSince = DateUtils.parseMendeleyApiTimestamp("2014-01-21T11:52:30.000Z");
 		int limit = 7;
 		String marker = "12";
 		boolean reverse = true;
-		Order order = Order.DESC;
-		Sort sort = Sort.MODIFIED;
+		DocumentEndpoint.DocumentRequestParameters.Order order = DocumentEndpoint.DocumentRequestParameters.Order.DESC;
+		DocumentEndpoint.DocumentRequestParameters.Sort sort = DocumentEndpoint.DocumentRequestParameters.Sort.MODIFIED;
 
 		String paramsString = "?view=" + view +
 				"&group_id=" + groupId +
@@ -83,7 +79,7 @@ public class DocumentEndpointTest extends AndroidTestCase {
                 "&deleted_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(deletedSince), "ISO-8859-1");
                 Uri expectedUrl = Uri.parse(documentsUrl+paramsString);
 
-		DocumentRequestParameters params = new DocumentRequestParameters();
+		DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
 		params.view = view;
 		params.groupId = groupId;
 		params.modifiedSince = modifiedSince;
@@ -97,8 +93,8 @@ public class DocumentEndpointTest extends AndroidTestCase {
 		assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
 
 		expectedUrl = Uri.parse(documentsUrl+"?view=" + view);
-		params = new DocumentRequestParameters();
-		params.view = View.ALL;
+		params = new DocumentEndpoint.DocumentRequestParameters();
+		params.view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
 		url = DocumentEndpoint.getGetDocumentsUrl(params, null);
 
 		assertEquals("Get documents url with parameters is wrong", expectedUrl, url);

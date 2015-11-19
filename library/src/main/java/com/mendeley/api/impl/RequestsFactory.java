@@ -12,13 +12,12 @@ import com.mendeley.api.model.ReadPosition;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.request.GetFileNetworkRequest;
 import com.mendeley.api.request.Request;
-import com.mendeley.api.request.params.AnnotationRequestParameters;
-import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
-import com.mendeley.api.request.params.DocumentRequestParameters;
-import com.mendeley.api.request.params.FileRequestParameters;
-import com.mendeley.api.request.params.FolderRequestParameters;
-import com.mendeley.api.request.params.GroupRequestParameters;
-import com.mendeley.api.request.params.View;
+import com.mendeley.api.request.endpoint.AnnotationsEndpoint;
+import com.mendeley.api.request.endpoint.CatalogEndpoint;
+import com.mendeley.api.request.endpoint.DocumentEndpoint;
+import com.mendeley.api.request.endpoint.FilesEndpoint;
+import com.mendeley.api.request.endpoint.FolderEndpoint;
+import com.mendeley.api.request.endpoint.GroupsEndpoint;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -35,7 +34,7 @@ public interface RequestsFactory {
     /**
      * Retrieve a list of documents in the user's library.
      */
-    Request<List<Document>> getDocuments(DocumentRequestParameters parameters);
+    Request<List<Document>> getDocuments(DocumentEndpoint.DocumentRequestParameters parameters);
 
     /**
      * Retrieve subsequent pages of documents in the user's library.
@@ -50,14 +49,14 @@ public interface RequestsFactory {
      * @param documentId the document id to get.
      * @param view extended document view. If null, only core fields are returned.
      */
-    Request<Document> getDocument(String documentId, View view);
+    Request<Document> getDocument(String documentId, DocumentEndpoint.DocumentRequestParameters.View view);
 
     /**
      * Retrieve a list of deleted documents in the user's library.
      *  @param deletedSince only return documents deleted since this timestamp. Should be supplied in ISO 8601 format.
      * @param parameters holds optional query parameters, will be ignored if null
      */
-    Request<List<String>> getDeletedDocuments(Date deletedSince, DocumentRequestParameters parameters);
+    Request<List<String>> getDeletedDocuments(Date deletedSince, DocumentEndpoint.DocumentRequestParameters parameters);
 
     /**
      * Retrieve subsequent pages of deleted documents in the user's library.
@@ -119,7 +118,7 @@ public interface RequestsFactory {
     /**
      * Return metadata for a user's files, subject to specified query parameters.
      */
-    Request<List<File>> getFiles(FileRequestParameters parameters);
+    Request<List<File>> getFiles(FilesEndpoint.FileRequestParameters parameters);
 
     /**
      * Return metadata for all files associated with all of the user's documents.
@@ -168,7 +167,7 @@ public interface RequestsFactory {
     /**
      * Return metadata for all the user's folders.
      */
-    Request<List<Folder>> getFolders(FolderRequestParameters parameters);
+    Request<List<Folder>> getFolders(FolderEndpoint.FolderRequestParameters parameters);
 
     /**
      * Return metadata for all the user's folders.
@@ -212,7 +211,7 @@ public interface RequestsFactory {
      *
      * @param folderId ID of the folder to inspect.
      */
-    Request<List<String>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId);
+    Request<List<String>> getFolderDocumentIds(FolderEndpoint.FolderRequestParameters parameters, String folderId);
 
     /**
      * Returns the next page of document IDs stored in a particular folder.
@@ -253,7 +252,7 @@ public interface RequestsFactory {
     /**
      * Return metadata for all the user's groups.
      */
-    Request<List<Group>> getGroups(GroupRequestParameters parameters);
+    Request<List<Group>> getGroups(GroupsEndpoint.GroupRequestParameters parameters);
 
     /**
      * Returns the next page of group metadata entries.
@@ -274,7 +273,7 @@ public interface RequestsFactory {
      *
      * @param groupId ID of the group to inspect.
      */
-    Request<List<UserRole>> getGroupMembers(GroupRequestParameters parameters, String groupId);
+    Request<List<UserRole>> getGroupMembers(GroupsEndpoint.GroupRequestParameters parameters, String groupId);
 
     /**
      * Return a list of members user roles of a particular group.
@@ -288,7 +287,7 @@ public interface RequestsFactory {
     /**
      * Retrieve a list of documents in the user's trash.
      */
-    Request<List<Document>> getTrashedDocuments(DocumentRequestParameters parameters);
+    Request<List<Document>> getTrashedDocuments(DocumentEndpoint.DocumentRequestParameters parameters);
 
     /**
      * Retrieve a list of documents in the user's trash.
@@ -328,7 +327,7 @@ public interface RequestsFactory {
     /**
      * Retrieve a list of catalog documents
      */
-    Request<List<Document>> getCatalogDocuments(CatalogDocumentRequestParameters parameters);
+    Request<List<Document>> getCatalogDocuments(CatalogEndpoint.CatalogDocumentRequestParameters parameters);
 
     /**
      * Retrieve a single catalog document, specified by ID.
@@ -336,7 +335,7 @@ public interface RequestsFactory {
      * @param catalogId the catalog document id to get.
      * @param view extended catalog document view. If null, only core fields are returned.
      */
-    Request<Document> getCatalogDocument(String catalogId, View view);
+    Request<Document> getCatalogDocument(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view);
 
 
 
@@ -344,7 +343,7 @@ public interface RequestsFactory {
 
     Request<List<Annotation>> getAnnotations();
 
-    Request<List<Annotation>> getAnnotations(AnnotationRequestParameters parameters);
+    Request<List<Annotation>> getAnnotations(AnnotationsEndpoint.AnnotationRequestParameters parameters);
 
     Request<List<Annotation>> getAnnotations(Uri url);
 

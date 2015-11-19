@@ -5,7 +5,6 @@ import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.api.request.Request;
-import com.mendeley.api.request.params.FileRequestParameters;
 import com.mendeley.api.util.DateUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -44,7 +43,7 @@ public class FilesEndpointTest extends AndroidTestCase {
 		
 		Uri expectedUrl = Uri.parse(filesUrl+paramsString);
 
-		FileRequestParameters params = new FileRequestParameters();
+		FilesEndpoint.FileRequestParameters params = new FilesEndpoint.FileRequestParameters();
 		params.documentId = documentId;		
 		params.groupId = groupId;
 		params.addedSince = addedSince;
@@ -55,7 +54,7 @@ public class FilesEndpointTest extends AndroidTestCase {
 		assertEquals("Get files url with parameters is wrong", expectedUrl, url);
 		
 		expectedUrl = Uri.parse(filesUrl);
-		params = new FileRequestParameters();
+		params = new FilesEndpoint.FileRequestParameters();
 		url = FilesEndpoint.getGetFilesUrl(params);
 		
 		assertEquals("Get files url without parameters is wrong", expectedUrl, url);

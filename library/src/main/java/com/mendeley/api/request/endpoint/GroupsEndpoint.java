@@ -9,7 +9,6 @@ import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.params.GroupRequestParameters;
 
 import org.json.JSONException;
 
@@ -137,5 +136,12 @@ public class GroupsEndpoint {
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", MEMBERSHIP_CONTENT_TYPE);
         }
+    }
+
+    public static class GroupRequestParameters {
+        /**
+         * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
+         */
+        public Integer limit;
     }
 }

@@ -8,8 +8,6 @@ import com.mendeley.api.ClientCredentials;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
-import com.mendeley.api.request.params.View;
 
 import org.json.JSONException;
 
@@ -29,7 +27,7 @@ public class CatalogEndpoint {
     public static String CATALOG_BASE_URL = MENDELEY_API_BASE_URL + "catalog";
     private static String CATALOG_CONTENT_TYPE = DocumentEndpoint.DOCUMENTS_CONTENT_TYPE;
 
-    public static Uri getGetCatalogDocumentUrl(String catalogId, View view) {
+    public static Uri getGetCatalogDocumentUrl(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view) {
         StringBuilder url = new StringBuilder();
         url.append(CATALOG_BASE_URL);
         url.append("/").append(catalogId);
@@ -111,7 +109,7 @@ public class CatalogEndpoint {
     }
 
     public static class GetCatalogDocumentRequest extends GetAuthorizedRequest<Document> {
-        public GetCatalogDocumentRequest(String catalogId, View view, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetCatalogDocumentRequest(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(CatalogEndpoint.getGetCatalogDocumentUrl(catalogId, view), authTokenManager, clientCredentials);
         }
 
@@ -125,5 +123,30 @@ public class CatalogEndpoint {
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", CATALOG_CONTENT_TYPE);
         }
+    }
+
+    /**
+     * Parameters for requests to retrieve catalog documents.
+     * <p>
+     * Uninitialised properties will be ignored.
+     */
+    public static class CatalogDocumentRequestParameters {
+
+        public String arxiv;
+
+        public String doi;
+
+        public String isbn;
+
+        public String issn;
+
+        public String pmid;
+
+        public String scopus;
+
+        public String filehash;
+
+        public DocumentEndpoint.DocumentRequestParameters.View view;
+
     }
 }

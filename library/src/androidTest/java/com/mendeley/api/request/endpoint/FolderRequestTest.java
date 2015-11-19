@@ -4,7 +4,6 @@ import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Folder;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
-import com.mendeley.api.request.params.FolderRequestParameters;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Arrays;
@@ -57,7 +56,7 @@ public class FolderRequestTest extends SignedInTest {
         }
 
         // WHEN getting folders with parameters
-        FolderRequestParameters params = new FolderRequestParameters();
+        FolderEndpoint.FolderRequestParameters params = new FolderEndpoint.FolderRequestParameters();
         params.groupId = null;
         params.limit = 10;
         final List<Folder> actual = getRequestFactory().getFolders(params).run().resource;
@@ -91,7 +90,7 @@ public class FolderRequestTest extends SignedInTest {
         }
 
         // WHEN getting folders
-        final FolderRequestParameters params = new FolderRequestParameters();
+        final FolderEndpoint.FolderRequestParameters params = new FolderEndpoint.FolderRequestParameters();
         params.limit = pageSize;
 
         final List<Folder> actual = new LinkedList<Folder>();
@@ -191,7 +190,7 @@ public class FolderRequestTest extends SignedInTest {
         // WHEN getting the documents in the folder
         final List<String> actualDocIds = getRequestFactory().getFolderDocumentIds(null, folder.id).run().resource;
 
-        Request<List<String>>.Response response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        Request<List<String>>.Response response = getRequestFactory().getFolderDocumentIds(new FolderEndpoint.FolderRequestParameters(), folder.id).run();
         final Set<String> actualDeletedDocIds = new HashSet<String>(response.resource);
 
         // THEN we have received the documents in that folder
@@ -224,7 +223,7 @@ public class FolderRequestTest extends SignedInTest {
             getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
         }
 
-        Request<List<String>>.Response response = getRequestFactory().getFolderDocumentIds(new FolderRequestParameters(), folder.id).run();
+        Request<List<String>>.Response response = getRequestFactory().getFolderDocumentIds(new FolderEndpoint.FolderRequestParameters(), folder.id).run();
         final Set<String> actualDocIds = new HashSet<String>(response.resource);
 
         Comparator<String> comparator = new Comparator<String>() {

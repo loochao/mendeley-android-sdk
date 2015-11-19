@@ -11,8 +11,6 @@ import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
 import com.mendeley.api.request.PostAuthorizedRequest;
-import com.mendeley.api.request.params.DocumentRequestParameters;
-import com.mendeley.api.request.params.View;
 import com.mendeley.api.util.DateUtils;
 
 import org.apache.http.HttpEntity;
@@ -68,7 +66,7 @@ public class DocumentEndpoint {
      * @param documentId the document id
      * @return the url string
      */
-    public static Uri getGetDocumentUrl(String documentId, View view) {
+    public static Uri getGetDocumentUrl(String documentId, DocumentRequestParameters.View view) {
         StringBuilder url = new StringBuilder();
         url.append(DOCUMENTS_BASE_URL);
         url.append("/").append(documentId);
@@ -205,7 +203,7 @@ public class DocumentEndpoint {
 
     public static class GetDocumentRequest extends GetAuthorizedRequest<Document> {
 
-        public GetDocumentRequest(String documentId, View view, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetDocumentRequest(String documentId, DocumentRequestParameters.View view, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(getGetDocumentUrl(documentId, view), authTokenManager, clientCredentials);
         }
 
@@ -297,4 +295,132 @@ public class DocumentEndpoint {
         }
     }
 
+    /**
+     * Parameters for requests to retrieve documents.
+     * <p>
+     * Uninitialised properties will be ignored.
+     */
+    public static class DocumentRequestParameters {
+        /**
+         * The required document view.
+         */
+        public View view;
+
+        /**
+         * Group ID. If not supplied, returns user documents.
+         */
+        public String groupId;
+
+        /**
+         * Returns only documents modified since this timestamp. Should be supplied in ISO 8601 format.
+         */
+        public Date modifiedSince;
+
+        /**
+         * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
+         */
+        public Integer limit;
+
+        /**
+         * A flag to indicate that the scrolling direction has switched.
+         */
+        public Boolean reverse;
+
+        /**
+         * The sort order.
+         */
+        public Order order;
+
+        /**
+         * The field to sort on.
+         */
+        public Sort sort;
+
+        /**
+         * Available fields to sort lists by.
+         */
+        public enum Sort {
+            /**
+             * Sort by last modified date.
+             */
+            MODIFIED("last_modified"),
+            /**
+             * Sort by date added.
+             */
+            ADDED("created"),
+            /**
+             * Sort by title alphabetically.
+             */
+            TITLE("title");
+
+            private final String value;
+            Sort(String value) {
+                this.value = value;
+            }
+            public String getValue() {
+                return value;
+            }
+            @Override
+            public String toString() {
+                return value;
+            }
+        }
+
+        /**
+         * Available sort orders.
+         */
+        public enum Order {
+            /**
+             * Ascending order.
+             */
+            ASC("asc"),
+            /**
+             * Descending order.
+             */
+            DESC("desc");
+
+            private final String value;
+            Order(String value) {
+                this.value = value;
+            }
+            public String getValue() {
+                return value;
+            }
+            @Override
+            public String toString() {
+                return value;
+            }
+        }
+
+        /**
+         * Extended document views. The view specifies which additional fields are returned for document objects.
+         * All views return core fields.
+         */
+        public enum View {
+            /**
+             * Core + bibliographic fields.
+             */
+            BIB("bib"),
+            /**
+             * Core + client fields.
+             */
+            CLIENT("client"),
+            /**
+             * Core + bibliographic + client fields.
+             */
+            ALL("all");
+
+            private final String value;
+            View(String value) {
+                this.value = value;
+            }
+            public String getValue() {
+                return value;
+            }
+            @Override
+            public String toString() {
+                return value;
+            }
+        }
+    }
 }

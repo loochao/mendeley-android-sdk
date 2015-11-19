@@ -3,9 +3,6 @@ package com.mendeley.api.request.endpoint;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
-import com.mendeley.api.request.params.DocumentRequestParameters;
-import com.mendeley.api.request.params.Sort;
-import com.mendeley.api.request.params.View;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Arrays;
@@ -54,8 +51,8 @@ public class DocumentRequestTest extends SignedInTest {
         }
 
         // WHEN getting documents
-        final DocumentRequestParameters params = new DocumentRequestParameters();
-        params.sort = Sort.TITLE;
+        final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
+        params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
 
         final List<Document> actual = getRequestFactory().getDocuments(params).run().resource;
 
@@ -78,9 +75,9 @@ public class DocumentRequestTest extends SignedInTest {
         }
 
         // WHEN getting documents
-        final DocumentRequestParameters params = new DocumentRequestParameters();
+        final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.limit = pageSize;
-        params.sort = Sort.TITLE;
+        params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
 
         Request<List<Document>>.Response response = getRequestFactory().getDocuments(params).run();
 
@@ -177,7 +174,7 @@ public class DocumentRequestTest extends SignedInTest {
         AssertUtils.assertDocument(docPatching, returnedDoc);
 
         // ...and the server has updated the doc
-        final Document docAfter = getRequestFactory().getDocument(docPatching.id, View.ALL).run().resource;
+        final Document docAfter = getRequestFactory().getDocument(docPatching.id, DocumentEndpoint.DocumentRequestParameters.View.ALL).run().resource;
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
@@ -200,7 +197,7 @@ public class DocumentRequestTest extends SignedInTest {
         AssertUtils.assertDocument(docPatching, returnedDoc);
 
         // ...and the server has updated the doc
-        final Document docAfter = getRequestFactory().getDocument(docPatching.id, View.ALL).run().resource;
+        final Document docAfter = getRequestFactory().getDocument(docPatching.id, DocumentEndpoint.DocumentRequestParameters.View.ALL).run().resource;
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
@@ -218,7 +215,7 @@ public class DocumentRequestTest extends SignedInTest {
         }
 
         // WHEN requesting deleted doc since that date
-        DocumentRequestParameters params = new DocumentRequestParameters();
+        DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         List<String> deletedDocsIdList = getRequestFactory().getDeletedDocuments(deletedSince, params).run().resource;
 
 

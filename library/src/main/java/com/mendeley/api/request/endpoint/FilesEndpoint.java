@@ -9,7 +9,6 @@ import com.mendeley.api.model.File;
 import com.mendeley.api.request.DeleteAuthorizedRequest;
 import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
-import com.mendeley.api.request.params.FileRequestParameters;
 import com.mendeley.api.util.DateUtils;
 
 import org.json.JSONException;
@@ -20,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -126,4 +126,40 @@ public class FilesEndpoint {
         }
     }
 
+    /**
+     * This class represents parameters for file SDK requests.
+     * <p>
+     * Uninitialised properties will be ignored.
+     */
+    public static class FileRequestParameters {
+        /**
+         * The document ID.
+         */
+        public String documentId;
+
+        /**
+         * The group ID.
+         */
+        public String groupId;
+
+        /**
+         * Returns only files added since this timestamp. Should be supplied in ISO 8601 format.
+         */
+        public Date addedSince;
+
+        /**
+         * Returns files deleted since this timestamp. Should be supplied in ISO 8601 format.
+         */
+        public Date deletedSince;
+
+        /**
+         * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
+         */
+        public Integer limit;
+
+        /**
+         * The catalog ID.
+         */
+        public String catalogId;
+    }
 }

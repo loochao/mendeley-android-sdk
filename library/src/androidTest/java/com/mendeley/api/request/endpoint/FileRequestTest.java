@@ -4,7 +4,6 @@ import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
-import com.mendeley.api.request.params.FileRequestParameters;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Arrays;
@@ -55,7 +54,7 @@ public class FileRequestTest extends SignedInTest {
         }
 
         // WHEN getting files with parameters
-        FileRequestParameters params = new FileRequestParameters();
+        FilesEndpoint.FileRequestParameters params = new FilesEndpoint.FileRequestParameters();
         params.addedSince = currentDate;
         params.documentId = document.id;
 
@@ -88,7 +87,7 @@ public class FileRequestTest extends SignedInTest {
         }
 
         // WHEN getting files
-        final FileRequestParameters params = new FileRequestParameters();
+        final FilesEndpoint.FileRequestParameters params = new FilesEndpoint.FileRequestParameters();
         params.limit = pageSize;
 
         Request<List<File>>.Response response = getRequestFactory().getFiles(params).run();

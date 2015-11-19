@@ -5,7 +5,6 @@ import com.mendeley.api.model.Document;
 import com.mendeley.api.model.Point;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
-import com.mendeley.api.request.params.AnnotationRequestParameters;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.Arrays;
@@ -52,7 +51,7 @@ public class AnnotationRequestTest extends SignedInTest {
         }
 
         // WHEN getting annotations
-        AnnotationRequestParameters params = new AnnotationRequestParameters();
+        AnnotationsEndpoint.AnnotationRequestParameters params = new AnnotationsEndpoint.AnnotationRequestParameters();
         params.documentId = postedDocument.id;
         params.limit = 12;
         final List<Annotation> actual = getRequestFactory().getAnnotations(params).run().resource;
@@ -84,7 +83,7 @@ public class AnnotationRequestTest extends SignedInTest {
         }
 
         // WHEN getting annotations
-        final AnnotationRequestParameters params = new AnnotationRequestParameters();
+        final AnnotationsEndpoint.AnnotationRequestParameters params = new AnnotationsEndpoint.AnnotationRequestParameters();
         params.limit = pageSize;
 
         final List<Annotation> actual = new LinkedList<Annotation>();

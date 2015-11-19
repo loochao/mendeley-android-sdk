@@ -2,7 +2,7 @@ package com.mendeley.api.request;
 
 
 import com.mendeley.api.model.Document;
-import com.mendeley.api.request.params.DocumentRequestParameters;
+import com.mendeley.api.request.endpoint.DocumentEndpoint;
 import com.mendeley.api.testUtils.AssertUtils;
 
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class TrashRequestTest extends SignedInTest {
         getRequestFactory().deleteTrashedDocument(deletingDoc.id).run();
 
         // THEN the document is permanently deleted
-        final DocumentRequestParameters params = new DocumentRequestParameters();
+        final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
 
         final List<String> expectedDeletedDocIds = Arrays.asList(deletingDoc.id);
         final List<String> actualDeletedDocIds = getRequestFactory().getDeletedDocuments(deletedSince, params).run().resource;

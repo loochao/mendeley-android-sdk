@@ -11,7 +11,6 @@ import com.mendeley.api.request.GetAuthorizedRequest;
 import com.mendeley.api.request.JsonParser;
 import com.mendeley.api.request.PatchAuthorizedRequest;
 import com.mendeley.api.request.PostAuthorizedRequest;
-import com.mendeley.api.request.params.FolderRequestParameters;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -278,5 +277,22 @@ public class FolderEndpoint {
         public DeleteDocumentFromFolder(String folderId, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(FolderEndpoint.getDeleteDocumentFromFolderUrl(folderId, documentId), authTokenManager, clientCredentials);
         }
+    }
+
+    /**
+     * This class represents parameters for folder SDK requests.
+     * <p>
+     * Uninitialised properties will be ignored.
+     */
+    public static class FolderRequestParameters {
+        /**
+         * Group ID. If not supplied, returns user folders.
+         */
+        public String groupId;
+
+        /**
+         * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
+         */
+        public Integer limit;
     }
 }

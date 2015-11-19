@@ -5,7 +5,6 @@ import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.api.request.Request;
-import com.mendeley.api.request.params.FolderRequestParameters;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -32,7 +31,7 @@ public class FolderEndpointTest extends AndroidTestCase {
 		String paramsString = "?group_id=" + groupId;; 
 		Uri expectedUrl = Uri.parse(foldersUrl+paramsString);
 
-		FolderRequestParameters params = new FolderRequestParameters();
+		FolderEndpoint.FolderRequestParameters params = new FolderEndpoint.FolderRequestParameters();
 		params.groupId = groupId;
 		
 		Uri url = FolderEndpoint.getGetFoldersUrl(params);
@@ -40,7 +39,7 @@ public class FolderEndpointTest extends AndroidTestCase {
 		assertEquals("Get folders url with parameters is wrong", expectedUrl, url);
 		
 		expectedUrl = Uri.parse(foldersUrl);
-		params = new FolderRequestParameters();
+		params = new FolderEndpoint.FolderRequestParameters();
 		url = FolderEndpoint.getGetFoldersUrl(params);
 		
 		assertEquals("Get folders url without parameters is wrong", expectedUrl, url);

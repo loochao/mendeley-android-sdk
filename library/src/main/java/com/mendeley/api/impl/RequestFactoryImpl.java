@@ -27,13 +27,6 @@ import com.mendeley.api.request.endpoint.GroupsEndpoint;
 import com.mendeley.api.request.endpoint.ProfilesEndpoint;
 import com.mendeley.api.request.endpoint.RecentlyReadEndpoint;
 import com.mendeley.api.request.endpoint.TrashEndpoint;
-import com.mendeley.api.request.params.AnnotationRequestParameters;
-import com.mendeley.api.request.params.CatalogDocumentRequestParameters;
-import com.mendeley.api.request.params.DocumentRequestParameters;
-import com.mendeley.api.request.params.FileRequestParameters;
-import com.mendeley.api.request.params.FolderRequestParameters;
-import com.mendeley.api.request.params.GroupRequestParameters;
-import com.mendeley.api.request.params.View;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -59,11 +52,11 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<Document>> getDocuments() {
-        return getDocuments((DocumentRequestParameters) null);
+        return getDocuments((DocumentEndpoint.DocumentRequestParameters) null);
     }
 
     @Override
-    public Request<List<Document>> getDocuments(DocumentRequestParameters parameters) {
+    public Request<List<Document>> getDocuments(DocumentEndpoint.DocumentRequestParameters parameters) {
         return new DocumentEndpoint.GetDocumentsRequest(parameters, false, authTokenManager, clientCredentials);
     }
 
@@ -73,12 +66,12 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<Document> getDocument(String documentId, View view) {
+    public Request<Document> getDocument(String documentId, DocumentEndpoint.DocumentRequestParameters.View view) {
         return new DocumentEndpoint.GetDocumentRequest(documentId, view, authTokenManager, clientCredentials);
     }
 
     @Override
-    public Request<List<String>> getDeletedDocuments(Date deletedSince, DocumentRequestParameters parameters)  {
+    public Request<List<String>> getDeletedDocuments(Date deletedSince, DocumentEndpoint.DocumentRequestParameters parameters)  {
         return new DocumentEndpoint.GetDeletedDocumentsRequest(parameters, deletedSince, authTokenManager, clientCredentials);
     }
 
@@ -127,11 +120,11 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<Annotation>> getAnnotations() {
-        return getAnnotations((AnnotationRequestParameters) null);
+        return getAnnotations((AnnotationsEndpoint.AnnotationRequestParameters) null);
     }
 
     @Override
-    public Request<List<Annotation>> getAnnotations(AnnotationRequestParameters parameters) {
+    public Request<List<Annotation>> getAnnotations(AnnotationsEndpoint.AnnotationRequestParameters parameters) {
         return new AnnotationsEndpoint.GetAnnotationsRequest(parameters, authTokenManager, clientCredentials);
     }
 
@@ -164,11 +157,11 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<File>> getFiles() {
-        return getFiles((FileRequestParameters) null);
+        return getFiles((FilesEndpoint.FileRequestParameters) null);
     }
 
     @Override
-    public Request<List<File>> getFiles(FileRequestParameters parameters) {
+    public Request<List<File>> getFiles(FilesEndpoint.FileRequestParameters parameters) {
         return new FilesEndpoint.GetFilesRequest(parameters, authTokenManager, clientCredentials);
     }
 
@@ -196,11 +189,11 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<Folder>> getFolders() {
-        return getFolders((FolderRequestParameters) null);
+        return getFolders((FolderEndpoint.FolderRequestParameters) null);
     }
 
     @Override
-    public Request<List<Folder>> getFolders(FolderRequestParameters parameters) {
+    public Request<List<Folder>> getFolders(FolderEndpoint.FolderRequestParameters parameters) {
         return new FolderEndpoint.GetFoldersRequest(parameters, authTokenManager, clientCredentials);
     }
 
@@ -225,7 +218,7 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<String>> getFolderDocumentIds(FolderRequestParameters parameters, String folderId) {
+    public Request<List<String>> getFolderDocumentIds(FolderEndpoint.FolderRequestParameters parameters, String folderId) {
         return new FolderEndpoint.GetFolderDocumentIdsRequest(parameters, folderId, authTokenManager, clientCredentials);
     }
 
@@ -265,7 +258,7 @@ public class RequestFactoryImpl implements RequestsFactory {
     /* GROUPS */
 
     @Override
-    public Request<List<Group>> getGroups(GroupRequestParameters parameters) {
+    public Request<List<Group>> getGroups(GroupsEndpoint.GroupRequestParameters parameters) {
         return new GroupsEndpoint.GetGroupsRequest(parameters, authTokenManager, clientCredentials);
     }
 
@@ -280,7 +273,7 @@ public class RequestFactoryImpl implements RequestsFactory {
     }
 
     @Override
-    public Request<List<UserRole>> getGroupMembers(GroupRequestParameters parameters, String groupId) {
+    public Request<List<UserRole>> getGroupMembers(GroupsEndpoint.GroupRequestParameters parameters, String groupId) {
         return new GroupsEndpoint.GetGroupMembersRequest(parameters, groupId, authTokenManager, clientCredentials);
     }
 
@@ -294,11 +287,11 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<Document>> getTrashedDocuments(){
-        return getTrashedDocuments((DocumentRequestParameters) null);
+        return getTrashedDocuments((DocumentEndpoint.DocumentRequestParameters) null);
     }
 
     @Override
-    public Request<List<Document>> getTrashedDocuments(DocumentRequestParameters parameters) {
+    public Request<List<Document>> getTrashedDocuments(DocumentEndpoint.DocumentRequestParameters parameters) {
         return new DocumentEndpoint.GetDocumentsRequest(parameters, true, authTokenManager, clientCredentials);
     }
 
@@ -315,12 +308,12 @@ public class RequestFactoryImpl implements RequestsFactory {
     /* CATALOG  */
 
     @Override
-    public Request<List<Document>> getCatalogDocuments(CatalogDocumentRequestParameters parameters) {
+    public Request<List<Document>> getCatalogDocuments(CatalogEndpoint.CatalogDocumentRequestParameters parameters) {
         return new CatalogEndpoint.GetCatalogDocumentsRequest(parameters, authTokenManager, clientCredentials);
     }
 
     @Override
-    public Request<Document> getCatalogDocument(String catalogId, View view) {
+    public Request<Document> getCatalogDocument(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view) {
         return new CatalogEndpoint.GetCatalogDocumentRequest(catalogId, view, authTokenManager, clientCredentials);
     }
 
