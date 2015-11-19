@@ -34,6 +34,8 @@ public abstract class Request<ResultType> {
         httpHeaderDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
+    private final Uri uri;
+
     private static Date parseHeaderDate(String serverDateStr) {
         try {
             return httpHeaderDateFormat.parse(serverDateStr);
@@ -47,12 +49,17 @@ public abstract class Request<ResultType> {
     protected final AuthTokenManager authTokenManager;
     protected final ClientCredentials clientCredentials;
 
-    public abstract Response run() throws MendeleyException;
-
-    public Request(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public Request(Uri uri, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        this.uri = uri;
         this.authTokenManager = authTokenManager;
         this.clientCredentials = clientCredentials;
     }
+
+    public final Uri getUrl() {
+        return uri;
+    }
+
+    public abstract Response run() throws MendeleyException;
 
     public final void cancel() {
         cancelled = true;

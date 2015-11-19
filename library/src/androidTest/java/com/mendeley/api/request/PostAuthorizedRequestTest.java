@@ -3,8 +3,6 @@ package com.mendeley.api.request;
 import android.net.Uri;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.mendeley.api.testUtils.SignInException;
-
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -20,7 +18,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
     private String postedBody;
 
     @Override
-    protected void setUp() throws InterruptedException, SignInException {
+    protected void setUp() throws InterruptedException {
         super.setUp();
         postedBody = "the posted body";
     }

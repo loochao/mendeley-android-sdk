@@ -1,7 +1,10 @@
 package com.mendeley.api.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +13,6 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.mendeley.api.R;
-import com.mendeley.api.util.Utils;
 
 /**
  * Display the screen to sign in or sign up, with buttons to sign in or create an account.
@@ -41,7 +43,7 @@ public class SignInOrSignUpActivity extends Activity implements OnClickListener 
      */
 	@Override
 	public void onClick(View v) {
-		if (!Utils.isOnline(this)) {
+		if (!isOnline(this)) {
 			Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -93,5 +95,11 @@ public class SignInOrSignUpActivity extends Activity implements OnClickListener 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
+	}
+
+	private boolean isOnline(Context context) {
+		final ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+		return activeNetwork != null && activeNetwork.isAvailable() && activeNetwork.isConnected();
 	}
 }

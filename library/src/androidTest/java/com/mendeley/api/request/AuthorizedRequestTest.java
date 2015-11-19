@@ -4,7 +4,6 @@ package com.mendeley.api.request;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.testUtils.SignInException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +13,7 @@ public abstract class AuthorizedRequestTest extends SignedInTest {
     private AuthorizedRequest<JSONObject> request;
 
     @Override
-    protected void setUp() throws InterruptedException, SignInException {
+    protected void setUp() throws InterruptedException {
         super.setUp();
         request = createRequest();
     }

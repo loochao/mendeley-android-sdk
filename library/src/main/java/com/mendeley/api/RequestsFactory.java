@@ -1,4 +1,4 @@
-package com.mendeley.api.impl;
+package com.mendeley.api;
 
 import android.net.Uri;
 

@@ -26,14 +26,14 @@ import java.util.List;
 public class AuthTokenRefreshRequest extends Request<Void> {
 
     public AuthTokenRefreshRequest(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(authTokenManager, clientCredentials);
+        super(Uri.parse(AuthTokenManager.TOKENS_URL), authTokenManager, clientCredentials);
     }
 
     @Override
     public Response run() throws MendeleyException {
         try {
             final HttpClient httpclient = new DefaultHttpClient();
-            final HttpPost httppost = new HttpPost(AuthTokenManager.TOKENS_URL);
+            final HttpPost httppost = new HttpPost(getUrl().toString());
 
             final List<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("grant_type", AuthTokenManager.GRANT_TYPE_REFRESH));
@@ -53,7 +53,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
                     responseString = NetworkUtils.readInputStream(response.getEntity().getContent());
                 } catch (IOException ignored) {
                 }
-                throw new HttpResponseException(statusCode, response.getStatusLine().getReasonPhrase(), Uri.parse(AuthTokenManager.TOKENS_URL), responseString);
+                throw new HttpResponseException(statusCode, response.getStatusLine().getReasonPhrase(), getUrl(), responseString);
             }
 
             final String responseString = NetworkUtils.readInputStream(response.getEntity().getContent());

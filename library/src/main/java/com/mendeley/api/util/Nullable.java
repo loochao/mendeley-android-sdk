@@ -9,5 +9,5 @@ package com.mendeley.api.util;
  */
 public interface Nullable {
 
-    public boolean isNull();
+    boolean isNull();
 }

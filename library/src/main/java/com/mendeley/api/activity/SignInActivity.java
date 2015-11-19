@@ -15,7 +15,7 @@ import android.webkit.WebViewClient;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.R;
-import com.mendeley.api.impl.Mendeley;
+import com.mendeley.api.Mendeley;
 import com.mendeley.api.request.NetworkUtils;
 import com.mendeley.api.request.Request;
 

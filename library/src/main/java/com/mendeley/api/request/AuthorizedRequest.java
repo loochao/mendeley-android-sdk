@@ -1,5 +1,6 @@
 package com.mendeley.api.request;
 
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.mendeley.api.AuthTokenManager;
@@ -18,8 +19,8 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> {
 
-    public AuthorizedRequest(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(authTokenManager, clientCredentials);
+    public AuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        super(url, authTokenManager, clientCredentials);
     }
 
     public final Response run() throws MendeleyException {

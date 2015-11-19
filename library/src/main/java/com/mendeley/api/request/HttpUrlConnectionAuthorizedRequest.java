@@ -26,25 +26,23 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         HttpsURLConnection.setDefaultSSLSocketFactory(new NoSSLv3Factory());
     }
 
-    private final Uri url;
     private RequestProgressListener progressListener;
 
     public HttpUrlConnectionAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(authTokenManager, clientCredentials);
-        this.url = url;
+        super(url, authTokenManager, clientCredentials);
     }
 
     @Override
     public final Response doRun() throws MendeleyException {
-        return doRun(url, 0, true);
+        return doRun(getUrl(), 0, true);
     }
 
-    private Response doRun(Uri uri, int currentRetry, boolean addOauthToken) throws MendeleyException {
+    private Response doRun(Uri url, int currentRetry, boolean addOauthToken) throws MendeleyException {
         InputStream is = null;
         HttpURLConnection con = null;
 
         try {
-            con = createConnection(uri);
+            con = createConnection(url);
 
             if (addOauthToken) {
                 con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
@@ -96,7 +94,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         } catch (IOException ioe) {
             // If the issue is due to IOException, retry up to MAX_HTTP_RETRIES times
             if (currentRetry <  MAX_HTTP_RETRIES) {
-                return doRun(uri, currentRetry + 1, addOauthToken);
+                return doRun(url, currentRetry + 1, addOauthToken);
             } else {
                 throw new MendeleyException("IO error in GET request " + url, ioe);
             }

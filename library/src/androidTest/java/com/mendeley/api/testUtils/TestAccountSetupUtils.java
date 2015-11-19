@@ -5,7 +5,7 @@ import android.util.JsonReader;
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.BuildConfig;
 import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.impl.RequestsFactory;
+import com.mendeley.api.RequestsFactory;
 import com.mendeley.api.model.Annotation;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;

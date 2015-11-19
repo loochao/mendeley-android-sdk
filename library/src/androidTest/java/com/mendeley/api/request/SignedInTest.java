@@ -5,11 +5,10 @@ import android.test.AndroidTestCase;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.impl.RequestFactoryImpl;
-import com.mendeley.api.impl.RequestsFactory;
+import com.mendeley.api.Mendeley;
+import com.mendeley.api.RequestsFactory;
 import com.mendeley.api.testUtils.ClientCredentialsFromAssetsFactory;
 import com.mendeley.api.testUtils.InMemoryAuthTokenManager;
-import com.mendeley.api.testUtils.SignInException;
 import com.mendeley.api.testUtils.TestAccountSetupUtils;
 import com.mendeley.api.testUtils.UsernameAndPasswordSessionManagerFactory;
 
@@ -26,7 +25,7 @@ public abstract class SignedInTest extends AndroidTestCase {
     private Random random;
 
     @Override
-    protected void setUp() throws InterruptedException, SignInException {
+    protected void setUp() throws InterruptedException {
         random = new Random();
 
         final AssetManager assetManager =  getContext().getAssets();
@@ -34,7 +33,7 @@ public abstract class SignedInTest extends AndroidTestCase {
         authTokenManager = new InMemoryAuthTokenManager();
         UsernameAndPasswordSessionManagerFactory.create(assetManager, clientCredentials, authTokenManager).signIn();
 
-        requestsFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
+        requestsFactory = new Mendeley.RequestFactoryImpl(authTokenManager, clientCredentials);
         testAccountSetupUtils = new TestAccountSetupUtils(authTokenManager, requestsFactory);
 
         // reset account

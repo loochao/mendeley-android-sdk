@@ -8,7 +8,6 @@ import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.JsonParsingException;
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.util.DateUtils;
-import com.mendeley.api.util.Utils;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -30,40 +29,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 // TODO try to eliminate Apache HTTP
+@SuppressWarnings("deprecation")
 public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedRequest<ResultType> {
-    private final Uri url;
     private final Date date;
 
     public PatchAuthorizedRequest(Uri url, Date date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(authTokenManager, clientCredentials);
-        this.url = url;
+        super(url, authTokenManager, clientCredentials);
         this.date = date;
     }
 
     @Override
     protected Response doRun() throws MendeleyException {
-        final HttpParams httpParameters = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParameters, CONNECTION_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParameters, READ_TIMEOUT);
-        final HttpClient httpclient = new DefaultHttpClient(httpParameters);
-
-        final HttpPatch httpPatch = new HttpPatch(url.toString());
-        httpPatch.setHeader("Authorization", "Bearer " + authTokenManager.getAccessToken());
-        if (date != null) {
-            httpPatch.setHeader("If-Unmodified-Since", DateUtils.formatMendeleyApiTimestamp(date));
-        }
-
-        final Map<String, String> requestHeaders = new HashMap<>();
-        appendHeaders(requestHeaders);
-        for (String key: requestHeaders.keySet()) {
-            httpPatch.setHeader(key, requestHeaders.get(key));
-        }
-
-        InputStream is = null;
         try {
+
+            final Uri url = getUrl();
+
+            final HttpParams httpParameters = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParameters, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpParameters, READ_TIMEOUT);
+            final HttpClient httpclient = new DefaultHttpClient(httpParameters);
+
+            final HttpPatch httpPatch = new HttpPatch(url.toString());
+            httpPatch.setHeader("Authorization", "Bearer " + authTokenManager.getAccessToken());
+            if (date != null) {
+                httpPatch.setHeader("If-Unmodified-Since", DateUtils.formatMendeleyApiTimestamp(date));
+            }
+
+            final Map<String, String> requestHeaders = new HashMap<>();
+            appendHeaders(requestHeaders);
+            for (String key: requestHeaders.keySet()) {
+                httpPatch.setHeader(key, requestHeaders.get(key));
+            }
+
             httpPatch.setEntity(createPatchingEntity());
 
-            HttpResponse response = httpclient.execute(httpPatch);
+            final HttpResponse response = httpclient.execute(httpPatch);
 
             final int responseCode = response.getStatusLine().getStatusCode();
 
@@ -83,8 +83,6 @@ public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedReque
             throw new JsonParsingException("Error parsing model to patch", e);
         } catch (Exception e) {
             throw new MendeleyException(e.getMessage(), e);
-        } finally {
-            Utils.closeQuietly(is);
         }
     }
 

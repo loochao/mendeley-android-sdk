@@ -3,8 +3,6 @@ package com.mendeley.api.request;
 import android.net.Uri;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.mendeley.api.testUtils.SignInException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
@@ -18,7 +16,7 @@ public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
     private String patchedBody;
 
     @Override
-    protected void setUp() throws InterruptedException, SignInException {
+    protected void setUp() throws InterruptedException {
         super.setUp();
         patchedBody = "the patched body";
     }

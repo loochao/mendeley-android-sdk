@@ -33,109 +33,8 @@ import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
 public class DocumentEndpoint {
 
-	public static String DOCUMENTS_BASE_URL = MENDELEY_API_BASE_URL + "documents";
-    public static String  DOCUMENTS_CONTENT_TYPE = "application/vnd.mendeley-document.1+json";
-
-    /* URLS */
-
-    /**
-     * Building the url for deleting document
-     *
-     * @param documentId the id of the document to delete
-     * @return the url string
-     */
-    public static Uri getDeleteDocumentUrl(String documentId) {
-        return Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId);
-    }
-
-    /**
-     * Building the url for post trash document
-     *
-     * @param documentId the id of the document to trash
-     * @return the url string
-     */
-    public static Uri getTrashDocumentUrl(String documentId) {
-        return Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId + "/trash");
-    }
-
-    /**
-     * Builds the url for get document
-     *
-     * @param documentId the document id
-     * @return the url string
-     */
-    public static Uri getGetDocumentUrl(String documentId, DocumentRequestParameters.View view) {
-        StringBuilder url = new StringBuilder();
-        url.append(DOCUMENTS_BASE_URL);
-        url.append("/").append(documentId);
-
-        if (view != null) {
-            url.append("?").append("view=" + view);
-        }
-
-        return Uri.parse(url.toString());
-    }
-
-    /**
-	 * Building the url for get documents
-	 * 
-	 * @return the url string
-	 */
-    public static Uri getGetDocumentsUrl(DocumentRequestParameters params, Date deletedSince) {
-    	return getGetDocumentsUrl(DOCUMENTS_BASE_URL, params, deletedSince);
-    }
-    
-    /**
-	 * Building the url for get trashed documents
-	 * 
-	 * @return the url string
-	 */
-    public static Uri getTrashDocumentsUrl(DocumentRequestParameters params, Date deletedSince) {
-    	return getGetDocumentsUrl(TrashEndpoint.BASE_URL, params, deletedSince);
-    }
-
-    private static Uri getGetDocumentsUrl(String baseUrl, DocumentRequestParameters params, Date deletedSince) {
-        final Uri.Builder bld = Uri.parse(baseUrl).buildUpon();
-
-        if (params != null) {
-            if (params.view != null) {
-                bld.appendQueryParameter("view", params.view.getValue());
-            }
-            if (params.groupId != null) {
-                bld.appendQueryParameter("group_id", params.groupId);
-            }
-            if (params.modifiedSince != null) {
-                bld.appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(params.modifiedSince));
-            }
-            if (params.limit != null) {
-                bld.appendQueryParameter("limit", String.valueOf(params.limit));
-            }
-            if (params.reverse != null) {
-                bld.appendQueryParameter("reverse", String.valueOf(params.reverse));
-            }
-            if (params.order != null) {
-                bld.appendQueryParameter("order", params.order.getValue());
-            }
-            if (params.sort != null) {
-                bld.appendQueryParameter("sort", params.sort.getValue());
-            }
-            if (deletedSince != null) {
-                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince));
-            }
-        }
-
-        return bld.build();
-    }
-
-	/**
-	 * Building the url for patch document
-	 * 
-	 * @param documentId the id of the document to patch
-	 * @return the url string
-	 */
-	public static Uri getPatchDocumentUrl(String documentId) {
-		return Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId);
-	}
+    public static String DOCUMENTS_BASE_URL = MENDELEY_API_BASE_URL + "documents";
+    public static String DOCUMENTS_CONTENT_TYPE = "application/vnd.mendeley-document.1+json";
 
     /* PROCEDURES */
 
@@ -144,9 +43,8 @@ public class DocumentEndpoint {
             super(url, authTokenManager, clientCredentials);
         }
 
-        // TODO: put trashed as a field in the parameters
-        public GetDocumentsRequest(DocumentRequestParameters parameters, boolean trashed, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(trashed ? DocumentEndpoint.getTrashDocumentsUrl(parameters, null) : getGetDocumentsUrl(parameters, null), authTokenManager, clientCredentials);
+        public GetDocumentsRequest(DocumentEndpoint.DocumentRequestParameters params, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(params != null ? params.appendToUi(Uri.parse(DOCUMENTS_BASE_URL), null) : Uri.parse(DOCUMENTS_BASE_URL), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -157,17 +55,18 @@ public class DocumentEndpoint {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
+            headers.put("Content-type", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
         }
-   }
+    }
 
+    // TODO: put this a case of GetDocumentsRequest with one parameter
     public static class GetDeletedDocumentsRequest extends GetAuthorizedRequest<List<String>> {
         public GetDeletedDocumentsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
-        public GetDeletedDocumentsRequest(DocumentRequestParameters parameters, Date deletedSince, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(getGetDocumentsUrl(parameters, deletedSince), authTokenManager, clientCredentials);
+        public GetDeletedDocumentsRequest(DocumentRequestParameters params, Date deletedSince, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(params != null ? params.appendToUi(Uri.parse(DOCUMENTS_BASE_URL), deletedSince) : Uri.parse(DOCUMENTS_BASE_URL), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -184,6 +83,18 @@ public class DocumentEndpoint {
 
 
     public static class GetDocumentRequest extends GetAuthorizedRequest<Document> {
+
+        private static Uri getGetDocumentUrl(String documentId, DocumentRequestParameters.View view) {
+            StringBuilder url = new StringBuilder();
+            url.append(DOCUMENTS_BASE_URL);
+            url.append("/").append(documentId);
+
+            if (view != null) {
+                url.append("?").append("view=" + view);
+            }
+
+            return Uri.parse(url.toString());
+        }
 
         public GetDocumentRequest(String documentId, DocumentRequestParameters.View view, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(getGetDocumentUrl(documentId, view), authTokenManager, clientCredentials);
@@ -230,10 +141,11 @@ public class DocumentEndpoint {
     }
 
     public static class PatchDocumentAuthorizedRequest extends PatchAuthorizedRequest<Document> {
+
         private final Document document;
 
         public PatchDocumentAuthorizedRequest(String documentId, Document document, Date date, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getPatchDocumentUrl(documentId), date, authTokenManager, clientCredentials);
+            super(Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId), date, authTokenManager, clientCredentials);
             this.document = document;
         }
 
@@ -257,7 +169,7 @@ public class DocumentEndpoint {
 
     public static class TrashDocumentRequest extends PostAuthorizedRequest<Void> {
         public TrashDocumentRequest(String documentId,  AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getTrashDocumentUrl(documentId), authTokenManager, clientCredentials);
+            super(Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId + "/trash"), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -272,8 +184,9 @@ public class DocumentEndpoint {
     }
 
     public static class DeleteDocumentRequest extends DeleteAuthorizedRequest<Void> {
+
         public DeleteDocumentRequest(String documentId,  AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(DocumentEndpoint.getDeleteDocumentUrl(documentId), authTokenManager, clientCredentials);
+            super(Uri.parse(DOCUMENTS_BASE_URL + "/" + documentId), authTokenManager, clientCredentials);
         }
     }
 
@@ -317,6 +230,39 @@ public class DocumentEndpoint {
          * The field to sort on.
          */
         public Sort sort;
+
+
+        Uri appendToUi(Uri uri, Date deletedSince) {
+            final Uri.Builder bld = uri.buildUpon();
+
+            if (view != null) {
+                bld.appendQueryParameter("view", view.getValue());
+            }
+            if (groupId != null) {
+                bld.appendQueryParameter("group_id", groupId);
+            }
+            if (modifiedSince != null) {
+                bld.appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(modifiedSince));
+            }
+            if (limit != null) {
+                bld.appendQueryParameter("limit", String.valueOf(limit));
+            }
+            if (reverse != null) {
+                bld.appendQueryParameter("reverse", String.valueOf(reverse));
+            }
+            if (order != null) {
+                bld.appendQueryParameter("order", order.getValue());
+            }
+            if (sort != null) {
+                bld.appendQueryParameter("sort", sort.getValue());
+            }
+            if (deletedSince != null) {
+                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince));
+            }
+
+
+            return bld.build();
+        }
 
         /**
          * Available fields to sort lists by.
