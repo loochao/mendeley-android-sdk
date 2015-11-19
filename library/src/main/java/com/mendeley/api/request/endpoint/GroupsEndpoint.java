@@ -44,18 +44,14 @@ public class GroupsEndpoint {
      * @return the url string
      */
     public static Uri getGetGroupsUrl(GroupRequestParameters params, String requestUrl) {
-        StringBuilder url = new StringBuilder();
-
-        url.append(requestUrl == null ? GROUP_BASE_URL : requestUrl);
+        final Uri.Builder bld = Uri.parse(requestUrl == null ? GROUP_BASE_URL : requestUrl).buildUpon();
 
         if (params != null) {
-            boolean firstParam = true;
             if (params.limit != null) {
-                url.append(firstParam ? "?" : "&").append("limit=" + params.limit);
-                firstParam = false;
+                bld.appendQueryParameter("limit", String.valueOf(params.limit));
             }
         }
-        return Uri.parse(url.toString());
+        return bld.build();
     }
 
     /**

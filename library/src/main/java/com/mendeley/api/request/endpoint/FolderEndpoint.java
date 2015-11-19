@@ -43,23 +43,18 @@ public class FolderEndpoint {
      * @return the url string
      */
     public static Uri getGetFoldersUrl(FolderRequestParameters params, String requestUrl) {
-        StringBuilder url = new StringBuilder();
-
-        url.append(requestUrl==null? FOLDERS_BASE_URL :requestUrl);
+        final Uri.Builder bld = Uri.parse(requestUrl==null? FOLDERS_BASE_URL :requestUrl).buildUpon();
 
         if (params != null) {
-            boolean firstParam = true;
             if (params.groupId != null) {
-                url.append(firstParam?"?":"&").append("group_id="+params.groupId);
-                firstParam = false;
+                bld.appendQueryParameter("group_id", String.valueOf(params.groupId));
             }
             if (params.limit != null) {
-                url.append(firstParam?"?":"&").append("limit="+params.limit);
-                firstParam = false;
+                bld.appendQueryParameter("limit", String.valueOf(params.limit));
             }
         }
 
-        return Uri.parse(url.toString());
+        return bld.build();
     }
 
     public static Uri getGetFoldersUrl(FolderRequestParameters params) {

@@ -40,27 +40,27 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
     }
 
     private Response doRun(Uri uri, int currentRetry, boolean addOauthToken) throws MendeleyException {
-
         InputStream is = null;
         HttpURLConnection con = null;
 
         try {
             con = createConnection(uri);
-            con.setConnectTimeout(CONNECTION_TIMEOUT);
-            con.setReadTimeout(READ_TIMEOUT);
-
-            // the redirection in implemented by us
-            con.setInstanceFollowRedirects(false);
 
             if (addOauthToken) {
                 con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
             }
+
+            con.setConnectTimeout(CONNECTION_TIMEOUT);
+            con.setReadTimeout(READ_TIMEOUT);
 
             final Map<String, String> requestHeaders = new HashMap<String, String>();
             appendHeaders(requestHeaders);
             for (String key: requestHeaders.keySet()) {
                 con.addRequestProperty(key, requestHeaders.get(key));
             }
+
+            // the redirection in implemented by us
+            con.setInstanceFollowRedirects(false);
 
             con.connect();
 

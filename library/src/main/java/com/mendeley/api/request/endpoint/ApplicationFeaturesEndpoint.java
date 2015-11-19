@@ -25,9 +25,9 @@ public class ApplicationFeaturesEndpoint {
     private final static String APPLICATION_FEATURES_BASE_URL = MENDELEY_API_BASE_URL + "/application_features";
     private static String APPLICATION_FEATURES_CONTENT_TYPE;
 
-    public static class GetApplicationFeaturesProcedure extends GetAuthorizedRequest<List<String>> {
+    public static class GetApplicationFeaturesRequest extends GetAuthorizedRequest<List<String>> {
 
-        public GetApplicationFeaturesProcedure(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        public GetApplicationFeaturesRequest(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(Uri.parse(APPLICATION_FEATURES_BASE_URL), authTokenManager, clientCredentials);
         }
 

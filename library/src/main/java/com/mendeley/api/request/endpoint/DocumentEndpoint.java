@@ -24,8 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -95,55 +93,39 @@ public class DocumentEndpoint {
     public static Uri getTrashDocumentsUrl(DocumentRequestParameters params, Date deletedSince) {
     	return getGetDocumentsUrl(TrashEndpoint.BASE_URL, params, deletedSince);
     }
-    
-	private static Uri getGetDocumentsUrl(String baseUrl, DocumentRequestParameters params, Date deletedSince)  {
-        try {
-            StringBuilder url = new StringBuilder();
-            url.append(baseUrl);
-            StringBuilder paramsString = new StringBuilder();
 
-            if (params != null) {
-                boolean firstParam = true;
-                if (params.view != null) {
-                    paramsString.append("?").append("view=").append(params.view);
-                    firstParam = false;
-                }
-                if (params.groupId != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("group_id=").append(params.groupId);
-                    firstParam = false;
-                }
-                if (params.modifiedSince != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("modified_since=").append(URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.modifiedSince), "ISO-8859-1"));
-                    firstParam = false;
-                }
-                if (params.limit != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("limit=").append(params.limit);
-                    firstParam = false;
-                }
-                if (params.reverse != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("reverse=").append(params.reverse);
-                    firstParam = false;
-                }
-                if (params.order != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("order=").append(params.order);
-                    firstParam = false;
-                }
-                if (params.sort != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("sort=").append(params.sort);
-                }
-                if (deletedSince != null) {
-                    final String deletedSinceStr = DateUtils.formatMendeleyApiTimestamp(deletedSince);
-                    paramsString.append(firstParam ? "?" : "&").append("deleted_since=").append(URLEncoder.encode(deletedSinceStr, "ISO-8859-1"));
-                }
+    private static Uri getGetDocumentsUrl(String baseUrl, DocumentRequestParameters params, Date deletedSince) {
+        final Uri.Builder bld = Uri.parse(baseUrl).buildUpon();
+
+        if (params != null) {
+            if (params.view != null) {
+                bld.appendQueryParameter("view", params.view.getValue());
             }
-
-            url.append(paramsString.toString());
-            return Uri.parse(url.toString());
-
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(e);
+            if (params.groupId != null) {
+                bld.appendQueryParameter("group_id", params.groupId);
+            }
+            if (params.modifiedSince != null) {
+                bld.appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(params.modifiedSince));
+            }
+            if (params.limit != null) {
+                bld.appendQueryParameter("limit", String.valueOf(params.limit));
+            }
+            if (params.reverse != null) {
+                bld.appendQueryParameter("reverse", String.valueOf(params.reverse));
+            }
+            if (params.order != null) {
+                bld.appendQueryParameter("order", params.order.getValue());
+            }
+            if (params.sort != null) {
+                bld.appendQueryParameter("sort", params.sort.getValue());
+            }
+            if (deletedSince != null) {
+                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince));
+            }
         }
-	}
+
+        return bld.build();
+    }
 
 	/**
 	 * Building the url for patch document

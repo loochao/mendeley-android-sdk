@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ReadPositionRequestTest extends SignedInTest {
+public class RecentlyReadRequestTest extends SignedInTest {
 
 
     @LargeTest

@@ -46,45 +46,36 @@ public class CatalogEndpoint {
     }
 
     private static Uri getCatalogGetDocumentsUrl(String baseUrl, CatalogDocumentRequestParameters params) {
-        StringBuilder url = new StringBuilder();
-        url.append(baseUrl);
-        StringBuilder paramsString = new StringBuilder();
+        final Uri.Builder bld = Uri.parse(baseUrl).buildUpon();
 
         if (params != null) {
-            boolean firstParam = true;
             if (params.view != null) {
-                paramsString.append(firstParam ? "?" : "&").append("view=" + params.view);
-                firstParam = false;
+                bld.appendQueryParameter("view", params.view.getValue());
             }
             if (params.arxiv != null) {
-                paramsString.append(firstParam ? "?" : "&").append("arxiv=" + params.arxiv);
-                firstParam = false;
+                bld.appendQueryParameter("arxiv", params.arxiv);
             }
             if (params.doi != null) {
-                paramsString.append(firstParam ? "?" : "&").append("doi=" + params.doi);
-                firstParam = false;
+                bld.appendQueryParameter("doi", params.doi);
             }
             if (params.isbn != null) {
-                paramsString.append(firstParam ? "?" : "&").append("isbn=" + params.isbn);
-                firstParam = false;
+                bld.appendQueryParameter("isbn", params.isbn);
             }
             if (params.issn != null) {
-                paramsString.append(firstParam ? "?" : "&").append("issn=" + params.issn);
-                firstParam = false;
+                bld.appendQueryParameter("issn", params.issn);
             }
             if (params.pmid != null) {
-                paramsString.append(firstParam ? "?" : "&").append("pmid=" + params.pmid);
+                bld.appendQueryParameter("pmid", params.pmid);
             }
             if (params.scopus != null) {
-                paramsString.append(firstParam ? "?" : "&").append("scopus=" + params.scopus);
+                bld.appendQueryParameter("scopus", params.scopus);
             }
             if (params.filehash != null) {
-                paramsString.append(firstParam ? "?" : "&").append("filehash=" + params.filehash);
+                bld.appendQueryParameter("filehash", params.filehash);
             }
         }
 
-        url.append(paramsString.toString());
-        return Uri.parse(url.toString());
+        return bld.build();
     }
 
     public static class GetCatalogDocumentsRequest extends GetAuthorizedRequest<List<Document>> {

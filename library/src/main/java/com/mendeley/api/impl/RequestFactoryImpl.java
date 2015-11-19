@@ -331,7 +331,7 @@ public class RequestFactoryImpl implements RequestsFactory {
 
     @Override
     public Request<List<String>> getApplicationFeatures() {
-        return new ApplicationFeaturesEndpoint.GetApplicationFeaturesProcedure(authTokenManager, clientCredentials);
+        return new ApplicationFeaturesEndpoint.GetApplicationFeaturesRequest(authTokenManager, clientCredentials);
     }
 
 }

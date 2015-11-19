@@ -17,8 +17,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,45 +34,32 @@ public class FilesEndpoint {
      *
      * @param params the file request parameters
      * @return the url string
-     * @throws UnsupportedEncodingException
      */
     public static Uri getGetFilesUrl(FileRequestParameters params) {
-        try {
-            StringBuilder url = new StringBuilder();
-            url.append(FILES_BASE_URL);
+        final Uri.Builder bld = Uri.parse(FILES_BASE_URL).buildUpon();
 
-            if (params != null) {
-                boolean firstParam = true;
-                if (params.documentId != null) {
-                    url.append(firstParam ? "?" : "&").append("document_id=" + params.documentId);
-                    firstParam = false;
-                }
-                if (params.groupId != null) {
-                    url.append(firstParam ? "?" : "&").append("group_id=" + params.groupId);
-                    firstParam = false;
-                }
-                if (params.addedSince != null) {
-                    url.append(firstParam ? "?" : "&").append("added_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.addedSince), "ISO-8859-1"));
-                    firstParam = false;
-                }
-                if (params.deletedSince != null) {
-                    url.append(firstParam ? "?" : "&").append("deleted_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.deletedSince), "ISO-8859-1"));
-                    firstParam = false;
-                }
-                if (params.limit != null) {
-                    url.append(firstParam ? "?" : "&").append("limit=" + params.limit);
-                    firstParam = false;
-                }
-                if (params.catalogId != null) {
-                    url.append(firstParam ? "?" : "&").append("catalog_id=" + params.catalogId);
-                    firstParam = false;
-                }
+        if (params != null) {
+            if (params.documentId != null) {
+                bld.appendQueryParameter("document_id", params.documentId);
             }
-
-            return Uri.parse(url.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Could not parse date", e);
+            if (params.groupId != null) {
+                bld.appendQueryParameter("group_id", params.groupId);
+            }
+            if (params.addedSince != null) {
+                bld.appendQueryParameter("added_since", DateUtils.formatMendeleyApiTimestamp(params.addedSince));
+            }
+            if (params.deletedSince != null) {
+                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(params.deletedSince));
+            }
+            if (params.limit != null) {
+                bld.appendQueryParameter("limit", String.valueOf(params.limit));
+            }
+            if (params.catalogId != null) {
+                bld.appendQueryParameter("catalog_id", params.catalogId);
+            }
         }
+
+        return bld.build();
     }
 
     /**

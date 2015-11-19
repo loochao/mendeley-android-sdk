@@ -34,25 +34,20 @@ public class RecentlyReadEndpoint {
 
 
     public static Uri getGetRecentlyReadUrl(String groupId, String fileId, int limit) {
-        StringBuilder url = new StringBuilder();
-        url.append(RECENTLY_READ_BASE_URL);
-
-        boolean firstParam = true;
+        final Uri.Builder bld = Uri.parse(RECENTLY_READ_BASE_URL).buildUpon();
 
         // groupId
         if (groupId != null) {
-            url.append(firstParam ? "?" : "&").append("groupId=" + groupId);
-            firstParam = false;
+            bld.appendQueryParameter("groupId", groupId);
         }
         // fileId
         if (fileId != null) {
-            url.append(firstParam ? "?" : "&").append("fileId=" + fileId);
-            firstParam = false;
+            bld.appendQueryParameter("fileId", fileId);
         }
         // limit
-        url.append(firstParam ? "?" : "&").append("limit=" + limit);
+        bld.appendQueryParameter("limit", String.valueOf(limit));
 
-        return Uri.parse(url.toString());
+        return bld.build();
     }
 
     public static class GetRecentlyReadRequest extends GetAuthorizedRequest<List<ReadPosition>> {

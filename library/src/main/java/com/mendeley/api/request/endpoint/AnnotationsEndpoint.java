@@ -24,8 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -48,46 +46,30 @@ public class AnnotationsEndpoint {
     }
 
 	public static Uri getAnnotationsUrl(AnnotationRequestParameters params) {
-		StringBuilder url = new StringBuilder();
-		url.append(ANNOTATIONS_BASE_URL);
+        final Uri.Builder bld = Uri.parse(ANNOTATIONS_BASE_URL).buildUpon();
 
-        try {
-            if (params != null) {
-                StringBuilder paramsString = new StringBuilder();
-                boolean firstParam = true;
-                if (params.documentId != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("document_id=" + params.documentId);
-                    firstParam = false;
-                }
-                if (params.groupId != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("group_id=" + params.groupId);
-                    firstParam = false;
-                }
-                if (params.includeTrashed != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("include_trashed=" + params.includeTrashed);
-                    firstParam = false;
-                }
-                if (params.modifiedSince != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("modified_since="
-                            + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.modifiedSince), "ISO-8859-1"));
-                    firstParam = false;
-                }
-                if (params.deletedSince != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("deleted_since="
-                            + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(params.deletedSince), "ISO-8859-1"));
-                    firstParam = false;
-                }
-                if (params.limit != null) {
-                    paramsString.append(firstParam ? "?" : "&").append("limit=" + params.limit);
-                    firstParam = false;
-                }
-                url.append(paramsString.toString());
+        if (params != null) {
+            if (params.documentId != null) {
+                bld.appendQueryParameter("document_id", params.documentId);
             }
-
-            return Uri.parse(url.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Could not parse date", e);
+            if (params.groupId != null) {
+                bld.appendQueryParameter("group_id", params.groupId);
+            }
+            if (params.includeTrashed != null) {
+                bld.appendQueryParameter("include_trashed", String.valueOf(params.includeTrashed));
+            }
+            if (params.modifiedSince != null) {
+                bld.appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(params.modifiedSince));
+           }
+            if (params.deletedSince != null) {
+                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(params.deletedSince));
+            }
+            if (params.limit != null) {
+                bld.appendQueryParameter("limit", String.valueOf(params.limit));
+            }
         }
+
+        return bld.build();
 	}
 
 
