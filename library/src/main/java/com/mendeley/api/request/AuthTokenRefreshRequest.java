@@ -1,7 +1,6 @@
 package com.mendeley.api.request;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
@@ -9,19 +8,14 @@ import com.mendeley.api.exceptions.AuthenticationException;
 import com.mendeley.api.exceptions.HttpResponseException;
 import com.mendeley.api.exceptions.MendeleyException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class AuthTokenRefreshRequest extends Request<Void> {
 
@@ -31,57 +25,65 @@ public class AuthTokenRefreshRequest extends Request<Void> {
 
     @Override
     public Response run() throws MendeleyException {
+        HttpsURLConnection con = null;
         try {
-            final HttpClient httpclient = new DefaultHttpClient();
-            final HttpPost httppost = new HttpPost(getUrl().toString());
+            con = (HttpsURLConnection) new URL(getUrl().toString()).openConnection();
+            con.setRequestMethod("POST");
+            con.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-            final List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("grant_type", AuthTokenManager.GRANT_TYPE_REFRESH));
-            nameValuePairs.add(new BasicNameValuePair("redirect_uri", clientCredentials.redirectUri));
-            nameValuePairs.add(new BasicNameValuePair("client_id", clientCredentials.clientId));
-            nameValuePairs.add(new BasicNameValuePair("client_secret", clientCredentials.clientSecret));
-            nameValuePairs.add(new BasicNameValuePair("refresh_token", authTokenManager.getRefreshToken()));
+            con.setDoInput(true);
+            con.setDoOutput(true);
 
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            final String urlEncodedForm = new Uri.Builder()
+                    .appendQueryParameter("grant_type", AuthTokenManager.GRANT_TYPE_REFRESH)
+                    .appendQueryParameter("redirect_uri", clientCredentials.redirectUri)
+                    .appendQueryParameter("client_id", clientCredentials.clientId)
+                    .appendQueryParameter("client_secret", clientCredentials.clientSecret)
+                    .appendQueryParameter("refresh_token", authTokenManager.getRefreshToken())
+                    .build()
+                    .getEncodedQuery();
 
-            final HttpResponse response = httpclient.execute(httppost);
-            final int statusCode = response.getStatusLine().getStatusCode();
+
+            //Send request
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream ());
+            wr.writeBytes (urlEncodedForm);
+            wr.flush ();
+            wr.close ();
+
+            final int statusCode = con.getResponseCode();
 
             if (statusCode != 200) {
-                String responseString = null;
+                String responseBody = "";
                 try {
-                    responseString = NetworkUtils.readInputStream(response.getEntity().getContent());
+                    responseBody = NetworkUtils.readInputStream(con.getInputStream());
                 } catch (IOException ignored) {
                 }
-                throw new HttpResponseException(statusCode, response.getStatusLine().getReasonPhrase(), getUrl(), responseString);
+                throw new HttpResponseException(statusCode, con.getResponseMessage(), getUrl(), responseBody);
             }
 
-            final String responseString = NetworkUtils.readInputStream(response.getEntity().getContent());
+            final String responseString = NetworkUtils.readInputStream(con.getInputStream());
             onJsonStringResult(responseString);
+
         } catch (Exception e) {
             throw new AuthenticationException("Cannot refresh token", e);
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
         }
 
         return null;
     }
 
+    private void onJsonStringResult(String jsonTokenString) throws JSONException {
+        final JSONObject tokenObject = new JSONObject(jsonTokenString);
 
-    private boolean onJsonStringResult(String jsonTokenString) {
-        try {
-            final JSONObject tokenObject = new JSONObject(jsonTokenString);
+        final String accessToken = tokenObject.getString("access_token");
+        final String refreshToken = tokenObject.getString("refresh_token");
+        final String tokenType = tokenObject.getString("token_type");
+        final int expiresIn = tokenObject.getInt("expires_in");
 
-            final String accessToken = tokenObject.getString("access_token");
-            final String refreshToken = tokenObject.getString("refresh_token");
-            final String tokenType = tokenObject.getString("token_type");
-            final int expiresIn = tokenObject.getInt("expires_in");
-
-            authTokenManager.saveTokens(accessToken, refreshToken, tokenType, expiresIn);
-            return true;
-        } catch (JSONException e) {
-            // If the client credentials are incorrect, the tokenString contains an error message
-            Log.e(Request.class.getSimpleName(), "Could not parse the json response with the auth tokens: " + jsonTokenString, e);
-            return false;
-        }
+        authTokenManager.saveTokens(accessToken, refreshToken, tokenType, expiresIn);
     }
 
 }
