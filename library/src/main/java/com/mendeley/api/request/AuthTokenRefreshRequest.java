@@ -30,7 +30,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
     }
 
     @Override
-    public Response<Void> run() throws MendeleyException {
+    public Response run() throws MendeleyException {
         try {
             final HttpClient httpclient = new DefaultHttpClient();
             final HttpPost httppost = new HttpPost(AuthTokenManager.TOKENS_URL);
@@ -79,7 +79,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
             return true;
         } catch (JSONException e) {
             // If the client credentials are incorrect, the tokenString contains an error message
-            Log.e(TAG, "Could not parse the json response with the auth tokens: " + jsonTokenString, e);
+            Log.e(Request.class.getSimpleName(), "Could not parse the json response with the auth tokens: " + jsonTokenString, e);
             return false;
         }
     }

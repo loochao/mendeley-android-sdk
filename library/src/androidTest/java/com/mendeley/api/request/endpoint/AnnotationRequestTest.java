@@ -88,7 +88,7 @@ public class AnnotationRequestTest extends SignedInTest {
         params.limit = pageSize;
 
         final List<Annotation> actual = new LinkedList<Annotation>();
-        Request.Response<List<Annotation>> response = getRequestFactory().getAnnotations(params).run();
+        Request<List<Annotation>>.Response response = getRequestFactory().getAnnotations(params).run();
 
         // THEN we receive an annotations list...
         for (int page = 0; page < pageCount; page++) {

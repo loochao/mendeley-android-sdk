@@ -69,7 +69,7 @@ public class GroupRequestTest extends SignedInTest {
         params.limit = pageSize;
 
         final List<Group> actual = new LinkedList<Group>();
-        Request.Response<List<Group>> response = getRequestFactory().getGroups(params).run();
+        Request<List<Group>>.Response response = getRequestFactory().getGroups(params).run();
 
 
         // THEN we receive a group list...

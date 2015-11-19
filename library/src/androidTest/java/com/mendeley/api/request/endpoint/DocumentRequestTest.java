@@ -82,7 +82,7 @@ public class DocumentRequestTest extends SignedInTest {
         params.limit = pageSize;
         params.sort = Sort.TITLE;
 
-        Request.Response<List<Document>> response = getRequestFactory().getDocuments(params).run();
+        Request<List<Document>>.Response response = getRequestFactory().getDocuments(params).run();
 
         // THEN we receive a document list...
         for (int page = 0; page < pageCount; page++) {

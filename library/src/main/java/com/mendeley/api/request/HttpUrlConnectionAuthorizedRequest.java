@@ -1,7 +1,6 @@
 package com.mendeley.api.request;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.ClientCredentials;
@@ -36,17 +35,19 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
     }
 
     @Override
-    public final Response<ResultType> doRun() throws MendeleyException {
+    public final Response doRun() throws MendeleyException {
         return doRun(url, 0, true);
     }
 
-    private Response<ResultType> doRun(Uri uri, int currentRetry, boolean addOauthToken) throws MendeleyException {
+    private Response doRun(Uri uri, int currentRetry, boolean addOauthToken) throws MendeleyException {
 
         InputStream is = null;
         HttpURLConnection con = null;
 
         try {
             con = createConnection(uri);
+            con.setConnectTimeout(CONNECTION_TIMEOUT);
+            con.setReadTimeout(READ_TIMEOUT);
 
             // the redirection in implemented by us
             con.setInstanceFollowRedirects(false);
@@ -86,7 +87,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
             is = new MyProgressPublisherInputStream(con.getInputStream(), con.getContentLength());
 
             final Map<String, List<String>> responseHeaders = con.getHeaderFields();
-            return new Response<>(manageResponse(is), getServerDateString(responseHeaders), getNextPage(responseHeaders));
+            return new Response(manageResponse(is), getServerDateString(responseHeaders), getNextPage(responseHeaders));
 
         } catch (MendeleyException me) {
             throw me;
@@ -95,7 +96,6 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         } catch (IOException ioe) {
             // If the issue is due to IOException, retry up to MAX_HTTP_RETRIES times
             if (currentRetry <  MAX_HTTP_RETRIES) {
-                Log.w(TAG, "Problem connecting to " + url+ ". Retrying (" + (currentRetry + 1) + "/" + MAX_HTTP_RETRIES + ")");
                 return doRun(uri, currentRetry + 1, addOauthToken);
             } else {
                 throw new MendeleyException("IO error in GET request " + url, ioe);
@@ -121,7 +121,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
      * - if redirected to Amazon or other server, we don't want to forward the Mendeley auth jeader
      * - ... but the redirection that HttpUrlConnection does forwards the header
      */
-    private Response<ResultType> followRedirection(HttpURLConnection con) throws MendeleyException {
+    private Response followRedirection(HttpURLConnection con) throws MendeleyException {
         final Uri redirectionUri = Uri.parse(con.getHeaderField("location"));
         final boolean addOauthToken = redirectionUri.getHost().equals(Uri.parse(MENDELEY_API_BASE_URL).getHost());
         return doRun(redirectionUri, 0, addOauthToken);

@@ -41,7 +41,7 @@ public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedReque
     }
 
     @Override
-    protected Response<ResultType> doRun() throws MendeleyException {
+    protected Response doRun() throws MendeleyException {
         final HttpParams httpParameters = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParameters, CONNECTION_TIMEOUT);
         HttpConnectionParams.setSoTimeout(httpParameters, READ_TIMEOUT);
@@ -77,7 +77,7 @@ public abstract class PatchAuthorizedRequest<ResultType> extends AuthorizedReque
             }
 
             final HttpEntity responseEntity = response.getEntity();
-            return new Response<>(manageResponse(responseEntity.getContent()), getServerDate(response));
+            return new Response(manageResponse(responseEntity.getContent()), getServerDate(response));
 
         } catch (JSONException e) {
             throw new JsonParsingException("Error parsing model to patch", e);

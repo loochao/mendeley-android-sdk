@@ -19,21 +19,35 @@ import java.util.TimeZone;
  */
 public abstract class Request<ResultType> {
 
-    protected static final String TAG = Request.class.getSimpleName();
+    // RFC 7231 format, used for Dates in HTTP headers.
+    private final static SimpleDateFormat httpHeaderDateFormat;
 
-    public static final int CONNECTION_TIMEOUT = 1500;
-    public static final int READ_TIMEOUT = 15000 ;
     public static final String MENDELEY_API_BASE_URL = BuildConfig.WEB_API_BASE_URL;
-
-    protected final AuthTokenManager authTokenManager;
-    protected final ClientCredentials clientCredentials;
+    protected static final int CONNECTION_TIMEOUT = 1500;
+    protected static final int READ_TIMEOUT = 15000 ;
 
     // Number of times to retry failed HTTP requests due to IOExceptions.
     protected static final int MAX_HTTP_RETRIES = 0;
 
-    public abstract Response<ResultType> run() throws MendeleyException;
+    static {
+        httpHeaderDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss 'GMT'", Locale.US);
+        httpHeaderDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
+    private static Date parseHeaderDate(String serverDateStr) {
+        try {
+            return httpHeaderDateFormat.parse(serverDateStr);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not parse server date header", e);
+        }
+    }
+
 
     private boolean cancelled;
+    protected final AuthTokenManager authTokenManager;
+    protected final ClientCredentials clientCredentials;
+
+    public abstract Response run() throws MendeleyException;
 
     public Request(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         this.authTokenManager = authTokenManager;
@@ -50,42 +64,26 @@ public abstract class Request<ResultType> {
 
     /**
      * Response of the @{link Request}
-     * @param <T>
      */
-    public static class Response<T> {
-        // RFC 7231 format, used for Dates in HTTP headers.
-        private final static SimpleDateFormat httpHeaderDateFormat;
+    public class Response {
 
-        static {
-            httpHeaderDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss 'GMT'", Locale.US);
-            httpHeaderDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        }
-
-        public final T resource;
+        public final ResultType resource;
         public final Uri next;
 
         public final Date serverDate;
 
-        public Response(T resource, Date serverDate, Uri next) {
+        public Response(ResultType resource, Date serverDate, Uri next) {
             this.resource = resource;
             this.next = next;
             this.serverDate = serverDate;
         }
 
-        public Response(T resource, String serverDateStr, Uri next) {
+        public Response(ResultType resource, String serverDateStr, Uri next) {
             this(resource, parseHeaderDate(serverDateStr), next);
         }
 
-        public Response(T resource, String serverDateStr) {
+        public Response(ResultType resource, String serverDateStr) {
             this(resource, serverDateStr, null);
-        }
-
-        private static Date parseHeaderDate(String serverDateStr) {
-            try {
-                return httpHeaderDateFormat.parse(serverDateStr);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Could not parse server date header", e);
-            }
         }
 
     }

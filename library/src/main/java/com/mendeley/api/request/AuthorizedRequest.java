@@ -22,7 +22,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         super(authTokenManager, clientCredentials);
     }
 
-    public final Response<ResultType> run() throws MendeleyException {
+    public final Response run() throws MendeleyException {
         if (TextUtils.isEmpty(authTokenManager.getAccessToken())) {
             // Must call startSignInProcess first - caller error!
             throw new NotSignedInException();
@@ -48,7 +48,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         new AuthTokenRefreshRequest(authTokenManager, clientCredentials).run();
     }
 
-    protected abstract Response<ResultType> doRun() throws MendeleyException;
+    protected abstract Response doRun() throws MendeleyException;
 
     // TODO: consider dropping this to reduce complexity
     /**

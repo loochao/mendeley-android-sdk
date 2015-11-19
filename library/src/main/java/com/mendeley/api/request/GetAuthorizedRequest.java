@@ -28,10 +28,7 @@ public abstract class GetAuthorizedRequest<ResultType> extends HttpUrlConnection
     protected final HttpsURLConnection createConnection(Uri uri) throws IOException {
         final URL url = new URL(uri.toString());
         final HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-        con.setConnectTimeout(CONNECTION_TIMEOUT);
-        con.setReadTimeout(READ_TIMEOUT);
         con.setRequestMethod("GET");
-
         return con;
     }
 

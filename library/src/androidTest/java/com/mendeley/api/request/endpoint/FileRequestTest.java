@@ -91,7 +91,7 @@ public class FileRequestTest extends SignedInTest {
         final FileRequestParameters params = new FileRequestParameters();
         params.limit = pageSize;
 
-        Request.Response<List<File>> response = getRequestFactory().getFiles(params).run();
+        Request<List<File>>.Response response = getRequestFactory().getFiles(params).run();
 
         final List<File> actual = new LinkedList<File>();
         // THEN we receive a files list...
