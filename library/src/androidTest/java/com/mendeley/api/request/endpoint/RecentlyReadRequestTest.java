@@ -1,12 +1,15 @@
 package com.mendeley.api.request.endpoint;
 
 
+import android.net.Uri;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.api.exceptions.MendeleyException;
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.model.ReadPosition;
+import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.testUtils.AssertUtils;
 
@@ -19,6 +22,24 @@ import java.util.List;
 
 public class RecentlyReadRequestTest extends SignedInTest {
 
+    @SmallTest
+    public void test_getRecentlyRead_usesRightUrl() throws Exception {
+        final String groupId = "groupId" + getRandom().nextInt();
+        final String fileId = "theGroupId" + getRandom().nextInt();
+        final int limit =  getRandom().nextInt();
+
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon()
+                .appendPath("recently_read")
+                .appendQueryParameter("groupId", groupId)
+                .appendQueryParameter("fileId", fileId)
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .build();
+
+
+        final Uri url = getRequestFactory().getRecentlyRead(groupId, fileId, limit).getUrl();
+
+        assertEquals("Request url is wrong", expectedUrl, url);
+    }
 
     @LargeTest
     public void test_getRecentlyRead_receivesCorrectItems() throws Exception {
@@ -34,6 +55,14 @@ public class RecentlyReadRequestTest extends SignedInTest {
 
         // THEN we have the expected recently read positions
         AssertUtils.assertReadPositions(expected, actual);
+    }
+
+    @SmallTest
+    public void test_postRecentlyRead_usesRightUrl() throws Exception {
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL);
+        final Uri url = getRequestFactory().postRecentlyRead(null).getUrl();
+
+        assertEquals("Request url is wrong", expectedUrl, url);
     }
 
     @LargeTest

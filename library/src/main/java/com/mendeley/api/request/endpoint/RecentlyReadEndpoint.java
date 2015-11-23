@@ -33,26 +33,26 @@ public class RecentlyReadEndpoint {
     public static final String RECENTLY_READ_CONTENT_TYPE = "application/vnd.mendeley-recently-read.1+json";
 
 
-    public static Uri getGetRecentlyReadUrl(String groupId, String fileId, int limit) {
-        final Uri.Builder bld = Uri.parse(RECENTLY_READ_BASE_URL).buildUpon();
-
-        // groupId
-        if (groupId != null) {
-            bld.appendQueryParameter("groupId", groupId);
-        }
-        // fileId
-        if (fileId != null) {
-            bld.appendQueryParameter("fileId", fileId);
-        }
-        // limit
-        bld.appendQueryParameter("limit", String.valueOf(limit));
-
-        return bld.build();
-    }
-
     public static class GetRecentlyReadRequest extends GetAuthorizedRequest<List<ReadPosition>> {
+        private static Uri getGetRecentlyReadUrl(String groupId, String fileId, int limit) {
+            final Uri.Builder bld = Uri.parse(RECENTLY_READ_BASE_URL).buildUpon();
+
+            // groupId
+            if (groupId != null) {
+                bld.appendQueryParameter("groupId", groupId);
+            }
+            // fileId
+            if (fileId != null) {
+                bld.appendQueryParameter("fileId", fileId);
+            }
+            // limit
+            bld.appendQueryParameter("limit", String.valueOf(limit));
+
+            return bld.build();
+        }
+
         public GetRecentlyReadRequest(String groupId, String fileId, int limit, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(RecentlyReadEndpoint.getGetRecentlyReadUrl(groupId, fileId, limit), authTokenManager, clientCredentials);
+            super(getGetRecentlyReadUrl(groupId, fileId, limit), authTokenManager, clientCredentials);
         }
 
         @Override
