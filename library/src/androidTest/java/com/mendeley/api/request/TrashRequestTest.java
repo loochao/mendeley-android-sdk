@@ -64,7 +64,7 @@ public class TrashRequestTest extends SignedInTest {
         getRequestFactory().trashDocument(restoredDoc.id);
 
         // WHEN restoring it
-        getRequestFactory().restoreDocument(restoredDoc.id);
+        getRequestFactory().restoreTrashedDocument(restoredDoc.id);
 
         // THEN the document is no longer trashed
         final List<Document> actual   = getRequestFactory().getDocuments().run().resource;

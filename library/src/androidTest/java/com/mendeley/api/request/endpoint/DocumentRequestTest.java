@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 public class DocumentRequestTest extends SignedInTest {
+
     @SmallTest
     public void test_getDocument_usesTheRightUrl_withoutView() throws Exception {
 
@@ -43,55 +44,6 @@ public class DocumentRequestTest extends SignedInTest {
         assertEquals("Get document url with parameters is wrong", expectedUrl, actual);
     }
 
-    @SmallTest
-    public void test_getDeletedDocuments_usesTheRightUrl_withLotsOfParams() throws Exception {
-        DocumentEndpoint.DocumentRequestParameters.View view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
-        String groupId = "test-group_id";
-        Date modifiedSince = DateUtils.parseMendeleyApiTimestamp("2014-02-28T11:52:30.000Z");
-        Date deletedSince = DateUtils.parseMendeleyApiTimestamp("2014-01-21T11:52:30.000Z");
-        int limit = 7;
-        boolean reverse = true;
-        DocumentEndpoint.DocumentRequestParameters.Order order = DocumentEndpoint.DocumentRequestParameters.Order.DESC;
-        DocumentEndpoint.DocumentRequestParameters.Sort sort = DocumentEndpoint.DocumentRequestParameters.Sort.MODIFIED;
-
-        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon()
-                .appendPath("documents")
-                .appendQueryParameter("view", view.getValue())
-                .appendQueryParameter("group_id", groupId)
-                .appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(modifiedSince))
-                .appendQueryParameter("limit", String.valueOf(limit))
-                .appendQueryParameter("reverse", String.valueOf(reverse))
-                .appendQueryParameter("order", order.getValue())
-                .appendQueryParameter("sort", sort.getValue())
-                .appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince))
-                .build();
-
-        DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
-        params.view = view;
-        params.groupId = groupId;
-        params.modifiedSince = modifiedSince;
-        params.limit = 7;
-        params.reverse = true;
-        params.order = order;
-        params.sort = sort;
-        params.deletedSince = deletedSince;
-
-        final Uri url = getRequestFactory().getDocuments(params).getUrl();
-
-        assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
-    }
-
-    @SmallTest
-    public void test_getDeletedDocuments_usesTheRightUrl_withOnlyView() throws Exception {
-        final DocumentEndpoint.DocumentRequestParameters.View view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
-        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendQueryParameter("view", view.getValue()).build();
-
-        final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
-        params.view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
-        final Uri actual = getRequestFactory().getDocuments(params).getUrl();
-
-        assertEquals("Get documents url with parameters is wrong", expectedUrl, actual);
-    }
 
     public void test_getDocuments_withoutParameters_receivesCorrectDocuments() throws Exception {
         // GIVEN some documents
@@ -297,6 +249,55 @@ public class DocumentRequestTest extends SignedInTest {
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
+    @SmallTest
+    public void test_getDeletedDocuments_usesTheRightUrl_withLotsOfParams() throws Exception {
+        DocumentEndpoint.DocumentRequestParameters.View view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
+        String groupId = "test-group_id";
+        Date modifiedSince = DateUtils.parseMendeleyApiTimestamp("2014-02-28T11:52:30.000Z");
+        Date deletedSince = DateUtils.parseMendeleyApiTimestamp("2014-01-21T11:52:30.000Z");
+        int limit = 7;
+        boolean reverse = true;
+        DocumentEndpoint.DocumentRequestParameters.Order order = DocumentEndpoint.DocumentRequestParameters.Order.DESC;
+        DocumentEndpoint.DocumentRequestParameters.Sort sort = DocumentEndpoint.DocumentRequestParameters.Sort.MODIFIED;
+
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon()
+                .appendPath("documents")
+                .appendQueryParameter("view", view.getValue())
+                .appendQueryParameter("group_id", groupId)
+                .appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(modifiedSince))
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .appendQueryParameter("reverse", String.valueOf(reverse))
+                .appendQueryParameter("order", order.getValue())
+                .appendQueryParameter("sort", sort.getValue())
+                .appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince))
+                .build();
+
+        DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
+        params.view = view;
+        params.groupId = groupId;
+        params.modifiedSince = modifiedSince;
+        params.limit = 7;
+        params.reverse = true;
+        params.order = order;
+        params.sort = sort;
+        params.deletedSince = deletedSince;
+
+        final Uri url = getRequestFactory().getDocuments(params).getUrl();
+
+        assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
+    }
+
+    @SmallTest
+    public void test_getDeletedDocuments_usesTheRightUrl_withOnlyView() throws Exception {
+        final DocumentEndpoint.DocumentRequestParameters.View view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendQueryParameter("view", view.getValue()).build();
+
+        final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
+        params.view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
+        final Uri actual = getRequestFactory().getDocuments(params).getUrl();
+
+        assertEquals("Get documents url with parameters is wrong", expectedUrl, actual);
+    }
 
     public void test_getDeletedDocuments_receivesCorrectDocuments() throws Exception {
         // GIVEN some documents deleted after one date

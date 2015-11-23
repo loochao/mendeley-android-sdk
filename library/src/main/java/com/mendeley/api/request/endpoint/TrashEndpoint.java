@@ -59,8 +59,8 @@ public class TrashEndpoint {
         }
     }
 
-    public static class RestoreDocumentRequest extends PostAuthorizedRequest<Void> {
-        public RestoreDocumentRequest(String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public static class RestoreTrashedDocumentRequest extends PostAuthorizedRequest<Void> {
+        public RestoreTrashedDocumentRequest(String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(Uri.parse(BASE_URL).buildUpon().appendPath(documentId).appendPath("restore").build(), authTokenManager, clientCredentials);
         }
 

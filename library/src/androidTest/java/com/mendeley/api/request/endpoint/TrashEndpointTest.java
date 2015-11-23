@@ -1,18 +1,22 @@
 package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
+import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.SmallTest;
 
+import com.mendeley.api.model.Document;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
+import com.mendeley.api.testUtils.AssertUtils;
 import com.mendeley.api.util.DateUtils;
 
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TrashEndpointTest extends SignedInTest {
-
-    // TODO create tests for GET, DELETE and RESTORE
 
     @SmallTest
     public void test_getTrashDocuments_useTheRightUrl_noParams() {
@@ -61,6 +65,27 @@ public class TrashEndpointTest extends SignedInTest {
         assertEquals("Request url is wrong", expectedUrl, actualUrl);
     }
 
+    @LargeTest
+    public void test_getTrashedDocuments_getTheRightDocuments() throws Exception {
+        // GIVEN some deleted documents
+        final List<Document> expected = new LinkedList<Document>();
+        for (int i = 0; i < 5; i++) {
+            final String title = String.format("title %04d", i);
+            final Document doc = getTestAccountSetupUtils().setupDocument(createDocument(title));
+            getTestAccountSetupUtils().trashDocument(doc.id);
+            expected.add(doc);
+        }
+
+        // WHEN getting trashed documents
+        final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
+        params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
+
+        final List<Document> actual = getRequestFactory().getTrashedDocuments(params).run().resource;
+
+        // THEN we have the expected trashed documents
+        AssertUtils.assertDocuments(expected, actual);
+    }
+
 
     @SmallTest
     public void test_deleteTrashDocument_useTheRightUrl() {
@@ -72,13 +97,77 @@ public class TrashEndpointTest extends SignedInTest {
         assertEquals("Request url is wrong", expectedUrl, actual);
     }
 
+    @LargeTest
+    public void test_deleteTrashedDocument_deletesDocInServer() throws Exception {
+        // GIVEN some deleted documents
+        final List<Document> expected = new LinkedList<Document>();
+        for (int i = 0; i < 5; i++) {
+            final String title = String.format("title %04d", i);
+            final Document doc = getTestAccountSetupUtils().setupDocument(createDocument(title));
+            getTestAccountSetupUtils().trashDocument(doc.id);
+            expected.add(doc);
+        }
+
+        // WHEN deleting one of them
+        final Document deletedDocument = expected.remove(getRandom().nextInt(expected.size() -1));
+        getRequestFactory().deleteTrashedDocument(deletedDocument.id).run();
+
+        // THEN we have the expected trashed documents
+        final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
+        params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
+        final List<Document> actual = getRequestFactory().getTrashedDocuments(params).run().resource;
+
+        AssertUtils.assertDocuments(expected, actual);
+    }
+
     @SmallTest
-    public void test_restoreTrashesDocument_useTheRightUrl() {
+    public void test_restoreTrashedDocument_useTheRightUrl() {
         final String docId = "theDocId";
 
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("trash").appendPath(docId).appendPath("restore").build();
-        final Uri actual = getRequestFactory().restoreDocument(docId).getUrl();
+        final Uri actual = getRequestFactory().restoreTrashedDocument(docId).getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, actual);
+    }
+
+    @LargeTest
+    public void test_restoreTrashedDocuments_deletesDocInServer() throws Exception {
+        // GIVEN some deleted documents
+        final List<Document> expectedtrashed = new LinkedList<Document>();
+        for (int i = 0; i < 5; i++) {
+            final String title = String.format("title %04d", i);
+            final Document doc = getTestAccountSetupUtils().setupDocument(createDocument(title));
+            getTestAccountSetupUtils().trashDocument(doc.id);
+            expectedtrashed.add(doc);
+        }
+
+        // WHEN restoring one of them
+        final Document restoredDocument = expectedtrashed.remove(getRandom().nextInt(expectedtrashed.size() -1));
+        getRequestFactory().restoreTrashedDocument(restoredDocument.id).run();
+
+        // THEN we have the expected trashed documents
+        final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
+        params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
+        final List<Document> actualTrashed = getRequestFactory().getTrashedDocuments(params).run().resource;
+
+        AssertUtils.assertDocuments(expectedtrashed, actualTrashed);
+
+        // AND the expected non-trashed documents
+        final List<Document> expectedNonTrashed = Collections.singletonList(restoredDocument);
+        final List<Document> actualNonTrashed = getRequestFactory().getDocuments(params).run().resource;
+
+        AssertUtils.assertDocuments(expectedNonTrashed, actualNonTrashed);
+    }
+
+    private Document createDocument(String title) throws Exception {
+        final Document doc = new Document.Builder().
+                setType("book").
+                setTitle(title).
+                setYear(getRandom().nextInt(2000)).
+                setAbstractString("abstract" + getRandom().nextInt()).
+                setSource("source" + getRandom().nextInt()).
+                build();
+
+        return doc;
     }
 }

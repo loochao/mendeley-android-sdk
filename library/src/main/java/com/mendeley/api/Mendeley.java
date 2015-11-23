@@ -413,8 +413,8 @@ public class Mendeley {
         }
 
         @Override
-        public Request<Void> restoreDocument(String documentId) {
-            return new TrashEndpoint.RestoreDocumentRequest(documentId, authTokenManager, clientCredentials);
+        public Request<Void> restoreTrashedDocument(String documentId) {
+            return new TrashEndpoint.RestoreTrashedDocumentRequest(documentId, authTokenManager, clientCredentials);
         }
 
         /* CATALOG  */

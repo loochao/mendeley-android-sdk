@@ -102,6 +102,11 @@ public class TestAccountSetupUtils{
         return requestFactory.postDocument(doc).run().resource;
     }
 
+    public void trashDocument(String docId) throws MendeleyException {
+        // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
+       requestFactory.trashDocument(docId).run();
+    }
+
     public Annotation setupAnnotation(Annotation annotation) throws MendeleyException {
         // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
         return requestFactory.postAnnotation(annotation).run().resource;

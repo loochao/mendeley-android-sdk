@@ -292,7 +292,7 @@ public interface RequestsFactory {
      *
      * @param documentId id of the document to restore.
      */
-    Request<Void> restoreDocument(String documentId);
+    Request<Void> restoreTrashedDocument(String documentId);
 
     /* PROFILES */
 
