@@ -37,45 +37,9 @@ public class AnnotationsEndpoint {
     public static String ANNOTATIONS_BASE_URL = MENDELEY_API_BASE_URL + "annotations";
     private static String ANNOTATIONS_CONTENT_TYPE = "application/vnd.mendeley-annotation.1+json";
 
-    public static Uri deleteAnnotationUrl(String documentId) {
-        return Uri.parse(ANNOTATIONS_BASE_URL + "/" + documentId);
-    }
-
-    public static Uri getAnnotationUrl(String documentId) {
-        return Uri.parse(ANNOTATIONS_BASE_URL + "/" + documentId);
-    }
-
-	public static Uri getAnnotationsUrl(AnnotationRequestParameters params) {
-        final Uri.Builder bld = Uri.parse(ANNOTATIONS_BASE_URL).buildUpon();
-
-        if (params != null) {
-            if (params.documentId != null) {
-                bld.appendQueryParameter("document_id", params.documentId);
-            }
-            if (params.groupId != null) {
-                bld.appendQueryParameter("group_id", params.groupId);
-            }
-            if (params.includeTrashed != null) {
-                bld.appendQueryParameter("include_trashed", String.valueOf(params.includeTrashed));
-            }
-            if (params.modifiedSince != null) {
-                bld.appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(params.modifiedSince));
-           }
-            if (params.deletedSince != null) {
-                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(params.deletedSince));
-            }
-            if (params.limit != null) {
-                bld.appendQueryParameter("limit", String.valueOf(params.limit));
-            }
-        }
-
-        return bld.build();
-	}
-
-
     public static class GetAnnotationRequest extends GetAuthorizedRequest<Annotation> {
         public GetAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getAnnotationUrl(annotationId), authTokenManager, clientCredentials);
+            super(Uri.parse(ANNOTATIONS_BASE_URL + "/" + annotationId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -91,6 +55,12 @@ public class AnnotationsEndpoint {
     }
 
     public static class GetAnnotationsRequest extends GetAuthorizedRequest<List<Annotation>> {
+
+        private static Uri getAnnotationsUrl(AnnotationRequestParameters params) {
+            final Uri uri = Uri.parse(ANNOTATIONS_BASE_URL);
+            return params != null ? params.appendToUi(uri) : uri;
+        }
+
         public GetAnnotationsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -169,7 +139,7 @@ public class AnnotationsEndpoint {
 
     public static class DeleteAnnotationRequest extends DeleteAuthorizedRequest<Void> {
         public DeleteAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(deleteAnnotationUrl(annotationId), authTokenManager, clientCredentials);
+            super(Uri.parse(ANNOTATIONS_BASE_URL + "/" + annotationId), authTokenManager, clientCredentials);
         }
     }
 
@@ -199,5 +169,33 @@ public class AnnotationsEndpoint {
          * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
          */
         public Integer limit;
+
+
+        Uri appendToUi(Uri uri) {
+            final Uri.Builder bld = uri.buildUpon();
+
+
+            if (documentId != null) {
+                bld.appendQueryParameter("document_id", documentId);
+            }
+            if (groupId != null) {
+                bld.appendQueryParameter("group_id", groupId);
+            }
+            if (includeTrashed != null) {
+                bld.appendQueryParameter("include_trashed", String.valueOf(includeTrashed));
+            }
+            if (modifiedSince != null) {
+                bld.appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(modifiedSince));
+            }
+            if (deletedSince != null) {
+                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince));
+            }
+            if (limit != null) {
+                bld.appendQueryParameter("limit", String.valueOf(limit));
+            }
+
+            return bld.build();
+        }
+
     }
 }

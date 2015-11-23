@@ -14,6 +14,8 @@ import java.util.List;
 
 public class AnnotationRequestTest extends SignedInTest {
 
+    // TODO: create tests for checking that each request use the right URL / parameters are formatted into the correct query string...
+
     public void test_getAnnotations_withoutParameters_receivesCorrectAnnotations() throws Exception {
         // GIVEN some annotations
         final List<Annotation> expected = new LinkedList<Annotation>();

@@ -22,8 +22,8 @@ import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
 public class ApplicationFeaturesEndpoint {
 
-    private final static String APPLICATION_FEATURES_BASE_URL = MENDELEY_API_BASE_URL + "/application_features";
-    private static String APPLICATION_FEATURES_CONTENT_TYPE;
+    public final static String APPLICATION_FEATURES_BASE_URL = MENDELEY_API_BASE_URL + "/application_features";
+    public static String APPLICATION_FEATURES_CONTENT_TYPE;
 
     public static class GetApplicationFeaturesRequest extends GetAuthorizedRequest<List<String>> {
 
