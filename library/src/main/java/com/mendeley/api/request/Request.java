@@ -1,6 +1,7 @@
 package com.mendeley.api.request;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 
 import com.mendeley.api.AuthTokenManager;
 import com.mendeley.api.BuildConfig;
@@ -11,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.Executor;
 
 /**
  * HTTP request launched against the Mendeley Web API.
@@ -44,7 +46,6 @@ public abstract class Request<ResultType> {
         }
     }
 
-
     private boolean cancelled;
     protected final AuthTokenManager authTokenManager;
     protected final ClientCredentials clientCredentials;
@@ -61,6 +62,16 @@ public abstract class Request<ResultType> {
 
     public abstract Response run() throws MendeleyException;
 
+    public final RequestAsyncTask runAsync(final RequestCallback<ResultType> callback) {
+        return runAsync(callback, AsyncTask.SERIAL_EXECUTOR);
+    }
+
+    public final RequestAsyncTask runAsync(final RequestCallback<ResultType> callback, Executor executor) {
+        final RequestAsyncTask task = new RequestAsyncTask(callback);
+        task.executeOnExecutor(executor);
+        return task;
+    }
+
     public final void cancel() {
         cancelled = true;
     }
@@ -68,6 +79,8 @@ public abstract class Request<ResultType> {
     public final boolean isCancelled() {
         return cancelled;
     }
+
+
 
     /**
      * Response of the @{link Request}
@@ -94,4 +107,79 @@ public abstract class Request<ResultType> {
         }
 
     }
+
+    /**
+     * {@link AsyncTask} to execute the {@link Request} asynchronously
+     */
+    public final class RequestAsyncTask extends AsyncTask<Void, Void, RequestResponseMaybe> {
+
+        private final RequestCallback<ResultType> callback;
+
+        public RequestAsyncTask(RequestCallback<ResultType> callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        protected RequestResponseMaybe doInBackground(Void... params) {
+            try {
+                return new RequestResponseMaybe(Request.this.run());
+            } catch (MendeleyException e) {
+                return new RequestResponseMaybe(e);
+            }
+        }
+
+        @Override
+        protected final void onCancelled() {
+            super.onCancelled();
+            Request.this.cancel();
+        }
+
+        @Override
+        protected final void onPostExecute(RequestResponseMaybe maybe) {
+            super.onPostExecute(maybe);
+
+            if (maybe.error != null) {
+                callback.onFailure(maybe.error);
+            } else {
+                callback.onSuccess(maybe.response.resource, maybe.response.next, maybe.response.serverDate);
+            }
+        }
+    }
+
+
+    /**
+     * Callback for when the {@link Request} is executed asynchronously
+     *
+     * @param <ResultType>
+     */
+    public interface RequestCallback<ResultType> {
+        void onSuccess(ResultType resource, Uri next, Date serverDate);
+
+        // FIXME: this includes cancelation - fix later
+        void onFailure(MendeleyException mendeleyException);
+
+    }
+
+    /**
+     * Class for holding the result or the exception of the request
+     */
+    private class RequestResponseMaybe {
+
+        public final Response response;
+        public final MendeleyException error;
+
+        public RequestResponseMaybe(Response response) {
+            this(response, null);
+        }
+
+        public RequestResponseMaybe(MendeleyException error) {
+            this(null, error);
+        }
+
+        private RequestResponseMaybe(Response response, MendeleyException error) {
+            this.response = response;
+            this.error = error;
+        }
+    }
+
 }
