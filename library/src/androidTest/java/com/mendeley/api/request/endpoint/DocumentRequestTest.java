@@ -330,7 +330,6 @@ public class DocumentRequestTest extends SignedInTest {
 
     // TODO: create test for trash document
 
-
     @SmallTest
     public void test_trashedDocument_usesTheRightUrl() throws Exception {
         final String documentId = "docId";
