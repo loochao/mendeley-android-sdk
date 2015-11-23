@@ -31,57 +31,21 @@ public class GroupsEndpoint {
     public static final String GROUP_CONTENT_TYPE = "application/vnd.mendeley-group.1+json";
     public static final String MEMBERSHIP_CONTENT_TYPE = "application/vnd.mendeley-membership.1+json";
 
-    /* URLS */
-
-    public static Uri getGetGroupsUrl(GroupRequestParameters params) {
-        return getGetGroupsUrl(params, null);
-    }
-
-    /**
-     * Builds the url for get groups
-     *
-     * @param params group request parameters object
-     * @return the url string
-     */
-    public static Uri getGetGroupsUrl(GroupRequestParameters params, String requestUrl) {
-        final Uri.Builder bld = Uri.parse(requestUrl == null ? GROUP_BASE_URL : requestUrl).buildUpon();
-
-        if (params != null) {
-            if (params.limit != null) {
-                bld.appendQueryParameter("limit", String.valueOf(params.limit));
-            }
-        }
-        return bld.build();
-    }
-
-    /**
-     * Building the url for get group
-     *
-     * @param groupId the group id to get
-     * @return the url string
-     */
-    public static Uri getGetGroupUrl(String groupId) {
-        return Uri.parse(GROUP_BASE_URL + "/" + groupId);
-    }
-
-    /**
-     * Building the url for get group members
-     *
-     * @param groupId the group id
-     * @return the url string
-     */
-    public static String getGetGroupMembersUrl(String groupId) {
-        return GROUP_BASE_URL + "/" + groupId + "/members";
-    }
-
-
     public static class GetGroupsRequest extends GetAuthorizedRequest<List<Group>> {
+        private static Uri getGetGroupsUrl(GroupRequestParameters params) {
+            final Uri.Builder bld = Uri.parse(GROUP_BASE_URL).buildUpon();
+            if (params == null) {
+                return bld.build();
+            }
+            return params.appendToUi(bld.build());
+        }
+
         public GetGroupsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
-        public GetGroupsRequest(GroupRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(getGetGroupsUrl(parameters), authTokenManager, clientCredentials);
+        public GetGroupsRequest(GroupRequestParameters params, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(getGetGroupsUrl(params), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -98,7 +62,7 @@ public class GroupsEndpoint {
 
     public static class GetGroupRequest extends GetAuthorizedRequest<Group> {
         public GetGroupRequest(String groupId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(GroupsEndpoint.getGetGroupUrl(groupId), authTokenManager, clientCredentials);
+            super(Uri.parse(GROUP_BASE_URL + "/" + groupId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -114,12 +78,20 @@ public class GroupsEndpoint {
     }
 
     public static class GetGroupMembersRequest extends GetAuthorizedRequest<List<UserRole>> {
+        private static Uri getGetGroupMembersUrl(GroupRequestParameters params, String groupId) {
+            final Uri.Builder bld = Uri.parse(GROUP_BASE_URL + "/" + groupId + "/members").buildUpon();
+            if (params == null) {
+                return bld.build();
+            }
+            return params.appendToUi(bld.build());
+        }
+
         public GetGroupMembersRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
         public GetGroupMembersRequest(GroupRequestParameters parameters, String groupId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(getGetGroupsUrl(parameters, getGetGroupMembersUrl(groupId)), authTokenManager, clientCredentials);
+            this(getGetGroupMembersUrl(parameters, groupId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -139,5 +111,15 @@ public class GroupsEndpoint {
          * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
          */
         public Integer limit;
+
+        Uri appendToUi(Uri uri) {
+            final Uri.Builder bld = uri.buildUpon();
+
+            if (limit != null) {
+                bld.appendQueryParameter("limit", String.valueOf(limit));
+            }
+
+            return bld.build();
+        }
     }
 }

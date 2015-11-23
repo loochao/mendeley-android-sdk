@@ -1,5 +1,8 @@
 package com.mendeley.api.request.endpoint;
 
+import android.net.Uri;
+import android.test.suitebuilder.annotation.SmallTest;
+
 import com.mendeley.api.model.Group;
 import com.mendeley.api.model.UserRole;
 import com.mendeley.api.request.Request;
@@ -30,6 +33,68 @@ public class GroupRequestTest extends SignedInTest {
      * through the web interface https://www.mendeley.com/groups/
      * The same is true with the profile ids used in the getGroupMembers test
      */
+
+    @SmallTest
+    public void test_getGroups_usesRightUrl_without_limit() throws Exception {
+
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().
+                appendPath("groups").
+                build();
+        GroupsEndpoint.GroupRequestParameters params = new GroupsEndpoint.GroupRequestParameters();
+
+        Uri actual = getRequestFactory().getGroups(params).getUrl();
+
+        assertEquals("Get groups url without limit is wrong", expectedUrl, actual);
+    }
+
+    @SmallTest
+    public void test_getGroups_usesRightUrl_with_limit() throws Exception {
+        final int limit = 20;
+
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().
+                appendPath("groups")
+                .appendQueryParameter("limit", String.valueOf(limit)).
+                        build();
+        GroupsEndpoint.GroupRequestParameters params = new GroupsEndpoint.GroupRequestParameters();
+        params.limit = limit;
+
+        Uri actual = getRequestFactory().getGroups(params).getUrl();
+
+        assertEquals("Get groups url with limit is wrong", expectedUrl, actual);
+    }
+
+    @SmallTest
+    public void test_getGroup_usesRightUrl() throws Exception {
+
+        final String groupId = "groupId";
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().
+                appendPath("groups").
+                appendPath(groupId).
+                build();
+
+        Uri actual = getRequestFactory().getGroup(groupId).getUrl();
+
+        assertEquals("Get groups url without limit is wrong", expectedUrl, actual);
+    }
+
+    @SmallTest
+    public void test_getGroupMembers_usesRightUrl() throws Exception {
+
+        final String groupId = "groupId";
+        final int limit = 30;
+
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().
+                appendPath("groups").
+                appendPath(groupId).
+                appendPath("members").
+                appendQueryParameter("limit", String.valueOf(limit)).
+                build();
+        GroupsEndpoint.GroupRequestParameters params = new GroupsEndpoint.GroupRequestParameters();
+        params.limit = limit;
+        Uri actual = getRequestFactory().getGroupMembers(params, groupId).getUrl();
+
+        assertEquals("Get groups url without limit is wrong", expectedUrl, actual);
+    }
 
     public void test_getGroups_receivesCorrectGroups() throws Exception {
         // GIVEN some groups on the server
