@@ -29,68 +29,23 @@ public class FilesEndpoint {
     public final static String FILES_BASE_URL = MENDELEY_API_BASE_URL + "files";
     public static final String FILES_CONTENT_TYPE = "application/vnd.mendeley-file.1+json";
 
-    /**
-     * Building the url for get files
-     *
-     * @param params the file request parameters
-     * @return the url string
-     */
-    public static Uri getGetFilesUrl(FileRequestParameters params) {
-        final Uri.Builder bld = Uri.parse(FILES_BASE_URL).buildUpon();
-
-        if (params != null) {
-            if (params.documentId != null) {
-                bld.appendQueryParameter("document_id", params.documentId);
-            }
-            if (params.groupId != null) {
-                bld.appendQueryParameter("group_id", params.groupId);
-            }
-            if (params.addedSince != null) {
-                bld.appendQueryParameter("added_since", DateUtils.formatMendeleyApiTimestamp(params.addedSince));
-            }
-            if (params.deletedSince != null) {
-                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(params.deletedSince));
-            }
-            if (params.limit != null) {
-                bld.appendQueryParameter("limit", String.valueOf(params.limit));
-            }
-            if (params.catalogId != null) {
-                bld.appendQueryParameter("catalog_id", params.catalogId);
-            }
-        }
-
-        return bld.build();
-    }
-
-    /**
-     * Building the url for get files
-     *
-     * @param fileId the id of the file to get
-     * @return the url string
-     */
-    String getGetFileUrl(String fileId) {
-        return FILES_BASE_URL +"/"+fileId;
-    }
-
-    /**
-     * Building the url for delete files
-     *
-     * @param fileId the id of the file to delete
-     * @return the url string
-     */
-    public static Uri getDeleteFileUrl(String fileId) {
-        return Uri.parse(FILES_BASE_URL + "/" + fileId);
-    }
-
     /* PROCEDURES */
 
     public static class GetFilesRequest extends GetAuthorizedRequest<List<File>> {
+        private static Uri getGetFilesUrl(FileRequestParameters params) {
+            final Uri.Builder bld = Uri.parse(FILES_BASE_URL).buildUpon();
+            if (params == null) {
+                return bld.build();
+            }
+            return params.appendToUi(bld.build());
+        }
+
         public GetFilesRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
         public GetFilesRequest(FileRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(FilesEndpoint.getGetFilesUrl(parameters), authTokenManager, clientCredentials);
+            this(getGetFilesUrl(parameters), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -107,7 +62,7 @@ public class FilesEndpoint {
 
     public static class DeleteFileRequest extends DeleteAuthorizedRequest<Void> {
         public DeleteFileRequest(String fileId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(FilesEndpoint.getDeleteFileUrl(fileId), authTokenManager, clientCredentials);
+            super(Uri.parse(FILES_BASE_URL + "/" + fileId), authTokenManager, clientCredentials);
         }
     }
 
@@ -146,5 +101,30 @@ public class FilesEndpoint {
          * The catalog ID.
          */
         public String catalogId;
+
+
+        Uri appendToUi(Uri uri) {
+            final Uri.Builder bld = uri.buildUpon();
+
+            if (documentId != null) {
+                bld.appendQueryParameter("document_id", documentId);
+            }
+            if (groupId != null) {
+                bld.appendQueryParameter("group_id", groupId);
+            }
+            if (addedSince != null) {
+                bld.appendQueryParameter("added_since", DateUtils.formatMendeleyApiTimestamp(addedSince));
+            }
+            if (deletedSince != null) {
+                bld.appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince));
+            }
+            if (limit != null) {
+                bld.appendQueryParameter("limit", String.valueOf(limit));
+            }
+            if (catalogId != null) {
+                bld.appendQueryParameter("catalog_id", catalogId);
+            }
+            return bld.build();
+        }
     }
 }

@@ -1,11 +1,16 @@
 package com.mendeley.api.request.endpoint;
 
+import android.net.Uri;
+import android.test.suitebuilder.annotation.SmallTest;
+
 import com.mendeley.api.model.Document;
 import com.mendeley.api.model.File;
 import com.mendeley.api.request.Request;
 import com.mendeley.api.request.SignedInTest;
 import com.mendeley.api.testUtils.AssertUtils;
+import com.mendeley.api.util.DateUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -13,6 +18,63 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class FileRequestTest extends SignedInTest {
+
+    @SmallTest
+    public void test_getFiles_usesRightUrl() throws Exception {
+
+        String documentId = "test-document_id";
+        String groupId = "test-group_id";
+        Date addedSince = DateUtils.parseMendeleyApiTimestamp("2014-02-28T11:52:30.000Z");
+        Date deletedSince = DateUtils.parseMendeleyApiTimestamp("2014-01-21T11:52:30.000Z");
+
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().
+                appendPath("files").
+                appendQueryParameter("document_id", documentId).
+                appendQueryParameter("group_id", groupId).
+                appendQueryParameter("added_since", DateUtils.formatMendeleyApiTimestamp(addedSince)).
+                appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince)).
+                build();
+
+        FilesEndpoint.FileRequestParameters params = new FilesEndpoint.FileRequestParameters();
+        params.documentId = documentId;
+        params.groupId = groupId;
+        params.addedSince = addedSince;
+        params.deletedSince = deletedSince;
+
+        Uri url = getRequestFactory().getFiles(params).getUrl();
+
+        assertEquals("Get files url with parameters is wrong", expectedUrl, url);
+
+        expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "files");
+        params = new FilesEndpoint.FileRequestParameters();
+        url = getRequestFactory().getFiles(params).getUrl();
+
+        assertEquals("Get files url without parameters is wrong", expectedUrl, url);
+    }
+
+    @SmallTest
+    public void test_getFile_usesRightUrl() throws Exception {
+        final String fileId = "test-file_id";
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().
+                appendPath("files").
+                appendPath(fileId).
+                build();
+        Uri url = getRequestFactory().getFileBinary(fileId, null).getUrl();
+
+        assertEquals("Get file url is wrong", expectedUrl, url);
+    }
+
+    @SmallTest
+    public void test_getDeletedFile_usesRightUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final String fileId = "test-file_id";
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().
+                appendPath("files").
+                appendPath(fileId).
+                build();
+        Uri url = getRequestFactory().deleteFile(fileId).getUrl();
+
+        assertEquals("Delete file url is wrong", expectedUrl, url);
+    }
 
     public void test_getFiles_withoutParameters_receivesCorrectFiles() throws Exception {
         // GIVEN a document with files

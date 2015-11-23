@@ -27,64 +27,18 @@ public class CatalogEndpoint {
     public static String CATALOG_BASE_URL = MENDELEY_API_BASE_URL + "catalog";
     private static String CATALOG_CONTENT_TYPE = DocumentEndpoint.DOCUMENTS_CONTENT_TYPE;
 
-    public static Uri getGetCatalogDocumentUrl(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view) {
-        StringBuilder url = new StringBuilder();
-        url.append(CATALOG_BASE_URL);
-        url.append("/").append(catalogId);
-
-        if (view != null) {
-            url.append("?").append("view=" + view);
-        }
-
-        return Uri.parse(url.toString());
-    }
-
-
-
-    public static Uri getGetCatalogDocumentsUrl(CatalogDocumentRequestParameters params) {
-        return getCatalogGetDocumentsUrl(CATALOG_BASE_URL, params);
-    }
-
-    private static Uri getCatalogGetDocumentsUrl(String baseUrl, CatalogDocumentRequestParameters params) {
-        final Uri.Builder bld = Uri.parse(baseUrl).buildUpon();
-
-        if (params != null) {
-            if (params.view != null) {
-                bld.appendQueryParameter("view", params.view.getValue());
-            }
-            if (params.arxiv != null) {
-                bld.appendQueryParameter("arxiv", params.arxiv);
-            }
-            if (params.doi != null) {
-                bld.appendQueryParameter("doi", params.doi);
-            }
-            if (params.isbn != null) {
-                bld.appendQueryParameter("isbn", params.isbn);
-            }
-            if (params.issn != null) {
-                bld.appendQueryParameter("issn", params.issn);
-            }
-            if (params.pmid != null) {
-                bld.appendQueryParameter("pmid", params.pmid);
-            }
-            if (params.scopus != null) {
-                bld.appendQueryParameter("scopus", params.scopus);
-            }
-            if (params.filehash != null) {
-                bld.appendQueryParameter("filehash", params.filehash);
-            }
-        }
-
-        return bld.build();
-    }
 
     public static class GetCatalogDocumentsRequest extends GetAuthorizedRequest<List<Document>> {
-        public GetCatalogDocumentsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        private static Uri getCatalogDocumentUrl(CatalogDocumentRequestParameters params) {
+            final Uri.Builder bld = Uri.parse(CATALOG_BASE_URL).buildUpon();
+            if (params == null) {
+                return bld.build();
+            }
+            return params.appendToUi(bld.build());
         }
 
-        public GetCatalogDocumentsRequest(CatalogDocumentRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(CatalogEndpoint.getGetCatalogDocumentsUrl(parameters), authTokenManager, clientCredentials);
+        public GetCatalogDocumentsRequest(CatalogDocumentRequestParameters params, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(getCatalogDocumentUrl(params), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -100,8 +54,20 @@ public class CatalogEndpoint {
     }
 
     public static class GetCatalogDocumentRequest extends GetAuthorizedRequest<Document> {
+        private static Uri getGetCatalogDocumentUrl(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view) {
+            StringBuilder url = new StringBuilder();
+            url.append(CATALOG_BASE_URL);
+            url.append("/").append(catalogId);
+
+            if (view != null) {
+                url.append("?").append("view=" + view);
+            }
+
+            return Uri.parse(url.toString());
+        }
+
         public GetCatalogDocumentRequest(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(CatalogEndpoint.getGetCatalogDocumentUrl(catalogId, view), authTokenManager, clientCredentials);
+            super(getGetCatalogDocumentUrl(catalogId, view), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -138,6 +104,37 @@ public class CatalogEndpoint {
         public String filehash;
 
         public DocumentEndpoint.DocumentRequestParameters.View view;
+
+        Uri appendToUi(Uri uri) {
+            final Uri.Builder bld = uri.buildUpon();
+
+            if (view != null) {
+                bld.appendQueryParameter("view", view.getValue());
+            }
+            if (arxiv != null) {
+                bld.appendQueryParameter("arxiv", arxiv);
+            }
+            if (doi != null) {
+                bld.appendQueryParameter("doi", doi);
+            }
+            if (isbn != null) {
+                bld.appendQueryParameter("isbn", isbn);
+            }
+            if (issn != null) {
+                bld.appendQueryParameter("issn", issn);
+            }
+            if (pmid != null) {
+                bld.appendQueryParameter("pmid", pmid);
+            }
+            if (scopus != null) {
+                bld.appendQueryParameter("scopus", scopus);
+            }
+            if (filehash != null) {
+                bld.appendQueryParameter("filehash", filehash);
+            }
+
+            return bld.build();
+        }
 
     }
 }
