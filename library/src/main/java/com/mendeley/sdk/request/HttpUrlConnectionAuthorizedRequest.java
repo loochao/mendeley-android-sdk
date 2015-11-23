@@ -6,6 +6,7 @@ import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
+import com.mendeley.sdk.exceptions.UserCancelledException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +15,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -53,7 +55,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
 
             final Map<String, String> requestHeaders = new HashMap<String, String>();
             appendHeaders(requestHeaders);
-            for (String key: requestHeaders.keySet()) {
+            for (String key : requestHeaders.keySet()) {
                 con.addRequestProperty(key, requestHeaders.get(key));
             }
 
@@ -75,20 +77,24 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
                 String responseString = null;
                 try {
                     responseString = NetworkUtils.readInputStream(con.getInputStream());
-                } catch (IOException ignored) {}
+                } catch (IOException ignored) {
+                }
 
                 throw new HttpResponseException(responseCode, con.getResponseMessage(), url, responseString);
             }
 
-            // wrapping the input stream of the connection in one ProgressPublisherInputStream
-            // to publish progress as the file is being read
-            is = new MyProgressPublisherInputStream(con.getInputStream(), con.getContentLength());
+            // wrapping the input stream of the connection in:
+            // -- CancellableInputStream to stop reading if the request has been cancelled
+            // -- ProgressPublisherInputStream to publish progress as the file is being read
+            is = new MyCancellableInputStream(new MyProgressPublisherInputStream(con.getInputStream(), con.getContentLength()));
 
             final Map<String, List<String>> responseHeaders = con.getHeaderFields();
             return new Response(manageResponse(is), getServerDateString(responseHeaders), getNextPage(responseHeaders));
 
         } catch (MendeleyException me) {
             throw me;
+        } catch (CancellationException ce) {
+            throw new UserCancelledException();
         } catch (ParseException pe) {
             throw new MendeleyException("Could not parse a date in the JSON response " + url, pe);
         } catch (IOException ioe) {
@@ -165,6 +171,20 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
             }
         }
         return null;
+    }
+
+    /**
+     * Implementation of {@link CancellableInputStream} that stops reading when the reuqest has been cancelled
+     */
+    private class MyCancellableInputStream extends CancellableInputStream {
+        public MyCancellableInputStream(InputStream delegate) {
+            super(delegate);
+        }
+
+        @Override
+        protected boolean isCancelled() {
+            return HttpUrlConnectionAuthorizedRequest.this.isCancelled();
+        }
     }
 
     /**

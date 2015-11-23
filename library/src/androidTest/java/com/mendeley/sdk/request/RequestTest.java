@@ -3,6 +3,7 @@ package com.mendeley.sdk.request;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
+import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.sdk.exceptions.MendeleyException;
@@ -64,7 +65,7 @@ public class RequestTest extends AndroidTestCase {
         final Request<Thread> request = new Request<Thread>(null, null, null) {
             @Override
             public Response run() throws MendeleyException {
-                return new Response(Thread.currentThread(), (Date) null, null);
+                return new Response(Thread.currentThread(), new Date(), null);
             }
         };
 
@@ -93,9 +94,86 @@ public class RequestTest extends AndroidTestCase {
     }
 
 
+    @LargeTest
+    public void test_run_invokesOnSuccessOverTheCallback_whenRunIsSuccesfull() throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        // GIVEN a request that runs until cancelled
+        final Request<Void> request = new Request<Void>(null, null, null) {
+            @Override
+            public Response run() throws MendeleyException {
+                return new Response(null, new Date(), null);
+            }
+        };
+
+        // WHEN the asynctask is cancelled
+        final TestRequestCallback<Void> callback = new TestRequestCallback<>(latch);
+        request.runAsync(callback);
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        // THEN the right callback was invoked
+        assertTrue("OnSuccess callback invoked", callback.onSuccessExecuted);
+    }
+
+    @SmallTest
+    public void test_run_invokesOnSuccessOverTheCallback_whenRunFails() throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        // GIVEN a request that runs until cancelled
+        final Request<Void> request = new Request<Void>(null, null, null) {
+            @Override
+            public Response run() throws MendeleyException {
+                throw new MendeleyException("crap");
+            }
+        };
+
+        // WHEN the asynctask is cancelled
+        final TestRequestCallback<Void> callback = new TestRequestCallback<>(latch);
+        request.runAsync(callback);
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        // THEN the right callback was invoked
+        assertTrue("OnSuccess callback invoked", callback.onFailureExecuted);
+    }
+
+    @SmallTest
+    public void test_cancel_invokesOnCanceledOverTheCallback() throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        // GIVEN a request that runs until cancelled
+        final Request<Void> request = new Request<Void>(null, null, null) {
+            @Override
+            public Response run() throws MendeleyException {
+                try {
+                    while (!isCancelled()) {
+                        Thread.sleep(1000);
+                    }
+                } catch (Exception ignored) {
+                }
+                return null;
+            }
+        };
+
+        // WHEN the asynctask is cancelled
+        final TestRequestCallback<Void> callback = new TestRequestCallback<>(latch);
+        request.runAsync(callback);
+        request.cancel();
+
+        latch.await(10, TimeUnit.SECONDS);
+
+        // THEN the right callback was invoked
+        assertTrue("Cancelled callback invoked", callback.onCancelledExecuted);
+    }
+
     private class TestRequestCallback<T> implements Request.RequestCallback<T> {
         private final CountDownLatch latch;
         public T resource;
+
+        private boolean onSuccessExecuted;
+        private boolean onFailureExecuted;
+        private boolean onCancelledExecuted;
 
         public TestRequestCallback(CountDownLatch latch) {
             this.latch = latch;
@@ -104,12 +182,21 @@ public class RequestTest extends AndroidTestCase {
         @Override
         public void onSuccess(T resource, Uri next, Date serverDate) {
             this.resource = resource;
+            onSuccessExecuted = true;
             latch.countDown();
         }
 
         @Override
         public void onFailure(MendeleyException mendeleyException) {
+            onFailureExecuted = true;
             latch.countDown();
         }
+
+        @Override
+        public void onCancelled() {
+            onCancelledExecuted = true;
+            latch.countDown();
+        }
+
     }
 }

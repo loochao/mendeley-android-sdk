@@ -62,14 +62,13 @@ public abstract class Request<ResultType> {
 
     public abstract Response run() throws MendeleyException;
 
-    public final RequestAsyncTask runAsync(final RequestCallback<ResultType> callback) {
-        return runAsync(callback, AsyncTask.SERIAL_EXECUTOR);
+    public final void runAsync(final RequestCallback<ResultType> callback) {
+        runAsync(callback, AsyncTask.SERIAL_EXECUTOR);
     }
 
-    public final RequestAsyncTask runAsync(final RequestCallback<ResultType> callback, Executor executor) {
+    public final void runAsync(final RequestCallback<ResultType> callback, Executor executor) {
         final RequestAsyncTask task = new RequestAsyncTask(callback);
         task.executeOnExecutor(executor);
-        return task;
     }
 
     public final void cancel() {
@@ -128,17 +127,22 @@ public abstract class Request<ResultType> {
             }
         }
 
+
         @Override
         protected final void onCancelled() {
             super.onCancelled();
-            Request.this.cancel();
+            if (callback != null) {
+                callback.onCancelled();
+            }
         }
 
         @Override
         protected final void onPostExecute(RequestResponseMaybe maybe) {
             super.onPostExecute(maybe);
 
-            if (maybe.error != null) {
+            if (Request.this.isCancelled()) {
+                callback.onCancelled();
+            } else if (maybe.error != null) {
                 callback.onFailure(maybe.error);
             } else {
                 callback.onSuccess(maybe.response.resource, maybe.response.next, maybe.response.serverDate);
@@ -155,9 +159,9 @@ public abstract class Request<ResultType> {
     public interface RequestCallback<ResultType> {
         void onSuccess(ResultType resource, Uri next, Date serverDate);
 
-        // FIXME: this includes cancelation - fix later
         void onFailure(MendeleyException mendeleyException);
 
+        void onCancelled();
     }
 
     /**
