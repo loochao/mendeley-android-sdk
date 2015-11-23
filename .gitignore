@@ -7,6 +7,7 @@ library/src/debug/assets/config.properties
 library/src/productionDebug/
 library/src/stagingDebug/
 
+example/src/main/assets/config.properties
 example/src/debug/assets/config.properties
 example/src/productionDebug/
 example/src/stagingDebug/
