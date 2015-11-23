@@ -16,7 +16,7 @@ import com.mendeley.api.request.endpoint.AnnotationsEndpoint;
 import com.mendeley.api.request.endpoint.CatalogEndpoint;
 import com.mendeley.api.request.endpoint.DocumentEndpoint;
 import com.mendeley.api.request.endpoint.FilesEndpoint;
-import com.mendeley.api.request.endpoint.FolderEndpoint;
+import com.mendeley.api.request.endpoint.FoldersEndpoint;
 import com.mendeley.api.request.endpoint.GroupsEndpoint;
 
 import java.io.InputStream;
@@ -153,7 +153,7 @@ public interface RequestsFactory {
     /**
      * Return metadata for all the user's folders.
      */
-    Request<List<Folder>> getFolders(FolderEndpoint.FolderRequestParameters parameters);
+    Request<List<Folder>> getFolders(FoldersEndpoint.FolderRequestParameters parameters);
 
     /**
      * Return metadata for all the user's folders.
@@ -197,7 +197,7 @@ public interface RequestsFactory {
      *
      * @param folderId ID of the folder to inspect.
      */
-    Request<List<String>> getFolderDocumentIds(FolderEndpoint.FolderRequestParameters parameters, String folderId);
+    Request<List<String>> getFolderDocumentIds(FoldersEndpoint.FolderRequestParameters parameters, String folderId);
 
     /**
      * Returns the next page of document IDs stored in a particular folder.

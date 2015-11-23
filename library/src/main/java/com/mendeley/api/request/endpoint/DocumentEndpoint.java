@@ -36,7 +36,6 @@ public class DocumentEndpoint {
     public static String DOCUMENTS_BASE_URL = MENDELEY_API_BASE_URL + "documents";
     public static String DOCUMENTS_CONTENT_TYPE = "application/vnd.mendeley-document.1+json";
 
-    /* PROCEDURES */
 
     public static class GetDocumentsRequest extends GetAuthorizedRequest<List<Document>> {
         public GetDocumentsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {

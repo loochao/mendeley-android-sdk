@@ -10,7 +10,6 @@ import com.mendeley.api.testUtils.AssertUtils;
 import com.mendeley.api.util.DateUtils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -25,7 +24,7 @@ public class DocumentRequestTest extends SignedInTest {
 
         final String documentId = "docId";
 
-        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "documents/" + documentId);
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).build();
 
         Uri actual = getRequestFactory().getDocument(documentId, null).getUrl();
 
@@ -37,7 +36,7 @@ public class DocumentRequestTest extends SignedInTest {
 
         final String documentId = "docId";
 
-        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "documents/" + documentId + "?view=client");
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendQueryParameter("view", "client").build();
 
         Uri actual = getRequestFactory().getDocument(documentId, DocumentEndpoint.DocumentRequestParameters.View.CLIENT).getUrl();
 
@@ -55,17 +54,17 @@ public class DocumentRequestTest extends SignedInTest {
         DocumentEndpoint.DocumentRequestParameters.Order order = DocumentEndpoint.DocumentRequestParameters.Order.DESC;
         DocumentEndpoint.DocumentRequestParameters.Sort sort = DocumentEndpoint.DocumentRequestParameters.Sort.MODIFIED;
 
-        String paramsString = "?view=" + view +
-                "&group_id=" + groupId +
-                "&modified_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(modifiedSince), "ISO-8859-1") +
-                "&limit=" + limit +
-                "&reverse=" + reverse +
-                "&order=" + order +
-                "&sort=" + sort +
-                "&deleted_since=" + URLEncoder.encode(DateUtils.formatMendeleyApiTimestamp(deletedSince), "ISO-8859-1");
-
-        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "documents" + paramsString);
-
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon()
+                .appendPath("documents")
+                .appendQueryParameter("view", view.getValue())
+                .appendQueryParameter("group_id", groupId)
+                .appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(modifiedSince))
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .appendQueryParameter("reverse", String.valueOf(reverse))
+                .appendQueryParameter("order", order.getValue())
+                .appendQueryParameter("sort", sort.getValue())
+                .appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince))
+                .build();
 
         DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.view = view;
@@ -85,7 +84,7 @@ public class DocumentRequestTest extends SignedInTest {
     @SmallTest
     public void test_getDeletedDocuments_usesTheRightUrl_withOnlyView() throws Exception {
         final DocumentEndpoint.DocumentRequestParameters.View view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
-        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "documents" + "?view=" + view);
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendQueryParameter("view", view.getValue()).build();
 
         final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
@@ -221,7 +220,7 @@ public class DocumentRequestTest extends SignedInTest {
     @SmallTest
     public void test_deleteDocument_usesTheRightUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final String documentId = "docId";
-        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "documents/" + documentId);
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).build();
         Uri actual =  getRequestFactory().deleteDocument(documentId).getUrl();
 
         assertEquals("Documents url is wrong", expectedUrl, actual);
@@ -246,7 +245,7 @@ public class DocumentRequestTest extends SignedInTest {
     public void test_getPatchDocument_usesTheRightUrl() throws Exception {
         final String documentId = "docId";
 
-        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL +"documents/" + documentId);
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).build();
         final Uri url = getRequestFactory().patchDocument(documentId, null, null).getUrl();
 
         assertEquals("Patch document url is wrong", expectedUrl, url);
@@ -335,7 +334,7 @@ public class DocumentRequestTest extends SignedInTest {
     @SmallTest
     public void test_trashedDocument_usesTheRightUrl() throws Exception {
         final String documentId = "docId";
-        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "documents/" + documentId + "/trash");
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).appendPath("trash").build();
         Uri actual =  getRequestFactory().trashDocument(documentId).getUrl();
 
         assertEquals("Documents url is wrong", expectedUrl, actual);

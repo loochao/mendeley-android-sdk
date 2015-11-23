@@ -28,7 +28,7 @@ import com.mendeley.api.request.endpoint.DocumentEndpoint;
 import com.mendeley.api.request.endpoint.DocumentIdentifiersEndpoint;
 import com.mendeley.api.request.endpoint.DocumentTypesEndpoint;
 import com.mendeley.api.request.endpoint.FilesEndpoint;
-import com.mendeley.api.request.endpoint.FolderEndpoint;
+import com.mendeley.api.request.endpoint.FoldersEndpoint;
 import com.mendeley.api.request.endpoint.GroupsEndpoint;
 import com.mendeley.api.request.endpoint.ProfilesEndpoint;
 import com.mendeley.api.request.endpoint.RecentlyReadEndpoint;
@@ -301,57 +301,57 @@ public class Mendeley {
 
         @Override
         public Request<List<Folder>> getFolders() {
-            return getFolders((FolderEndpoint.FolderRequestParameters) null);
+            return getFolders((FoldersEndpoint.FolderRequestParameters) null);
         }
 
         @Override
-        public Request<List<Folder>> getFolders(FolderEndpoint.FolderRequestParameters parameters) {
-            return new FolderEndpoint.GetFoldersRequest(parameters, authTokenManager, clientCredentials);
+        public Request<List<Folder>> getFolders(FoldersEndpoint.FolderRequestParameters parameters) {
+            return new FoldersEndpoint.GetFoldersRequest(parameters, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Folder>> getFolders(Uri uri) {
-            return new FolderEndpoint.GetFoldersRequest(uri, authTokenManager, clientCredentials);
+            return new FoldersEndpoint.GetFoldersRequest(uri, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Folder> getFolder(String folderId) {
-            return new FolderEndpoint.GetFolderRequest(folderId, authTokenManager, clientCredentials);
+            return new FoldersEndpoint.GetFolderRequest(folderId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Folder> postFolder(Folder folder) {
-            return new FolderEndpoint.PostFolderRequest(folder, authTokenManager, clientCredentials);
+            return new FoldersEndpoint.PostFolderRequest(folder, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Folder> patchFolder(String folderId, Folder folder) {
-            return new FolderEndpoint.PatchFolderAuthorizedRequest(folderId, folder, authTokenManager, clientCredentials);
+            return new FoldersEndpoint.PatchFolderAuthorizedRequest(folderId, folder, authTokenManager, clientCredentials);
         }
 
         @Override
-        public Request<List<String>> getFolderDocumentIds(FolderEndpoint.FolderRequestParameters parameters, String folderId) {
-            return new FolderEndpoint.GetFolderDocumentIdsRequest(parameters, folderId, authTokenManager, clientCredentials);
+        public Request<List<String>> getFolderDocumentIds(FoldersEndpoint.FolderRequestParameters parameters, String folderId) {
+            return new FoldersEndpoint.GetFolderDocumentIdsRequest(parameters, folderId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<String>> getFolderDocumentIds(Uri uri) {
-            return new FolderEndpoint.GetFolderDocumentIdsRequest(uri, authTokenManager, clientCredentials);
+            return new FoldersEndpoint.GetFolderDocumentIdsRequest(uri, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> postDocumentToFolder(String folderId, String documentId) {
-            return new FolderEndpoint.PostDocumentToFolderRequest(folderId, documentId, authTokenManager, clientCredentials);
+            return new FoldersEndpoint.PostDocumentToFolderRequest(folderId, documentId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> deleteFolder(String folderId) {
-            return new FolderEndpoint.DeleteFolderRequest(folderId, authTokenManager, clientCredentials);
+            return new FoldersEndpoint.DeleteFolderRequest(folderId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> deleteDocumentFromFolder(String folderId, String documentId) {
-            return new FolderEndpoint.DeleteDocumentFromFolder(folderId, documentId, authTokenManager, clientCredentials);
+            return new FoldersEndpoint.DeleteDocumentFromFolder(folderId, documentId, authTokenManager, clientCredentials);
         }
 
 

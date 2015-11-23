@@ -29,101 +29,17 @@ import java.util.Map;
 
 import static com.mendeley.api.request.Request.MENDELEY_API_BASE_URL;
 
-public class FolderEndpoint {
+public class FoldersEndpoint {
 
 	public static final String FOLDERS_BASE_URL = MENDELEY_API_BASE_URL + "folders";
     public static final String FOLDER_CONTENT_TYPE = "application/vnd.mendeley-folder.1+json";
 
-    /* URLS */
-
-    /**
-     * Building the url for get folders
-     *
-     * @param params folder request parameters object
-     * @return the url string
-     */
-    public static Uri getGetFoldersUrl(FolderRequestParameters params, String requestUrl) {
-        final Uri.Builder bld = Uri.parse(requestUrl==null? FOLDERS_BASE_URL :requestUrl).buildUpon();
-
-        if (params != null) {
-            if (params.groupId != null) {
-                bld.appendQueryParameter("group_id", String.valueOf(params.groupId));
-            }
-            if (params.limit != null) {
-                bld.appendQueryParameter("limit", String.valueOf(params.limit));
-            }
+    public static class GetFoldersRequest extends GetAuthorizedRequest<List<Folder>> {
+        private static Uri getGetFoldersUrl(FolderRequestParameters params) {
+            Uri uri = Uri.parse(FOLDERS_BASE_URL);
+            return params != null ? params.appendToUi(uri) : uri;
         }
 
-        return bld.build();
-    }
-
-    public static Uri getGetFoldersUrl(FolderRequestParameters params) {
-        return getGetFoldersUrl(params, null);
-    }
-
-    /**
-     * Building the url for get folder
-     *
-     * @param folderId the folder id to get
-     * @return the url string
-     */
-    public static Uri getGetFolderUrl(String folderId) {
-        return Uri.parse(FOLDERS_BASE_URL + "/" + folderId);
-    }
-
-    /**
-     * Building the url for patch folder
-     *
-     * @param folderId the folder id to patch
-     * @return the url string
-     */
-    public static Uri getPatchFolderUrl(String folderId) {
-        return Uri.parse(FOLDERS_BASE_URL + "/" + folderId);
-    }
-
-    /**
-	 * Building the url for delete folder
-	 * 
-	 * @param folderId the folder id
-	 * @return the url string
-	 */
-    public static Uri getDeleteFolderUrl(String folderId) {
-		return Uri.parse(FOLDERS_BASE_URL + "/" + folderId);
-	}
-
-    /**
-     * Building the url for get folder document ids
-     *
-     * @param folderId the folder id
-     * @return the url string
-     */
-    public static String getGetFolderDocumentIdsUrl(String folderId) {
-        return FOLDERS_BASE_URL + "/" + folderId + "/documents";
-    }
-
-    /**
-     * Building the url for post document to folder
-     *
-     * @param folderId the folder id
-     * @return the url string
-     */
-    public static Uri getPostDocumentToFolderUrl(String folderId) {
-        return Uri.parse(FOLDERS_BASE_URL + "/" + folderId + "/documents");
-    }
-
-    /**
-	 * Building the url for delete document from folder
-	 * 
-	 * @param folderId the id of the folder
-	 * @param documentId the id of the document to delete
-	 */
-    public static Uri getDeleteDocumentFromFolderUrl(String folderId, String documentId) {
-		return Uri.parse(FOLDERS_BASE_URL + "/" + folderId + "/documents/" + documentId);
-	}
-	
-
-
-    public static class GetFoldersRequest extends GetAuthorizedRequest<List<Folder>> {
         public GetFoldersRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
@@ -146,7 +62,7 @@ public class FolderEndpoint {
 
     public static class GetFolderRequest extends GetAuthorizedRequest<Folder> {
         public GetFolderRequest(String folderId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getGetFolderUrl(folderId), authTokenManager, clientCredentials);
+            super(Uri.parse(FOLDERS_BASE_URL + "/" + folderId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -165,7 +81,7 @@ public class FolderEndpoint {
         private final Folder folder;
 
         public PostFolderRequest(Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(Uri.parse(FolderEndpoint.FOLDERS_BASE_URL), authTokenManager, clientCredentials);
+            super(Uri.parse(FoldersEndpoint.FOLDERS_BASE_URL), authTokenManager, clientCredentials);
             this.folder = folder;
         }
 
@@ -192,7 +108,7 @@ public class FolderEndpoint {
         private final Folder folder;
 
         public PatchFolderAuthorizedRequest(String folderId, Folder folder, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(FolderEndpoint.getPatchFolderUrl(folderId), null, authTokenManager, clientCredentials);
+            super(Uri.parse(FOLDERS_BASE_URL + "/" + folderId), null, authTokenManager, clientCredentials);
             this.folder = folder;
         }
 
@@ -219,7 +135,7 @@ public class FolderEndpoint {
         private final String documentId;
 
         public PostDocumentToFolderRequest(String folderId, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getPostDocumentToFolderUrl(folderId), authTokenManager, clientCredentials);
+            super(Uri.parse(FOLDERS_BASE_URL).buildUpon().appendPath(folderId).appendPath("documents").build(), authTokenManager, clientCredentials);
             this.documentId = documentId;
         }
 
@@ -242,12 +158,18 @@ public class FolderEndpoint {
     }
 
     public static class GetFolderDocumentIdsRequest extends GetAuthorizedRequest<List<String>> {
+
+        private static Uri getGetFolderDocumentIdsUrl(FolderRequestParameters params, String folderId) {
+            Uri uri = Uri.parse(FOLDERS_BASE_URL).buildUpon().appendPath(folderId).appendPath("documents").build();
+            return params != null ? params.appendToUi(uri) : uri;
+        }
+
         public GetFolderDocumentIdsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(url, authTokenManager, clientCredentials);
         }
 
         public GetFolderDocumentIdsRequest(FolderRequestParameters parameters, String folderId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(getGetFoldersUrl(parameters, getGetFolderDocumentIdsUrl(folderId)), authTokenManager, clientCredentials);
+            this(getGetFolderDocumentIdsUrl(parameters, folderId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -264,13 +186,13 @@ public class FolderEndpoint {
 
     public static class DeleteFolderRequest extends DeleteAuthorizedRequest<Void> {
         public DeleteFolderRequest(String folderId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(getDeleteFolderUrl(folderId), authTokenManager, clientCredentials);
+            super(Uri.parse(FOLDERS_BASE_URL).buildUpon().appendPath(folderId).build(), authTokenManager, clientCredentials);
         }
     }
 
     public static class DeleteDocumentFromFolder extends DeleteAuthorizedRequest<Void> {
         public DeleteDocumentFromFolder(String folderId, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(FolderEndpoint.getDeleteDocumentFromFolderUrl(folderId, documentId), authTokenManager, clientCredentials);
+            super(Uri.parse(FOLDERS_BASE_URL).buildUpon().appendPath(folderId).appendPath(documentId).build(), authTokenManager, clientCredentials);
         }
     }
 
@@ -289,5 +211,19 @@ public class FolderEndpoint {
          * The maximum number of items on the page. If not supplied, the default is 20. The largest allowable value is 500.
          */
         public Integer limit;
+
+
+        Uri appendToUi(Uri uri) {
+            final Uri.Builder bld = uri.buildUpon();
+
+            if (groupId != null) {
+                bld.appendQueryParameter("view", groupId);
+            }
+            if (limit != null) {
+                bld.appendQueryParameter("group_id", Integer.toString(limit));
+            }
+
+            return bld.build();
+        }
     }
 }
