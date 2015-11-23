@@ -36,7 +36,7 @@ public class DocumentRequestTest extends SignedInTest {
 
         final String documentId = "docId";
 
-        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendQueryParameter("view", "client").build();
+        Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).appendQueryParameter("view", "client").build();
 
         Uri actual = getRequestFactory().getDocument(documentId, DocumentEndpoint.DocumentRequestParameters.View.CLIENT).getUrl();
 

@@ -1,6 +1,7 @@
 package com.mendeley.api.request.endpoint;
 
 import android.net.Uri;
+import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.api.model.Document;
@@ -23,16 +24,13 @@ public class FolderRequestTest extends SignedInTest {
 
     @SmallTest
     public void test_GetFoldersRequest_usesCorrectUrl_withParameters() throws Exception {
+        final String groupId = "test-group_id";
 
-        String groupId = "test-group_id";
-
-        String paramsString = "?group_id=" + groupId;
-        Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(paramsString).build();
+        final Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendQueryParameter("groupId", groupId).build();
 
         FoldersEndpoint.FolderRequestParameters params = new FoldersEndpoint.FolderRequestParameters();
         params.groupId = groupId;
-
-        Uri actualUri = getRequestFactory().getFolders(params).getUrl();
+        final Uri actualUri = getRequestFactory().getFolders(params).getUrl();
 
         assertEquals("Get folders url with parameters is wrong", expectedUrl, actualUri);
     }
@@ -95,7 +93,7 @@ public class FolderRequestTest extends SignedInTest {
         AssertUtils.assertSameElementsInCollection(expected, actual, comparator);
     }
 
-    public void test_geFolders_whenMoreThanOnePage_receivesCorrectFolders() throws Exception {
+    public void test_getFolders_whenMoreThanOnePage_receivesCorrectFolders() throws Exception {
 
         // GIVEN a number of folders greater than the page size
         final int pageSize = 4;
@@ -161,12 +159,13 @@ public class FolderRequestTest extends SignedInTest {
     public void test_DeleteFolderUrl_usesrightUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final String folderId = "theFolderId";
 
-        final Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folder").appendPath(folderId).build();
+        final Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).build();
         final Uri url = getRequestFactory().deleteFolder(folderId).getUrl();
 
         assertEquals("Delete folder url is wrong", expectedUrl, url);
     }
 
+    @LargeTest
     public void test_deleteFolder_removesTheFolderFromServer() throws Exception {
         // GIVEN some folders
         final List<Folder> serverFoldersBefore = new LinkedList<Folder>();
@@ -216,6 +215,29 @@ public class FolderRequestTest extends SignedInTest {
         AssertUtils.assertFolder(folderPatched, folderAfter);
     }
 
+    @SmallTest
+    public void test_getDocumentsInFolder_usesTheCorrectUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final String folderId = "theFolderId";
+        final String groupdId = "theGroupId";
+        final int limit = 69;
+
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon()
+                .appendPath("folders")
+                .appendPath(folderId)
+                .appendPath("documents")
+                .appendQueryParameter("groupId", groupdId)
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .build();
+
+        final FoldersEndpoint.FolderRequestParameters params = new FoldersEndpoint.FolderRequestParameters();
+        params.groupId = groupdId;
+        params.limit = limit;
+
+        final Uri actualUrl = getRequestFactory().getFolderDocumentIds(params, folderId).getUrl();
+
+        assertEquals("Get folder document ids url is wrong", expectedUrl, actualUrl);
+    }
+
     public void test_getDocumentsInFolder_receivesTheCorrectDocumentIds() throws Exception {
 
         // GIVEN a folder
@@ -246,7 +268,17 @@ public class FolderRequestTest extends SignedInTest {
         AssertUtils.assertSameElementsInCollection(expectedDocIds, actualDocIds, comparator);
     }
 
+    @SmallTest
+    public void test_postDocumentsToFolder_usesCorrectUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final String folderId = "theFolderId";
 
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).appendPath("documents").build();
+        final Uri actualUrl = getRequestFactory().postDocumentToFolder(folderId, "theDocumentId").getUrl();
+
+        assertEquals("Post document to folder url is wrong", expectedUrl, actualUrl);
+    }
+
+    @LargeTest
     public void test_postDocumentsToFolder_createsDocumentsInTheFolderInServer() throws Exception {
 
         // GIVEN a folder
@@ -279,58 +311,7 @@ public class FolderRequestTest extends SignedInTest {
     }
 
     @SmallTest
-    public void test_GetFolderRequest_usesCorrectUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        final String folderId = "folderId";
-
-        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).build();
-        final Uri actualUrl = getRequestFactory().getFolder(folderId).getUrl();
-
-        assertEquals("Get folder url is wrong", expectedUrl, actualUrl);
-    }
-
-    // TODO create test for getting one specific folder
-
-
-    @SmallTest
-    public void test_getGetFolderDocumentIdsUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        final String folderId = "theFolderId";
-        final String groupdId = "theGroupId";
-        final int limit = 69;
-
-        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon()
-                .appendPath("folders")
-                .appendPath(folderId)
-                .appendPath("documents")
-                .appendQueryParameter("groupId", groupdId)
-                .appendQueryParameter("limit", String.valueOf(limit))
-                .build();
-
-        final FoldersEndpoint.FolderRequestParameters params = new FoldersEndpoint.FolderRequestParameters();
-        params.groupId = groupdId;
-        params.limit = limit;
-
-        final Uri actualUrl = getRequestFactory().getFolderDocumentIds(params, folderId).getUrl();
-
-        assertEquals("Get folder document ids url is wrong", expectedUrl, actualUrl);
-    }
-
-    // TODO create tests for getting contents of one specific folder
-
-    @SmallTest
-    public void test_PostDocumentToFolderRequest_usesCorrectUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        final String folderId = "theFolderId";
-
-        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).appendPath("documents").build();
-        final Uri actualUrl = getRequestFactory().postDocumentToFolder(folderId, "theDocumentId").getUrl();
-
-        assertEquals("Post document to folder url is wrong", expectedUrl, actualUrl);
-    }
-
-    // TODO create test for posting document to folder
-
-
-    @SmallTest
-    public void test_getDeleteDocumentFromFolderUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public void test_getDeleteDocumentFromFolder_usesTheCorrectUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final String folderId = "theFolderId";
         final String documentId = "test-document_id";
 
@@ -340,8 +321,63 @@ public class FolderRequestTest extends SignedInTest {
         assertEquals("Delete document from folder url is wrong", expectedUrl, actualUrl);
     }
 
+    @LargeTest
+    public void test_deleteDocumentFromFolder_deletesDocumentsInTheFolderInServer() throws Exception {
+        // GIVEN a folder
+        final Folder folder = getTestAccountSetupUtils().setupFolder(createParentFolder());
 
-    // TODO create test for deleting document from folder
+        // AND documents in it
+        List<Document> documents = new LinkedList<Document>();
+        final Set<String> expectedDocIds = new HashSet<String>();
+        for (int i = 0; i < 4; i++) {
+            Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title" + i));
+            documents.add(document);
+            expectedDocIds.add(document.id);
+            getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
+        }
+
+        // WHEN deleting one of the documents
+        final String deletingDocumentId = documents.remove(getRandom().nextInt(documents.size() -1)).id;
+        expectedDocIds.remove(deletingDocumentId);
+
+        getRequestFactory().deleteDocumentFromFolder(folder.id, deletingDocumentId).run();
+
+        // THEN the server has no longer that document in the folder
+        Request<List<String>>.Response response = getRequestFactory().getFolderDocumentIds(new FoldersEndpoint.FolderRequestParameters(), folder.id).run();
+        final Set<String> actualDocIds = new HashSet<String>(response.resource);
+
+        Comparator<String> comparator = new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                return lhs.compareTo(rhs);
+            }
+        };
+        AssertUtils.assertSameElementsInCollection(expectedDocIds, actualDocIds, comparator);
+    }
+
+    @SmallTest
+    public void test_GetFolderRequest_usesCorrectUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final String folderId = "folderId";
+
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).build();
+        final Uri actualUrl = getRequestFactory().getFolder(folderId).getUrl();
+
+        assertEquals("Get folder url is wrong", expectedUrl, actualUrl);
+    }
+
+    @LargeTest
+    public void test_getFolder_receivesTheCorrectFolder() throws Exception {
+
+        // GIVEN a folder that has been posted
+        final Folder postingFolder = createParentFolder();
+        final String folderId = getTestAccountSetupUtils().setupFolder(postingFolder).id;
+
+        // WHEN getting that folder
+        final Folder actualFolder =  getRequestFactory().getFolder(folderId).run().resource;
+
+        // THEN the folder is the correct one
+        AssertUtils.assertFolder(postingFolder, actualFolder);
+    }
 
     private Folder createParentFolder() {
         Folder folder = new Folder.Builder()

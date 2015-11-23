@@ -192,7 +192,7 @@ public class FoldersEndpoint {
 
     public static class DeleteDocumentFromFolder extends DeleteAuthorizedRequest<Void> {
         public DeleteDocumentFromFolder(String folderId, String documentId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(Uri.parse(FOLDERS_BASE_URL).buildUpon().appendPath(folderId).appendPath(documentId).build(), authTokenManager, clientCredentials);
+            super(Uri.parse(FOLDERS_BASE_URL).buildUpon().appendPath(folderId).appendPath("documents").appendPath(documentId).build(), authTokenManager, clientCredentials);
         }
     }
 
@@ -217,10 +217,10 @@ public class FoldersEndpoint {
             final Uri.Builder bld = uri.buildUpon();
 
             if (groupId != null) {
-                bld.appendQueryParameter("view", groupId);
+                bld.appendQueryParameter("groupId", groupId);
             }
             if (limit != null) {
-                bld.appendQueryParameter("group_id", Integer.toString(limit));
+                bld.appendQueryParameter("limit", Integer.toString(limit));
             }
 
             return bld.build();
