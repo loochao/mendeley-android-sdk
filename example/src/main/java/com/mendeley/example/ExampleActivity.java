@@ -1,7 +1,8 @@
 package com.mendeley.example;
 
-import com.mendeley.example.R;
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,15 +11,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.mendeley.api.ClientCredentials;
-import com.mendeley.api.MendeleySdk;
-import com.mendeley.api.MendeleySdkFactory;
-import com.mendeley.api.MendeleySignInInterface;
-import com.mendeley.api.exceptions.MendeleyException;
-import com.mendeley.api.impl.DefaultMendeleySdk;
-import com.mendeley.api.model.Document;
-import com.mendeley.api.params.DocumentRequestParameters;
-import com.mendeley.api.params.Page;
+import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.Mendeley;
+import com.mendeley.sdk.RequestsFactory;
+import com.mendeley.sdk.example.R;
+import com.mendeley.sdk.exceptions.MendeleyException;
+import com.mendeley.sdk.model.Document;
+import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -31,28 +31,26 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-public class ExampleActivity extends Activity implements View.OnClickListener, GetDocumentsCallback, MendeleySignInInterface
+public class ExampleActivity extends Activity implements View.OnClickListener, Mendeley.SignInCallback
 {
     private static final String CONFIG_FILE = "config.properties";
 
     private static final String KEY_PROJECT_ID = "example_app_project_id";
     private static final String KEY_CLIENT_SECRET = "example_app_client_secret";
     private static final String KEY_CLIENT_REDIRECT_URI = "example_app_client_redirect_url";
+    private RequestsFactory requestFactory;
 
 
-    enum SignInStatus { SIGNED_OUT, SIGNING_IN, SIGNED_IN };
+    enum SignInStatus { SIGNED_OUT, SIGNING_IN, SIGNED_IN }
     private SignInStatus signInStatus = SignInStatus.SIGNED_OUT;
 	
-    private MendeleySdk sdk;
-
     private Button getDocumentsButton;
 	private TextView outputView;
 	
 	private StringBuilder outputText = new StringBuilder();
 	
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         getDocumentsButton = (Button) findViewById(R.id.getDocumentsButton);
@@ -60,33 +58,35 @@ public class ExampleActivity extends Activity implements View.OnClickListener, G
         disableControls();
         outputView = (TextView) findViewById(R.id.output);
 
-        sdk = MendeleySdkFactory.getInstance();
         signIn();
     }
 
     private void signIn() {
-        if (sdk.isSignedIn()) {
-            setSignInStatus(SignInStatus.SIGNED_IN);
-        } else {
+        InputStream is = null;
+        try {
+            is = getAssets().open(CONFIG_FILE);
+            InputStream bis = new BufferedInputStream(is);
+            Reader reader = new InputStreamReader(bis);
+            ResourceBundle propertyResourceBundle = new PropertyResourceBundle(reader);
+
+            final String clientId = propertyResourceBundle.getString(KEY_PROJECT_ID);
+            final String clientSecret = propertyResourceBundle.getString(KEY_CLIENT_SECRET);
+            final String clientRedirectUri = propertyResourceBundle.getString(KEY_CLIENT_REDIRECT_URI);
+            ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, clientRedirectUri);
+
+            Mendeley.sdkInitialise(this, clientCredentials);
+            Mendeley.getInstance().signIn(this, false);
+            setSignInStatus(SignInStatus.SIGNING_IN);
+        } catch (IOException ioe) {
+            throw new IllegalStateException("Could not read property files with client configuration. Should be located in assets/" + CONFIG_FILE, ioe);
+        } catch (MissingResourceException mr) {
+            throw new IllegalStateException("Could not read property value from client configuration file. Check everything is configured in assets/"+CONFIG_FILE, mr);
+        } finally {
             try {
-                InputStream is = getAssets().open(CONFIG_FILE);
-                InputStream bis = new BufferedInputStream(is);
-                Reader reader = new InputStreamReader(bis);
-                ResourceBundle propertyResourceBundle = new PropertyResourceBundle(reader);
-
-                final String clientId = propertyResourceBundle.getString(KEY_PROJECT_ID);
-                final String clientSecret = propertyResourceBundle.getString(KEY_CLIENT_SECRET);
-                final String clientRedirectUri = propertyResourceBundle.getString(KEY_CLIENT_REDIRECT_URI);
-
-                setSignInStatus(SignInStatus.SIGNING_IN);
-                ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, clientRedirectUri);
-                DefaultMendeleySdk.sdkInitialise(ExampleActivity.this.getApplicationContext(), clientCredentials);
-
-                sdk.signIn(this, this, true);
-            } catch (IOException ioe) {
-                throw new IllegalStateException("Could not read property files with client configuration. Should be located in assets/"+CONFIG_FILE, ioe);
-            } catch (MissingResourceException mr) {
-                throw new IllegalStateException("Could not read property value from client configuration file. Check everything is configured in assets/"+CONFIG_FILE, mr);
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException ignored) {
             }
         }
     }
@@ -94,7 +94,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, G
     private void signOut() {
         clearOutput();
         setSignInStatus(SignInStatus.SIGNED_OUT);
-        sdk.signOut();
+        Mendeley.getInstance().signOut();
     }
 
     private void setSignInStatus(SignInStatus status) {
@@ -170,27 +170,48 @@ public class ExampleActivity extends Activity implements View.OnClickListener, G
     }
 
     @Override
-	public void onDocumentsReceived(List<Document> docs, Page next, Date serverDate) {
-		outputText.append("Page received:\n");
-		for (Document doc : docs) {
-			outputText.append("* " + doc.title + "\n");
-		}
-		outputText.append("\n");
-		outputView.setText(outputText.toString());
-		
-    	sdk.getDocuments(next, this);
-	}
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (Mendeley.getInstance().onActivityResult(requestCode, resultCode, data, this)) {
+            return;
+        }
 
-    @Override
-	public void onDocumentsNotReceived(MendeleyException mendeleyException) {
-		outputText.append(mendeleyException.toString() + "\n");
-		outputView.setText(outputText.toString());
-	}
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     private void getDocuments() {
-        DocumentRequestParameters params = new DocumentRequestParameters();
+        requestFactory = Mendeley.getInstance().getRequestFactory();
+        DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.limit = 3;
-        outputText.setLength(0);
-        sdk.getDocuments(params, this);
+        Request<List<Document>> documentRequest = requestFactory.getDocuments(params);
+
+        documentRequest.runAsync(new DocumentsRequestCallback());
+    }
+
+    private void manageResponse(List<Document> resource, Uri next, Date serverDate) {
+        outputText.append("Page received:\n");
+        for (Document doc : resource) {
+            outputText.append("* " + doc.title + "\n");
+        }
+        outputText.append("\n");
+        outputView.setText(outputText.toString());
+
+        if (next != null) {
+            Request<List<Document>> documentRequest = requestFactory.getDocuments(next);
+            documentRequest.runAsync(new DocumentsRequestCallback());
+        }
+    }
+
+    private class DocumentsRequestCallback implements Request.RequestCallback<List<Document>> {
+
+        @Override
+        public void onSuccess(List<Document> resource, Uri next, Date serverDate) {
+            manageResponse(resource, next, serverDate);
+        }
+
+        @Override
+        public void onFailure(MendeleyException mendeleyException) {
+            outputText.append(mendeleyException.toString() + "\n");
+            outputView.setText(outputText.toString());
+        }
     }
 }
