@@ -32,8 +32,8 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class ExampleActivity extends Activity implements View.OnClickListener, Mendeley.SignInCallback {
-    private static final String CONFIG_FILE = "config.properties";
 
+    private static final String CONFIG_FILE = "config.properties";
     private static final String KEY_PROJECT_ID = "example_app_project_id";
     private static final String KEY_CLIENT_SECRET = "example_app_client_secret";
     private static final String KEY_CLIENT_REDIRECT_URI = "example_app_client_redirect_url";
@@ -74,6 +74,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
             ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, clientRedirectUri);
 
             Mendeley.sdkInitialise(this, clientCredentials);
+
             if (Mendeley.getInstance().isSignedIn()) {
                 setSignInStatus(SignInStatus.SIGNED_IN);
             } else {
