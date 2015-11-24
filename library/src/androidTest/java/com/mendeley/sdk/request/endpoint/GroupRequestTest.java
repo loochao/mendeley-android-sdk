@@ -42,7 +42,7 @@ public class GroupRequestTest extends SignedInTest {
                 build();
         GroupsEndpoint.GroupRequestParameters params = new GroupsEndpoint.GroupRequestParameters();
 
-        Uri actual = getRequestFactory().getGroups(params).getUrl();
+        Uri actual = getRequestFactory().newGetGroupsRequest(params).getUrl();
 
         assertEquals("Get groups url without limit is wrong", expectedUrl, actual);
     }
@@ -58,7 +58,7 @@ public class GroupRequestTest extends SignedInTest {
         GroupsEndpoint.GroupRequestParameters params = new GroupsEndpoint.GroupRequestParameters();
         params.limit = limit;
 
-        Uri actual = getRequestFactory().getGroups(params).getUrl();
+        Uri actual = getRequestFactory().newGetGroupsRequest(params).getUrl();
 
         assertEquals("Get groups url with limit is wrong", expectedUrl, actual);
     }
@@ -72,7 +72,7 @@ public class GroupRequestTest extends SignedInTest {
                 appendPath(groupId).
                 build();
 
-        Uri actual = getRequestFactory().getGroup(groupId).getUrl();
+        Uri actual = getRequestFactory().newGetGroupRequest(groupId).getUrl();
 
         assertEquals("Get groups url without limit is wrong", expectedUrl, actual);
     }
@@ -91,7 +91,7 @@ public class GroupRequestTest extends SignedInTest {
                 build();
         GroupsEndpoint.GroupRequestParameters params = new GroupsEndpoint.GroupRequestParameters();
         params.limit = limit;
-        Uri actual = getRequestFactory().getGroupMembers(params, groupId).getUrl();
+        Uri actual = getRequestFactory().newGetGroupMembersRequest(params, groupId).getUrl();
 
         assertEquals("Get groups url without limit is wrong", expectedUrl, actual);
     }
@@ -104,7 +104,7 @@ public class GroupRequestTest extends SignedInTest {
         }
 
         // WHEN getting groups
-        final List<Group> actual = getRequestFactory().getGroups(new GroupsEndpoint.GroupRequestParameters()).run().resource;
+        final List<Group> actual = getRequestFactory().newGetGroupsRequest(new GroupsEndpoint.GroupRequestParameters()).run().resource;
 
         Comparator<Group> comparator = new Comparator<Group>() {
             @Override
@@ -133,7 +133,7 @@ public class GroupRequestTest extends SignedInTest {
         params.limit = pageSize;
 
         final List<Group> actual = new LinkedList<Group>();
-        Request<List<Group>>.Response response = getRequestFactory().getGroups(params).run();
+        Request<List<Group>>.Response response = getRequestFactory().newGetGroupsRequest(params).run();
 
 
         // THEN we receive a group list...
@@ -143,7 +143,7 @@ public class GroupRequestTest extends SignedInTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", response.next != null);
-                response = getRequestFactory().getGroups(response.next).run();
+                response = getRequestFactory().newGetGroupsRequest(response.next).run();
             }
         }
 
@@ -163,7 +163,7 @@ public class GroupRequestTest extends SignedInTest {
         Group expected = getTestAccountSetupUtils().getGroups().get(0);
 
         // WHEN getting the group by id
-        final Group actual = getRequestFactory().getGroup(expected.id).run().resource;
+        final Group actual = getRequestFactory().newGetGroupRequest(expected.id).run().resource;
 
         // THEN we have the expected group
         AssertUtils.assertGroup(expected, actual);
@@ -189,7 +189,7 @@ public class GroupRequestTest extends SignedInTest {
         }
 
         // WHEN getting the group members
-        List<UserRole> actual = getRequestFactory().getGroupMembers(new GroupsEndpoint.GroupRequestParameters(), group.id).run().resource;
+        List<UserRole> actual = getRequestFactory().newGetGroupMembersRequest(new GroupsEndpoint.GroupRequestParameters(), group.id).run().resource;
 
         // THEN we have the expected members
         Comparator<UserRole> userRoleComparator = new Comparator<UserRole>() {

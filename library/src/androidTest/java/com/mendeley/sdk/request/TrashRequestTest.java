@@ -21,10 +21,10 @@ public class TrashRequestTest extends SignedInTest {
 
         // WHEN trashing one of them
         final String trashingDocId = serverDocsBefore.get(0).id;
-        getRequestFactory().trashDocument(trashingDocId).run();
+        getRequestFactory().newTrashDocumentRequest(trashingDocId).run();
 
         // THEN the server does not list the document as non trashed documents
-        final List<Document> serverDocsAfter= getRequestFactory().getDocuments().run().resource;
+        final List<Document> serverDocsAfter= getRequestFactory().newGetDocumentsRequest().run().resource;
         for (Document doc : serverDocsAfter) {
             assertFalse(trashingDocId.equals(doc.id));
         }
@@ -37,12 +37,12 @@ public class TrashRequestTest extends SignedInTest {
         final List<Document> expectedTrashedDocs = new ArrayList<Document>();
         for (int i = 0; i < existingDocs.size() / 2; i++) {
             final Document doc = existingDocs.get(i);
-            getRequestFactory().trashDocument(doc.id).run();
+            getRequestFactory().newTrashDocumentRequest(doc.id).run();
             expectedTrashedDocs.add(doc);
         }
 
         // WHEN requesting trashed docs
-        final List<Document> actualTrashedDocs = getRequestFactory().getTrashedDocuments().run().resource;
+        final List<Document> actualTrashedDocs = getRequestFactory().newGetTrashedDocumentsRequest().run().resource;
 
 
         // THEN we receive the trashed docs
@@ -61,13 +61,13 @@ public class TrashRequestTest extends SignedInTest {
     public void test_restoreTrashedDocument_restoresDocumentInServer() throws Exception {
         // GIVEN one trashed document in the server
         final Document restoredDoc = setUpDocumentsInServer(1).get(0);
-        getRequestFactory().trashDocument(restoredDoc.id);
+        getRequestFactory().newTrashDocumentRequest(restoredDoc.id);
 
         // WHEN restoring it
-        getRequestFactory().restoreTrashedDocument(restoredDoc.id);
+        getRequestFactory().newRestoreTrashedDocumentRequest(restoredDoc.id);
 
         // THEN the document is no longer trashed
-        final List<Document> actual   = getRequestFactory().getDocuments().run().resource;
+        final List<Document> actual   = getRequestFactory().newGetDocumentsRequest().run().resource;
         final List<Document> expected = Arrays.asList(restoredDoc);
 
         Comparator<Document> comparator = new Comparator<Document>() {
@@ -83,17 +83,17 @@ public class TrashRequestTest extends SignedInTest {
         // GIVEN one trashed document in the server
         final Date deletedSince = getServerDate();
         final Document deletingDoc = setUpDocumentsInServer(1).get(0);
-        getRequestFactory().trashDocument(deletingDoc.id).run();
+        getRequestFactory().newTrashDocumentRequest(deletingDoc.id).run();
 
         // WHEN deleting it
-        getRequestFactory().deleteTrashedDocument(deletingDoc.id).run();
+        getRequestFactory().newDeleteTrashedDocumentRequest(deletingDoc.id).run();
 
         // THEN the document is permanently deleted
         final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.deletedSince = deletedSince;
 
         final List<Document> expectedDeletedDocIds = Collections.singletonList(deletingDoc);
-        final List<Document> actualDeletedDocIds = getRequestFactory().getDocuments(params).run().resource;
+        final List<Document> actualDeletedDocIds = getRequestFactory().newGetDocumentsRequest(params).run().resource;
 
         Comparator<Document> comparator = new Comparator<Document>() {
             @Override
@@ -121,6 +121,6 @@ public class TrashRequestTest extends SignedInTest {
             docs.add(doc);
         }
 
-        return getRequestFactory().getDocuments().run().resource;
+        return getRequestFactory().newGetDocumentsRequest().run().resource;
     }
 }

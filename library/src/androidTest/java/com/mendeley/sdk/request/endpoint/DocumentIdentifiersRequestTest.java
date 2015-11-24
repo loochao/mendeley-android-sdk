@@ -25,7 +25,7 @@ public class DocumentIdentifiersRequestTest extends SignedInTest {
 
     public void test_getIdentifierTypes_receivesCorrectIdentifierTypes() throws MendeleyException {
 
-        Map<String, String> actualIdTypes = getRequestFactory().getDocumentIdentifierTypes().run().resource;
+        Map<String, String> actualIdTypes = getRequestFactory().newGetDocumentIdentifierTypesRequest().run().resource;
 
         // we test that the API returns at least the identifiers that existed when writing this test
         for (String key : expectedIdentifierTypes.keySet()) {

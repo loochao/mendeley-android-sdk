@@ -17,7 +17,7 @@ public class ProfileRequestTest extends SignedInTest {
         Profile expected = createTestProfile();
 
         // WHEN getting the profile
-        final Profile actual = getRequestFactory().getProfile(expected.id).run().resource;
+        final Profile actual = getRequestFactory().newGetProfileRequest(expected.id).run().resource;
 
         // THEN we have the expected profile
         AssertUtils.assertProfile(expected, actual);
@@ -28,7 +28,7 @@ public class ProfileRequestTest extends SignedInTest {
         Profile expected = createTestProfile();
 
         // WHEN getting the profile
-        final Profile actual = getRequestFactory().getMyProfile().run().resource;
+        final Profile actual = getRequestFactory().newGetMyProfileRequest().run().resource;
 
         // THEN we have the expected profile
         AssertUtils.assertProfile(expected, actual);

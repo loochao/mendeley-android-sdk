@@ -27,7 +27,7 @@ public class DocumentRequestTest extends SignedInTest {
 
         Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).build();
 
-        Uri actual = getRequestFactory().getDocument(documentId, null).getUrl();
+        Uri actual = getRequestFactory().newGetDocumentRequest(documentId, null).getUrl();
 
         assertEquals("Get document url without parameters is wrong", expectedUrl, actual);
     }
@@ -39,7 +39,7 @@ public class DocumentRequestTest extends SignedInTest {
 
         Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).appendQueryParameter("view", "client").build();
 
-        Uri actual = getRequestFactory().getDocument(documentId, DocumentEndpoint.DocumentRequestParameters.View.CLIENT).getUrl();
+        Uri actual = getRequestFactory().newGetDocumentRequest(documentId, DocumentEndpoint.DocumentRequestParameters.View.CLIENT).getUrl();
 
         assertEquals("Get document url with parameters is wrong", expectedUrl, actual);
     }
@@ -57,7 +57,7 @@ public class DocumentRequestTest extends SignedInTest {
         }
 
         // WHEN getting documents
-        final List<Document> actual = getRequestFactory().getDocuments().run().resource;
+        final List<Document> actual = getRequestFactory().newGetDocumentsRequest().run().resource;
 
         Comparator<Document> comparator = new Comparator<Document>() {
             @Override
@@ -84,7 +84,7 @@ public class DocumentRequestTest extends SignedInTest {
         final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
 
-        final List<Document> actual = getRequestFactory().getDocuments(params).run().resource;
+        final List<Document> actual = getRequestFactory().newGetDocumentsRequest(params).run().resource;
 
         // THEN we have the expected documents
         AssertUtils.assertDocuments(expected, actual);
@@ -109,7 +109,7 @@ public class DocumentRequestTest extends SignedInTest {
         params.limit = pageSize;
         params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
 
-        Request<List<Document>>.Response response = getRequestFactory().getDocuments(params).run();
+        Request<List<Document>>.Response response = getRequestFactory().newGetDocumentsRequest(params).run();
 
         // THEN we receive a document list...
         for (int page = 0; page < pageCount; page++) {
@@ -124,7 +124,7 @@ public class DocumentRequestTest extends SignedInTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", response.next != null);
-                response = getRequestFactory().getDocuments(response.next).run();
+                response = getRequestFactory().newGetDocumentsRequest(response.next).run();
             }
         }
     }
@@ -138,14 +138,14 @@ public class DocumentRequestTest extends SignedInTest {
         final Document postingDoc = createDocument("posting document");
 
         // WHEN posting it
-        final Document returnedDoc = getRequestFactory().postDocument(postingDoc).run().resource;
+        final Document returnedDoc = getRequestFactory().newPostDocumentRequest(postingDoc).run().resource;
 
         // THEN we receive the same document back, with id filled
         AssertUtils.assertDocument(postingDoc, returnedDoc);
         assertNotNull(returnedDoc.id);
 
         // ...and the document exists in the server
-        AssertUtils.assertDocuments(getRequestFactory().getDocuments().run().resource, Arrays.asList(postingDoc));
+        AssertUtils.assertDocuments(getRequestFactory().newGetDocumentsRequest().run().resource, Arrays.asList(postingDoc));
     }
 
     public void test_postDocument_withStrangeCharacters_createsDocumentInServer() throws Exception {
@@ -159,21 +159,21 @@ public class DocumentRequestTest extends SignedInTest {
                 build();
 
         // WHEN posting it
-        final Document returnedDoc = getRequestFactory().postDocument(postingDoc).run().resource;
+        final Document returnedDoc = getRequestFactory().newPostDocumentRequest(postingDoc).run().resource;
 
         // THEN we receive the same document back, with id filled
         AssertUtils.assertDocument(postingDoc, returnedDoc);
         assertNotNull(returnedDoc.id);
 
         // ...and the document exists in the server
-        AssertUtils.assertDocuments(getRequestFactory().getDocuments().run().resource, Arrays.asList(postingDoc));
+        AssertUtils.assertDocuments(getRequestFactory().newGetDocumentsRequest().run().resource, Arrays.asList(postingDoc));
     }
 
     @SmallTest
     public void test_deleteDocument_usesTheRightUrl() throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final String documentId = "docId";
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).build();
-        Uri actual =  getRequestFactory().deleteDocument(documentId).getUrl();
+        Uri actual =  getRequestFactory().newDeleteDocumentRequest(documentId).getUrl();
 
         assertEquals("Documents url is wrong", expectedUrl, actual);
     }
@@ -184,10 +184,10 @@ public class DocumentRequestTest extends SignedInTest {
 
         // WHEN deleting one of them
         final String deletingDocId = serverDocsBefore.get(0).id;
-        getRequestFactory().deleteDocument(deletingDocId).run();
+        getRequestFactory().newDeleteDocumentRequest(deletingDocId).run();
 
         // THEN the server does not have the deleted document any more
-        final List<Document> serverDocsAfter= getRequestFactory().getDocuments().run().resource;
+        final List<Document> serverDocsAfter= getRequestFactory().newGetDocumentsRequest().run().resource;
         for (Document doc : serverDocsAfter) {
             assertFalse(deletingDocId.equals(doc.id));
         }
@@ -198,7 +198,7 @@ public class DocumentRequestTest extends SignedInTest {
         final String documentId = "docId";
 
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).build();
-        final Uri url = getRequestFactory().patchDocument(documentId, null, null).getUrl();
+        final Uri url = getRequestFactory().newPatchDocumentRequest(documentId, null, null).getUrl();
 
         assertEquals("Patch document url is wrong", expectedUrl, url);
     }
@@ -216,13 +216,13 @@ public class DocumentRequestTest extends SignedInTest {
                 .build();
 
 
-        final Document returnedDoc = getRequestFactory().patchDocument(docPatching.id, null, docPatching).run().resource;
+        final Document returnedDoc = getRequestFactory().newPatchDocumentRequest(docPatching.id, null, docPatching).run().resource;
 
         // THEN we receive the patched document
         AssertUtils.assertDocument(docPatching, returnedDoc);
 
         // ...and the server has updated the doc
-        final Document docAfter = getRequestFactory().getDocument(docPatching.id, DocumentEndpoint.DocumentRequestParameters.View.ALL).run().resource;
+        final Document docAfter = getRequestFactory().newGetDocumentRequest(docPatching.id, DocumentEndpoint.DocumentRequestParameters.View.ALL).run().resource;
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
@@ -239,13 +239,13 @@ public class DocumentRequestTest extends SignedInTest {
                 .build();
 
 
-        final Document returnedDoc = getRequestFactory().patchDocument(docPatching.id, null, docPatching).run().resource;
+        final Document returnedDoc = getRequestFactory().newPatchDocumentRequest(docPatching.id, null, docPatching).run().resource;
 
         // THEN we receive the patched document
         AssertUtils.assertDocument(docPatching, returnedDoc);
 
         // ...and the server has updated the doc
-        final Document docAfter = getRequestFactory().getDocument(docPatching.id, DocumentEndpoint.DocumentRequestParameters.View.ALL).run().resource;
+        final Document docAfter = getRequestFactory().newGetDocumentRequest(docPatching.id, DocumentEndpoint.DocumentRequestParameters.View.ALL).run().resource;
         AssertUtils.assertDocument(docPatching, docAfter);
     }
 
@@ -282,7 +282,7 @@ public class DocumentRequestTest extends SignedInTest {
         params.sort = sort;
         params.deletedSince = deletedSince;
 
-        final Uri url = getRequestFactory().getDocuments(params).getUrl();
+        final Uri url = getRequestFactory().newGetDocumentsRequest(params).getUrl();
 
         assertEquals("Get documents url with parameters is wrong", expectedUrl, url);
     }
@@ -294,7 +294,7 @@ public class DocumentRequestTest extends SignedInTest {
 
         final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.view = DocumentEndpoint.DocumentRequestParameters.View.ALL;
-        final Uri actual = getRequestFactory().getDocuments(params).getUrl();
+        final Uri actual = getRequestFactory().newGetDocumentsRequest(params).getUrl();
 
         assertEquals("Get documents url with parameters is wrong", expectedUrl, actual);
     }
@@ -307,7 +307,7 @@ public class DocumentRequestTest extends SignedInTest {
         final Set<Document> expectedDeletedDocs = new HashSet<>();
         for (int i = 0; i < existingDocs.size() / 2; i++) {
             final Document doc = existingDocs.get(i);
-            getRequestFactory().deleteDocument(doc.id).run();
+            getRequestFactory().newDeleteDocumentRequest(doc.id).run();
             expectedDeletedDocs.add(doc);
         }
 
@@ -315,7 +315,7 @@ public class DocumentRequestTest extends SignedInTest {
         DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.deletedSince = deletedSince;
 
-        List<Document> deletedDocsList = getRequestFactory().getDocuments(params).run().resource;
+        List<Document> deletedDocsList = getRequestFactory().newGetDocumentsRequest(params).run().resource;
 
 
         // THEN we receive the deleted docs
@@ -335,7 +335,7 @@ public class DocumentRequestTest extends SignedInTest {
     public void test_trashedDocument_usesTheRightUrl() throws Exception {
         final String documentId = "docId";
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("documents").appendPath(documentId).appendPath("trash").build();
-        Uri actual =  getRequestFactory().trashDocument(documentId).getUrl();
+        Uri actual =  getRequestFactory().newTrashDocumentRequest(documentId).getUrl();
 
         assertEquals("Documents url is wrong", expectedUrl, actual);
     }
@@ -363,6 +363,6 @@ public class DocumentRequestTest extends SignedInTest {
             docs.add(doc);
         }
 
-        return getRequestFactory().getDocuments().run().resource;
+        return getRequestFactory().newGetDocumentsRequest().run().resource;
     }
 }

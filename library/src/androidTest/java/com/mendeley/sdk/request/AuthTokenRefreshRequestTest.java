@@ -12,7 +12,7 @@ public class AuthTokenRefreshRequestTest extends SignedInTest {
     @SmallTest
     public void test_AuthTokenRefreshRequest_updatesTheAccessToken() throws Exception {
 
-        final Profile expected = getRequestFactory().getMyProfile().run().resource;
+        final Profile expected = getRequestFactory().newGetMyProfileRequest().run().resource;
 
         // GIVEN an invalid access token
         final String invalidAccessToken = "invalid";
@@ -29,7 +29,7 @@ public class AuthTokenRefreshRequestTest extends SignedInTest {
         assertNotSame("Access token updated", invalidAccessToken, authTokenManager.getAccessToken());
 
         // ...that indeed allows as to perform valid request
-        final Profile actual = getRequestFactory().getMyProfile().run().resource;
+        final Profile actual = getRequestFactory().newGetMyProfileRequest().run().resource;
         AssertUtils.assertProfile(expected, actual);
     }
 

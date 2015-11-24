@@ -25,7 +25,7 @@ public class CatalogRequestTest extends SignedInTest {
                 appendPath(catalogId).
                 build();
 
-        Uri actual = getRequestFactory().getCatalogDocument(catalogId, null).getUrl();
+        Uri actual = getRequestFactory().newGetCatalogDocumentRequest(catalogId, null).getUrl();
 
         assertEquals("Get catalog document url without parameters is wrong", expectedUrl, actual);
     }
@@ -41,7 +41,7 @@ public class CatalogRequestTest extends SignedInTest {
                 appendQueryParameter("view", "client").
                 build();
 
-        Uri actual = getRequestFactory().getCatalogDocument(catalogId, DocumentEndpoint.DocumentRequestParameters.View.CLIENT).getUrl();
+        Uri actual = getRequestFactory().newGetCatalogDocumentRequest(catalogId, DocumentEndpoint.DocumentRequestParameters.View.CLIENT).getUrl();
 
         assertEquals("Get catalog document url with parameters is wrong", expectedUrl, actual);
     }
@@ -73,7 +73,7 @@ public class CatalogRequestTest extends SignedInTest {
         params.filehash = "filehash";
 
 
-        final Uri url = getRequestFactory().getCatalogDocuments(params).getUrl();
+        final Uri url = getRequestFactory().newGetCatalogDocumentsRequest(params).getUrl();
 
         assertEquals("Get catalog documents url with parameters is wrong", expectedUrl, url);
     }
@@ -85,7 +85,7 @@ public class CatalogRequestTest extends SignedInTest {
 
         Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "documents/" + documentId);
 
-        Uri actual = getRequestFactory().getDocument(documentId, null).getUrl();
+        Uri actual = getRequestFactory().newGetDocumentRequest(documentId, null).getUrl();
 
         assertEquals("Get document url without parameters is wrong", expectedUrl, actual);
     }
@@ -98,7 +98,7 @@ public class CatalogRequestTest extends SignedInTest {
         catalogueParams.filehash = fileHash;
 
         //WHEN getting a catalog document with this file hash
-        List<Document> receivedDocs = getRequestFactory().getCatalogDocuments(catalogueParams).run().resource;
+        List<Document> receivedDocs = getRequestFactory().newGetCatalogDocumentsRequest(catalogueParams).run().resource;
 
         //THEN the correct catalog document received
         Document catalogDocument = receivedDocs.get(0);
@@ -110,7 +110,7 @@ public class CatalogRequestTest extends SignedInTest {
         final String catalogDocumentId = "bcded033-52b5-370d-ac27-a3ec23146f88";
 
         //WHEN getting a catalog document with this id
-        Document receivedDoc = getRequestFactory().getCatalogDocument(catalogDocumentId, null).run().resource;
+        Document receivedDoc = getRequestFactory().newGetCatalogDocumentRequest(catalogDocumentId, null).run().resource;
 
         //THEN the correct catalog document received
         assertEquals("wrong catalog document", catalogDocumentId, receivedDoc.id);

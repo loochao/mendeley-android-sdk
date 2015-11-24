@@ -41,13 +41,13 @@ public class FileRequestTest extends SignedInTest {
         params.addedSince = addedSince;
         params.deletedSince = deletedSince;
 
-        Uri url = getRequestFactory().getFiles(params).getUrl();
+        Uri url = getRequestFactory().newGetFilesRequest(params).getUrl();
 
         assertEquals("Get files url with parameters is wrong", expectedUrl, url);
 
         expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL + "files");
         params = new FilesEndpoint.FileRequestParameters();
-        url = getRequestFactory().getFiles(params).getUrl();
+        url = getRequestFactory().newGetFilesRequest(params).getUrl();
 
         assertEquals("Get files url without parameters is wrong", expectedUrl, url);
     }
@@ -59,7 +59,7 @@ public class FileRequestTest extends SignedInTest {
                 appendPath("files").
                 appendPath(fileId).
                 build();
-        Uri url = getRequestFactory().getFileBinary(fileId, null).getUrl();
+        Uri url = getRequestFactory().newGetFileBinaryRequest(fileId, null).getUrl();
 
         assertEquals("Get file url is wrong", expectedUrl, url);
     }
@@ -71,7 +71,7 @@ public class FileRequestTest extends SignedInTest {
                 appendPath("files").
                 appendPath(fileId).
                 build();
-        Uri url = getRequestFactory().deleteFile(fileId).getUrl();
+        Uri url = getRequestFactory().newDeleteFileRequest(fileId).getUrl();
 
         assertEquals("Delete file url is wrong", expectedUrl, url);
     }
@@ -89,7 +89,7 @@ public class FileRequestTest extends SignedInTest {
         }
 
         // WHEN getting files
-        final List<File> actual = getRequestFactory().getFiles().run().resource;
+        final List<File> actual = getRequestFactory().newGetFilesRequest().run().resource;
 
         Comparator<File> comparator = new Comparator<File>() {
             @Override
@@ -120,7 +120,7 @@ public class FileRequestTest extends SignedInTest {
         params.addedSince = currentDate;
         params.documentId = document.id;
 
-        final List<File> actual = getRequestFactory().getFiles(params).run().resource;
+        final List<File> actual = getRequestFactory().newGetFilesRequest(params).run().resource;
 
         Comparator<File> comparator = new Comparator<File>() {
             @Override
@@ -152,7 +152,7 @@ public class FileRequestTest extends SignedInTest {
         final FilesEndpoint.FileRequestParameters params = new FilesEndpoint.FileRequestParameters();
         params.limit = pageSize;
 
-        Request<List<File>>.Response response = getRequestFactory().getFiles(params).run();
+        Request<List<File>>.Response response = getRequestFactory().newGetFilesRequest(params).run();
 
         final List<File> actual = new LinkedList<File>();
         // THEN we receive a files list...
@@ -162,7 +162,7 @@ public class FileRequestTest extends SignedInTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", response.next != null);
-                response = getRequestFactory().getFiles(response.next).run();
+                response = getRequestFactory().newGetFilesRequest(response.next).run();
             }
         }
 
@@ -186,14 +186,14 @@ public class FileRequestTest extends SignedInTest {
         File postingFile = createFile(document.id);
 
         // WHEN posting it
-        final File returnedFile = getRequestFactory().postFileBinary(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName).run().resource;
+        final File returnedFile = getRequestFactory().newPostFileBinaryRequest(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName).run().resource;
 
         // THEN we receive the same file back, with id filled
         AssertUtils.assertFile(postingFile, returnedFile);
         assertNotNull(returnedFile.id);
 
         // ...and the file exists in the server
-        AssertUtils.assertFiles(getRequestFactory().getFiles().run().resource, Arrays.asList(postingFile));
+        AssertUtils.assertFiles(getRequestFactory().newGetFilesRequest().run().resource, Arrays.asList(postingFile));
     }
 
     public void test_deleteFile_removesTheFileFromServer() throws Exception {
@@ -210,10 +210,10 @@ public class FileRequestTest extends SignedInTest {
 
         // WHEN deleting one of them
         final String deletingFileId = serverFilesBefore.get(0).id;
-        getRequestFactory().deleteFile(deletingFileId).run();;
+        getRequestFactory().newDeleteFileRequest(deletingFileId).run();;
 
         // THEN the server does not have the deleted file any more
-        final List<File> serverFilesAfter = getRequestFactory().getFiles().run().resource;
+        final List<File> serverFilesAfter = getRequestFactory().newGetFilesRequest().run().resource;
         for (File file : serverFilesAfter) {
             assertFalse(deletingFileId.equals(file.id));
         }

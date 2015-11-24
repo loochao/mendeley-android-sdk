@@ -65,6 +65,6 @@ public abstract class SignedInTest extends AndroidTestCase {
     protected Date getServerDate() throws Exception {
         // wait a bit, so we get a "fresh" date
         Thread.sleep(1000);
-        return getRequestFactory().getDocuments().run().serverDate;
+        return getRequestFactory().newGetDocumentsRequest().run().serverDate;
     }
 }

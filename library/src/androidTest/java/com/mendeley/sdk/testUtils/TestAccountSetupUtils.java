@@ -57,22 +57,22 @@ public class TestAccountSetupUtils{
         try {
             // delete non-trashed docs
             // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-            for (Document doc: requestFactory.getDocuments().run().resource) {
+            for (Document doc: requestFactory.newGetDocumentsRequest().run().resource) {
                 // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-                requestFactory.deleteDocument(doc.id).run();
+                requestFactory.newDeleteDocumentRequest(doc.id).run();
             }
 
             // delete trashed docs
             // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-            for (Document doc: requestFactory.getTrashedDocuments().run().resource) {
+            for (Document doc: requestFactory.newGetTrashedDocumentsRequest().run().resource) {
                 // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-                requestFactory.deleteTrashedDocument(doc.id).run();
+                requestFactory.newDeleteTrashedDocumentRequest(doc.id).run();
             }
 
             // ensure no documents at all (trashed or deleted)
             // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-            Assert.assertEquals("Expected empty list of non trashed docs in server", 0, requestFactory.getDocuments().run().resource.size());
-            Assert.assertEquals("Expected empty list of trashed docs in server", 0, requestFactory.getTrashedDocuments().run().resource.size());
+            Assert.assertEquals("Expected empty list of non trashed docs in server", 0, requestFactory.newGetDocumentsRequest().run().resource.size());
+            Assert.assertEquals("Expected empty list of trashed docs in server", 0, requestFactory.newGetTrashedDocumentsRequest().run().resource.size());
 
         } catch (Exception e) {
             throw new TestAccountSetupException(e);
@@ -83,14 +83,14 @@ public class TestAccountSetupUtils{
         try {
             // delete parent folders as sub folders will be deleted as well
             // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-            for (Folder folder: requestFactory.getFolders().run().resource) {
+            for (Folder folder: requestFactory.newGetFoldersRequest().run().resource) {
                 // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
                 if (folder.parentId == null) {
-                    requestFactory.deleteFolder(folder.id).run();
+                    requestFactory.newDeleteFolderRequest(folder.id).run();
                 }
             }
 
-            Assert.assertEquals("Expected empty list of folders in server", 0, requestFactory.getFolders().run().resource.size());
+            Assert.assertEquals("Expected empty list of folders in server", 0, requestFactory.newGetFoldersRequest().run().resource.size());
 
         } catch (Exception e) {
             throw new TestAccountSetupException(e);
@@ -99,32 +99,32 @@ public class TestAccountSetupUtils{
 
     public Document setupDocument(Document doc) throws MendeleyException {
         // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
-        return requestFactory.postDocument(doc).run().resource;
+        return requestFactory.newPostDocumentRequest(doc).run().resource;
     }
 
     public void trashDocument(String docId) throws MendeleyException {
         // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
-       requestFactory.trashDocument(docId).run();
+       requestFactory.newTrashDocumentRequest(docId).run();
     }
 
     public Annotation setupAnnotation(Annotation annotation) throws MendeleyException {
         // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
-        return requestFactory.postAnnotation(annotation).run().resource;
+        return requestFactory.newPostAnnotationRequest(annotation).run().resource;
     }
 
     public File setupFile(String docId, String fileName, InputStream inputStream) throws MendeleyException {
         // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
-        return requestFactory.postFileBinary("application/pdf", docId, inputStream, fileName).run().resource;
+        return requestFactory.newPostFileBinaryRequest("application/pdf", docId, inputStream, fileName).run().resource;
     }
 
     public Folder setupFolder(Folder folder) throws MendeleyException {
         // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
-        return requestFactory.postFolder(folder).run().resource;
+        return requestFactory.newPostFolderRequest(folder).run().resource;
     }
 
     public List<Group> getGroups() throws MendeleyException {
         // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory this should receive a JSON and post it using HTTP
-        return requestFactory.getGroups(new GroupsEndpoint.GroupRequestParameters()).run().resource;
+        return requestFactory.newGetGroupsRequest(new GroupsEndpoint.GroupRequestParameters()).run().resource;
     }
 
     public ReadPosition setupReadingPosition(String fileId, int page, int verticalPosition, Date date) throws Exception{

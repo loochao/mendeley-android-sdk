@@ -30,7 +30,7 @@ public class FolderRequestTest extends SignedInTest {
 
         FoldersEndpoint.FolderRequestParameters params = new FoldersEndpoint.FolderRequestParameters();
         params.groupId = groupId;
-        final Uri actualUri = getRequestFactory().getFolders(params).getUrl();
+        final Uri actualUri = getRequestFactory().newGetFoldersRequest(params).getUrl();
 
         assertEquals("Get folders url with parameters is wrong", expectedUrl, actualUri);
     }
@@ -50,7 +50,7 @@ public class FolderRequestTest extends SignedInTest {
         }
 
         // WHEN getting folders
-        final List<Folder> actual = getRequestFactory().getFolders().run().resource;
+        final List<Folder> actual = getRequestFactory().newGetFoldersRequest().run().resource;
 
         Comparator<Folder> comparator = new Comparator<Folder>() {
             @Override
@@ -80,7 +80,7 @@ public class FolderRequestTest extends SignedInTest {
         FoldersEndpoint.FolderRequestParameters params = new FoldersEndpoint.FolderRequestParameters();
         params.groupId = null;
         params.limit = 10;
-        final List<Folder> actual = getRequestFactory().getFolders(params).run().resource;
+        final List<Folder> actual = getRequestFactory().newGetFoldersRequest(params).run().resource;
 
         Comparator<Folder> comparator = new Comparator<Folder>() {
             @Override
@@ -115,7 +115,7 @@ public class FolderRequestTest extends SignedInTest {
         params.limit = pageSize;
 
         final List<Folder> actual = new LinkedList<Folder>();
-        Request<List<Folder>>.Response response = getRequestFactory().getFolders(params).run();
+        Request<List<Folder>>.Response response = getRequestFactory().newGetFoldersRequest(params).run();
 
         // THEN we receive a folder list...
         for (int page = 0; page < pageCount; page++) {
@@ -124,7 +124,7 @@ public class FolderRequestTest extends SignedInTest {
             //... with a link to the next page if it was not the last page
             if (page < pageCount - 1) {
                 assertTrue("page must be valid", response.next != null);
-                response = getRequestFactory().getFolders(response.next).run();
+                response = getRequestFactory().newGetFoldersRequest(response.next).run();
             }
         }
 
@@ -145,14 +145,14 @@ public class FolderRequestTest extends SignedInTest {
         final Folder postingFolder = createParentFolder();
 
         // WHEN posting it
-        final Folder returnedFolder = getRequestFactory().postFolder(postingFolder).run().resource;
+        final Folder returnedFolder = getRequestFactory().newPostFolderRequest(postingFolder).run().resource;
 
         // THEN we receive the same folder back, with id filled
         AssertUtils.assertFolder(postingFolder, returnedFolder);
         assertNotNull(returnedFolder.id);
 
         // ...and the folder exists in the server
-        AssertUtils.assertFolders(getRequestFactory().getFolders().run().resource, Arrays.asList(postingFolder));
+        AssertUtils.assertFolders(getRequestFactory().newGetFoldersRequest().run().resource, Arrays.asList(postingFolder));
     }
 
     @SmallTest
@@ -160,7 +160,7 @@ public class FolderRequestTest extends SignedInTest {
         final String folderId = "theFolderId";
 
         final Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).build();
-        final Uri url = getRequestFactory().deleteFolder(folderId).getUrl();
+        final Uri url = getRequestFactory().newDeleteFolderRequest(folderId).getUrl();
 
         assertEquals("Delete folder url is wrong", expectedUrl, url);
     }
@@ -177,10 +177,10 @@ public class FolderRequestTest extends SignedInTest {
 
         // WHEN deleting one of them
         final String deletingFolderId = serverFoldersBefore.get(0).id;
-        getRequestFactory().deleteFolder(deletingFolderId).run();
+        getRequestFactory().newDeleteFolderRequest(deletingFolderId).run();
 
         // THEN the server does not have the deleted folder any more
-        final List<Folder> serverFoldersAfter = getRequestFactory().getFolders().run().resource;
+        final List<Folder> serverFoldersAfter = getRequestFactory().newGetFoldersRequest().run().resource;
         for (Folder folder : serverFoldersAfter) {
             assertFalse(deletingFolderId.equals(folder.id));
         }
@@ -191,7 +191,7 @@ public class FolderRequestTest extends SignedInTest {
         final String folderId = "theFolderId";
 
         final Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).build();
-        final Uri actualUrl = getRequestFactory().patchFolder(folderId, null).getUrl();
+        final Uri actualUrl = getRequestFactory().newPatchFolderRequest(folderId, null).getUrl();
 
         assertEquals("Patch folder url is wrong", expectedUrl, actualUrl);
     }
@@ -205,13 +205,13 @@ public class FolderRequestTest extends SignedInTest {
                 .setName(folder.name + "updated")
                 .build();
 
-        final Folder returnedFolder = getRequestFactory().patchFolder(folder.id, folderPatched).run().resource;
+        final Folder returnedFolder = getRequestFactory().newPatchFolderRequest(folder.id, folderPatched).run().resource;
 
         // THEN we receive the patched folder
         AssertUtils.assertFolder(folderPatched, returnedFolder);
 
         // ...and the server has updated the folder
-        final Folder folderAfter = getRequestFactory().getFolder(folderPatched.id).run().resource;
+        final Folder folderAfter = getRequestFactory().newGetFolderRequest(folderPatched.id).run().resource;
         AssertUtils.assertFolder(folderPatched, folderAfter);
     }
 
@@ -233,7 +233,7 @@ public class FolderRequestTest extends SignedInTest {
         params.groupId = groupdId;
         params.limit = limit;
 
-        final Uri actualUrl = getRequestFactory().getFolderDocumentIds(params, folderId).getUrl();
+        final Uri actualUrl = getRequestFactory().newGetFolderDocumentsRequest(params, folderId).getUrl();
 
         assertEquals("Get folder document ids url is wrong", expectedUrl, actualUrl);
     }
@@ -248,14 +248,14 @@ public class FolderRequestTest extends SignedInTest {
 
         for (int i = 0; i < 4; i++) {
             Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title" + i));
-            getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
+            getRequestFactory().newPostDocumentToFolderRequest(folder.id, document.id).run();
             expectedDocIds.add(document.id);
         }
 
         // WHEN getting the documents in the folder
-        final List<String> actualDocIds = getRequestFactory().getFolderDocumentIds(null, folder.id).run().resource;
+        final List<String> actualDocIds = getRequestFactory().newGetFolderDocumentsRequest(null, folder.id).run().resource;
 
-        Request<List<String>>.Response response = getRequestFactory().getFolderDocumentIds(new FoldersEndpoint.FolderRequestParameters(), folder.id).run();
+        Request<List<String>>.Response response = getRequestFactory().newGetFolderDocumentsRequest(new FoldersEndpoint.FolderRequestParameters(), folder.id).run();
         final Set<String> actualDeletedDocIds = new HashSet<String>(response.resource);
 
         // THEN we have received the documents in that folder
@@ -273,7 +273,7 @@ public class FolderRequestTest extends SignedInTest {
         final String folderId = "theFolderId";
 
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).appendPath("documents").build();
-        final Uri actualUrl = getRequestFactory().postDocumentToFolder(folderId, "theDocumentId").getUrl();
+        final Uri actualUrl = getRequestFactory().newPostDocumentToFolderRequest(folderId, "theDocumentId").getUrl();
 
         assertEquals("Post document to folder url is wrong", expectedUrl, actualUrl);
     }
@@ -295,10 +295,10 @@ public class FolderRequestTest extends SignedInTest {
 
         // WHEN posting the documents to the folder
         for (Document document : documents) {
-            getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
+            getRequestFactory().newPostDocumentToFolderRequest(folder.id, document.id).run();
         }
 
-        Request<List<String>>.Response response = getRequestFactory().getFolderDocumentIds(new FoldersEndpoint.FolderRequestParameters(), folder.id).run();
+        Request<List<String>>.Response response = getRequestFactory().newGetFolderDocumentsRequest(new FoldersEndpoint.FolderRequestParameters(), folder.id).run();
         final Set<String> actualDocIds = new HashSet<String>(response.resource);
 
         Comparator<String> comparator = new Comparator<String>() {
@@ -316,7 +316,7 @@ public class FolderRequestTest extends SignedInTest {
         final String documentId = "test-document_id";
 
         final Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).appendPath("documents").appendPath(documentId).build();
-        final Uri actualUrl = getRequestFactory().deleteDocumentFromFolder(folderId, documentId).getUrl();
+        final Uri actualUrl = getRequestFactory().newDeleteDocumentFromFolderRequest(folderId, documentId).getUrl();
 
         assertEquals("Delete document from folder url is wrong", expectedUrl, actualUrl);
     }
@@ -333,17 +333,17 @@ public class FolderRequestTest extends SignedInTest {
             Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title" + i));
             documents.add(document);
             expectedDocIds.add(document.id);
-            getRequestFactory().postDocumentToFolder(folder.id, document.id).run();
+            getRequestFactory().newPostDocumentToFolderRequest(folder.id, document.id).run();
         }
 
         // WHEN deleting one of the documents
         final String deletingDocumentId = documents.remove(getRandom().nextInt(documents.size() -1)).id;
         expectedDocIds.remove(deletingDocumentId);
 
-        getRequestFactory().deleteDocumentFromFolder(folder.id, deletingDocumentId).run();
+        getRequestFactory().newDeleteDocumentFromFolderRequest(folder.id, deletingDocumentId).run();
 
         // THEN the server has no longer that document in the folder
-        Request<List<String>>.Response response = getRequestFactory().getFolderDocumentIds(new FoldersEndpoint.FolderRequestParameters(), folder.id).run();
+        Request<List<String>>.Response response = getRequestFactory().newGetFolderDocumentsRequest(new FoldersEndpoint.FolderRequestParameters(), folder.id).run();
         final Set<String> actualDocIds = new HashSet<String>(response.resource);
 
         Comparator<String> comparator = new Comparator<String>() {
@@ -360,7 +360,7 @@ public class FolderRequestTest extends SignedInTest {
         final String folderId = "folderId";
 
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendPath(folderId).build();
-        final Uri actualUrl = getRequestFactory().getFolder(folderId).getUrl();
+        final Uri actualUrl = getRequestFactory().newGetFolderRequest(folderId).getUrl();
 
         assertEquals("Get folder url is wrong", expectedUrl, actualUrl);
     }
@@ -373,7 +373,7 @@ public class FolderRequestTest extends SignedInTest {
         final String folderId = getTestAccountSetupUtils().setupFolder(postingFolder).id;
 
         // WHEN getting that folder
-        final Folder actualFolder =  getRequestFactory().getFolder(folderId).run().resource;
+        final Folder actualFolder =  getRequestFactory().newGetFolderRequest(folderId).run().resource;
 
         // THEN the folder is the correct one
         AssertUtils.assertFolder(postingFolder, actualFolder);

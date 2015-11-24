@@ -36,7 +36,7 @@ public class RecentlyReadRequestTest extends SignedInTest {
                 .build();
 
 
-        final Uri url = getRequestFactory().getRecentlyRead(groupId, fileId, limit).getUrl();
+        final Uri url = getRequestFactory().newGetRecentlyReadRequest(groupId, fileId, limit).getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, url);
     }
@@ -51,7 +51,7 @@ public class RecentlyReadRequestTest extends SignedInTest {
         }
 
         // WHEN getting recently read positions
-        final List<ReadPosition> actual = getRequestFactory().getRecentlyRead(null, null, 20).run().resource;
+        final List<ReadPosition> actual = getRequestFactory().newGetRecentlyReadRequest(null, null, 20).run().resource;
 
         // THEN we have the expected recently read positions
         AssertUtils.assertReadPositions(expected, actual);
@@ -60,7 +60,7 @@ public class RecentlyReadRequestTest extends SignedInTest {
     @SmallTest
     public void test_postRecentlyRead_usesRightUrl() throws Exception {
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("recently_read").build();
-        final Uri url = getRequestFactory().postRecentlyRead(null).getUrl();
+        final Uri url = getRequestFactory().newPostRecentlyReadRequest(null).getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, url);
     }
@@ -78,7 +78,7 @@ public class RecentlyReadRequestTest extends SignedInTest {
                 .setDate(new Date())
                 .build();
 
-        getRequestFactory().postRecentlyRead(expected).run();
+        getRequestFactory().newPostRecentlyReadRequest(expected).run();
 
         // THEN we have successfully posted it
         final List<ReadPosition> actual = getTestAccountSetupUtils().getAllReadingPositions();
@@ -98,7 +98,7 @@ public class RecentlyReadRequestTest extends SignedInTest {
                 .setDate(new Date())
                 .build();
 
-        getRequestFactory().postRecentlyRead(firstReadPostion).run();
+        getRequestFactory().newPostRecentlyReadRequest(firstReadPostion).run();
 
         // WHEN updating (posting for second time) the read position for the same file
 
@@ -110,7 +110,7 @@ public class RecentlyReadRequestTest extends SignedInTest {
                 .setDate(new Date())
                 .build();
 
-        getRequestFactory().postRecentlyRead(secondReadPostion).run();
+        getRequestFactory().newPostRecentlyReadRequest(secondReadPostion).run();
 
         // THEN we have successfully posted it
         final List<ReadPosition> actual = getTestAccountSetupUtils().getAllReadingPositions();

@@ -21,7 +21,7 @@ public class TrashEndpointTest extends SignedInTest {
     @SmallTest
     public void test_getTrashDocuments_useTheRightUrl_noParams() {
         Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("trash").build();
-        Uri actual = getRequestFactory().getTrashedDocuments().getUrl();
+        Uri actual = getRequestFactory().newGetTrashedDocumentsRequest().getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, actual);
     }
@@ -60,7 +60,7 @@ public class TrashEndpointTest extends SignedInTest {
         params.deletedSince = deletedSince;
 
 
-        final Uri actualUrl = getRequestFactory().getTrashedDocuments(params).getUrl();
+        final Uri actualUrl = getRequestFactory().newGetTrashedDocumentsRequest(params).getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, actualUrl);
     }
@@ -80,7 +80,7 @@ public class TrashEndpointTest extends SignedInTest {
         final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
 
-        final List<Document> actual = getRequestFactory().getTrashedDocuments(params).run().resource;
+        final List<Document> actual = getRequestFactory().newGetTrashedDocumentsRequest(params).run().resource;
 
         // THEN we have the expected trashed documents
         AssertUtils.assertDocuments(expected, actual);
@@ -92,7 +92,7 @@ public class TrashEndpointTest extends SignedInTest {
         final String docId = "theDocId";
 
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("trash").appendPath(docId).build();
-        final Uri actual = getRequestFactory().deleteTrashedDocument(docId).getUrl();
+        final Uri actual = getRequestFactory().newDeleteTrashedDocumentRequest(docId).getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, actual);
     }
@@ -110,12 +110,12 @@ public class TrashEndpointTest extends SignedInTest {
 
         // WHEN deleting one of them
         final Document deletedDocument = expected.remove(getRandom().nextInt(expected.size() -1));
-        getRequestFactory().deleteTrashedDocument(deletedDocument.id).run();
+        getRequestFactory().newDeleteTrashedDocumentRequest(deletedDocument.id).run();
 
         // THEN we have the expected trashed documents
         final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
-        final List<Document> actual = getRequestFactory().getTrashedDocuments(params).run().resource;
+        final List<Document> actual = getRequestFactory().newGetTrashedDocumentsRequest(params).run().resource;
 
         AssertUtils.assertDocuments(expected, actual);
     }
@@ -125,7 +125,7 @@ public class TrashEndpointTest extends SignedInTest {
         final String docId = "theDocId";
 
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("trash").appendPath(docId).appendPath("restore").build();
-        final Uri actual = getRequestFactory().restoreTrashedDocument(docId).getUrl();
+        final Uri actual = getRequestFactory().newRestoreTrashedDocumentRequest(docId).getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, actual);
     }
@@ -143,18 +143,18 @@ public class TrashEndpointTest extends SignedInTest {
 
         // WHEN restoring one of them
         final Document restoredDocument = expectedtrashed.remove(getRandom().nextInt(expectedtrashed.size() -1));
-        getRequestFactory().restoreTrashedDocument(restoredDocument.id).run();
+        getRequestFactory().newRestoreTrashedDocumentRequest(restoredDocument.id).run();
 
         // THEN we have the expected trashed documents
         final DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.sort = DocumentEndpoint.DocumentRequestParameters.Sort.TITLE;
-        final List<Document> actualTrashed = getRequestFactory().getTrashedDocuments(params).run().resource;
+        final List<Document> actualTrashed = getRequestFactory().newGetTrashedDocumentsRequest(params).run().resource;
 
         AssertUtils.assertDocuments(expectedtrashed, actualTrashed);
 
         // AND the expected non-trashed documents
         final List<Document> expectedNonTrashed = Collections.singletonList(restoredDocument);
-        final List<Document> actualNonTrashed = getRequestFactory().getDocuments(params).run().resource;
+        final List<Document> actualNonTrashed = getRequestFactory().newGetDocumentsRequest(params).run().resource;
 
         AssertUtils.assertDocuments(expectedNonTrashed, actualNonTrashed);
     }

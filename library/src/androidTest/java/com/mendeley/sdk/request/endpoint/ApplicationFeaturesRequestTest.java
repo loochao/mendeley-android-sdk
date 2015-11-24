@@ -43,7 +43,7 @@ public class ApplicationFeaturesRequestTest extends SignedInTest {
             assertTrue("no features posted", expected.size() > 0);
 
             // WHEN getting application features
-            final List<String> actual = getRequestFactory().getApplicationFeatures().run().resource;
+            final List<String> actual = getRequestFactory().newGetApplicationFeaturesRequest().run().resource;
 
             // THEN we have the expected application features
             for (String feature : expected) {

@@ -29,19 +29,19 @@ public interface RequestsFactory {
     /**
      * Retrieve a list of documents in the user's library.
      */
-    Request<List<Document>> getDocuments();
+    Request<List<Document>> newGetDocumentsRequest();
 
     /**
      * Retrieve a list of documents in the user's library.
      */
-    Request<List<Document>> getDocuments(DocumentEndpoint.DocumentRequestParameters parameters);
+    Request<List<Document>> newGetDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters);
 
     /**
      * Retrieve subsequent pages of documents in the user's library.
      *
      * @param url reference to next page returned in a previous DocumentList.
      */
-    Request<List<Document>> getDocuments(Uri url);
+    Request<List<Document>> newGetDocumentsRequest(Uri url);
 
     /**
      * Retrieve a single document, specified by ID.
@@ -49,14 +49,14 @@ public interface RequestsFactory {
      * @param documentId the document id to get.
      * @param view extended document view. If null, only core fields are returned.
      */
-    Request<Document> getDocument(String documentId, DocumentEndpoint.DocumentRequestParameters.View view);
+    Request<Document> newGetDocumentRequest(String documentId, DocumentEndpoint.DocumentRequestParameters.View view);
 
     /**
      * Add a new document to the user's library.
      *
      * @param document the document object to be added.
      */
-    Request<Document> postDocument(Document document);
+    Request<Document> newPostDocumentRequest(Document document);
 
     /**
      * Modify an existing document in the user's library.
@@ -66,57 +66,57 @@ public interface RequestsFactory {
      * @param document a document object containing the fields to be updated.
      *                 Missing fields are left unchanged (not cleared).
      */
-    Request<Document> patchDocument(String documentId, Date date, Document document);
+    Request<Document> newPatchDocumentRequest(String documentId, Date date, Document document);
 
     /**
      * Move an existing document into the user's trash collection.
      *
      * @param documentId id of the document to be trashed.
      */
-    Request<Void> trashDocument(String documentId);
+    Request<Void> newTrashDocumentRequest(String documentId);
 
     /**
      * Delete a document which is NOT trashed.
      *
      * @param documentId id of the document to be deleted.
      */
-    Request<Void> deleteDocument(String documentId);
+    Request<Void> newDeleteDocumentRequest(String documentId);
 
     /**
      * Delete a document which is alreare trashed.
      *
      * @param documentId id of the document to be deleted.
      */
-    Request<Void> deleteTrashedDocument(String documentId);
+    Request<Void> newDeleteTrashedDocumentRequest(String documentId);
 
     /**
      * Return a list of valid document types.
      */
-    Request<Map<String, String>> getDocumentTypes();
+    Request<Map<String, String>> newGetDocumentTypesRequest();
 
     /**
      * Return a list of valid identifiers types.
      */
-    Request<Map<String, String>> getDocumentIdentifierTypes();
+    Request<Map<String, String>> newGetDocumentIdentifierTypesRequest();
 
     /* FILES */
 
     /**
      * Return metadata for a user's files, subject to specified query parameters.
      */
-    Request<List<File>> getFiles(FilesEndpoint.FileRequestParameters parameters);
+    Request<List<File>> newGetFilesRequest(FilesEndpoint.FileRequestParameters parameters);
 
     /**
      * Return metadata for all files associated with all of the user's documents.
      */
-    Request<List<File>> getFiles();
+    Request<List<File>> newGetFilesRequest();
 
     /**
      * Return the next page of file metadata entries.
      *
      * @param uri returned from previous getFiles() call.
      */
-    Request<List<File>> getFiles(Uri uri);
+    Request<List<File>> newGetFilesRequest(Uri uri);
 
 
     /**
@@ -127,7 +127,7 @@ public interface RequestsFactory {
      *
      * @return bytes downloaded
      */
-    GetFileNetworkRequest getFileBinary(String fileId, java.io.File targetFile);
+    GetFileNetworkRequest newGetFileBinaryRequest(String fileId, java.io.File targetFile);
 
 
     /**
@@ -140,39 +140,39 @@ public interface RequestsFactory {
      * @return the file metadata
      * @
      */
-    Request<File> postFileBinary(String contentType, String documentId, InputStream inputStream, String fileName);
+    Request<File> newPostFileBinaryRequest(String contentType, String documentId, InputStream inputStream, String fileName);
 
     /**
      * Delete file with the given id
      * @param fileId
      */
-    Request<Void> deleteFile(String fileId);
+    Request<Void> newDeleteFileRequest(String fileId);
 
     /* FOLDERS */
 
     /**
      * Return metadata for all the user's folders.
      */
-    Request<List<Folder>> getFolders(FoldersEndpoint.FolderRequestParameters parameters);
+    Request<List<Folder>> newGetFoldersRequest(FoldersEndpoint.FolderRequestParameters parameters);
 
     /**
      * Return metadata for all the user's folders.
      */
-    Request<List<Folder>> getFolders();
+    Request<List<Folder>> newGetFoldersRequest();
 
     /**
      * Returns the next page of folder metadata entries.
      *
      * @param uri returned from a previous getFolders() call.
      */
-    Request<List<Folder>> getFolders(Uri uri);
+    Request<List<Folder>> newGetFoldersRequest(Uri uri);
 
     /**
      * Returns metadata for a single folder, specified by ID.
      *
      * @param folderId ID of the folder to retrieve metadata for.
      */
-    Request<Folder> getFolder(String folderId);
+    Request<Folder> newGetFolderRequest(String folderId);
 
 
     /**
@@ -180,7 +180,7 @@ public interface RequestsFactory {
      *
      * @param folder metadata for the folder to create.
      */
-    Request<Folder> postFolder(Folder folder);
+    Request<Folder> newPostFolderRequest(Folder folder);
 
     /**
      * Update a folder's metadata.
@@ -190,21 +190,21 @@ public interface RequestsFactory {
      * @param folderId the id of the folder to modify.
      * @param folder metadata object that provides the new name and parentId.
      */
-    Request<Folder> patchFolder(String folderId, Folder folder);
+    Request<Folder> newPatchFolderRequest(String folderId, Folder folder);
 
     /**
      * Return a list of IDs of the documents stored in a particular folder.
      *
      * @param folderId ID of the folder to inspect.
      */
-    Request<List<String>> getFolderDocumentIds(FoldersEndpoint.FolderRequestParameters parameters, String folderId);
+    Request<List<String>> newGetFolderDocumentsRequest(FoldersEndpoint.FolderRequestParameters parameters, String folderId);
 
     /**
      * Returns the next page of document IDs stored in a particular folder.
      * @param uri returned by a previous call to getFolderDocumentIds().
      *
      */
-    Request<List<String>> getFolderDocumentIds(Uri uri);
+    Request<List<String>> newGetFolderDocumentsRequest(Uri uri);
 
     /**
      * Add a document to a folder.
@@ -212,7 +212,7 @@ public interface RequestsFactory {
      * @param folderId the ID the folder.
      * @param documentId the ID of the document to add to the folder.
      */
-    Request<Void> postDocumentToFolder(String folderId, String documentId);
+    Request<Void> newPostDocumentToFolderRequest(String folderId, String documentId);
 
     /**
      * Delete a folder.
@@ -221,7 +221,7 @@ public interface RequestsFactory {
      *
      * @param folderId the ID of the folder to delete.
      */
-    Request<Void> deleteFolder(String folderId);
+    Request<Void> newDeleteFolderRequest(String folderId);
 
     /**
      * Remove a document from a folder.
@@ -231,89 +231,89 @@ public interface RequestsFactory {
      * @param folderId the ID of the folder.
      * @param documentId the ID of the document to remove.
      */
-    Request<Void> deleteDocumentFromFolder(String folderId, String documentId);
+    Request<Void> newDeleteDocumentFromFolderRequest(String folderId, String documentId);
 
     /* GROUPS */
 
     /**
      * Return metadata for all the user's groups.
      */
-    Request<List<Group>> getGroups(GroupsEndpoint.GroupRequestParameters parameters);
+    Request<List<Group>> newGetGroupsRequest(GroupsEndpoint.GroupRequestParameters parameters);
 
     /**
      * Returns the next page of group metadata entries.
      *
      * @param uri returned from a previous getGroups() call.
      */
-    Request<List<Group>> getGroups(Uri uri);
+    Request<List<Group>> newGetGroupsRequest(Uri uri);
 
     /**
      * Returns metadata for a single group, specified by ID.
      *
      * @param groupId ID of the group to retrieve metadata for.
      */
-    Request<Group> getGroup(String groupId);
+    Request<Group> newGetGroupRequest(String groupId);
 
     /**
      * Return a list of members user roles of a particular group.
      *
      * @param groupId ID of the group to inspect.
      */
-    Request<List<UserRole>> getGroupMembers(GroupsEndpoint.GroupRequestParameters parameters, String groupId);
+    Request<List<UserRole>> newGetGroupMembersRequest(GroupsEndpoint.GroupRequestParameters parameters, String groupId);
 
     /**
      * Return a list of members user roles of a particular group.
      *
      * @param url returned from a previous getGroupMembers() call.
      */
-    Request<List<UserRole>> getGroupMembers(Uri url);
+    Request<List<UserRole>> newGetGroupMembersRequest(Uri url);
 
     /* TRASH */
 
     /**
      * Retrieve a list of documents in the user's trash.
      */
-    Request<List<Document>> getTrashedDocuments(DocumentEndpoint.DocumentRequestParameters parameters);
+    Request<List<Document>> newGetTrashedDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters);
 
     /**
      * Retrieve a list of documents in the user's trash.
      */
-    Request<List<Document>> getTrashedDocuments();
+    Request<List<Document>> newGetTrashedDocumentsRequest();
 
     /**
      * Retrieve subsequent pages of documents from the user's trash.
      *
      * @param uri reference to next page returned by a previous DocumentList from getTrashedDocuments().
      */
-    Request<List<Document>> getTrashedDocuments(Uri uri);
+    Request<List<Document>> newGetTrashedDocumentsRequest(Uri uri);
 
     /**
      * Move a document from trash into the user's library.
      *
      * @param documentId id of the document to restore.
      */
-    Request<Void> restoreTrashedDocument(String documentId);
+    Request<Void> newRestoreTrashedDocumentRequest(String documentId);
 
     /* PROFILES */
 
     /**
      * Return the user's profile information.
      */
-    Request<Profile> getMyProfile();
+    Request<Profile> newGetMyProfileRequest();
 
     /**
      * Return profile information for another user.
      *
      * @param  profileId ID of the profile to be fetched.
      */
-    Request<Profile> getProfile(String profileId);
+    Request<Profile> newGetProfileRequest(String profileId);
 
     /* CATALOG */
 
     /**
      * Retrieve a list of catalog documents
      */
-    Request<List<Document>> getCatalogDocuments(CatalogEndpoint.CatalogDocumentRequestParameters parameters);
+    Request<List<Document>> newGetCatalogDocumentsRequest(CatalogEndpoint.CatalogDocumentRequestParameters parameters);
 
     /**
      * Retrieve a single catalog document, specified by ID.
@@ -321,25 +321,25 @@ public interface RequestsFactory {
      * @param catalogId the catalog document id to get.
      * @param view extended catalog document view. If null, only core fields are returned.
      */
-    Request<Document> getCatalogDocument(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view);
+    Request<Document> newGetCatalogDocumentRequest(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view);
 
 
 
     /* ANNOTATIONS */
 
-    Request<List<Annotation>> getAnnotations();
+    Request<List<Annotation>> newGetAnnotationsRequest();
 
-    Request<List<Annotation>> getAnnotations(AnnotationsEndpoint.AnnotationRequestParameters parameters);
+    Request<List<Annotation>> newGetAnnotationsRequest(AnnotationsEndpoint.AnnotationRequestParameters parameters);
 
-    Request<List<Annotation>> getAnnotations(Uri url);
+    Request<List<Annotation>> newGetAnnotationsRequest(Uri url);
 
-    Request<Annotation> getAnnotation(String annotationId);
+    Request<Annotation> newGetAnnotationRequest(String annotationId);
 
-    Request<Annotation> postAnnotation(Annotation annotation);
+    Request<Annotation> newPostAnnotationRequest(Annotation annotation);
 
-    Request<Annotation> patchAnnotation(String annotationId, Annotation annotation);
+    Request<Annotation> newPatchAnnotationRequest(String annotationId, Annotation annotation);
 
-    Request<Void> deleteAnnotation(String annotationId);
+    Request<Void> newDeleteAnnotationRequest(String annotationId);
 
     /* RECENTLY READ POSITIONS */
 
@@ -351,7 +351,7 @@ public interface RequestsFactory {
      * @param limit
      * @return a list of {@link ReadPosition} with the last {@link ReadPosition} for some files
      */
-    Request<List<ReadPosition>> getRecentlyRead(String groupId, String fileId, int limit);
+    Request<List<ReadPosition>> newGetRecentlyReadRequest(String groupId, String fileId, int limit);
 
     /**
      * Posts the passed {@link ReadPosition} to the Mendeley Web API
@@ -359,7 +359,7 @@ public interface RequestsFactory {
      * @param readPosition
      * @return the posted {@link ReadPosition} as it's now in the server
      */
-    Request<ReadPosition> postRecentlyRead(ReadPosition readPosition);
+    Request<ReadPosition> newPostRecentlyReadRequest(ReadPosition readPosition);
 
     /**
      *
@@ -371,6 +371,7 @@ public interface RequestsFactory {
      * Retrieves a list of features from the web API with experimental features enabled.
      * @return a list of features from the web API with experimental features enabled.
      */
-    Request<List<String>> getApplicationFeatures();
+    @Deprecated
+    Request<List<String>> newGetApplicationFeaturesRequest();
 
 }
