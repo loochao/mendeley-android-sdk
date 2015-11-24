@@ -7,6 +7,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.sdk.exceptions.MendeleyException;
+import com.mendeley.sdk.testUtils.MutableReference;
 
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
@@ -38,6 +39,8 @@ public class RequestTest extends AndroidTestCase {
 
     @SmallTest
     public void test_runAsync_executesRequestInABackgroundThread() throws InterruptedException {
+        final MutableReference<Thread> actualThread = new MutableReference<>();
+
         // GIVEN a request that returns the thread it run in
         final Request<Thread> request = new Request<Thread>(null, null, null) {
             @Override
@@ -48,19 +51,35 @@ public class RequestTest extends AndroidTestCase {
 
         // WHEN it runs;
         final CountDownLatch latch = new CountDownLatch(1);
-        final TestRequestCallback<Thread> callback = new TestRequestCallback<>(latch);
-        request.runAsync(callback);
+
+        request.runAsync(new Request.RequestCallback<Thread>() {
+            @Override
+            public void onSuccess(Thread resource, Uri next, Date serverDate) {
+                actualThread.value = resource;
+                latch.countDown();
+            }
+
+            @Override
+            public void onFailure(MendeleyException mendeleyException) {
+            }
+
+            @Override
+            public void onCancelled() {
+            }
+        });
         latch.await(3, TimeUnit.SECONDS);
 
         // THEN it has not run in the current thread
         final String notExpectedThreadName = Thread.currentThread().getName();
-        final String actualThreadName = callback.resource.getName();
+        final String actualThreadName = actualThread.value.getName();
 
         assertNotSame("Running thread of the request", notExpectedThreadName, actualThreadName);
     }
 
     @SmallTest
     public void test_runAsync_executesRequestInABackgroundThread_whenPassingCustomExecutor() throws InterruptedException {
+        final MutableReference<Thread> actualThread = new MutableReference<>();
+
         // GIVEN a request that returns the thread it run in
         final Request<Thread> request = new Request<Thread>(null, null, null) {
             @Override
@@ -82,13 +101,26 @@ public class RequestTest extends AndroidTestCase {
         // WHEN it runs
         final CountDownLatch latch = new CountDownLatch(1);
 
-        final TestRequestCallback<Thread> callback = new TestRequestCallback<>(latch);
-        request.runAsync(callback, executor);
+        request.runAsync(new Request.RequestCallback<Thread>() {
+            @Override
+            public void onSuccess(Thread resource, Uri next, Date serverDate) {
+                actualThread.value = resource;
+                latch.countDown();
+            }
+
+            @Override
+            public void onFailure(MendeleyException mendeleyException) {
+            }
+
+            @Override
+            public void onCancelled() {
+            }
+        }, executor);
 
         latch.await(3, TimeUnit.SECONDS);
 
         // THEN it has run in the thread of the executor
-        final String actualThreadName = callback.resource.getName();
+        final String actualThreadName = actualThread.value.getName();
 
         assertEquals("Running thread of the request", expectedThreadName, actualThreadName);
     }
@@ -96,6 +128,7 @@ public class RequestTest extends AndroidTestCase {
 
     @LargeTest
     public void test_run_invokesOnSuccessOverTheCallback_whenRunIsSuccesfull() throws InterruptedException {
+        final MutableReference<Boolean> callbackCalled = new MutableReference<Boolean>();
         final CountDownLatch latch = new CountDownLatch(1);
 
         // GIVEN a request that runs until cancelled
@@ -106,19 +139,35 @@ public class RequestTest extends AndroidTestCase {
             }
         };
 
-        // WHEN the asynctask is cancelled
-        final TestRequestCallback<Void> callback = new TestRequestCallback<>(latch);
-        request.runAsync(callback);
+        // WHEN the asynctask runs and finishes with exception
+        request.runAsync(new Request.RequestCallback<Void>() {
+            @Override
+            public void onSuccess(Void resource, Uri next, Date serverDate) {
+                callbackCalled.value = true;
+                latch.countDown();
+            }
+
+            @Override
+            public void onFailure(MendeleyException mendeleyException) {
+
+            }
+
+            @Override
+            public void onCancelled() {
+
+            }
+        });
 
         latch.await(10, TimeUnit.SECONDS);
 
         // THEN the right callback was invoked
-        assertTrue("OnSuccess callback invoked", callback.onSuccessExecuted);
+        assertTrue("OnSuccess callback invoked", callbackCalled.value);
     }
 
     @SmallTest
     public void test_run_invokesOnSuccessOverTheCallback_whenRunFails() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
+        final MutableReference<Exception> exceptionReceived = new MutableReference<Exception>();
 
         // GIVEN a request that runs until cancelled
         final Request<Void> request = new Request<Void>(null, null, null) {
@@ -128,19 +177,35 @@ public class RequestTest extends AndroidTestCase {
             }
         };
 
-        // WHEN the asynctask is cancelled
-        final TestRequestCallback<Void> callback = new TestRequestCallback<>(latch);
-        request.runAsync(callback);
+        // WHEN the asynctask runs and finishes with success
+        request.runAsync(new Request.RequestCallback<Void>() {
+            @Override
+            public void onSuccess(Void resource, Uri next, Date serverDate) {
+            }
 
+            @Override
+            public void onFailure(MendeleyException mendeleyException) {
+                exceptionReceived.value = mendeleyException;
+                latch.countDown();
+            }
+
+            @Override
+            public void onCancelled() {
+
+            }
+        });
         latch.await(10, TimeUnit.SECONDS);
 
         // THEN the right callback was invoked
-        assertTrue("OnSuccess callback invoked", callback.onFailureExecuted);
+        assertNotNull("OnFailure callback invoked", exceptionReceived.value);
+;
     }
+
 
     @SmallTest
     public void test_cancel_invokesOnCanceledOverTheCallback() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
+        final MutableReference<Boolean> callbackCalled = new MutableReference<Boolean>();
 
         // GIVEN a request that runs until cancelled
         final Request<Void> request = new Request<Void>(null, null, null) {
@@ -157,46 +222,27 @@ public class RequestTest extends AndroidTestCase {
         };
 
         // WHEN the asynctask is cancelled
-        final TestRequestCallback<Void> callback = new TestRequestCallback<>(latch);
-        request.runAsync(callback);
+        request.runAsync(new Request.RequestCallback<Void>() {
+            @Override
+            public void onSuccess(Void resource, Uri next, Date serverDate) {
+            }
+
+            @Override
+            public void onFailure(MendeleyException mendeleyException) {
+            }
+
+            @Override
+            public void onCancelled() {
+                callbackCalled.value = true;
+                latch.countDown();
+            }
+        });
         request.cancel();
 
         latch.await(10, TimeUnit.SECONDS);
 
         // THEN the right callback was invoked
-        assertTrue("Cancelled callback invoked", callback.onCancelledExecuted);
+        assertTrue("Cancelled callback invoked", callbackCalled.value);
     }
 
-    private class TestRequestCallback<T> implements Request.RequestCallback<T> {
-        private final CountDownLatch latch;
-        public T resource;
-
-        private boolean onSuccessExecuted;
-        private boolean onFailureExecuted;
-        private boolean onCancelledExecuted;
-
-        public TestRequestCallback(CountDownLatch latch) {
-            this.latch = latch;
-        }
-
-        @Override
-        public void onSuccess(T resource, Uri next, Date serverDate) {
-            this.resource = resource;
-            onSuccessExecuted = true;
-            latch.countDown();
-        }
-
-        @Override
-        public void onFailure(MendeleyException mendeleyException) {
-            onFailureExecuted = true;
-            latch.countDown();
-        }
-
-        @Override
-        public void onCancelled() {
-            onCancelledExecuted = true;
-            latch.countDown();
-        }
-
-    }
 }

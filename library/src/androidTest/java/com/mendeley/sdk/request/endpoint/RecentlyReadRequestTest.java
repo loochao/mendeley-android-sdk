@@ -59,7 +59,7 @@ public class RecentlyReadRequestTest extends SignedInTest {
 
     @SmallTest
     public void test_postRecentlyRead_usesRightUrl() throws Exception {
-        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL);
+        final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("recently_read").build();
         final Uri url = getRequestFactory().postRecentlyRead(null).getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, url);

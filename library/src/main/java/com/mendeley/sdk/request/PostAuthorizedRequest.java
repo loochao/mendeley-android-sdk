@@ -32,9 +32,26 @@ public abstract class PostAuthorizedRequest<ResultType> extends HttpUrlConnectio
 
     @Override
     protected void onConnected(HttpURLConnection con) throws Exception {
-        final OutputStream os = con.getOutputStream();
+        // wrapping the OutputStream of the connection in CancellableOutputStream to stop writing when the request is cancelled
+        final OutputStream os = new MyCancelableOutputStream(con.getOutputStream());
         writePostBody(os);
         os.close();
+    }
+
+
+    /**
+     * Implementation of {@link CancellableOutputStream} that uses the {@link Request} to determine
+     * whether it has been cancelled.
+     */
+    private class MyCancelableOutputStream extends CancellableOutputStream {
+        public MyCancelableOutputStream(OutputStream delegate) {
+            super(delegate);
+        }
+
+        @Override
+        protected boolean isCancelled() {
+            return PostAuthorizedRequest.this.isCancelled();
+        }
     }
 
 

@@ -4,15 +4,13 @@ package com.mendeley.sdk.request;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.Future;
 
 /**
- * Wrapper over {@link InputStream} to publish report the progress of reading through it
+ * Wrapper over {@link InputStream} that will stop reading from it if it's been cancelled
  */
 public abstract class CancellableInputStream extends InputStream {
 
     private final InputStream delegate;
-    private Future l;
 
     public CancellableInputStream(InputStream delegate) {
         this.delegate = delegate;
@@ -40,6 +38,9 @@ public abstract class CancellableInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
+        if (isCancelled()) {
+            throw new CancellationException("Stream has been cancelled");
+        }
         return delegate.read();
     }
 
