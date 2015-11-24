@@ -36,7 +36,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
             con.setDoOutput(true);
 
             final String urlEncodedForm = new Uri.Builder()
-                    .appendQueryParameter("grant_type", AuthTokenManager.GRANT_TYPE_REFRESH)
+                    .appendQueryParameter("grant_type", "refresh_token")
                     .appendQueryParameter("redirect_uri", clientCredentials.redirectUri)
                     .appendQueryParameter("client_id", clientCredentials.clientId)
                     .appendQueryParameter("client_secret", clientCredentials.clientSecret)

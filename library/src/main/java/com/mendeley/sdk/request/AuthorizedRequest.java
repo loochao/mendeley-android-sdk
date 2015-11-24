@@ -19,6 +19,9 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> {
 
+    // Only use tokens which don't expire in the next 5 mins:
+    private final static int MIN_TOKEN_VALIDITY_SEC = 300;
+
     public AuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(url, authTokenManager, clientCredentials);
     }
@@ -63,6 +66,6 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         Date expires = authTokenManager.getAuthTenExpiresAt();
         long timeToExpiryMs = expires.getTime() - now.getTime();
         long timeToExpirySec = TimeUnit.MILLISECONDS.toSeconds(timeToExpiryMs);
-        return timeToExpirySec < AuthTokenManager.MIN_TOKEN_VALIDITY_SEC;
+        return timeToExpirySec < MIN_TOKEN_VALIDITY_SEC;
     }
 }

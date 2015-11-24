@@ -26,14 +26,6 @@ import java.util.Date;
 public interface AuthTokenManager {
 
     String TOKENS_URL = Request.MENDELEY_API_BASE_URL + "/oauth/token";
-    String GRANT_TYPE_AUTH = "authorization_code";
-    String GRANT_TYPE_REFRESH = "refresh_token";
-    String SCOPE = "all";
-    String RESPONSE_TYPE = "code";
-
-    // Only use tokens which don't expire in the next 5 mins:
-    int MIN_TOKEN_VALIDITY_SEC = 300;
-
 
     String getAccessToken();
 

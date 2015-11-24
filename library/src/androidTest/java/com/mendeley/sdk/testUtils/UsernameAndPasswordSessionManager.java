@@ -25,7 +25,6 @@ public class UsernameAndPasswordSessionManager {
     private final ClientCredentials clientCredentials;
     private final AuthTokenManager authTokenManager;
 
-    public static final String GRANT_TYPE_PASSWORD = "password";
     private static final String TAG = InMemoryAuthTokenManager.class.getSimpleName();
 
 
@@ -60,8 +59,8 @@ public class UsernameAndPasswordSessionManager {
             con.setDoOutput(true);
 
             final String urlEncodedForm = new Uri.Builder()
-                    .appendQueryParameter("grant_type", GRANT_TYPE_PASSWORD)
-                    .appendQueryParameter("scope", AuthTokenManager.SCOPE)
+                    .appendQueryParameter("grant_type", "password")
+                    .appendQueryParameter("scope", "all")
                     .appendQueryParameter("client_id", clientCredentials.clientId)
                     .appendQueryParameter("client_secret", clientCredentials.clientSecret)
                     .appendQueryParameter("username", username)

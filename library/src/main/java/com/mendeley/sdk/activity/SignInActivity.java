@@ -33,6 +33,10 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class SignInActivity extends Activity {
 
+	private final static String GRANT_TYPE_AUTH = "authorization_code";
+	private final static String SCOPE = "all";
+	private final static String RESPONSE_TYPE = "code";
+
 	public final static int AUTH_REQUEST_CODE = 31231;
 	public static final String EXTRA_JSON_TOKENS = "returned_json_tokens";
 
@@ -122,10 +126,10 @@ public class SignInActivity extends Activity {
         StringBuilder urlString = new StringBuilder(OAUTH2_URL);
 
 		urlString
-		.append("?").append("grant_type=").append(AuthTokenManager.GRANT_TYPE_AUTH)
+		.append("?").append("grant_type=").append(GRANT_TYPE_AUTH)
 		.append("&").append("redirect_uri=").append(mendeley.getClientCredentials().redirectUri)
-		.append("&").append("scope=").append(AuthTokenManager.SCOPE)
-		.append("&").append("response_type=").append(AuthTokenManager.RESPONSE_TYPE)
+		.append("&").append("scope=").append(SCOPE)
+		.append("&").append("response_type=").append(RESPONSE_TYPE)
 		.append("&").append("client_id=").append(mendeley.getClientCredentials().clientId);
 
 		return urlString.toString();
@@ -182,7 +186,7 @@ public class SignInActivity extends Activity {
 
 			if (authorizationCode != null) {
 				try {
-					return postAuthorizationCode(AuthTokenManager.TOKENS_URL, AuthTokenManager.GRANT_TYPE_AUTH, authorizationCode);
+					return postAuthorizationCode(AuthTokenManager.TOKENS_URL, GRANT_TYPE_AUTH, authorizationCode);
 				} catch (Exception e) {
 					Log.e(TAG, "Could not obtain the access token from authorization code", e);
 				}
