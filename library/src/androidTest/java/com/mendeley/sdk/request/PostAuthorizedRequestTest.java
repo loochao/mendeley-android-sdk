@@ -54,7 +54,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
 
 
     @LargeTest
-    public void test_postResponse() throws Exception {
+    public void test_run_writesThePostPayload() throws Exception {
 
         final JSONObject httpBinResponse = getRequest().run().resource;
         final String actual = httpBinResponse.getString("data");
