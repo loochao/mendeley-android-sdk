@@ -13,7 +13,7 @@ import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.request.JsonParser;
-import com.mendeley.sdk.request.NetworkUtils;
+import com.mendeley.sdk.util.NetworkUtils;
 import com.mendeley.sdk.request.endpoint.GroupsEndpoint;
 import com.mendeley.sdk.util.DateUtils;
 

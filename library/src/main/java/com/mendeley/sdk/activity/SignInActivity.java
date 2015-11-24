@@ -14,23 +14,17 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.R;
 import com.mendeley.sdk.Mendeley;
-import com.mendeley.sdk.request.NetworkUtils;
+import com.mendeley.sdk.R;
+import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.util.NetworkUtils;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * This activity will show the login web interface in a webview.
@@ -188,10 +182,9 @@ public class SignInActivity extends Activity {
 
 			if (authorizationCode != null) {
 				try {
-					HttpResponse response = doPost(AuthTokenManager.TOKENS_URL, AuthTokenManager.GRANT_TYPE_AUTH, authorizationCode);
-					return NetworkUtils.readInputStream(response.getEntity().getContent());
-				} catch (IOException e) {
-					Log.e(TAG, "", e);
+					return postAuthorizationCode(AuthTokenManager.TOKENS_URL, AuthTokenManager.GRANT_TYPE_AUTH, authorizationCode);
+				} catch (Exception e) {
+					Log.e(TAG, "Could not obtain the access token from authorization code", e);
 				}
 			}
 
@@ -211,32 +204,52 @@ public class SignInActivity extends Activity {
     
 	/**
 	 * Helper method for executing http post request
-	 * 
-	 * @param url the url string
-	 * @param grantType the grant type string
-	 * @param authorizationCode the authorisation code string
-	 * @return the HttpResponse object
-	 * @throws ClientProtocolException
-	 * @throws IOException
 	 */
-	private HttpResponse doPost(String url, String grantType, String authorizationCode)
-            throws IOException {
+	private String postAuthorizationCode(String url, String grantType, String authorizationCode)  throws Exception {
 
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(url);
-        
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("grant_type", grantType));
-        nameValuePairs.add(new BasicNameValuePair("redirect_uri", mendeley.getClientCredentials().redirectUri));
-        nameValuePairs.add(new BasicNameValuePair("code", authorizationCode));
-        nameValuePairs.add(new BasicNameValuePair("client_id", mendeley.getClientCredentials().clientId));
-        nameValuePairs.add(new BasicNameValuePair("client_secret", mendeley.getClientCredentials().clientSecret));
-        
-        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		HttpsURLConnection con = null;
+		try {
+			con = (HttpsURLConnection) new URL(url).openConnection();
+			con.setRequestMethod("POST");
+			con.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-        HttpResponse response = httpclient.execute(httppost);
-		  
-		return response;  
+			con.setDoInput(true);
+			con.setDoOutput(true);
+
+			final String urlEncodedForm = new Uri.Builder()
+					.appendQueryParameter("grant_type", grantType)
+					.appendQueryParameter("redirect_uri", mendeley.getClientCredentials().redirectUri)
+					.appendQueryParameter("code", authorizationCode)
+					.appendQueryParameter("client_id", mendeley.getClientCredentials().clientId)
+					.appendQueryParameter("client_secret", mendeley.getClientCredentials().clientSecret)
+					.build()
+					.getEncodedQuery();
+
+			//Send request
+			DataOutputStream wr = new DataOutputStream(con.getOutputStream ());
+			wr.writeBytes (urlEncodedForm);
+			wr.flush ();
+			wr.close ();
+
+			final int statusCode = con.getResponseCode();
+
+			if (statusCode != 200) {
+				String responseBody = "";
+				try {
+					return NetworkUtils.readInputStream(con.getInputStream());
+				} catch (IOException ignored) {
+				}
+				throw new HttpResponseException(statusCode, con.getResponseMessage(), Uri.parse(url), responseBody);
+			}
+
+			return NetworkUtils.readInputStream(con.getInputStream());
+
+		} finally {
+			if (con != null) {
+				con.disconnect();
+			}
+		}
+
 	}
 
 

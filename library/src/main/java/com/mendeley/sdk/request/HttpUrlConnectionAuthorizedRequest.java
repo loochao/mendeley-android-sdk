@@ -7,6 +7,7 @@ import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.exceptions.UserCancelledException;
+import com.mendeley.sdk.util.NetworkUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,11 +70,11 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
             final int responseCode = con.getResponseCode();
 
             // Implementation of HTTP redirection.
-            if (responseCode >= 300 && responseCode < 400) {
+            if (responseCode / 100 == 3) {
                 return followRedirection(con);
             }
 
-            if (responseCode < 200 && responseCode >= 300) {
+            if (responseCode / 100 == 200) {
                 String responseString = null;
                 try {
                     responseString = NetworkUtils.readInputStream(con.getInputStream());
@@ -102,10 +103,10 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
             if (currentRetry <  MAX_HTTP_RETRIES) {
                 return doRun(url, currentRetry + 1, addOauthToken);
             } else {
-                throw new MendeleyException("IO error in GET request " + url, ioe);
+                throw new MendeleyException("IO error in request " + url, ioe);
             }
         } catch (Exception e) {
-            throw new MendeleyException("Error in GET request " + url, e);
+            throw new MendeleyException("Error in request " + url, e);
         } finally {
             if (is != null) {
                 try {

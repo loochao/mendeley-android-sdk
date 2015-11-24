@@ -5,14 +5,15 @@ import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.sdk.util.DateUtils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 
-import static com.mendeley.sdk.request.NetworkUtils.readInputStream;
+import static com.mendeley.sdk.util.NetworkUtils.readInputStream;
 
 public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
 
@@ -29,8 +30,10 @@ public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
     protected AuthorizedRequest<JSONObject> createRequest() {
         return new PatchAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/patch"), currentDate, getAuthTokenManager(), getClientCredentials()) {
             @Override
-            protected HttpEntity createPatchingEntity() throws Exception {
-                return new StringEntity(patchedBody);
+            protected void writePatchBody(OutputStream os) throws Exception {
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(patchedBody);
+                writer.flush();
             }
 
             @Override
@@ -46,9 +49,9 @@ public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
     public void test_run_writesThePatchPayload() throws Exception {
 
         final JSONObject httpBinResponse = getRequest().run().resource;
-        final String actual = httpBinResponse.getString("data");
+        final String actual = httpBinResponse.getString("form");
 
-        assertTrue("Posted and returned content", actual.contains(patchedBody));
+        assertTrue("Patched and returned content", actual.contains(patchedBody));
     }
 
     @SmallTest

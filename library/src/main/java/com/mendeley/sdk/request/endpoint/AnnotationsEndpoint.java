@@ -13,8 +13,6 @@ import com.mendeley.sdk.request.PatchAuthorizedRequest;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
 import com.mendeley.sdk.util.DateUtils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
@@ -125,9 +123,10 @@ public class AnnotationsEndpoint {
         }
 
         @Override
-        protected HttpEntity createPatchingEntity() throws Exception {
-            final String json = JsonParser.jsonFromAnnotation(annotation);
-            return new StringEntity(json, "UTF-8");
+        protected void writePatchBody(OutputStream os) throws Exception {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(JsonParser.jsonFromAnnotation(annotation));
+            writer.flush();
         }
 
         @Override
@@ -135,6 +134,7 @@ public class AnnotationsEndpoint {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseAnnotation(reader);
         }
+
     }
 
     public static class DeleteAnnotationRequest extends DeleteAuthorizedRequest<Void> {

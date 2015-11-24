@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static com.mendeley.sdk.request.NetworkUtils.readInputStream;
+import static com.mendeley.sdk.util.NetworkUtils.readInputStream;
 
 public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
 

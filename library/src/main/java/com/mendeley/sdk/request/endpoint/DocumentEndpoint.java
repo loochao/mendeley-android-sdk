@@ -13,8 +13,6 @@ import com.mendeley.sdk.request.PatchAuthorizedRequest;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
 import com.mendeley.sdk.util.DateUtils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
@@ -131,9 +129,10 @@ public class DocumentEndpoint {
         }
 
         @Override
-        protected HttpEntity createPatchingEntity() throws Exception {
-            final String json = JsonParser.jsonFromDocument(document);
-            return new StringEntity(json, "UTF-8");
+        protected void writePatchBody(OutputStream os) throws Exception {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(JsonParser.jsonFromDocument(document));
+            writer.flush();
         }
 
         @Override
@@ -141,6 +140,7 @@ public class DocumentEndpoint {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseDocument(reader);
         }
+
     }
 
     public static class TrashDocumentRequest extends PostAuthorizedRequest<Void> {

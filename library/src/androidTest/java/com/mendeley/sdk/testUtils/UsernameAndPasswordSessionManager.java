@@ -1,24 +1,20 @@
 package com.mendeley.sdk.testUtils;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.ClientCredentials;
-import com.mendeley.sdk.request.NetworkUtils;
+import com.mendeley.sdk.exceptions.AuthenticationException;
+import com.mendeley.sdk.util.NetworkUtils;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.DataOutputStream;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class UsernameAndPasswordSessionManager {
@@ -42,8 +38,7 @@ public class UsernameAndPasswordSessionManager {
 
     public void signIn() {
         try {
-            HttpResponse response = doPasswordPost();
-            String jsonToken = NetworkUtils.readInputStream(response.getEntity().getContent());
+            String jsonToken = doPasswordPost();
             onJsonStringResult(jsonToken);
         } catch (Exception e) {
             Log.e(TAG, "Problem when authenticating", e);
@@ -54,23 +49,46 @@ public class UsernameAndPasswordSessionManager {
     /**
      * Helper method for executing http post request for password-based authentication.
      */
-    private HttpResponse doPasswordPost() throws IOException {
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(AuthTokenManager.TOKENS_URL);
+    private String doPasswordPost() throws Exception {
+        HttpsURLConnection con = null;
+        try {
+            con = (HttpsURLConnection) new URL(AuthTokenManager.TOKENS_URL).openConnection();
+            con.setRequestMethod("POST");
+            con.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("grant_type", GRANT_TYPE_PASSWORD));
-        nameValuePairs.add(new BasicNameValuePair("scope", AuthTokenManager.SCOPE));
-        nameValuePairs.add(new BasicNameValuePair("client_id", clientCredentials.clientId));
-        nameValuePairs.add(new BasicNameValuePair("client_secret", clientCredentials.clientSecret));
-        nameValuePairs.add(new BasicNameValuePair("username", username));
-        nameValuePairs.add(new BasicNameValuePair("password", password));
+            con.setDoInput(true);
+            con.setDoOutput(true);
 
-        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            final String urlEncodedForm = new Uri.Builder()
+                    .appendQueryParameter("grant_type", GRANT_TYPE_PASSWORD)
+                    .appendQueryParameter("scope", AuthTokenManager.SCOPE)
+                    .appendQueryParameter("client_id", clientCredentials.clientId)
+                    .appendQueryParameter("client_secret", clientCredentials.clientSecret)
+                    .appendQueryParameter("username", username)
+                    .appendQueryParameter("password", password)
+                    .build()
+                    .getEncodedQuery();
 
-        HttpResponse response = httpclient.execute(httppost);
+            //Send request
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream ());
+            wr.writeBytes (urlEncodedForm);
+            wr.flush ();
+            wr.close ();
 
-        return response;
+            final int statusCode = con.getResponseCode();
+
+            if (statusCode != 200) {
+                throw new Exception("Could not get auth token: " + con.getResponseMessage());
+            }
+
+            return NetworkUtils.readInputStream(con.getInputStream());
+        } catch (Exception e) {
+            throw new AuthenticationException("Cannot refresh token", e);
+        } finally {
+            if (con != null) {
+                con.disconnect();
+            }
+        }
     }
 
     private boolean onJsonStringResult(String jsonTokenString) {

@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static com.mendeley.sdk.request.NetworkUtils.readInputStream;
+import static com.mendeley.sdk.util.NetworkUtils.readInputStream;
 
 public abstract class AuthorizedRequestTest extends SignedInTest {
 

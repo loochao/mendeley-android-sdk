@@ -12,8 +12,6 @@ import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PatchAuthorizedRequest;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
@@ -118,9 +116,10 @@ public class FoldersEndpoint {
         }
 
         @Override
-        protected HttpEntity createPatchingEntity() throws Exception {
-            final String json = JsonParser.jsonFromFolder(folder);
-            return new StringEntity(json, "UTF-8");
+        protected void writePatchBody(OutputStream os) throws Exception {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(JsonParser.jsonFromFolder(folder));
+            writer.flush();
         }
 
         @Override
@@ -128,6 +127,7 @@ public class FoldersEndpoint {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.parseFolder(reader);
         }
+
 
     }
 

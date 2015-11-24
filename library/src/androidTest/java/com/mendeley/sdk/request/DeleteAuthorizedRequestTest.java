@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 
-import static com.mendeley.sdk.request.NetworkUtils.readInputStream;
+import static com.mendeley.sdk.util.NetworkUtils.readInputStream;
 
 public class DeleteAuthorizedRequestTest extends AuthorizedRequestTest {
 

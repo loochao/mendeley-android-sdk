@@ -7,6 +7,7 @@ import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.exceptions.AuthenticationException;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
+import com.mendeley.sdk.util.NetworkUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
