@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,8 +47,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
     private Button getDocumentsButton;
 	private TextView outputView;
 	
-	private StringBuilder outputText = new StringBuilder();
-	
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,10 +57,10 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
         disableControls();
         outputView = (TextView) findViewById(R.id.output);
 
-        signIn();
+        init();
     }
 
-    private void signIn() {
+    private void init() {
         InputStream is = null;
         try {
             is = getAssets().open(CONFIG_FILE);
@@ -74,13 +74,6 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
             ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, clientRedirectUri);
 
             Mendeley.sdkInitialise(this, clientCredentials);
-
-            if (Mendeley.getInstance().isSignedIn()) {
-                setSignInStatus(SignInStatus.SIGNED_IN);
-            } else {
-                Mendeley.getInstance().signIn(this, false);
-                setSignInStatus(SignInStatus.SIGNING_IN);
-            }
         } catch (IOException ioe) {
             throw new IllegalStateException("Could not read property files with client configuration. Should be located in assets/" + CONFIG_FILE, ioe);
         } catch (MissingResourceException mr) {
@@ -95,10 +88,26 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkSigned();
+    }
+
+    private void checkSigned() {
+        if (Mendeley.getInstance().isSignedIn()) {
+            setSignInStatus(SignInStatus.SIGNED_IN);
+        } else {
+            Mendeley.getInstance().signIn(this, true);
+            setSignInStatus(SignInStatus.SIGNING_IN);
+        }
+    }
+
     private void signOut() {
         clearOutput();
         setSignInStatus(SignInStatus.SIGNED_OUT);
         Mendeley.getInstance().signOut();
+        checkSigned();
     }
 
     private void setSignInStatus(SignInStatus status) {
@@ -134,7 +143,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sign_in:
-                signIn();
+                init();
                 break;
             case R.id.action_sign_out:
                 signOut();
@@ -152,8 +161,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
     }
 
     private void clearOutput() {
-        outputText.setLength(0);
-        outputView.setText(outputText.toString());
+        outputView.setText("");
     }
 
     @Override
@@ -192,17 +200,21 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
     }
 
     private void manageResponse(List<Document> resource, Uri next, Date serverDate) {
-        outputText.append("Page received:\n");
+        appendToOutputView("Page received:");
         for (Document doc : resource) {
-            outputText.append("* " + doc.title + "\n");
+            appendToOutputView("* " + doc.title);
         }
-        outputText.append("\n");
-        outputView.setText(outputText.toString());
+        appendToOutputView("");
 
         if (next != null) {
             Request<List<Document>> documentRequest = requestFactory.getDocuments(next);
             documentRequest.runAsync(new DocumentsRequestCallback());
         }
+    }
+
+    private void appendToOutputView(String str) {
+        outputView.append(str);
+        outputView.append("\n");
     }
 
     private class DocumentsRequestCallback implements Request.RequestCallback<List<Document>> {
@@ -214,8 +226,15 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
 
         @Override
         public void onFailure(MendeleyException mendeleyException) {
-            outputText.append(mendeleyException.toString() + "\n");
-            outputView.setText(outputText.toString());
+            Log.e(ExampleActivity.class.getSimpleName(), "Error in request", mendeleyException);
+            appendToOutputView(mendeleyException.toString());
+        }
+
+        @Override
+        public void onCancelled() {
+            outputView.setText("request canceled");
         }
     }
+
+
 }
