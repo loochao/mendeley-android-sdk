@@ -26,9 +26,11 @@ public class AuthTokenRefreshRequest extends Request<Void> {
 
     @Override
     public Response run() throws MendeleyException {
+        final String url = getUrl().toString();
         HttpsURLConnection con = null;
+
         try {
-            con = (HttpsURLConnection) new URL(getUrl().toString()).openConnection();
+            con = (HttpsURLConnection) new URL(url).openConnection();
             con.setRequestMethod("POST");
             con.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
@@ -59,7 +61,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
                     responseBody = NetworkUtils.readInputStream(con.getInputStream());
                 } catch (IOException ignored) {
                 }
-                throw new HttpResponseException(statusCode, con.getResponseMessage(), getUrl(), responseBody);
+                throw new HttpResponseException(statusCode, con.getResponseMessage(), url, responseBody);
             }
 
             final String responseString = NetworkUtils.readInputStream(con.getInputStream());

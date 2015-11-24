@@ -81,7 +81,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
                 } catch (IOException ignored) {
                 }
 
-                throw new HttpResponseException(responseCode, con.getResponseMessage(), url, responseString);
+                throw new HttpResponseException(responseCode, con.getResponseMessage(), url.toString(), responseString);
             }
 
             // wrapping the input stream of the connection in:

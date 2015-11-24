@@ -243,7 +243,7 @@ public class SignInActivity extends Activity {
 					return NetworkUtils.readInputStream(con.getInputStream());
 				} catch (IOException ignored) {
 				}
-				throw new HttpResponseException(statusCode, con.getResponseMessage(), Uri.parse(url), responseBody);
+				throw new HttpResponseException(statusCode, con.getResponseMessage(), url, responseBody);
 			}
 
 			return NetworkUtils.readInputStream(con.getInputStream());
