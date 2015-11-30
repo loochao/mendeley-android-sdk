@@ -74,8 +74,8 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
                 return followRedirection(con);
             }
 
-            if (responseCode / 100 == 200) {
-                String responseString = null;
+            if (responseCode / 100 != 2) {
+                String responseString = "";
                 try {
                     responseString = NetworkUtils.readInputStream(con.getInputStream());
                 } catch (IOException ignored) {
