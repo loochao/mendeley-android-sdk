@@ -24,7 +24,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
     }
 
     @Override
-    public Response run() throws MendeleyException {
+    public Response doRun() throws MendeleyException {
         final String url = getUrl().toString();
         HttpURLConnection con = null;
 

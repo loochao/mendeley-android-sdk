@@ -47,6 +47,7 @@ public abstract class Request<ResultType> {
     }
 
     private boolean cancelled;
+    private boolean finishedRun;
     protected final AuthTokenManager authTokenManager;
     protected final ClientCredentials clientCredentials;
 
@@ -60,7 +61,15 @@ public abstract class Request<ResultType> {
         return uri;
     }
 
-    public abstract Response run() throws MendeleyException;
+    public final Response run() throws MendeleyException {
+        try {
+            return doRun();
+        } finally {
+            finishedRun = true;
+        }
+    }
+
+    protected abstract Response doRun() throws MendeleyException;
 
     public final void runAsync(final RequestCallback<ResultType> callback) {
         runAsync(callback, AsyncTask.SERIAL_EXECUTOR);
@@ -79,6 +88,9 @@ public abstract class Request<ResultType> {
         return cancelled;
     }
 
+    public boolean isDone() {
+        return finishedRun || cancelled;
+    }
 
 
     /**
@@ -124,15 +136,6 @@ public abstract class Request<ResultType> {
                 return new RequestResponseMaybe(Request.this.run());
             } catch (MendeleyException e) {
                 return new RequestResponseMaybe(e);
-            }
-        }
-
-
-        @Override
-        protected final void onCancelled() {
-            super.onCancelled();
-            if (callback != null) {
-                callback.onCancelled();
             }
         }
 

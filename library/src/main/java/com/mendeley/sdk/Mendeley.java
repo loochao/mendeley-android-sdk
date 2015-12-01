@@ -18,11 +18,8 @@ import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.model.UserRole;
-import com.mendeley.sdk.request.GetFileNetworkRequest;
-import com.mendeley.sdk.request.PostFileAuthorizedRequest;
 import com.mendeley.sdk.request.Request;
 import com.mendeley.sdk.request.endpoint.AnnotationsEndpoint;
-import com.mendeley.sdk.request.endpoint.ApplicationFeaturesEndpoint;
 import com.mendeley.sdk.request.endpoint.CatalogEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentIdentifiersEndpoint;
@@ -283,14 +280,15 @@ public class Mendeley {
         }
 
         @Override
-        public GetFileNetworkRequest newGetFileBinaryRequest(String fileId, java.io.File targetFile) {
-            return new GetFileNetworkRequest(fileId, targetFile, authTokenManager, clientCredentials);
+        public FilesEndpoint.GetFileBinaryRequest newGetFileBinaryRequest(String fileId, java.io.File targetFile) {
+            return new FilesEndpoint.GetFileBinaryRequest(fileId, targetFile, authTokenManager, clientCredentials);
         }
 
         @Override
-        public Request<File> newPostFileBinaryRequest(String contentType, String documentId, InputStream inputStream, String fileName) {
-            return new PostFileAuthorizedRequest(contentType, documentId, fileName, inputStream, authTokenManager, clientCredentials);
+        public Request<File> newPostFileWithBinaryRequest(String contentType, String documentId, InputStream inputStream, String fileName) {
+            return new FilesEndpoint.PostFileWithBinaryRequest(contentType, documentId, fileName, inputStream, authTokenManager, clientCredentials);
         }
+
 
         @Override
         public Request<Void> newDeleteFileRequest(String fileId) {
@@ -439,11 +437,6 @@ public class Mendeley {
         @Override
         public Request<ReadPosition> newPostRecentlyReadRequest(ReadPosition readPosition) {
             return new RecentlyReadEndpoint.PostRecentlyReadRequest(readPosition, authTokenManager, clientCredentials);
-        }
-
-        @Override
-        public Request<List<String>> newGetApplicationFeaturesRequest() {
-            return new ApplicationFeaturesEndpoint.GetApplicationFeaturesRequest(authTokenManager, clientCredentials);
         }
 
     }

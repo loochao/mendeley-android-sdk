@@ -5,18 +5,26 @@ import android.util.JsonReader;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.exceptions.FileDownloadException;
 import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.request.DeleteAuthorizedRequest;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
+import com.mendeley.sdk.request.PostAuthorizedRequest;
+import com.mendeley.sdk.request.Request;
 import com.mendeley.sdk.util.DateUtils;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +68,97 @@ public class FilesEndpoint {
         }
     }
 
+    /**
+     * {@link Request} to download the binary of a file (usually the pdf file)
+     */
+    public static class GetFileBinaryRequest extends GetAuthorizedRequest<Long> {
+
+        private static String filesUrl = MENDELEY_API_BASE_URL + "files";
+
+        private static final String PARTIALLY_DOWNLOADED_EXTENSION = ".part";
+        private final String fileId;
+        private final java.io.File targetFile;
+
+        public GetFileBinaryRequest(String fileId, java.io.File targetFile, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(filesUrl + "/" + fileId), authTokenManager, clientCredentials);
+            this.fileId = fileId;
+            this.targetFile = targetFile;
+        }
+
+        @Override
+        protected Long manageResponse(InputStream is) throws IOException, FileDownloadException {
+            final java.io.File tempFile = new java.io.File(targetFile.getParent(), targetFile.getName() + PARTIALLY_DOWNLOADED_EXTENSION);
+
+            long total = 0;
+            FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+
+            byte data[] = new byte[1024];
+            int count;
+
+            while (!isCancelled() && (count = is.read(data)) != -1) {
+                total += count;
+                fileOutputStream.write(data, 0, count);
+            }
+
+            if (!tempFile.renameTo(targetFile)) {
+                throw new FileDownloadException("Cannot rename downloaded file", fileId);
+            } else {
+                return total;
+            }
+        }
+
+        public String getFileId() {
+            return fileId;
+        }
+    }
+
+    public static class PostFileWithBinaryRequest extends PostAuthorizedRequest<File> {
+        private final String contentType;
+        private final String documentId;
+        private final String fileName;
+        private final InputStream inputStream;
+
+        private static String filesUrl = MENDELEY_API_BASE_URL + "files";
+
+        public PostFileWithBinaryRequest(String contentType, String documentId, String fileName, InputStream inputStream, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(filesUrl), authTokenManager, clientCredentials);
+            this.contentType = contentType;
+            this.documentId = documentId;
+            this.fileName = fileName;
+            this.inputStream = inputStream;
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-Disposition", "attachment; filename*=UTF-8\'\'" + fileName);
+            headers.put("Content-type", contentType);
+            headers.put("Link", "<" + MENDELEY_API_BASE_URL + "documents/" + documentId + ">; rel=\"document\"");
+        }
+
+        @Override
+        protected void writePostBody(OutputStream os) throws Exception {
+            final int bufferSize = 65536;
+            final byte[] buffer = new byte[bufferSize];
+            int r;
+            while ((r =  inputStream.read(buffer, 0, bufferSize)) > 0) {
+                os.write(buffer, 0, r);
+            }
+        }
+
+        @Override
+        protected File manageResponse(InputStream is) throws Exception {
+            final JsonReader reader = new JsonReader(new InputStreamReader(is));
+            return JsonParser.parseFile(reader);
+        }
+
+    }
+
     public static class DeleteFileRequest extends DeleteAuthorizedRequest<Void> {
         public DeleteFileRequest(String fileId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             super(Uri.parse(FILES_BASE_URL + "/" + fileId), authTokenManager, clientCredentials);
         }
     }
+
 
     /**
      * This class represents parameters for file SDK requests.
@@ -127,4 +221,7 @@ public class FilesEndpoint {
             return bld.build();
         }
     }
+
+
+
 }

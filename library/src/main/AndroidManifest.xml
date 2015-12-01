@@ -4,7 +4,7 @@
     android:versionCode="3"
     android:versionName="@string/version_name" >
 
-    <uses-requestFactory
+    <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
 

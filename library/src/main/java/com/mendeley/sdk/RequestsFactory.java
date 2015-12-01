@@ -10,7 +10,6 @@ import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.model.UserRole;
-import com.mendeley.sdk.request.GetFileNetworkRequest;
 import com.mendeley.sdk.request.Request;
 import com.mendeley.sdk.request.endpoint.AnnotationsEndpoint;
 import com.mendeley.sdk.request.endpoint.CatalogEndpoint;
@@ -127,11 +126,11 @@ public interface RequestsFactory {
      *
      * @return bytes downloaded
      */
-    GetFileNetworkRequest newGetFileBinaryRequest(String fileId, java.io.File targetFile);
+    FilesEndpoint.GetFileBinaryRequest newGetFileBinaryRequest(String fileId, java.io.File targetFile);
 
 
     /**
-     * Upload the content of a file
+     * Upload the content of a file and link it to the passed document
      *
      * @param contentType of the file
      * @param documentId the id of the document this file belongs to
@@ -140,13 +139,14 @@ public interface RequestsFactory {
      * @return the file metadata
      * @
      */
-    Request<File> newPostFileBinaryRequest(String contentType, String documentId, InputStream inputStream, String fileName);
+    Request<File> newPostFileWithBinaryRequest(String contentType, String documentId, InputStream inputStream, String fileName);
 
     /**
      * Delete file with the given id
      * @param fileId
      */
     Request<Void> newDeleteFileRequest(String fileId);
+
 
     /* FOLDERS */
 
@@ -361,17 +361,7 @@ public interface RequestsFactory {
      */
     Request<ReadPosition> newPostRecentlyReadRequest(ReadPosition readPosition);
 
-    /**
-     *
-     * This method is intended for internal development and should not be used by third party
-     * users of the SDK.
-     *
-     * TODO: remove this method from the public interface of the SDK.
-     *
-     * Retrieves a list of features from the web API with experimental features enabled.
-     * @return a list of features from the web API with experimental features enabled.
-     */
-    @Deprecated
-    Request<List<String>> newGetApplicationFeaturesRequest();
+
+
 
 }

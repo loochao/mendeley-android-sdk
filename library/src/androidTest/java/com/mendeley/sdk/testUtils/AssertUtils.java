@@ -5,6 +5,7 @@ import com.mendeley.sdk.model.Document;
 import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
+import com.mendeley.sdk.model.Person;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
 
@@ -36,6 +37,19 @@ public class AssertUtils {
         Assert.assertEquals(expected.year, actual.year);
         Assert.assertEquals(expected.abstractString, actual.abstractString);
         Assert.assertEquals(expected.source, actual.source);
+    }
+
+    public static void assertPersons(List<Person> expected, List<Person> actual) {
+        Assert.assertEquals("Number of persons gotten", expected.size(), actual.size());
+
+        for (int i = 0; i < expected.size(); i++) {
+            assertPerson(expected.get(i), actual.get(i));
+        }
+    }
+
+    public static void assertPerson(Person expected, Person actual) {
+        Assert.assertEquals(expected.firstName, actual.firstName);
+        Assert.assertEquals(expected.lastName, actual.lastName);
     }
 
     public static void assertAnnotations(List<Annotation> expected, List<Annotation> actual) {

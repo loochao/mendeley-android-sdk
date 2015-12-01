@@ -186,7 +186,7 @@ public class FileRequestTest extends SignedInTest {
         File postingFile = createFile(document.id);
 
         // WHEN posting it
-        final File returnedFile = getRequestFactory().newPostFileBinaryRequest(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName).run().resource;
+        final File returnedFile = getRequestFactory().newPostFileWithBinaryRequest(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName).run().resource;
 
         // THEN we receive the same file back, with id filled
         AssertUtils.assertFile(postingFile, returnedFile);

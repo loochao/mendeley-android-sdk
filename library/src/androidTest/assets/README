@@ -1,3 +1,2 @@
 The assets directory contains some dummy PDF files for use in SDK integration tests.
 
-These are not needed to run the sample app, and can safely be deleted.

@@ -26,7 +26,8 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         super(url, authTokenManager, clientCredentials);
     }
 
-    public final Response run() throws MendeleyException {
+    @Override
+    public final Response doRun() throws MendeleyException {
         if (TextUtils.isEmpty(authTokenManager.getAccessToken())) {
             // Must call startSignInProcess first - caller error!
             throw new NotSignedInException();
@@ -36,12 +37,12 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
             launchRefreshTokenRequest();
         }
         try {
-            return doRun();
+            return doRunAuthorized();
         } catch (HttpResponseException e) {
             if (e.httpReturnCode == 401 && e.getMessage().contains("Token has expired")) {
                 // The refresh-token-in-advance logic did not work for some reason: force a refresh now
                 launchRefreshTokenRequest();
-                return doRun();
+                return doRunAuthorized();
             } else {
                 throw e;
             }
@@ -52,7 +53,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         new AuthTokenRefreshRequest(authTokenManager, clientCredentials).run();
     }
 
-    protected abstract Response doRun() throws MendeleyException;
+    protected abstract Response doRunAuthorized() throws MendeleyException;
 
     // TODO: consider dropping this to reduce complexity
     /**

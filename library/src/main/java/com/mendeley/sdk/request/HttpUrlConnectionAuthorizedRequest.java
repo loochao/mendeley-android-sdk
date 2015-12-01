@@ -1,6 +1,7 @@
 package com.mendeley.sdk.request;
 
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.ClientCredentials;
@@ -36,7 +37,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
     }
 
     @Override
-    public final Response doRun() throws MendeleyException {
+    public final Response doRunAuthorized() throws MendeleyException {
         return doRun(getUrl(), 0, true);
     }
 
@@ -77,7 +78,10 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
             if (responseCode / 100 != 2) {
                 String responseString = "";
                 try {
-                    responseString = NetworkUtils.readInputStream(con.getInputStream());
+                    responseString = NetworkUtils.readInputStream(con.getErrorStream());
+                    if (TextUtils.isEmpty(responseString)) {
+                        responseString = NetworkUtils.readInputStream(con.getInputStream());
+                    }
                 } catch (IOException ignored) {
                 }
 

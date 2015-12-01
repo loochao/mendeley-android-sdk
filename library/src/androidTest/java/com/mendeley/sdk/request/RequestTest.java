@@ -22,7 +22,7 @@ public class RequestTest extends AndroidTestCase {
 
         final Request<Thread> request = new Request<Thread>(null, null, null) {
             @Override
-            public Response run() throws MendeleyException {
+            public Response doRun() throws MendeleyException {
                 return new Response(Thread.currentThread(), (Date) null, null);
             }
         };
@@ -44,7 +44,7 @@ public class RequestTest extends AndroidTestCase {
         // GIVEN a request that returns the thread it run in
         final Request<Thread> request = new Request<Thread>(null, null, null) {
             @Override
-            public Response run() throws MendeleyException {
+            public Response doRun() throws MendeleyException {
                 return new Response(Thread.currentThread(), (Date) null, null);
             }
         };
@@ -83,7 +83,7 @@ public class RequestTest extends AndroidTestCase {
         // GIVEN a request that returns the thread it run in
         final Request<Thread> request = new Request<Thread>(null, null, null) {
             @Override
-            public Response run() throws MendeleyException {
+            public Response doRun() throws MendeleyException {
                 return new Response(Thread.currentThread(), new Date(), null);
             }
         };
@@ -134,7 +134,7 @@ public class RequestTest extends AndroidTestCase {
         // GIVEN a request that runs until cancelled
         final Request<Void> request = new Request<Void>(null, null, null) {
             @Override
-            public Response run() throws MendeleyException {
+            public Response doRun() throws MendeleyException {
                 return new Response(null, new Date(), null);
             }
         };
@@ -172,7 +172,7 @@ public class RequestTest extends AndroidTestCase {
         // GIVEN a request that runs until cancelled
         final Request<Void> request = new Request<Void>(null, null, null) {
             @Override
-            public Response run() throws MendeleyException {
+            public Response doRun() throws MendeleyException {
                 throw new MendeleyException("crap");
             }
         };
@@ -210,7 +210,7 @@ public class RequestTest extends AndroidTestCase {
         // GIVEN a request that runs until cancelled
         final Request<Void> request = new Request<Void>(null, null, null) {
             @Override
-            public Response run() throws MendeleyException {
+            public Response doRun() throws MendeleyException {
                 try {
                     while (!isCancelled()) {
                         Thread.sleep(1000);

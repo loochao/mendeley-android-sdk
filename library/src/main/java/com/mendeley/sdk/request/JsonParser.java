@@ -1200,35 +1200,4 @@ public class JsonParser {
         return jsonObject.toString();
     }
 
-    public static List<String> parseApplicationFeatures(JsonReader reader) throws JSONException, IOException {
-        final List<String> featureList = new LinkedList<String>();
-
-        reader.beginArray();
-
-        while (reader.hasNext()) {
-            featureList.add(parseApplicationFeature(reader));
-        }
-
-        reader.endArray();
-        return featureList;
-    }
-
-    private static String parseApplicationFeature(JsonReader reader) throws IOException {
-        reader.beginObject();
-
-        String featureName = null;
-
-        while (reader.hasNext()) {
-            final String key = reader.nextName();
-
-            if (key.equals("name")) {
-                featureName = reader.nextString();
-            } else {
-                reader.skipValue();
-            }
-        }
-
-        reader.endObject();
-        return featureName;
-    }
 }
