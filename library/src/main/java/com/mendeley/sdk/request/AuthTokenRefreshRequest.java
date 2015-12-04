@@ -14,9 +14,8 @@ import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class AuthTokenRefreshRequest extends Request<Void> {
 
@@ -27,10 +26,10 @@ public class AuthTokenRefreshRequest extends Request<Void> {
     @Override
     public Response run() throws MendeleyException {
         final String url = getUrl().toString();
-        HttpsURLConnection con = null;
+        HttpURLConnection con = null;
 
         try {
-            con = (HttpsURLConnection) new URL(url).openConnection();
+            con = (HttpURLConnection) new URL(url).openConnection();
             con.setRequestMethod("POST");
             con.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 

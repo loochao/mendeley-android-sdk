@@ -12,8 +12,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
-
 
 public abstract class PostAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
@@ -23,9 +21,9 @@ public abstract class PostAuthorizedRequest<ResultType> extends HttpUrlConnectio
 
 
     @Override
-    protected HttpsURLConnection createConnection(Uri uri) throws IOException {
+    protected HttpURLConnection createConnection(Uri uri) throws IOException {
         final URL url = new URL(uri.toString());
-        final HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
         return con;
     }

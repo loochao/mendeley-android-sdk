@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
-
 /**
  * A NetworkProcedure specialised for making HTTP DELETE requests.
  */
@@ -24,7 +22,7 @@ public class DeleteAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthor
     @Override
     protected HttpURLConnection createConnection(Uri uri) throws IOException {
         final URL url = new URL(uri.toString());
-        final HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("DELETE");
         return con;
     }

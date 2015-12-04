@@ -14,8 +14,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-
 public abstract class PatchAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
     private final Date ifModifiedSinceDate;
@@ -28,7 +26,7 @@ public abstract class PatchAuthorizedRequest<ResultType> extends HttpUrlConnecti
     @Override
     protected HttpURLConnection createConnection(Uri uri) throws IOException {
         final URL url = new URL(uri.toString());
-        final HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
         NetworkUtils.setRequestMethodUsingWorkaroundForJREBug(con, "PATCH");
         return con;
     }

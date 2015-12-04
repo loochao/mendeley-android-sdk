@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
-
 /**
  * A NetworkProcedure specialised for making HTTP GET requests.
  */
@@ -25,9 +23,9 @@ public abstract class GetAuthorizedRequest<ResultType> extends HttpUrlConnection
     }
 
     @Override
-    protected final HttpsURLConnection createConnection(Uri uri) throws IOException {
+    protected final HttpURLConnection createConnection(Uri uri) throws IOException {
         final URL url = new URL(uri.toString());
-        final HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         return con;
     }
