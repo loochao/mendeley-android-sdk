@@ -89,7 +89,7 @@ public class FileRequestTest extends SignedInTest {
         }
 
         // WHEN getting files
-        final List<File> actual = getRequestFactory().newGetFilesRequest().run().resource;
+        final List<File> actual = getRequestFactory().newGetFilesRequest((FilesEndpoint.FileRequestParameters) null).run().resource;
 
         Comparator<File> comparator = new Comparator<File>() {
             @Override
@@ -193,7 +193,7 @@ public class FileRequestTest extends SignedInTest {
         assertNotNull(returnedFile.id);
 
         // ...and the file exists in the server
-        AssertUtils.assertFiles(getRequestFactory().newGetFilesRequest().run().resource, Arrays.asList(postingFile));
+        AssertUtils.assertFiles(getRequestFactory().newGetFilesRequest((FilesEndpoint.FileRequestParameters) null).run().resource, Arrays.asList(postingFile));
     }
 
     public void test_deleteFile_removesTheFileFromServer() throws Exception {
@@ -213,7 +213,7 @@ public class FileRequestTest extends SignedInTest {
         getRequestFactory().newDeleteFileRequest(deletingFileId).run();;
 
         // THEN the server does not have the deleted file any more
-        final List<File> serverFilesAfter = getRequestFactory().newGetFilesRequest().run().resource;
+        final List<File> serverFilesAfter = getRequestFactory().newGetFilesRequest((FilesEndpoint.FileRequestParameters) null).run().resource;
         for (File file : serverFilesAfter) {
             assertFalse(deletingFileId.equals(file.id));
         }

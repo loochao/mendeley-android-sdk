@@ -57,7 +57,7 @@ public class DocumentRequestTest extends SignedInTest {
         }
 
         // WHEN getting documents
-        final List<Document> actual = getRequestFactory().newGetDocumentsRequest().run().resource;
+        final List<Document> actual = getRequestFactory().newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource;
 
         Comparator<Document> comparator = new Comparator<Document>() {
             @Override
@@ -145,7 +145,7 @@ public class DocumentRequestTest extends SignedInTest {
         assertNotNull(returnedDoc.id);
 
         // ...and the document exists in the server
-        AssertUtils.assertDocuments(getRequestFactory().newGetDocumentsRequest().run().resource, Arrays.asList(postingDoc));
+        AssertUtils.assertDocuments(getRequestFactory().newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource, Arrays.asList(postingDoc));
     }
 
     public void test_postDocument_withStrangeCharacters_createsDocumentInServer() throws Exception {
@@ -166,7 +166,7 @@ public class DocumentRequestTest extends SignedInTest {
         assertNotNull(returnedDoc.id);
 
         // ...and the document exists in the server
-        AssertUtils.assertDocuments(getRequestFactory().newGetDocumentsRequest().run().resource, Arrays.asList(postingDoc));
+        AssertUtils.assertDocuments(getRequestFactory().newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource, Arrays.asList(postingDoc));
     }
 
     @SmallTest
@@ -187,7 +187,7 @@ public class DocumentRequestTest extends SignedInTest {
         getRequestFactory().newDeleteDocumentRequest(deletingDocId).run();
 
         // THEN the server does not have the deleted document any more
-        final List<Document> serverDocsAfter= getRequestFactory().newGetDocumentsRequest().run().resource;
+        final List<Document> serverDocsAfter= getRequestFactory().newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource;
         for (Document doc : serverDocsAfter) {
             assertFalse(deletingDocId.equals(doc.id));
         }
@@ -363,6 +363,6 @@ public class DocumentRequestTest extends SignedInTest {
             docs.add(doc);
         }
 
-        return getRequestFactory().newGetDocumentsRequest().run().resource;
+        return getRequestFactory().newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource;
     }
 }

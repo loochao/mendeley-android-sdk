@@ -13,6 +13,8 @@ import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.request.JsonParser;
+import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
+import com.mendeley.sdk.request.endpoint.FoldersEndpoint;
 import com.mendeley.sdk.request.endpoint.GroupsEndpoint;
 import com.mendeley.sdk.util.DateUtils;
 
@@ -56,22 +58,22 @@ public class TestAccountSetupUtils{
         try {
             // delete non-trashed docs
             // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-            for (Document doc: requestFactory.newGetDocumentsRequest().run().resource) {
+            for (Document doc: requestFactory.newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource) {
                 // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
                 requestFactory.newDeleteDocumentRequest(doc.id).run();
             }
 
             // delete trashed docs
             // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-            for (Document doc: requestFactory.newGetTrashedDocumentsRequest().run().resource) {
+            for (Document doc: requestFactory.newGetTrashedDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource) {
                 // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
                 requestFactory.newDeleteTrashedDocumentRequest(doc.id).run();
             }
 
             // ensure no documents at all (trashed or deleted)
             // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-            Assert.assertEquals("Expected empty list of non trashed docs in server", 0, requestFactory.newGetDocumentsRequest().run().resource.size());
-            Assert.assertEquals("Expected empty list of trashed docs in server", 0, requestFactory.newGetTrashedDocumentsRequest().run().resource.size());
+            Assert.assertEquals("Expected empty list of non trashed docs in server", 0, requestFactory.newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource.size());
+            Assert.assertEquals("Expected empty list of trashed docs in server", 0, requestFactory.newGetTrashedDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().resource.size());
 
         } catch (Exception e) {
             throw new TestAccountSetupException(e);
@@ -82,14 +84,14 @@ public class TestAccountSetupUtils{
         try {
             // delete parent folders as sub folders will be deleted as well
             // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
-            for (Folder folder: requestFactory.newGetFoldersRequest().run().resource) {
+            for (Folder folder: requestFactory.newGetFoldersRequest((FoldersEndpoint.FolderRequestParameters) null).run().resource) {
                 // FIXME: do not delegate into the requestFactory to this, because we are testing the requestFactory...
                 if (folder.parentId == null) {
                     requestFactory.newDeleteFolderRequest(folder.id).run();
                 }
             }
 
-            Assert.assertEquals("Expected empty list of folders in server", 0, requestFactory.newGetFoldersRequest().run().resource.size());
+            Assert.assertEquals("Expected empty list of folders in server", 0, requestFactory.newGetFoldersRequest((FoldersEndpoint.FolderRequestParameters)null).run().resource.size());
 
         } catch (Exception e) {
             throw new TestAccountSetupException(e);

@@ -7,6 +7,7 @@ import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.Mendeley;
 import com.mendeley.sdk.RequestsFactory;
+import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 import com.mendeley.sdk.testUtils.ClientCredentialsFromAssetsFactory;
 import com.mendeley.sdk.testUtils.InMemoryAuthTokenManager;
 import com.mendeley.sdk.testUtils.TestAccountSetupUtils;
@@ -65,6 +66,6 @@ public abstract class SignedInTest extends AndroidTestCase {
     protected Date getServerDate() throws Exception {
         // wait a bit, so we get a "fresh" date
         Thread.sleep(1000);
-        return getRequestFactory().newGetDocumentsRequest().run().serverDate;
+        return getRequestFactory().newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).run().serverDate;
     }
 }

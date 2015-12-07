@@ -50,7 +50,7 @@ public class FolderRequestTest extends SignedInTest {
         }
 
         // WHEN getting folders
-        final List<Folder> actual = getRequestFactory().newGetFoldersRequest().run().resource;
+        final List<Folder> actual = getRequestFactory().newGetFoldersRequest((FoldersEndpoint.FolderRequestParameters) null).run().resource;
 
         Comparator<Folder> comparator = new Comparator<Folder>() {
             @Override
@@ -152,7 +152,7 @@ public class FolderRequestTest extends SignedInTest {
         assertNotNull(returnedFolder.id);
 
         // ...and the folder exists in the server
-        AssertUtils.assertFolders(getRequestFactory().newGetFoldersRequest().run().resource, Arrays.asList(postingFolder));
+        AssertUtils.assertFolders(getRequestFactory().newGetFoldersRequest((FoldersEndpoint.FolderRequestParameters) null).run().resource, Arrays.asList(postingFolder));
     }
 
     @SmallTest
@@ -180,7 +180,7 @@ public class FolderRequestTest extends SignedInTest {
         getRequestFactory().newDeleteFolderRequest(deletingFolderId).run();
 
         // THEN the server does not have the deleted folder any more
-        final List<Folder> serverFoldersAfter = getRequestFactory().newGetFoldersRequest().run().resource;
+        final List<Folder> serverFoldersAfter = getRequestFactory().newGetFoldersRequest((FoldersEndpoint.FolderRequestParameters) null).run().resource;
         for (Folder folder : serverFoldersAfter) {
             assertFalse(deletingFolderId.equals(folder.id));
         }

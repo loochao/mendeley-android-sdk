@@ -21,7 +21,6 @@ import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.model.UserRole;
 import com.mendeley.sdk.request.Request;
 import com.mendeley.sdk.request.endpoint.AnnotationsEndpoint;
-import com.mendeley.sdk.request.endpoint.CatalogEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentIdentifiersEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentTypesEndpoint;
@@ -266,6 +265,16 @@ public class Mendeley {
         }
 
         @Override
+        public Request<Profile> newGetMyProfileRequest() {
+            return new ProfilesEndpoint.GetProfileRequest("me", authTokenManager, clientCredentials);
+        }
+
+        @Override
+        public Request<Profile> newGetProfileRequest(final String profileId) {
+            return new ProfilesEndpoint.GetProfileRequest(profileId, authTokenManager, clientCredentials);
+        }
+
+        @Override
         public Request<Map<String, String>> newGetDocumentTypesRequest()  {
             return new DocumentTypesEndpoint.GetDocumentTypesRequest(authTokenManager, clientCredentials);
         }
@@ -313,6 +322,21 @@ public class Mendeley {
         @Override
         public Request<Void> newDeleteTrashedDocumentRequest(String documentId) {
             return new TrashEndpoint.DeleteTrashedDocumentRequest(documentId, authTokenManager, clientCredentials);
+        }
+
+        @Override
+        public Request<List<Document>> newGetTrashedDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters) {
+            return new TrashEndpoint.GetTrashedDocumentsRequest(parameters, authTokenManager, clientCredentials);
+        }
+
+        @Override
+        public Request<List<Document>> newGetTrashedDocumentsRequest(Uri uri) {
+            return new TrashEndpoint.GetTrashedDocumentsRequest(uri, authTokenManager, clientCredentials);
+        }
+
+        @Override
+        public Request<Void> newRestoreTrashedDocumentRequest(String documentId) {
+            return new TrashEndpoint.RestoreTrashedDocumentRequest(documentId, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -427,16 +451,6 @@ public class Mendeley {
         }
 
         @Override
-        public Request<Profile> newGetMyProfileRequest() {
-            return new ProfilesEndpoint.GetProfileRequest("me", authTokenManager, clientCredentials);
-        }
-
-        @Override
-        public Request<Profile> newGetProfileRequest(final String profileId) {
-            return new ProfilesEndpoint.GetProfileRequest(profileId, authTokenManager, clientCredentials);
-        }
-
-        @Override
         public Request<List<Group>> newGetGroupsRequest(GroupsEndpoint.GroupRequestParameters parameters) {
             return new GroupsEndpoint.GetGroupsRequest(parameters, authTokenManager, clientCredentials);
         }
@@ -460,36 +474,6 @@ public class Mendeley {
         public Request<List<UserRole>> newGetGroupMembersRequest(Uri url){
             return new GroupsEndpoint.GetGroupMembersRequest(url, authTokenManager, clientCredentials);
 
-        }
-
-        @Override
-        public Request<List<Document>> newGetTrashedDocumentsRequest() {
-            return newGetTrashedDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null);
-        }
-
-        @Override
-        public Request<List<Document>> newGetTrashedDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters) {
-            return new TrashEndpoint.GetTrashedDocumentsRequest(parameters, authTokenManager, clientCredentials);
-        }
-
-        @Override
-        public Request<List<Document>> newGetTrashedDocumentsRequest(Uri uri) {
-            return new TrashEndpoint.GetTrashedDocumentsRequest(uri, authTokenManager, clientCredentials);
-        }
-
-        @Override
-        public Request<Void> newRestoreTrashedDocumentRequest(String documentId) {
-            return new TrashEndpoint.RestoreTrashedDocumentRequest(documentId, authTokenManager, clientCredentials);
-        }
-
-        @Override
-        public Request<List<Document>> newGetCatalogDocumentsRequest(CatalogEndpoint.CatalogDocumentRequestParameters parameters) {
-            return new CatalogEndpoint.GetCatalogDocumentsRequest(parameters, authTokenManager, clientCredentials);
-        }
-
-        @Override
-        public Request<Document> newGetCatalogDocumentRequest(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view) {
-            return new CatalogEndpoint.GetCatalogDocumentRequest(catalogId, view, authTokenManager, clientCredentials);
         }
 
         @Override

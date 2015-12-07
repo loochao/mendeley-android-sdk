@@ -12,7 +12,6 @@ import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.model.UserRole;
 import com.mendeley.sdk.request.Request;
 import com.mendeley.sdk.request.endpoint.AnnotationsEndpoint;
-import com.mendeley.sdk.request.endpoint.CatalogEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 import com.mendeley.sdk.request.endpoint.FilesEndpoint;
 import com.mendeley.sdk.request.endpoint.FoldersEndpoint;
@@ -32,6 +31,21 @@ import java.util.Map;
  * still possible to instantiate them directly using their public constructor.
  */
 public interface RequestsFactory {
+
+    /**
+     * Obtains a {@link Request} to retrieve the {@link Profile} of the signed in user.
+     *
+     * @return the request
+     */
+    Request<Profile> newGetMyProfileRequest();
+
+    /**
+     * Obtains a {@link Request} to retrieve the {@link Profile} of use user given their id.
+     *
+     * @param profileId id of the profile to get
+     * @return the request
+     */
+    Request<Profile> newGetProfileRequest(String profileId);
 
     /**
      * Obtains a {@link Request} to retrieve the list of valid document types. This is, the
@@ -119,6 +133,31 @@ public interface RequestsFactory {
     Request<Void> newDeleteTrashedDocumentRequest(String documentId);
 
     /**
+     * Obtains a {@link Request} to retrieve the list of {@link Document}s in the trash of the
+     * user's library.
+     *
+     * @param parameters used  to configure the query. Can be null.
+     * @return the requests
+     */
+    Request<List<Document>> newGetTrashedDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters);
+
+    /**
+     * Obtains a {@link Request} to retrieve the list of {@link Document}s in the trash.
+     *
+     * @param uri the URL of the request.
+     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     * @return the request
+     */
+    Request<List<Document>> newGetTrashedDocumentsRequest(Uri uri);
+
+    /**
+     * Obtains a {@link Request} to restore one specific {@link Document} from the trash.
+     *
+     * @param documentId id of the document to restore.
+     */
+    Request<Void> newRestoreTrashedDocumentRequest(String documentId);
+
+    /**
      * Obtains a {@link Request} to get a list of the @{link File}s in the user's library.
      *
      * @param parameters used  to configure the query. Can be null.
@@ -200,7 +239,7 @@ public interface RequestsFactory {
     /**
      * Obtains a {@link Request} to create a new  {@link Folder} in the user's library.
      *
-     * @param folder the foler to create
+     * @param folder the folder to create
      * @return the request
      */
     Request<Folder> newPostFolderRequest(Folder folder);
@@ -264,93 +303,46 @@ public interface RequestsFactory {
     Request<Void> newDeleteDocumentFromFolderRequest(String folderId, String documentId);
 
     /**
-     * Return metadata for all the user's groups.
+     * Obtains a {@link Request} to retrieve the list of {@link Group}s in the user library.
+     *
+     * @param parameters used  to configure the query. Can be null.
+     * @return the request
      */
     Request<List<Group>> newGetGroupsRequest(GroupsEndpoint.GroupRequestParameters parameters);
 
     /**
-     * Returns the next page of group metadata entries.
+     * Obtains a {@link Request} to retrieve the list of {@link Group}s in the user library.
      *
-     * @param uri returned from a previous getGroups() call.
+     * @param uri the URL of the request.
+     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     * @return the request
      */
     Request<List<Group>> newGetGroupsRequest(Uri uri);
 
     /**
-     * Returns metadata for a single group, specified by ID.
+     * Obtains a {@link Request} to retrieve one single {@link Group} by its id.
      *
-     * @param groupId ID of the group to retrieve metadata for.
+     * @param groupId ID of the group to retrieve
      */
     Request<Group> newGetGroupRequest(String groupId);
 
     /**
-     * Return a list of members user roles of a particular group.
+     * Obtains a {@link Request} to retrieve the list of the members in one specific {@link Group}
      *
-     * @param groupId ID of the group to inspect.
+     * @param parameters used  to configure the query. Can be null.
+     * @param groupId the id of the group whose members are being retrived
+     * @return the request
      */
     Request<List<UserRole>> newGetGroupMembersRequest(GroupsEndpoint.GroupRequestParameters parameters, String groupId);
 
     /**
-     * Return a list of members user roles of a particular group.
+     * Obtains a {@link Request} to retrieve the list of the members in one specific {@link Group}
      *
-     * @param url returned from a previous getGroupMembers() call.
+     * @param url the URL of the request.
+     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     * @return the request
      */
     Request<List<UserRole>> newGetGroupMembersRequest(Uri url);
-
-    /* TRASH */
-
-    /**
-     * Retrieve a list of documents in the user's trash.
-     */
-    Request<List<Document>> newGetTrashedDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters);
-
-    /**
-     * Retrieve a list of documents in the user's trash.
-     */
-    Request<List<Document>> newGetTrashedDocumentsRequest();
-
-    /**
-     * Retrieve subsequent pages of documents from the user's trash.
-     *
-     * @param uri reference to next page returned by a previous DocumentList from getTrashedDocuments().
-     */
-    Request<List<Document>> newGetTrashedDocumentsRequest(Uri uri);
-
-    /**
-     * Move a document from trash into the user's library.
-     *
-     * @param documentId id of the document to restore.
-     */
-    Request<Void> newRestoreTrashedDocumentRequest(String documentId);
-
-    /* PROFILES */
-
-    /**
-     * Return the user's profile information.
-     */
-    Request<Profile> newGetMyProfileRequest();
-
-    /**
-     * Return profile information for another user.
-     *
-     * @param  profileId ID of the profile to be fetched.
-     */
-    Request<Profile> newGetProfileRequest(String profileId);
-
-    /* CATALOG */
-
-    /**
-     * Retrieve a list of catalog documents
-     */
-    Request<List<Document>> newGetCatalogDocumentsRequest(CatalogEndpoint.CatalogDocumentRequestParameters parameters);
-
-    /**
-     * Retrieve a single catalog document, specified by ID.
-     *
-     * @param catalogId the catalog document id to get.
-     * @param view extended catalog document view. If null, only core fields are returned.
-     */
-    Request<Document> newGetCatalogDocumentRequest(String catalogId, DocumentEndpoint.DocumentRequestParameters.View view);
-
 
 
     /* ANNOTATIONS */

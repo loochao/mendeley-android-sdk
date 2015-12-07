@@ -21,7 +21,7 @@ public class TrashEndpointTest extends SignedInTest {
     @SmallTest
     public void test_getTrashDocuments_useTheRightUrl_noParams() {
         Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon().appendPath("trash").build();
-        Uri actual = getRequestFactory().newGetTrashedDocumentsRequest().getUrl();
+        Uri actual = getRequestFactory().newGetTrashedDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null).getUrl();
 
         assertEquals("Request url is wrong", expectedUrl, actual);
     }
