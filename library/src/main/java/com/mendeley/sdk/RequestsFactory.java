@@ -23,147 +23,164 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Factory for creating typical {@link Request}s to interact against the Mendeley API.
+ *
+ * <p/>
+ *
+ * While apps using the Mendeley SDK may obtain their {@link Request}s using this factory, it is
+ * still possible to instantiate them directly using their public constructor.
+ */
 public interface RequestsFactory {
 
     /**
-     * Retrieve a list of documents in the user's library.
-     */
-    Request<List<Document>> newGetDocumentsRequest();
-
-    /**
-     * Retrieve a list of documents in the user's library.
-     */
-    Request<List<Document>> newGetDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters);
-
-    /**
-     * Retrieve subsequent pages of documents in the user's library.
+     * Obtains a {@link Request} to retrieve the list of valid document types. This is, the
+     * possible values for {@link Document#type}
      *
-     * @param url reference to next page returned in a previous DocumentList.
-     */
-    Request<List<Document>> newGetDocumentsRequest(Uri url);
-
-    /**
-     * Retrieve a single document, specified by ID.
-     *
-     * @param documentId the document id to get.
-     * @param view extended document view. If null, only core fields are returned.
-     */
-    Request<Document> newGetDocumentRequest(String documentId, DocumentEndpoint.DocumentRequestParameters.View view);
-
-    /**
-     * Add a new document to the user's library.
-     *
-     * @param document the document object to be added.
-     */
-    Request<Document> newPostDocumentRequest(Document document);
-
-    /**
-     * Modify an existing document in the user's library.
-     *
-     * @param documentId the id of the document to be modified.
-     * @param date sets an optional "if unmodified since" condition on the request. Ignored if null.
-     * @param document a document object containing the fields to be updated.
-     *                 Missing fields are left unchanged (not cleared).
-     */
-    Request<Document> newPatchDocumentRequest(String documentId, Date date, Document document);
-
-    /**
-     * Move an existing document into the user's trash collection.
-     *
-     * @param documentId id of the document to be trashed.
-     */
-    Request<Void> newTrashDocumentRequest(String documentId);
-
-    /**
-     * Delete a document which is NOT trashed.
-     *
-     * @param documentId id of the document to be deleted.
-     */
-    Request<Void> newDeleteDocumentRequest(String documentId);
-
-    /**
-     * Delete a document which is alreare trashed.
-     *
-     * @param documentId id of the document to be deleted.
-     */
-    Request<Void> newDeleteTrashedDocumentRequest(String documentId);
-
-    /**
-     * Return a list of valid document types.
+     * @return the request
      */
     Request<Map<String, String>> newGetDocumentTypesRequest();
 
     /**
-     * Return a list of valid identifiers types.
+     * Obtains a {@link Request} to retrieve the list of valid document identifies. This is, the
+     * possible values for {@link Document#identifiers}
+     *
+     * @return the request
      */
     Request<Map<String, String>> newGetDocumentIdentifierTypesRequest();
 
-    /* FILES */
+    /**
+     * Obtains a {@link Request} to retrieve the list of {@link Document}s.
+     *
+     * @param parameters used  to configure the query. Can be null.
+     * @return the requests
+     */
+    Request<List<Document>> newGetDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters);
 
     /**
-     * Return metadata for a user's files, subject to specified query parameters.
+     * Obtains a {@link Request} to retrieve the list of {@link Document}s.
+     *
+     * @param url the URL of the request.
+     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     * @return the request
+     */
+    Request<List<Document>> newGetDocumentsRequest(Uri url);
+
+    /**
+     * Obtains a {@link Request} to retrieve one single {@link Document} by its id.
+     *
+     * @param documentId documentId the id of the document to get
+     * @param view used to configure which fields the server will return
+     * @return the request
+     */
+    Request<Document> newGetDocumentRequest(String documentId, DocumentEndpoint.DocumentRequestParameters.View view);
+
+    /**
+     * Obtains a {@link Request} to create a new  {@link Document} in the user's library.
+     *
+     * @param document the document to create
+     * @return the request
+     */
+    Request<Document> newPostDocumentRequest(Document document);
+
+    /**
+     * Obtains a {@link Request} to update an existing document in the user's library.
+     *
+     * @param documentId the id of the document to be updated.
+     * @param date sets an optional "if unmodified since" condition on the request. Ignored if null.
+     * @param document a document object containing the fields to be updated.
+     *                 Missing fields are left unchanged (not cleared).
+     * @return the request
+     */
+    Request<Document> newPatchDocumentRequest(String documentId, Date date, Document document);
+
+    /**
+     * Obtains a {@link Request} to move an existing document to the trash of the user's library.
+     *
+     * @param documentId the id of the document to trash
+     * @return the request
+     */
+    Request<Void> newTrashDocumentRequest(String documentId);
+
+    /**
+     * Obtains a {@link Request} to permanently delete an existing document which is NOT in the trash.
+     *
+     * @param documentId the id of the document to delete
+     * @return the request
+     */
+    Request<Void> newDeleteDocumentRequest(String documentId);
+
+    /**
+     * Obtains a {@link Request} to permanently delete an existing document which is in the trash.
+     *
+     * @param documentId the id of the document to delete
+     * @return the request
+     */
+    Request<Void> newDeleteTrashedDocumentRequest(String documentId);
+
+    /**
+     * Obtains a {@link Request} to get a list of the @{link File}s in the user's library.
+     *
+     * @param parameters used  to configure the query. Can be null.
+     * @return the request
      */
     Request<List<File>> newGetFilesRequest(FilesEndpoint.FileRequestParameters parameters);
 
     /**
-     * Return metadata for all files associated with all of the user's documents.
-     */
-    Request<List<File>> newGetFilesRequest();
-
-    /**
-     * Return the next page of file metadata entries.
      *
-     * @param uri returned from previous getFiles() call.
+     * Obtains a {@link Request} to get a list of the @{link File}s in the user's library.
+     *
+     * @param uri the URL of the request.
+     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     * @return the request
      */
     Request<List<File>> newGetFilesRequest(Uri uri);
 
-
     /**
-     * Download the content of a file.
+     * Obtains a {@link Request} to download the data related to a {@link File}. Normally,
+     * this is the pdf file that belongs to the {@link File}.
      *
-     * @param fileId the id of the file to download.
-     * @param targetFile the file name to store the file as.
-     *
-     * @return bytes downloaded
+     * @param fileId the id of the file
+     * @param targetFile the {@link File} in the file system where the data will be saved to
+     * @return the request
      */
     FilesEndpoint.GetFileBinaryRequest newGetFileBinaryRequest(String fileId, java.io.File targetFile);
 
-
     /**
-     * Upload the content of a file and link it to the passed document
      *
-     * @param contentType of the file
-     * @param documentId the id of the document this file belongs to
-     * @param inputStream the file input stream
-     * @param fileName the file name
-     * @return the file metadata
-     * @
+     * Obtains a {@link Request} to create a {@link File} in the server linked to the data posted
+     * by the request.
+     *
+     * @param contentType the content type of the data to be posted
+     * @param documentId the id of the {@link Document} the created file will belong to
+     * @param inputStream used to read the data posted to the server.
+     * @param fileName the name of the file.
+     * @return the request
      */
     Request<File> newPostFileWithBinaryRequest(String contentType, String documentId, InputStream inputStream, String fileName);
 
     /**
-     * Delete file with the given id
-     * @param fileId
+     * Obtains a {@link Request} to delete the {@link File} with the passed id.
+     *
+     * @param fileId the id of the file to delete
+     * @return the request
      */
     Request<Void> newDeleteFileRequest(String fileId);
 
-
-    /* FOLDERS */
-
     /**
-     * Return metadata for all the user's folders.
+     * Obtains a {@link Request} to get the list {@link Folder}s in the user's library.
+     *
+     * @param parameters used to configure the query. Can be null.
+     * @return the request
      */
     Request<List<Folder>> newGetFoldersRequest(FoldersEndpoint.FolderRequestParameters parameters);
 
     /**
-     * Return metadata for all the user's folders.
-     */
-    Request<List<Folder>> newGetFoldersRequest();
-
-    /**
-     * Returns the next page of folder metadata entries.
+     * Obtains a {@link Request} to get the list {@link Folder}s in the user's library.
      *
-     * @param uri returned from a previous getFolders() call.
+     * @param uri the URL of the request.
+     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     * @return the request
      */
     Request<List<Folder>> newGetFoldersRequest(Uri uri);
 
@@ -172,68 +189,79 @@ public interface RequestsFactory {
      *
      * @param folderId ID of the folder to retrieve metadata for.
      */
+    /**
+     * Obtains a {@link Request} to get one existing {@link Folder} with the passed id.
+     *
+     * @param folderId the id of the folder
+     * @return the request
+     */
     Request<Folder> newGetFolderRequest(String folderId);
 
-
     /**
-     * Create a new folder.
+     * Obtains a {@link Request} to create a new  {@link Folder} in the user's library.
      *
-     * @param folder metadata for the folder to create.
+     * @param folder the foler to create
+     * @return the request
      */
     Request<Folder> newPostFolderRequest(Folder folder);
 
     /**
-     * Update a folder's metadata.
-     * <p>
-     * This can be used to rename the folder, and/or to move it to a new parent.
+     * Obtains a {@link Request} to update an existing folder in the user's library.
      *
-     * @param folderId the id of the folder to modify.
-     * @param folder metadata object that provides the new name and parentId.
+     * @param folderId the id of the folder to be updated.
+     * @param folder a folder object containing the fields to be updated.
+     *                 Missing fields are left unchanged (not cleared).
+     * @return the request
      */
     Request<Folder> newPatchFolderRequest(String folderId, Folder folder);
 
     /**
-     * Return a list of IDs of the documents stored in a particular folder.
+     * Obtains a {@link Request} to permanently delete an existing {@link Folder}
      *
-     * @param folderId ID of the folder to inspect.
-     */
-    Request<List<String>> newGetFolderDocumentsRequest(FoldersEndpoint.FolderRequestParameters parameters, String folderId);
-
-    /**
-     * Returns the next page of document IDs stored in a particular folder.
-     * @param uri returned by a previous call to getFolderDocumentIds().
-     *
-     */
-    Request<List<String>> newGetFolderDocumentsRequest(Uri uri);
-
-    /**
-     * Add a document to a folder.
-     *
-     * @param folderId the ID the folder.
-     * @param documentId the ID of the document to add to the folder.
-     */
-    Request<Void> newPostDocumentToFolderRequest(String folderId, String documentId);
-
-    /**
-     * Delete a folder.
-     * <p>
-     * This does not delete the documents inside the folder.
-     *
-     * @param folderId the ID of the folder to delete.
+     * @param folderId the id of the document to delete
+     * @return the request
      */
     Request<Void> newDeleteFolderRequest(String folderId);
 
     /**
-     * Remove a document from a folder.
-     * <p>
-     * This does not delete the documents itself.
+     * Obtains a {@link Request} to retrieve the content of one specific {@link Folder} in the form
+     * of the ids of the {@link Document}s in it
      *
-     * @param folderId the ID of the folder.
-     * @param documentId the ID of the document to remove.
+     * @param parameters used to configure the query. Can be null.
+     * @param folderId the id of the folder to query
+     * @return the request
+     */
+    Request<List<String>> newGetFolderDocumentsRequest(FoldersEndpoint.FolderRequestParameters parameters, String folderId);
+
+    /**
+     * Obtains a {@link Request} to retrieve the content of one specific {@link Folder} in the form
+     * of the ids of the {@link Document}s in it
+     *
+     * @param uri the URL of the request.
+     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     * @return the request
+     */
+    Request<List<String>> newGetFolderDocumentsRequest(Uri uri);
+
+    /**
+     * Obtains a {@link Request} to insert one document into one folder.
+     *
+     * @param folderId the id the folder.
+     * @param documentId the id of the document to be added to the folder.
+     * @return the request
+     */
+    Request<Void> newPostDocumentToFolderRequest(String folderId, String documentId);
+
+    /**
+     * Obtains a {@link Request} to delete one document from one folder.
+     * This just deletes the document from the folder, but the document won't be deleted and will
+     * continue to exist in other folders it might be.
+     *
+     * @param folderId the id of the folder
+     * @param documentId the id of the document
+     * @return the request
      */
     Request<Void> newDeleteDocumentFromFolderRequest(String folderId, String documentId);
-
-    /* GROUPS */
 
     /**
      * Return metadata for all the user's groups.

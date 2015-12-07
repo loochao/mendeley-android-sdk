@@ -73,7 +73,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
             final String clientRedirectUri = propertyResourceBundle.getString(KEY_CLIENT_REDIRECT_URI);
             ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, clientRedirectUri);
 
-            Mendeley.sdkInitialise(this, clientCredentials);
+            Mendeley.getInstance().initialise(this, clientCredentials);
         } catch (IOException ioe) {
             throw new IllegalStateException("Could not read property files with client configuration. Should be located in assets/" + CONFIG_FILE, ioe);
         } catch (MissingResourceException mr) {
@@ -194,12 +194,12 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
         requestFactory = Mendeley.getInstance().getRequestFactory();
         DocumentEndpoint.DocumentRequestParameters params = new DocumentEndpoint.DocumentRequestParameters();
         params.limit = 3;
-        Request<List<Document>> documentRequest = requestFactory.getDocuments(params);
+        Request<List<Document>> documentRequest = requestFactory.newGetDocumentsRequest(params);
 
         documentRequest.runAsync(new DocumentsRequestCallback());
     }
 
-    private void manageResponse(List<Document> resource, Uri next, Date serverDate) {
+    private void manageResponse(List<Document> resource, Uri next) {
         appendToOutputView("Page received:");
         for (Document doc : resource) {
             appendToOutputView("* " + doc.title);
@@ -207,7 +207,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
         appendToOutputView("");
 
         if (next != null) {
-            Request<List<Document>> documentRequest = requestFactory.getDocuments(next);
+            Request<List<Document>> documentRequest = requestFactory.newGetDocumentsRequest(next);
             documentRequest.runAsync(new DocumentsRequestCallback());
         }
     }
@@ -221,7 +221,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
 
         @Override
         public void onSuccess(List<Document> resource, Uri next, Date serverDate) {
-            manageResponse(resource, next, serverDate);
+            manageResponse(resource, next);
         }
 
         @Override

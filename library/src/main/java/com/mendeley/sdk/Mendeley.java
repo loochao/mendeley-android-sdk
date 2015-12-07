@@ -1,5 +1,6 @@
 package com.mendeley.sdk;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -40,59 +41,125 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class exposing all the pubic functionality of the Mendeley SDK.
+ *
+ * <p/>
+ *
+ * This class provides default implementations of {@link AuthTokenManager}, used to get
+ * a valid authorization token and {@link RequestsFactory}, used to create HTTP {@link Request}s
+ * against the Mendeley API.
+ *
+ * <p/>
+ * This class can't be instantiated by client code and should always be accessed in a
+ * singleton way using {@link Mendeley#getInstance()}
+ *
+ * <p/>
+ * First thing client code should do is initialising this class by passing a valid
+ * API key and credentials calling  {@link Mendeley#initialise(Context, ClientCredentials)}
+ *
+ * <p/>
+ *
+ * Note: developers that wants to get rid of the {@link Mendeley} singleton for better dependency
+ * injection and unit testing may ignore this class and directly instantiate a {@link AuthTokenManager}
+ * and {@link RequestsFactory} if they want to do so.
+ */
 public class Mendeley {
 
     private static final String TAG = Mendeley.class.getSimpleName();
     private static Mendeley instance;
 
-    private final ClientCredentials clientCredentials;
-    private final AuthTokenManager authTokenManager;
-    private final RequestsFactory requestsFactory;
-
-    public static void sdkInitialise(Context context, ClientCredentials clientCredentials) {
-        final AuthTokenManager authTokenManager = new SharedPreferencesAuthTokenManager(context.getSharedPreferences("auth", Context.MODE_PRIVATE));
-        final RequestFactoryImpl requestFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
-        instance = new Mendeley(clientCredentials, authTokenManager, requestFactory);
-    }
-
+    private ClientCredentials clientCredentials;
+    private AuthTokenManager authTokenManager;
+    private RequestsFactory requestsFactory;
 
     /**
-     * Return the MendeleySdk singleton.
+     * @return a reference to the @{Mendeley} SDK singleton.
      */
-    public static Mendeley getInstance() {
+    public static synchronized Mendeley getInstance() {
         if (instance == null) {
-            throw new IllegalStateException("Sdk is not initialised. You must call #sdkInitialise() first.");
+            instance = new Mendeley();
         }
         return instance;
     }
 
-    private Mendeley(ClientCredentials clientCredentials, AuthTokenManager authTokenManager, RequestsFactory requestsFactory) {
-        this.clientCredentials = clientCredentials;
-        this.authTokenManager = authTokenManager;
-        this.requestsFactory = requestsFactory;
+    private Mendeley() {
     }
 
     /**
-     * Sign the user in.
-     * @param activity used for creating the sign-in activity.
-     * @param showSignUpScreen whether to show the screen with UI to create a new account before the sign-in dialog
+     * Initialises the SDK, providing a valid API key and credentials to obtain authorization tokens
+     * from the Mendeley API
+     *
+     * @param context a Context, won't be kept as a reference.
+     * @param clientCredentials, valid credentials to obtain authorization tokens from the Mendeley API
      */
-    public void signIn(Activity activity, boolean showSignUpScreen) {
-        final Intent intent;
-        if (showSignUpScreen) {
-            intent = new Intent(activity, SignInOrSignUpActivity.class);
-        } else {
-            intent = new Intent(activity, SignInActivity.class);
-        }
+    public final void initialise(Context context, ClientCredentials clientCredentials) {
+        this.clientCredentials = clientCredentials;
+        this.authTokenManager = new SharedPreferencesAuthTokenManager(context.getSharedPreferences(SharedPreferencesAuthTokenManager.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE));
+        this.requestsFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
+    }
+
+    /**
+     * Signs the user in.
+     *
+     * <p/>
+     *
+     * Calling this method will open one {@link Activity} showing the UI that lets the user enter
+     * their credentials to sign in into the Mendeley server.
+     *
+     * The SDK will take control of the flow, and will invoke @{Activity#onActivityResult} once the
+     * sign in flow has been resolved.
+     *
+     * Your @{Activity} will need to pass the result back to this class invoking @{Mendeley#onActivityResult}
+     * providing a {@link com.mendeley.sdk.Mendeley.SignInCallback} that can be used by your
+     * code to get the final outcome of the signing in attempt.
+     *
+     * @param activity used for creating the sign in @{Activity}. The SDK won't hold any reference to this,
+     *                 so there is no risk of leaking it.
+     * @param showSignUpScreen whether or not to show the screen with UI to create a new account before the sign-in screen
+     */
+    public final void signIn(Activity activity, boolean showSignUpScreen) {
+        assertInitialised();
+
+        final Class<? extends Activity> activityClass = showSignUpScreen ? SignInOrSignUpActivity.class : SignInActivity.class;
+        final Intent intent = new Intent(activity, activityClass);
         activity.startActivityForResult(intent, SignInActivity.AUTH_REQUEST_CODE);
     }
 
+
+    /**
+     * Signs the user out.
+     *
+     * <p/>
+     *
+     * In practice, this simply means clearing the authorization tokens from the Mendeley SDK, if any.*
+     */
     public void signOut() {
+        assertInitialised();
         authTokenManager.clearTokens();
     }
 
-
+    /**
+     * To be called from the {@link Activity#onActivityResult(int, int, Intent)} of your application.
+     *
+     * <p/>
+     *
+     * Once the user has signed in to the Mendeley server, the Activity that performs that work will
+     * pass the result using {@link Activity#onActivityResult(int, int, Intent)}. Hence, you need
+     * to pass the result back to the SDK by calling this method in your Activity, so that the SDK
+     * will analyse the result and persist the authorization token.
+     *
+     *
+     * @param requestCode the requestCode received in the onActivityResult of your app
+     * @param resultCode the resultCode received in the onActivityResult of your app
+     * @param data the data received in the onActivityResult of your app
+     * @param signInCallback a callback letting client code know the outcome of the sign in attempt
+     *
+     * @return true if the result relates to a sign in attempt and has been consumed by the Mendeley SDK
+     */
     public final boolean onActivityResult(int requestCode, int resultCode, Intent data, SignInCallback signInCallback) {
+        assertInitialised();
+
         switch (requestCode) {
             case SignInActivity.AUTH_REQUEST_CODE:
                 onLoginActivityResult(resultCode, data, signInCallback);
@@ -128,20 +195,47 @@ public class Mendeley {
         }
     }
 
-    public boolean isSignedIn() {
+    /**
+     * Returns whether or not the user is signed in to the Mendeley API server.
+     * This is, if the SDK has the needed information (AOuth access or refresh tokens) to launch
+     * HTTP {@link Request}s against the Mendeley API.
+     *
+     * @return if the user is signed in
+     */
+    public final boolean isSignedIn() {
+        assertInitialised();
+
         return !TextUtils.isEmpty(authTokenManager.getAccessToken());
     }
 
+    /**
+     * Returns one @{RequestsFactory} that you can use for creating typical {@link Request}s against
+     * the Mendeley SDK.
+     *
+     * @return a Request factory to create typical Requests
+     */
+    public RequestsFactory getRequestFactory() {return requestsFactory; }
+
+    /**
+     * @return clients credentials used by this Mendeley SDK, as passed by the app
+     * in the {@link Mendeley#initialise(Context, ClientCredentials)} method
+     */
     public ClientCredentials getClientCredentials() {
         return clientCredentials;
     }
 
+    /**
+     * @return AuthTokenManager used by this Mendeley SDK
+     */
     public AuthTokenManager getAuthTokenManager() {
         return authTokenManager;
     }
 
-    public RequestsFactory getRequestFactory() {return requestsFactory; }
-
+    private void assertInitialised() {
+        if (authTokenManager == null) {
+            throw new IllegalStateException("Sdk is not initialised. You must call #sdkInitialise() first.");
+        }
+    }
 
     /**
      * Interface that should be implemented by the application for receiving callbacks for sign
@@ -153,11 +247,15 @@ public class Mendeley {
     }
 
     /**
-     * Implementation of the blocking API calls.
+     * Default implementation of {@link RequestsFactory}
+     *
+     * <p/>
+     *
+     * Typical Android applications using the Mendeley SDK won't directly need to deal with this,
+     * but this class is left public in case you don't want to use the {@link Mendeley} singleton
+     * in your app and you prefer to instantiate the {@link RequestsFactory} by yourself.
      */
     public static class RequestFactoryImpl implements RequestsFactory {
-
-        public static final String TAG = RequestFactoryImpl.class.getSimpleName();
 
         private final ClientCredentials clientCredentials;
         private final AuthTokenManager authTokenManager;
@@ -167,11 +265,14 @@ public class Mendeley {
             this.clientCredentials = clientCredentials;
         }
 
-        /* DOCUMENTS */
+        @Override
+        public Request<Map<String, String>> newGetDocumentTypesRequest()  {
+            return new DocumentTypesEndpoint.GetDocumentTypesRequest(authTokenManager, clientCredentials);
+        }
 
         @Override
-        public Request<List<Document>> newGetDocumentsRequest() {
-            return newGetDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null);
+        public Request<Map<String, String>> newGetDocumentIdentifierTypesRequest() {
+            return new DocumentIdentifiersEndpoint.GetDocumentIdentifiersRequest(authTokenManager, clientCredentials);
         }
 
         @Override
@@ -194,7 +295,6 @@ public class Mendeley {
             return new DocumentEndpoint.PostDocumentRequest(document, authTokenManager, clientCredentials);
         }
 
-
         @Override
         public Request<Document> newPatchDocumentRequest(String documentId, Date date, Document document) {
             return new DocumentEndpoint.PatchDocumentAuthorizedRequest(documentId, document, date, authTokenManager, clientCredentials);
@@ -214,18 +314,6 @@ public class Mendeley {
         public Request<Void> newDeleteTrashedDocumentRequest(String documentId) {
             return new TrashEndpoint.DeleteTrashedDocumentRequest(documentId, authTokenManager, clientCredentials);
         }
-
-        @Override
-        public Request<Map<String, String>> newGetDocumentTypesRequest()  {
-            return new DocumentTypesEndpoint.GetDocumentTypesRequest(authTokenManager, clientCredentials);
-        }
-
-        @Override
-        public Request<Map<String, String>> newGetDocumentIdentifierTypesRequest() {
-            return new DocumentIdentifiersEndpoint.GetDocumentIdentifiersRequest(authTokenManager, clientCredentials);
-        }
-
-        /* ANNOTATIONS */
 
         @Override
         public Request<List<Annotation>> newGetAnnotationsRequest() {
@@ -254,19 +342,12 @@ public class Mendeley {
 
         @Override
         public Request<Annotation> newPatchAnnotationRequest(String annotationId, Annotation annotation) {
-           return new AnnotationsEndpoint.PatchAnnotationRequest(annotationId, annotation, authTokenManager, clientCredentials);
+            return new AnnotationsEndpoint.PatchAnnotationRequest(annotationId, annotation, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newDeleteAnnotationRequest(String annotationId) {
             return new AnnotationsEndpoint.DeleteAnnotationRequest(annotationId, authTokenManager, clientCredentials);
-        }
-
-        /* FILES BLOCKING */
-
-        @Override
-        public Request<List<File>> newGetFilesRequest() {
-            return newGetFilesRequest((FilesEndpoint.FileRequestParameters) null);
         }
 
         @Override
@@ -289,17 +370,9 @@ public class Mendeley {
             return new FilesEndpoint.PostFileWithBinaryRequest(contentType, documentId, fileName, inputStream, authTokenManager, clientCredentials);
         }
 
-
         @Override
         public Request<Void> newDeleteFileRequest(String fileId) {
             return new FilesEndpoint.DeleteFileRequest(fileId, authTokenManager, clientCredentials);
-        }
-
-        /* FOLDERS BLOCKING */
-
-        @Override
-        public Request<List<Folder>> newGetFoldersRequest() {
-            return newGetFoldersRequest((FoldersEndpoint.FolderRequestParameters) null);
         }
 
         @Override
@@ -327,6 +400,12 @@ public class Mendeley {
             return new FoldersEndpoint.PatchFolderAuthorizedRequest(folderId, folder, authTokenManager, clientCredentials);
         }
 
+
+        @Override
+        public Request<Void> newDeleteFolderRequest(String folderId) {
+            return new FoldersEndpoint.DeleteFolderRequest(folderId, authTokenManager, clientCredentials);
+        }
+
         @Override
         public Request<List<String>> newGetFolderDocumentsRequest(FoldersEndpoint.FolderRequestParameters parameters, String folderId) {
             return new FoldersEndpoint.GetFolderDocumentIdsRequest(parameters, folderId, authTokenManager, clientCredentials);
@@ -343,17 +422,9 @@ public class Mendeley {
         }
 
         @Override
-        public Request<Void> newDeleteFolderRequest(String folderId) {
-            return new FoldersEndpoint.DeleteFolderRequest(folderId, authTokenManager, clientCredentials);
-        }
-
-        @Override
         public Request<Void> newDeleteDocumentFromFolderRequest(String folderId, String documentId) {
             return new FoldersEndpoint.DeleteDocumentFromFolder(folderId, documentId, authTokenManager, clientCredentials);
         }
-
-
-        /* PROFILES */
 
         @Override
         public Request<Profile> newGetMyProfileRequest() {
@@ -364,8 +435,6 @@ public class Mendeley {
         public Request<Profile> newGetProfileRequest(final String profileId) {
             return new ProfilesEndpoint.GetProfileRequest(profileId, authTokenManager, clientCredentials);
         }
-
-        /* GROUPS */
 
         @Override
         public Request<List<Group>> newGetGroupsRequest(GroupsEndpoint.GroupRequestParameters parameters) {
@@ -393,8 +462,6 @@ public class Mendeley {
 
         }
 
-        /* TRASH */
-
         @Override
         public Request<List<Document>> newGetTrashedDocumentsRequest() {
             return newGetTrashedDocumentsRequest((DocumentEndpoint.DocumentRequestParameters) null);
@@ -415,8 +482,6 @@ public class Mendeley {
             return new TrashEndpoint.RestoreTrashedDocumentRequest(documentId, authTokenManager, clientCredentials);
         }
 
-        /* CATALOG  */
-
         @Override
         public Request<List<Document>> newGetCatalogDocumentsRequest(CatalogEndpoint.CatalogDocumentRequestParameters parameters) {
             return new CatalogEndpoint.GetCatalogDocumentsRequest(parameters, authTokenManager, clientCredentials);
@@ -427,8 +492,6 @@ public class Mendeley {
             return new CatalogEndpoint.GetCatalogDocumentRequest(catalogId, view, authTokenManager, clientCredentials);
         }
 
-        /* RECENTLY READ */
-
         @Override
         public Request<List<ReadPosition>> newGetRecentlyReadRequest(String groupId, String fileId, int limit) {
             return new RecentlyReadEndpoint.GetRecentlyReadRequest(groupId, fileId, limit, authTokenManager, clientCredentials);
@@ -438,13 +501,22 @@ public class Mendeley {
         public Request<ReadPosition> newPostRecentlyReadRequest(ReadPosition readPosition) {
             return new RecentlyReadEndpoint.PostRecentlyReadRequest(readPosition, authTokenManager, clientCredentials);
         }
-
     }
 
+
     /**
-     * Adds async calls to BaseMendeleySdk.
+     * Implementation of {@link AuthTokenManager} that uses Shared Preferences to persist the
+     * OAuth tokens.
+     *
+     * <p/>
+     *
+     * Typical Android applications using the Mendeley SDK won't directly need to deal with this,
+     * but this class is left public in case you don't want to use the {@link Mendeley} singleton
+     * in your app and you prefer to instantiate the {@link AuthTokenManager} by yourself.
      */
-    static class SharedPreferencesAuthTokenManager implements AuthTokenManager {
+    public static class SharedPreferencesAuthTokenManager implements AuthTokenManager {
+
+        private static final String SHARED_PREFERENCES_NAME = "auth";
 
         // Shared preferences keys:
         private static final String ACCESS_TOKEN_KEY = "accessToken";
@@ -454,12 +526,13 @@ public class Mendeley {
 
         private final SharedPreferences preferences;
 
-        SharedPreferencesAuthTokenManager(SharedPreferences preferences) {
+        public SharedPreferencesAuthTokenManager(SharedPreferences preferences) {
             this.preferences = preferences;
         }
 
+        @SuppressLint("CommitPrefEdits")
         @Override
-        public void saveTokens(String accessToken, String refreshToken, String tokenType, int expiresIn)  {
+        public final void saveTokens(String accessToken, String refreshToken, String tokenType, int expiresIn)  {
             Date expiresAt = generateExpiresAtFromExpiresIn(expiresIn);
 
             SharedPreferences.Editor editor = preferences.edit();
@@ -470,8 +543,9 @@ public class Mendeley {
             editor.commit();
         }
 
+        @SuppressLint("CommitPrefEdits")
         @Override
-        public void clearTokens() {
+        public final void clearTokens() {
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(ACCESS_TOKEN_KEY);
             editor.remove(REFRESH_TOKEN_KEY);
@@ -481,30 +555,27 @@ public class Mendeley {
         }
 
         @Override
-        public Date getAuthTenExpiresAt() {
+        public final Date getAuthTenExpiresAt() {
             return new Date(preferences.getLong(EXPIRES_AT_KEY, 0));
         }
 
         @Override
-        public String getRefreshToken() {
+        public final String getRefreshToken() {
             return preferences.getString(REFRESH_TOKEN_KEY, null);
         }
 
-        /**
-         * @return the access token string, or null if it does not exist.
-         */
         @Override
-        public String getAccessToken() {
+        public final  String getAccessToken() {
             return preferences.getString(ACCESS_TOKEN_KEY, null);
         }
 
         @Override
-        public String getTokenType() {
+        public final String getTokenType() {
             return preferences.getString(TOKEN_TYPE_KEY, null);
         }
 
         private Date generateExpiresAtFromExpiresIn(int expiresIn) {
-            Calendar c = Calendar.getInstance();
+            final Calendar c = Calendar.getInstance();
             c.add(Calendar.SECOND, expiresIn);
             return c.getTime();
         }
