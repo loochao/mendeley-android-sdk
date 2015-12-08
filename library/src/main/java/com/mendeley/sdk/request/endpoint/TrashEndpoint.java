@@ -10,6 +10,7 @@ import com.mendeley.sdk.request.DeleteAuthorizedRequest;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
+import com.mendeley.sdk.Request;
 
 import org.json.JSONException;
 
@@ -22,8 +23,12 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
+/**
+ * Class with the implementation of typical {@link Request}s against the /trash endpoint.
+ * {@see http://dev.mendeley.com/methods/#trash}
+ */
 public class TrashEndpoint {
     public static String BASE_URL = MENDELEY_API_BASE_URL + "trash";
 

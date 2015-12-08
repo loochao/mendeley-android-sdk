@@ -9,7 +9,7 @@ import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.model.Document;
 import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.model.ReadPosition;
-import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 

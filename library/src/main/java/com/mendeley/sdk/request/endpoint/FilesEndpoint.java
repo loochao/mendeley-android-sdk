@@ -11,7 +11,7 @@ import com.mendeley.sdk.request.DeleteAuthorizedRequest;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
-import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.util.DateUtils;
 
 import org.json.JSONException;
@@ -26,15 +26,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
-
+/**
+ * Class with the implementation of typical {@link Request}s against the /files endpoint.
+ * {@see http://dev.mendeley.com/methods/#files}
+ */
 public class FilesEndpoint {
 
     public final static String FILES_BASE_URL = MENDELEY_API_BASE_URL + "files";
     public static final String FILES_CONTENT_TYPE = "application/vnd.mendeley-file.1+json";
-
-    /* PROCEDURES */
 
     public static class GetFilesRequest extends GetAuthorizedRequest<List<File>> {
         private static Uri getGetFilesUrl(FileRequestParameters params) {

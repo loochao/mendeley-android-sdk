@@ -9,6 +9,7 @@ import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
+import com.mendeley.sdk.Request;
 
 import org.json.JSONException;
 
@@ -23,10 +24,11 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
 /**
- * NetworkProvider class for Recently read API calls
+ * Class with the implementation of typical {@link Request}s against the /recently_read endpoint.
+ * {@see http://dev.mendeley.com/methods/}
  */
 public class RecentlyReadEndpoint {
 	public static final String RECENTLY_READ_BASE_URL = MENDELEY_API_BASE_URL + "recently_read";

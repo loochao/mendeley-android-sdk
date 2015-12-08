@@ -9,6 +9,7 @@ import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.UserRole;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
+import com.mendeley.sdk.Request;
 
 import org.json.JSONException;
 
@@ -20,12 +21,12 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
 /**
- * NetworkProvider class for Group API calls
+ * Class with the implementation of typical {@link Request}s against the /groups endpoint.
+ * {@see http://dev.mendeley.com/methods/#groups}
  */
-
 public class GroupsEndpoint {
     private static final String GROUP_BASE_URL = MENDELEY_API_BASE_URL + "groups";
     public static final String GROUP_CONTENT_TYPE = "application/vnd.mendeley-group.1+json";

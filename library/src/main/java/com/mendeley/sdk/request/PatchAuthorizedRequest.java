@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.util.DateUtils;
 import com.mendeley.sdk.util.NetworkUtils;
 
@@ -14,6 +15,9 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * Request against the Mendeley API using the PATCH method.
+ */
 public abstract class PatchAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
     private final Date ifModifiedSinceDate;

@@ -8,6 +8,7 @@ import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
+import com.mendeley.sdk.Request;
 
 import org.json.JSONException;
 
@@ -18,8 +19,12 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.Map;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
+/**
+ * Class with the implementation of typical {@link Request}s against the /profiles endpoint.
+ * {@see http://dev.mendeley.com/methods/#profiles}
+ */
 public class ProfilesEndpoint {
 	public static String PROFILES_URL = MENDELEY_API_BASE_URL + "profiles/";
 

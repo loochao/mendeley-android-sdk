@@ -12,13 +12,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.Mendeley;
 import com.mendeley.sdk.RequestsFactory;
 import com.mendeley.sdk.example.R;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.model.Document;
-import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 
 import java.io.BufferedInputStream;
@@ -69,9 +68,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
 
             final String clientId = propertyResourceBundle.getString(KEY_PROJECT_ID);
             final String clientSecret = propertyResourceBundle.getString(KEY_CLIENT_SECRET);
-            AppCredentials appCredentials = new AppCredentials(clientId, clientSecret);
-
-            Mendeley.getInstance().initialise(this, appCredentials);
+            Mendeley.getInstance().init(this, clientId, clientSecret);
         } catch (IOException ioe) {
             throw new IllegalStateException("Could not read property files with client configuration. Should be located in assets/" + CONFIG_FILE, ioe);
         } catch (MissingResourceException mr) {

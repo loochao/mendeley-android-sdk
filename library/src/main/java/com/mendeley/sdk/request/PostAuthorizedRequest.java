@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.Request;
 
 import org.json.JSONException;
 
@@ -12,7 +13,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-
+/**
+ * Request against the Mendeley API using the POST method.
+ */
 public abstract class PostAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
     public PostAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {

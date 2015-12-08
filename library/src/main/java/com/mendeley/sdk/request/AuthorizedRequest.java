@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.exceptions.NotSignedInException;
@@ -15,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * {@link Request} against the Mendeley Web API that is performed using a valid OAuth access token.
  *
+ * This class is responsible to refresh the access token if it has expired.
+ *
  * @param <ResultType>
  */
 public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> {
@@ -22,8 +25,20 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
     // Only use tokens which don't expire in the next 5 mins:
     private final static int MIN_TOKEN_VALIDITY_SEC = 300;
 
+    protected final AuthTokenManager authTokenManager;
+    protected final AppCredentials appCredentials;
+
+    /**
+     * Constructor
+     *
+     * @param url URI the request will be executed against
+     * @param authTokenManager used to get the access token
+     * @param appCredentials used to refresh the access token, if needed
+     */
     public AuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-        super(url, authTokenManager, appCredentials);
+        super(url);
+        this.authTokenManager = authTokenManager;
+        this.appCredentials = appCredentials;
     }
 
     @Override
@@ -53,6 +68,13 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         new AuthTokenRefreshRequest(authTokenManager, appCredentials).run();
     }
 
+    /**
+     * Template method to be implemented by extending classes.
+     * This method is guaranteed to be run with a valid access token.
+     *
+     * @return
+     * @throws MendeleyException
+     */
     protected abstract Response doRunAuthorized() throws MendeleyException;
 
     // TODO: consider dropping this to reduce complexity

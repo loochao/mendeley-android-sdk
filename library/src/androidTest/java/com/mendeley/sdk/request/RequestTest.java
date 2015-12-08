@@ -6,6 +6,7 @@ import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.SmallTest;
 
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.testUtils.MutableReference;
 
@@ -20,7 +21,7 @@ public class RequestTest extends AndroidTestCase {
     public void test_run_executesRequestInTheCallingThread() throws MendeleyException {
         // GIVEN a request that returns the thread it run in
 
-        final Request<Thread> request = new Request<Thread>(null, null, null) {
+        final Request<Thread> request = new Request<Thread>(null) {
             @Override
             public Response doRun() throws MendeleyException {
                 return new Response(Thread.currentThread(), (Date) null, null);
@@ -42,7 +43,7 @@ public class RequestTest extends AndroidTestCase {
         final MutableReference<Thread> actualThread = new MutableReference<>();
 
         // GIVEN a request that returns the thread it run in
-        final Request<Thread> request = new Request<Thread>(null, null, null) {
+        final Request<Thread> request = new Request<Thread>(null) {
             @Override
             public Response doRun() throws MendeleyException {
                 return new Response(Thread.currentThread(), (Date) null, null);
@@ -81,7 +82,7 @@ public class RequestTest extends AndroidTestCase {
         final MutableReference<Thread> actualThread = new MutableReference<>();
 
         // GIVEN a request that returns the thread it run in
-        final Request<Thread> request = new Request<Thread>(null, null, null) {
+        final Request<Thread> request = new Request<Thread>(null) {
             @Override
             public Response doRun() throws MendeleyException {
                 return new Response(Thread.currentThread(), new Date(), null);
@@ -132,7 +133,7 @@ public class RequestTest extends AndroidTestCase {
         final CountDownLatch latch = new CountDownLatch(1);
 
         // GIVEN a request that runs until cancelled
-        final Request<Void> request = new Request<Void>(null, null, null) {
+        final Request<Void> request = new Request<Void>(null) {
             @Override
             public Response doRun() throws MendeleyException {
                 return new Response(null, new Date(), null);
@@ -170,7 +171,7 @@ public class RequestTest extends AndroidTestCase {
         final MutableReference<Exception> exceptionReceived = new MutableReference<Exception>();
 
         // GIVEN a request that runs until cancelled
-        final Request<Void> request = new Request<Void>(null, null, null) {
+        final Request<Void> request = new Request<Void>(null) {
             @Override
             public Response doRun() throws MendeleyException {
                 throw new MendeleyException("crap");
@@ -208,7 +209,7 @@ public class RequestTest extends AndroidTestCase {
         final MutableReference<Boolean> callbackCalled = new MutableReference<Boolean>();
 
         // GIVEN a request that runs until cancelled
-        final Request<Void> request = new Request<Void>(null, null, null) {
+        final Request<Void> request = new Request<Void>(null) {
             @Override
             public Response doRun() throws MendeleyException {
                 try {

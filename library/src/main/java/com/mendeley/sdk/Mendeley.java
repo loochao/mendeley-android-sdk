@@ -19,7 +19,6 @@ import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.model.UserRole;
-import com.mendeley.sdk.request.Request;
 import com.mendeley.sdk.request.endpoint.AnnotationsEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentIdentifiersEndpoint;
@@ -94,10 +93,11 @@ public class Mendeley {
      * from the Mendeley API
      *
      * @param context a Context, won't be kept as a reference.
-     * @param appCredentials, valid credentials to obtain authorization tokens from the Mendeley API
+     * @param appId, valid client app id
+     * @param appSecret, valid client app secret
      */
-    public final void initialise(Context context, AppCredentials appCredentials) {
-        this.appCredentials = appCredentials;
+    public final void init(Context context, String appId, String appSecret) {
+        this.appCredentials = new AppCredentials(appId, appSecret);
         this.authTokenManager = new SharedPreferencesAuthTokenManager(context.getSharedPreferences(SharedPreferencesAuthTokenManager.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE));
         this.requestsFactory = new RequestFactoryImpl(authTokenManager, appCredentials);
     }

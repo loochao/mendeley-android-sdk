@@ -11,6 +11,7 @@ import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PatchAuthorizedRequest;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
+import com.mendeley.sdk.Request;
 
 import org.json.JSONException;
 
@@ -25,8 +26,12 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
+/**
+ * Class with the implementation of typical {@link Request}s against the /folders endpoint.
+ * {@see http://dev.mendeley.com/methods/#folders}
+ */
 public class FoldersEndpoint {
 
 	public static final String FOLDERS_BASE_URL = MENDELEY_API_BASE_URL + "folders";

@@ -10,7 +10,6 @@ import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.model.UserRole;
-import com.mendeley.sdk.request.Request;
 import com.mendeley.sdk.request.endpoint.AnnotationsEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 import com.mendeley.sdk.request.endpoint.FilesEndpoint;
@@ -75,7 +74,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to retrieve the list of {@link Document}s.
      *
      * @param url the URL of the request.
-     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     *            May be the {@link Request.Response#next} field of a previous request.
      * @return the request
      */
     Request<List<Document>> newGetDocumentsRequest(Uri url);
@@ -145,7 +144,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to retrieve the list of {@link Document}s in the trash.
      *
      * @param uri the URL of the request.
-     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     *            May be the {@link Request.Response#next} field of a previous request.
      * @return the request
      */
     Request<List<Document>> newGetTrashedDocumentsRequest(Uri uri);
@@ -170,7 +169,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to get a list of the @{link File}s in the user's library.
      *
      * @param uri the URL of the request.
-     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     *            May be the {@link Request.Response#next} field of a previous request.
      * @return the request
      */
     Request<List<File>> newGetFilesRequest(Uri uri);
@@ -218,7 +217,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to get the list {@link Folder}s in the user's library.
      *
      * @param uri the URL of the request.
-     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     *            May be the {@link Request.Response#next} field of a previous request.
      * @return the request
      */
     Request<List<Folder>> newGetFoldersRequest(Uri uri);
@@ -277,7 +276,7 @@ public interface RequestsFactory {
      * of the ids of the {@link Document}s in it
      *
      * @param uri the URL of the request.
-     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     *            May be the {@link Request.Response#next} field of a previous request.
      * @return the request
      */
     Request<List<String>> newGetFolderDocumentsRequest(Uri uri);
@@ -314,7 +313,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to retrieve the list of {@link Group}s in the user library.
      *
      * @param uri the URL of the request.
-     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     *            May be the {@link Request.Response#next} field of a previous request.
      * @return the request
      */
     Request<List<Group>> newGetGroupsRequest(Uri uri);
@@ -339,7 +338,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to retrieve the list of the members in one specific {@link Group}
      *
      * @param url the URL of the request.
-     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     *            May be the {@link Request.Response#next} field of a previous request.
      * @return the request
      */
     Request<List<UserRole>> newGetGroupMembersRequest(Uri url);
@@ -356,7 +355,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to retrieve the list of {@link Annotation}s.
      *
      * @param url the URL of the request.
-     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     *            May be the {@link Request.Response#next} field of a previous request.
      * @return the request
      */
     Request<List<Annotation>> newGetAnnotationsRequest(Uri url);

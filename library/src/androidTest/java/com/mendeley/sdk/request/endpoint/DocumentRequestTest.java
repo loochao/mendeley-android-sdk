@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.sdk.model.Document;
-import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 import com.mendeley.sdk.util.DateUtils;

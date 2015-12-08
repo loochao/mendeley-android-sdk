@@ -3,6 +3,7 @@ package com.mendeley.sdk.request;
 import android.net.Uri;
 import android.test.suitebuilder.annotation.LargeTest;
 
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.UserCancelledException;
 import com.mendeley.sdk.testUtils.MutableReference;
 

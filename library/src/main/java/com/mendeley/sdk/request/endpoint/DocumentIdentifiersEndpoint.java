@@ -8,6 +8,7 @@ import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
+import com.mendeley.sdk.Request;
 
 import org.json.JSONException;
 
@@ -17,8 +18,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
+/**
+ * Class with the implementation of typical {@link Request}s against the /identifier_types endpoint.
+ * {@see http://dev.mendeley.com/methods/}
+ */
 public class DocumentIdentifiersEndpoint {
 
     public static String DOCUMENT_IDENTIFIER_TYPES_BASE_URL = MENDELEY_API_BASE_URL + "identifier_types";

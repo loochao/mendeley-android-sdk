@@ -17,7 +17,7 @@ import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.Mendeley;
 import com.mendeley.sdk.R;
 import com.mendeley.sdk.exceptions.HttpResponseException;
-import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.util.NetworkUtils;
 
 import java.io.DataOutputStream;

@@ -3,7 +3,7 @@ package com.mendeley.sdk.request.endpoint;
 import com.mendeley.sdk.model.Annotation;
 import com.mendeley.sdk.model.Document;
 import com.mendeley.sdk.model.Point;
-import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 

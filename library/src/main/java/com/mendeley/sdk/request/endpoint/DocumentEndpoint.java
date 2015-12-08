@@ -11,6 +11,7 @@ import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PatchAuthorizedRequest;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.util.DateUtils;
 
 import org.json.JSONException;
@@ -27,8 +28,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
+/**
+ * Class with the implementation of typical {@link Request}s against the /documents endpoint.
+ * {@see http://dev.mendeley.com/methods/#documents}
+ */
 public class DocumentEndpoint {
 
     public static String DOCUMENTS_BASE_URL = MENDELEY_API_BASE_URL + "documents";

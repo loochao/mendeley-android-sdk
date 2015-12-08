@@ -16,8 +16,6 @@
 
 package com.mendeley.sdk;
 
-import com.mendeley.sdk.request.Request;
-
 import java.util.Date;
 
 /**

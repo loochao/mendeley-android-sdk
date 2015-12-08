@@ -5,7 +5,7 @@ import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.UserRole;
-import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 

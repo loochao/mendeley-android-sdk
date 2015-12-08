@@ -17,7 +17,6 @@ public class ClientCredentialsFromAssetsFactory {
     private static final String CONFIG_FILE = "config.properties";
     private static final String KEY_PROJECT_ID = "integration_test_project_id";
     private static final String KEY_CLIENT_SECRET = "integration_test_client_secret";
-    private static final String KEY_CLIENT_REDIRECT_URI = "integration_test_client_redirect_url";
 
     public static AppCredentials create(AssetManager assetManager) {
         try {
@@ -28,7 +27,6 @@ public class ClientCredentialsFromAssetsFactory {
 
             final String clientId = propertyResourceBundle.getString(KEY_PROJECT_ID);
             final String clientSecret = propertyResourceBundle.getString(KEY_CLIENT_SECRET);
-            final String clientRedirectUri = propertyResourceBundle.getString(KEY_CLIENT_REDIRECT_URI);
 
             return new AppCredentials(clientId, clientSecret);
 

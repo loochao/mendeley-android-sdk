@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.AuthenticationException;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
@@ -17,10 +18,25 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Request that refreshed an expired access token.
+ * A valid refresh token in the passed {@link AuthTokenManager} is needed.
+ */
 public class AuthTokenRefreshRequest extends Request<Void> {
 
+    protected final AuthTokenManager authTokenManager;
+    protected final AppCredentials appCredentials;
+
+    /**
+     * Constructor
+     *
+     * @param authTokenManager used to get the refresh token
+     * @param appCredentials used to refresh the access token
+     */
     public AuthTokenRefreshRequest(AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-        super(Uri.parse(AuthTokenManager.TOKENS_URL), authTokenManager, appCredentials);
+        super(Uri.parse(AuthTokenManager.TOKENS_URL));
+        this.authTokenManager = authTokenManager;
+        this.appCredentials = appCredentials;
     }
 
     @Override

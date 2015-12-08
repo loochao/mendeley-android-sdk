@@ -6,7 +6,7 @@ import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.sdk.model.Document;
 import com.mendeley.sdk.model.Folder;
-import com.mendeley.sdk.request.Request;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 
@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static com.mendeley.sdk.request.Request.MENDELEY_API_BASE_URL;
+import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
 public class FolderRequestTest extends SignedInTest {
 

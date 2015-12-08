@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.exceptions.UserCancelledException;
@@ -22,7 +23,7 @@ import java.util.concurrent.CancellationException;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Base class for all synchronous network calls.
+ * Base implementation of {@link Request} using {@link HttpURLConnection} as the HTTP client.
  */
 public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends AuthorizedRequest<ResultType> {
 
