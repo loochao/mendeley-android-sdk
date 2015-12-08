@@ -56,7 +56,7 @@ public class FilesEndpoint {
         @Override
         protected List<File> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseFileList(reader);
+            return JsonParser.filesFromJson(reader);
         }
 
         @Override
@@ -145,7 +145,7 @@ public class FilesEndpoint {
         @Override
         protected File manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
-            return JsonParser.parseFile(reader);
+            return JsonParser.fileFromJson(reader);
         }
 
     }

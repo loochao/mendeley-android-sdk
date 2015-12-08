@@ -538,7 +538,7 @@ public class Mendeley {
         }
 
         @Override
-        public final Date getAuthTenExpiresAt() {
+        public final Date getAuthTokenExpirationDate() {
             return new Date(preferences.getLong(EXPIRES_AT_KEY, 0));
         }
 

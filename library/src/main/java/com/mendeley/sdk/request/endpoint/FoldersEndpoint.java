@@ -49,7 +49,7 @@ public class FoldersEndpoint {
         @Override
         protected List<Folder> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseFolderList(reader);
+            return JsonParser.foldersFromJson(reader);
         }
 
         @Override
@@ -66,7 +66,7 @@ public class FoldersEndpoint {
         @Override
         protected Folder manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseFolder(reader);
+            return JsonParser.folderFromJson(reader);
         }
 
         @Override
@@ -86,14 +86,14 @@ public class FoldersEndpoint {
         @Override
         protected void writePostBody(OutputStream os) throws Exception {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.jsonFromFolder(folder));
+            writer.write(JsonParser.folderToJson(folder).toString());
             writer.flush();
         }
 
         @Override
         protected Folder manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
-            return JsonParser.parseFolder(reader);
+            return JsonParser.folderFromJson(reader);
         }
 
         @Override
@@ -118,14 +118,14 @@ public class FoldersEndpoint {
         @Override
         protected void writePatchBody(OutputStream os) throws Exception {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.jsonFromFolder(folder));
+            writer.write(JsonParser.folderToJson(folder).toString());
             writer.flush();
         }
 
         @Override
         protected Folder manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
-            return JsonParser.parseFolder(reader);
+            return JsonParser.folderFromJson(reader);
         }
 
 
@@ -147,7 +147,7 @@ public class FoldersEndpoint {
         @Override
         protected void writePostBody(OutputStream os) throws Exception {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.jsonFromDocumentId(documentId));
+            writer.write(JsonParser.documentIdToJson(documentId).toString());
             writer.flush();
         }
 
@@ -175,7 +175,7 @@ public class FoldersEndpoint {
         @Override
         protected List<String> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseDocumentIds(reader);
+            return JsonParser.documentsIdsFromJson(reader);
         }
 
         @Override

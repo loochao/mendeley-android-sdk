@@ -34,7 +34,7 @@ public class ProfilesEndpoint {
         @Override
         protected Profile manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseProfile(reader);
+            return JsonParser.profileFromJson(reader);
         }
 
         @Override

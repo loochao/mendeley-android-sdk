@@ -35,7 +35,7 @@ public class InMemoryAuthTokenManager implements AuthTokenManager {
 
 
     @Override
-    public Date getAuthTenExpiresAt() {
+    public Date getAuthTokenExpirationDate() {
         return expiresAt;
     }
 

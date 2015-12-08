@@ -30,7 +30,7 @@ public class DocumentTypesEndpoint {
 
         protected Map<String, String> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseStringsMap(reader);
+            return JsonParser.stringsMapFromJson(reader);
         }
 
         @Override

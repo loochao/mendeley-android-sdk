@@ -164,7 +164,7 @@ public class TestAccountSetupUtils{
             }
 
             final JsonReader reader = new JsonReader(new InputStreamReader(con.getInputStream()));
-            return JsonParser.parseReadPosition(reader);
+            return JsonParser.readPositionFromJson(reader);
         } finally {
             try {
                 if (con != null) {
@@ -202,7 +202,7 @@ public class TestAccountSetupUtils{
             }
 
             final JsonReader reader = new JsonReader(new InputStreamReader(con.getInputStream()));
-            return JsonParser.parseReadPositionList(reader);
+            return JsonParser.readPositionsFromJson(reader);
         } finally {
             try {
                 if (con != null) {

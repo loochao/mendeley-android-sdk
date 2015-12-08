@@ -284,7 +284,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         JsonReader reader = getJsonReaderFromAssetsFile(documentWithNotNullCollectionsFile);
 
         // WHEN we parse the JSON
-        Document actualDocument = JsonParser.parseDocument(reader);
+        Document actualDocument = JsonParser.documentFromJson(reader);
 
         // THEN the parsed document matches the expected one
         assertDocumentsAreEqual(expectedDocument, actualDocument);
@@ -308,7 +308,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         Document expectedDocument = getTestDocument(null, null, null, null, null, null);
         JsonReader reader = getJsonReaderFromAssetsFile(documentWithNullCollectionsFile);
         // WHEN we parse the JSON
-        Document actualDocument = JsonParser.parseDocument(reader);
+        Document actualDocument = JsonParser.documentFromJson(reader);
 
         // THEN the parsed document matches the expected one
         assertDocumentsAreEqual(expectedDocument, actualDocument);
@@ -340,7 +340,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 		Folder expectedFolder = getTestFolder();
 		JsonReader reader = getJsonReaderFromAssetsFile(folderFile);
 
-		Folder actualFolder = JsonParser.parseFolder(reader);
+		Folder actualFolder = JsonParser.folderFromJson(reader);
 
         reader.close();
 
@@ -359,7 +359,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 		File expectedFile = getTestFile();
         JsonReader reader = getJsonReaderFromAssetsFile(fileFile);
 
-		File actualFile = JsonParser.parseFile(reader);
+		File actualFile = JsonParser.fileFromJson(reader);
 
 		boolean equal =
 				expectedFile.id.equals(actualFile.id) &&
@@ -382,7 +382,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 		Profile expectedProfile = getTestProfile();
 		JsonReader reader = getJsonReaderFromAssetsFile(profileFile);
 
-		final Profile actualProfile = JsonParser.parseProfile(reader);
+		final Profile actualProfile = JsonParser.profileFromJson(reader);
 
 		boolean equal =
                 expectedProfile.id.equals(actualProfile.id) &&
@@ -442,7 +442,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         Document formattingDocument = getTestDocumentWithNonNotNullCollections();
 
         // WHEN we format it
-        String actualJson = JsonParser.jsonFromDocument(formattingDocument);
+        String actualJson = JsonParser.documentToJson(formattingDocument).toString();
 
         // THEN the obtained JSON matches the expected one
         JSONAssert.assertEquals(expectedJson, actualJson, false);
@@ -457,7 +457,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         Document formattingDocument = getTestDocument(null, null, null, null, null, null);
 
         // WHEN we format it
-        String actualJson = JsonParser.jsonFromDocument(formattingDocument);
+        String actualJson = JsonParser.documentToJson(formattingDocument).toString();
 
         // THEN the obtained JSON matches the expected one
         JSONAssert.assertEquals(expectedJson, actualJson, false);
@@ -483,7 +483,7 @@ public class JsonParserTest extends InstrumentationTestCase {
             throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException, ParseException {
 		Folder parsingFolder = getTestFolder();
 		
-		String actualJson = JsonParser.jsonFromFolder(parsingFolder);
+		String actualJson = JsonParser.folderToJson(parsingFolder).toString();
 		String expectedJson = getJsonStringFromAssetsFile(folderFile);
 
         JSONAssert.assertEquals(expectedJson, actualJson, false);
@@ -495,7 +495,7 @@ public class JsonParserTest extends InstrumentationTestCase {
     	String documentId = "test-document_id";
     	String expectedString = "{\"id\":\"test-document_id\"}";
 		
-		String actualString = JsonParser.jsonFromDocumentId(documentId);
+		String actualString = JsonParser.documentIdToJson(documentId).toString();
 
         JSONAssert.assertEquals(expectedString, actualString, false);
     }
@@ -511,7 +511,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         expectedList.add("test-document_id_2");
         expectedList.add("test-document_id_3");
 		
-		final List<String> actualList = JsonParser.parseDocumentIds(reader);
+		final List<String> actualList = JsonParser.documentsIdsFromJson(reader);
 
         assertEquals("Wrong list size", expectedList.size(), actualList.size());
 		for (int i = 0; i < actualList.size(); i++) {
@@ -525,7 +525,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
         final Group expectedGroup = getTestGroup();
         final JsonReader reader = getJsonReaderFromAssetsFile(groupFile);
-        final Group actualGroup = JsonParser.parseGroup(reader);
+        final Group actualGroup = JsonParser.groupFromJson(reader);
         reader.close();
 
         assertEquals("id", expectedGroup.id, actualGroup.id);
@@ -547,7 +547,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         final UserRole expectedUserRole = getTestUserRole();
         final JsonReader reader = getJsonReaderFromAssetsFile(userRoleFile);
 
-        UserRole actualUserRole = JsonParser.parseUserRole(reader);
+        UserRole actualUserRole = JsonParser.userRoleFromJson(reader);
 
         assertEquals("profile_id", expectedUserRole.profileId, actualUserRole.profileId);
         assertEquals("joined", expectedUserRole.joined, actualUserRole.joined);
@@ -564,7 +564,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         final JsonReader reader = getJsonReaderFromAssetsFile(annotationWithNotNullValuesFile);
 
         // WHEN we parse the JSON
-        final Annotation actualAnnotation = JsonParser.parseAnnotation(reader);
+        final Annotation actualAnnotation = JsonParser.annotationFromJson(reader);
 
         // THEN the parsed document matches the expected one
         assertAnnotationsAreEqual(expectedAnnotation, actualAnnotation);
@@ -585,7 +585,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         final JsonReader reader = getJsonReaderFromAssetsFile(annotationWithNullValuesFile);
 
         // WHEN we parse the JSON
-        Annotation actualAnnotation = JsonParser.parseAnnotation(reader);
+        Annotation actualAnnotation = JsonParser.annotationFromJson(reader);
 
         // THEN the parsed document matches the expected one
         assertAnnotationsAreEqual(expectedAnnotation, actualAnnotation);
@@ -602,7 +602,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         final ReadPosition expected = getTestReadPosition();
         final JsonReader reader = getJsonReaderFromAssetsFile(readPositionFile);
 
-        ReadPosition actual = JsonParser.parseReadPosition(reader);
+        ReadPosition actual = JsonParser.readPositionFromJson(reader);
 
         Assert.assertEquals("ReadPosition id", expected.id, actual.id);
         Assert.assertEquals("ReadPosition fileId", expected.fileId, actual.fileId);
@@ -617,7 +617,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
         ReadPosition parsingReadPosition = getTestReadPosition();
 
-        String actualJson = JsonParser.jsonFromReadPosition(parsingReadPosition);
+        String actualJson = JsonParser.readPositionToJson(parsingReadPosition).toString();
         String expectedJson = getJsonStringFromAssetsFile(readPositionFile);
 
         JSONAssert.assertEquals(expectedJson, actualJson, false);

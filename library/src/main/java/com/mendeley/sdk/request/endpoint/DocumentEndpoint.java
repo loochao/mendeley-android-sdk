@@ -47,7 +47,7 @@ public class DocumentEndpoint {
         @Override
         protected List<Document> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseDocumentList(reader);
+            return JsonParser.documentsFromJson(reader);
         }
 
         @Override
@@ -77,7 +77,7 @@ public class DocumentEndpoint {
         @Override
         protected Document manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseDocument(reader);
+            return JsonParser.documentFromJson(reader);
         }
 
         @Override
@@ -98,14 +98,14 @@ public class DocumentEndpoint {
         @Override
         protected void writePostBody(OutputStream os) throws Exception {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.jsonFromDocument(doc));
+            writer.write(JsonParser.documentToJson(doc).toString());
             writer.flush();
         }
 
         @Override
         protected Document manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
-            return JsonParser.parseDocument(reader);
+            return JsonParser.documentFromJson(reader);
         }
 
         @Override
@@ -131,14 +131,14 @@ public class DocumentEndpoint {
         @Override
         protected void writePatchBody(OutputStream os) throws Exception {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.jsonFromDocument(document));
+            writer.write(JsonParser.documentToJson(document).toString());
             writer.flush();
         }
 
         @Override
         protected Document manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
-            return JsonParser.parseDocument(reader);
+            return JsonParser.documentFromJson(reader);
         }
 
     }

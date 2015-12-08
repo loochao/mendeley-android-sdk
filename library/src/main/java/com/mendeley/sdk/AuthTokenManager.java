@@ -21,23 +21,40 @@ import com.mendeley.sdk.request.Request;
 import java.util.Date;
 
 /**
- * Main entry points for making calls to the Mendeley SDK.
+ *  Manager used by the {@link Request} to get the OAuth access and refresh tokens from in order
+ *  to launch HTTP requests against the Mendeley API.
+ *
+ *  @{see http://dev.mendeley.com/}
  */
 public interface AuthTokenManager {
 
     String TOKENS_URL = Request.MENDELEY_API_BASE_URL + "/oauth/token";
     String REDIRECT_URI = "http://localhost/auth_return";
 
+    /**
+     * @return the OAuth access token.
+     */
     String getAccessToken();
 
+    /**
+     * @return the OAuth request token.
+     */
     String getRefreshToken();
 
-    Date getAuthTenExpiresAt();
+    /**
+     * @return a date with the expiration of the access token
+     */
+    Date getAuthTokenExpirationDate();
 
+    /**
+     * @return the type of the token
+     */
     String getTokenType();
 
     /**
-     * Stores the token details in shared preferences.
+     * Stores the tokens for further retrieval.
+     * Implementations of the interface should decide if they will use a persistent method for
+     * storing the data or any other approach.
      *
      * @param accessToken the access toekn string
      * @param refreshToken the refresh token string
@@ -46,5 +63,11 @@ public interface AuthTokenManager {
      */
     void saveTokens(String accessToken, String refreshToken, String tokenType, int expiresIn);
 
+    /**
+     * Clears the tokens.
+     * This implies logging the user out from the Mendeley API.
+     * After this method is invoked, the user will need to sign in again or {@link Request}s will
+     * end up in a authorization error.
+     */
     void clearTokens();
 }

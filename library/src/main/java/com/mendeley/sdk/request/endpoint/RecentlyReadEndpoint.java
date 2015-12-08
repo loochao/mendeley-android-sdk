@@ -58,7 +58,7 @@ public class RecentlyReadEndpoint {
         @Override
         protected List<ReadPosition> manageResponse(InputStream is) throws JSONException, ParseException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseReadPositionList(reader);
+            return JsonParser.readPositionsFromJson(reader);
         }
 
         @Override
@@ -82,7 +82,7 @@ public class RecentlyReadEndpoint {
         @Override
         protected void writePostBody(OutputStream os) throws Exception {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.jsonFromReadPosition(readPosition));
+            writer.write(JsonParser.readPositionToJson(readPosition).toString());
             writer.flush();
             writer.close();
         }
@@ -90,7 +90,7 @@ public class RecentlyReadEndpoint {
         @Override
         protected ReadPosition manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
-            return JsonParser.parseReadPosition(reader);
+            return JsonParser.readPositionFromJson(reader);
         }
 
         @Override

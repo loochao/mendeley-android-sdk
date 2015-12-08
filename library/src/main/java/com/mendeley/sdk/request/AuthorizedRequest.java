@@ -60,11 +60,11 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
      * Checks if the current access token will expire soon (or isn't valid at all).
      */
     private boolean willExpireSoon() {
-        if (TextUtils.isEmpty(authTokenManager.getAccessToken()) || authTokenManager.getAuthTenExpiresAt() == null) {
+        if (TextUtils.isEmpty(authTokenManager.getAccessToken()) || authTokenManager.getAuthTokenExpirationDate() == null) {
             return true;
         }
         Date now = new Date();
-        Date expires = authTokenManager.getAuthTenExpiresAt();
+        Date expires = authTokenManager.getAuthTokenExpirationDate();
         long timeToExpiryMs = expires.getTime() - now.getTime();
         long timeToExpirySec = TimeUnit.MILLISECONDS.toSeconds(timeToExpiryMs);
         return timeToExpirySec < MIN_TOKEN_VALIDITY_SEC;

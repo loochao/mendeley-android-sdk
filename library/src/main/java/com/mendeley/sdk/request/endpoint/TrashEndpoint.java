@@ -44,7 +44,7 @@ public class TrashEndpoint {
         @Override
         protected List<Document> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseDocumentList(reader);
+            return JsonParser.documentsFromJson(reader);
         }
 
         @Override

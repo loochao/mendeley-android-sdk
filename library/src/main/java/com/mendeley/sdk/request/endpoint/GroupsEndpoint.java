@@ -51,7 +51,7 @@ public class GroupsEndpoint {
         @Override
         protected List<Group> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseGroupList(reader);
+            return JsonParser.groupsFromJson(reader);
         }
 
         @Override
@@ -68,7 +68,7 @@ public class GroupsEndpoint {
         @Override
         protected Group manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseGroup(reader);
+            return JsonParser.groupFromJson(reader);
         }
 
         @Override
@@ -97,7 +97,7 @@ public class GroupsEndpoint {
         @Override
         protected List<UserRole> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseUserRoleList(reader);
+            return JsonParser.userRolesFromJson(reader);
         }
 
         @Override

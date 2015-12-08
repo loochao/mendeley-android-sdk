@@ -43,7 +43,7 @@ public class AnnotationsEndpoint {
         @Override
         protected Annotation manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseAnnotation(reader);
+            return JsonParser.annotationFromJson(reader);
         }
 
         @Override
@@ -70,7 +70,7 @@ public class AnnotationsEndpoint {
         @Override
         protected List<Annotation> manageResponse(InputStream is) throws JSONException, IOException, ParseException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.parseAnnotationList(reader);
+            return JsonParser.annotationsFromJson(reader);
         }
 
         @Override
@@ -90,13 +90,13 @@ public class AnnotationsEndpoint {
         @Override
         protected void writePostBody(OutputStream os) throws Exception {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.jsonFromAnnotation(annotation));
+            writer.write(JsonParser.annotationToJson(annotation).toString());
             writer.flush();
         }
         @Override
         protected Annotation manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
-            return JsonParser.parseAnnotation(reader);
+            return JsonParser.annotationFromJson(reader);
         }
 
         @Override
@@ -125,14 +125,14 @@ public class AnnotationsEndpoint {
         @Override
         protected void writePatchBody(OutputStream os) throws Exception {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.jsonFromAnnotation(annotation));
+            writer.write(JsonParser.annotationToJson(annotation).toString());
             writer.flush();
         }
 
         @Override
         protected Annotation manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
-            return JsonParser.parseAnnotation(reader);
+            return JsonParser.annotationFromJson(reader);
         }
 
     }
