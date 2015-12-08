@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.BuildConfig;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.exceptions.MendeleyException;
 
 import java.text.SimpleDateFormat;
@@ -49,12 +49,12 @@ public abstract class Request<ResultType> {
     private boolean cancelled;
     private boolean finishedRun;
     protected final AuthTokenManager authTokenManager;
-    protected final ClientCredentials clientCredentials;
+    protected final AppCredentials appCredentials;
 
-    public Request(Uri uri, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public Request(Uri uri, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
         this.uri = uri;
         this.authTokenManager = authTokenManager;
-        this.clientCredentials = clientCredentials;
+        this.appCredentials = appCredentials;
     }
 
     public final Uri getUrl() {

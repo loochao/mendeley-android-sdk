@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.exceptions.NotSignedInException;
@@ -22,8 +22,8 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
     // Only use tokens which don't expire in the next 5 mins:
     private final static int MIN_TOKEN_VALIDITY_SEC = 300;
 
-    public AuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(url, authTokenManager, clientCredentials);
+    public AuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+        super(url, authTokenManager, appCredentials);
     }
 
     @Override
@@ -50,7 +50,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
     }
 
     private void launchRefreshTokenRequest() throws MendeleyException {
-        new AuthTokenRefreshRequest(authTokenManager, clientCredentials).run();
+        new AuthTokenRefreshRequest(authTokenManager, appCredentials).run();
     }
 
     protected abstract Response doRunAuthorized() throws MendeleyException;

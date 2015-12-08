@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.Mendeley;
 import com.mendeley.sdk.RequestsFactory;
 import com.mendeley.sdk.example.R;
@@ -37,7 +37,6 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
     private static final String CONFIG_FILE = "config.properties";
     private static final String KEY_PROJECT_ID = "example_app_project_id";
     private static final String KEY_CLIENT_SECRET = "example_app_client_secret";
-    private static final String KEY_CLIENT_REDIRECT_URI = "example_app_client_redirect_url";
     private RequestsFactory requestFactory;
 
 
@@ -70,10 +69,9 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
 
             final String clientId = propertyResourceBundle.getString(KEY_PROJECT_ID);
             final String clientSecret = propertyResourceBundle.getString(KEY_CLIENT_SECRET);
-            final String clientRedirectUri = propertyResourceBundle.getString(KEY_CLIENT_REDIRECT_URI);
-            ClientCredentials clientCredentials = new ClientCredentials(clientId, clientSecret, clientRedirectUri);
+            AppCredentials appCredentials = new AppCredentials(clientId, clientSecret);
 
-            Mendeley.getInstance().initialise(this, clientCredentials);
+            Mendeley.getInstance().initialise(this, appCredentials);
         } catch (IOException ioe) {
             throw new IllegalStateException("Could not read property files with client configuration. Should be located in assets/" + CONFIG_FILE, ioe);
         } catch (MissingResourceException mr) {

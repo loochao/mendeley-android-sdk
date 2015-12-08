@@ -21,7 +21,7 @@ public class AuthTokenRefreshRequestTest extends SignedInTest {
         authTokenManager.saveTokens(invalidAccessToken, authTokenManager.getRefreshToken(), authTokenManager.getTokenType(), 1000);
 
         // WHEN running the refresh token request
-        final AuthTokenRefreshRequest refreshRequest = new AuthTokenRefreshRequest(getAuthTokenManager(), getClientCredentials());
+        final AuthTokenRefreshRequest refreshRequest = new AuthTokenRefreshRequest(getAuthTokenManager(), getAppCredentials());
         refreshRequest.run();
 
 

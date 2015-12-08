@@ -4,7 +4,7 @@ import android.content.res.AssetManager;
 import android.test.AndroidTestCase;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.Mendeley;
 import com.mendeley.sdk.RequestsFactory;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
@@ -19,7 +19,7 @@ import java.util.Random;
 public abstract class SignedInTest extends AndroidTestCase {
 
     private RequestsFactory requestsFactory;
-    private ClientCredentials clientCredentials;
+    private AppCredentials appCredentials;
     private AuthTokenManager authTokenManager;
 
     private TestAccountSetupUtils testAccountSetupUtils;
@@ -30,11 +30,11 @@ public abstract class SignedInTest extends AndroidTestCase {
         random = new Random();
 
         final AssetManager assetManager =  getContext().getAssets();
-        clientCredentials = ClientCredentialsFromAssetsFactory.create(assetManager);
+        appCredentials = ClientCredentialsFromAssetsFactory.create(assetManager);
         authTokenManager = new InMemoryAuthTokenManager();
-        UsernameAndPasswordSessionManagerFactory.create(assetManager, clientCredentials, authTokenManager).signIn();
+        UsernameAndPasswordSessionManagerFactory.create(assetManager, appCredentials, authTokenManager).signIn();
 
-        requestsFactory = new Mendeley.RequestFactoryImpl(authTokenManager, clientCredentials);
+        requestsFactory = new Mendeley.RequestFactoryImpl(authTokenManager, appCredentials);
         testAccountSetupUtils = new TestAccountSetupUtils(authTokenManager, requestsFactory);
 
         // reset account
@@ -50,8 +50,8 @@ public abstract class SignedInTest extends AndroidTestCase {
         return authTokenManager;
     }
 
-    protected final ClientCredentials getClientCredentials() {
-        return clientCredentials;
+    protected final AppCredentials getAppCredentials() {
+        return appCredentials;
     }
 
     protected final TestAccountSetupUtils getTestAccountSetupUtils() {

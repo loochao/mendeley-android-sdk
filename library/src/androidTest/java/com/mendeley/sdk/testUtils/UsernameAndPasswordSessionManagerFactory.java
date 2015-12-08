@@ -3,7 +3,7 @@ package com.mendeley.sdk.testUtils;
 import android.content.res.AssetManager;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -20,7 +20,7 @@ public class UsernameAndPasswordSessionManagerFactory {
     private static final String KEY_PASSWORD = "integration_test_password";
 
 
-    public static UsernameAndPasswordSessionManager create(AssetManager assetManager, ClientCredentials clientCredentials, AuthTokenManager authTokenManager) {
+    public static UsernameAndPasswordSessionManager create(AssetManager assetManager, AppCredentials appCredentials, AuthTokenManager authTokenManager) {
         try {
             InputStream is = assetManager.open(CONFIG_FILE);
             InputStream bis = new BufferedInputStream(is);
@@ -29,7 +29,7 @@ public class UsernameAndPasswordSessionManagerFactory {
 
             final String username = propertyResourceBundle.getString(KEY_USERNAME);
             final String password = propertyResourceBundle.getString(KEY_PASSWORD);
-            return new UsernameAndPasswordSessionManager(clientCredentials, authTokenManager, username, password);
+            return new UsernameAndPasswordSessionManager(appCredentials, authTokenManager, username, password);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

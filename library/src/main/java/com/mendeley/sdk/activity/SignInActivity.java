@@ -37,6 +37,8 @@ public class SignInActivity extends Activity {
 	private final static String SCOPE = "all";
 	private final static String RESPONSE_TYPE = "code";
 
+
+
 	public final static int AUTH_REQUEST_CODE = 31231;
 	public static final String EXTRA_JSON_TOKENS = "returned_json_tokens";
 
@@ -126,11 +128,11 @@ public class SignInActivity extends Activity {
         StringBuilder urlString = new StringBuilder(OAUTH2_URL);
 
 		urlString
-		.append("?").append("grant_type=").append(GRANT_TYPE_AUTH)
-		.append("&").append("redirect_uri=").append(mendeley.getClientCredentials().redirectUri)
-		.append("&").append("scope=").append(SCOPE)
-		.append("&").append("response_type=").append(RESPONSE_TYPE)
-		.append("&").append("client_id=").append(mendeley.getClientCredentials().clientId);
+			.append("?").append("grant_type=").append(GRANT_TYPE_AUTH)
+			.append("&").append("redirect_uri=").append(AuthTokenManager.REDIRECT_URI)
+			.append("&").append("scope=").append(SCOPE)
+			.append("&").append("response_type=").append(RESPONSE_TYPE)
+			.append("&").append("client_id=").append(mendeley.getAppCredentials().clientId);
 
 		return urlString.toString();
 	}
@@ -222,10 +224,10 @@ public class SignInActivity extends Activity {
 
 			final String urlEncodedForm = new Uri.Builder()
 					.appendQueryParameter("grant_type", grantType)
-					.appendQueryParameter("redirect_uri", mendeley.getClientCredentials().redirectUri)
+					.appendQueryParameter("redirect_uri", AuthTokenManager.REDIRECT_URI)
 					.appendQueryParameter("code", authorizationCode)
-					.appendQueryParameter("client_id", mendeley.getClientCredentials().clientId)
-					.appendQueryParameter("client_secret", mendeley.getClientCredentials().clientSecret)
+					.appendQueryParameter("client_id", mendeley.getAppCredentials().clientId)
+					.appendQueryParameter("client_secret", mendeley.getAppCredentials().clientSecret)
 					.build()
 					.getEncodedQuery();
 

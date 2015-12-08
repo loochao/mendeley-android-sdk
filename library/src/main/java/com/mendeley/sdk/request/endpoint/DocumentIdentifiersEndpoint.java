@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 
@@ -25,8 +25,8 @@ public class DocumentIdentifiersEndpoint {
     public static final String DOCUMENT_IDENTIFIER_CONTENT_TYPE = "application/vnd.mendeley-document-identifier.1+json";
 
     public static class GetDocumentIdentifiersRequest extends GetAuthorizedRequest<Map<String, String>> {
-        public GetDocumentIdentifiersRequest(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(Uri.parse(DOCUMENT_IDENTIFIER_TYPES_BASE_URL), authTokenManager, clientCredentials);
+        public GetDocumentIdentifiersRequest(AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+            super(Uri.parse(DOCUMENT_IDENTIFIER_TYPES_BASE_URL), authTokenManager, appCredentials);
         }
 
         protected Map<String, String> manageResponse(InputStream is) throws JSONException, IOException {

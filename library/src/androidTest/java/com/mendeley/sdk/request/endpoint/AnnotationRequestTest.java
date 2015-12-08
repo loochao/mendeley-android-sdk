@@ -28,7 +28,7 @@ public class AnnotationRequestTest extends SignedInTest {
         }
 
         // WHEN getting annotations
-        final List<Annotation> actual = getRequestFactory().newGetAnnotationsRequest().run().resource;
+        final List<Annotation> actual = getRequestFactory().newGetAnnotationsRequest((AnnotationsEndpoint.AnnotationRequestParameters) null).run().resource;
 
         Comparator<Annotation> comparator = new Comparator<Annotation>() {
             @Override
@@ -127,7 +127,7 @@ public class AnnotationRequestTest extends SignedInTest {
         assertNotNull(returnedAnnotation.id);
 
         // ...and the annotation exists in the server
-        AssertUtils.assertAnnotations(getRequestFactory().newGetAnnotationsRequest().run().resource, Arrays.asList(postingAnnotation));
+        AssertUtils.assertAnnotations(getRequestFactory().newGetAnnotationsRequest((AnnotationsEndpoint.AnnotationRequestParameters) null).run().resource, Arrays.asList(postingAnnotation));
     }
 
     public void test_deleteAnnotation_removesTheAnnotationFromServer() throws Exception {
@@ -140,7 +140,7 @@ public class AnnotationRequestTest extends SignedInTest {
         getRequestFactory().newDeleteAnnotationRequest(deletingAnnotationId).run();
 
         // THEN the server does not have the deleted annotation any more
-        final List<Annotation> serverAnnotationsAfter = getRequestFactory().newGetAnnotationsRequest().run().resource;
+        final List<Annotation> serverAnnotationsAfter = getRequestFactory().newGetAnnotationsRequest((AnnotationsEndpoint.AnnotationRequestParameters) null).run().resource;
         assertEquals("Annotation deleted", serverAnnotationsBefore.size() - 1, serverAnnotationsAfter.size());
 
         for (Annotation annotation : serverAnnotationsAfter) {
@@ -199,7 +199,7 @@ public class AnnotationRequestTest extends SignedInTest {
             annotations.add(annotation);
         }
 
-        return getRequestFactory().newGetAnnotationsRequest().run().resource;
+        return getRequestFactory().newGetAnnotationsRequest((AnnotationsEndpoint.AnnotationRequestParameters) null).run().resource;
     }
 
 }

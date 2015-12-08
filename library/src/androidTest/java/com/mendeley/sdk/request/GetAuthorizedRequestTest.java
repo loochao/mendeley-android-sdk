@@ -12,7 +12,7 @@ public class GetAuthorizedRequestTest extends AuthorizedRequestTest {
 
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
-        return new GetAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/get"), getAuthTokenManager(), getClientCredentials()) {
+        return new GetAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/get"), getAuthTokenManager(), getAppCredentials()) {
             @Override
             protected JSONObject manageResponse(InputStream is) throws Exception {
                 String responseString = readInputStream(is);

@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.exceptions.UserCancelledException;
@@ -32,8 +32,8 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
 
     private RequestProgressListener progressListener;
 
-    public HttpUrlConnectionAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(url, authTokenManager, clientCredentials);
+    public HttpUrlConnectionAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+        super(url, authTokenManager, appCredentials);
     }
 
     @Override

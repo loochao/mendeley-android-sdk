@@ -30,7 +30,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
 
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
-        return new PostAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getClientCredentials()) {
+        return new PostAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getAppCredentials()) {
             @Override
             protected void writePostBody(OutputStream os) throws Exception {
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -70,7 +70,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
         final int maxWrites = 100;
 
         // GIVEN a request
-        final Request<Void> request = new PostAuthorizedRequest<Void>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getClientCredentials()) {
+        final Request<Void> request = new PostAuthorizedRequest<Void>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getAppCredentials()) {
 
             @Override
             protected void writePostBody(OutputStream os) throws Exception {

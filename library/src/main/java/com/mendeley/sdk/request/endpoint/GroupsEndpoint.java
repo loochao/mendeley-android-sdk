@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.UserRole;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
@@ -40,12 +40,12 @@ public class GroupsEndpoint {
             return params.appendToUi(bld.build());
         }
 
-        public GetGroupsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        public GetGroupsRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+            super(url, authTokenManager, appCredentials);
         }
 
-        public GetGroupsRequest(GroupRequestParameters params, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(getGetGroupsUrl(params), authTokenManager, clientCredentials);
+        public GetGroupsRequest(GroupRequestParameters params, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+            this(getGetGroupsUrl(params), authTokenManager, appCredentials);
         }
 
         @Override
@@ -61,8 +61,8 @@ public class GroupsEndpoint {
     }
 
     public static class GetGroupRequest extends GetAuthorizedRequest<Group> {
-        public GetGroupRequest(String groupId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(Uri.parse(GROUP_BASE_URL + "/" + groupId), authTokenManager, clientCredentials);
+        public GetGroupRequest(String groupId, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+            super(Uri.parse(GROUP_BASE_URL + "/" + groupId), authTokenManager, appCredentials);
         }
 
         @Override
@@ -86,12 +86,12 @@ public class GroupsEndpoint {
             return params.appendToUi(bld.build());
         }
 
-        public GetGroupMembersRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            super(url, authTokenManager, clientCredentials);
+        public GetGroupMembersRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+            super(url, authTokenManager, appCredentials);
         }
 
-        public GetGroupMembersRequest(GroupRequestParameters parameters, String groupId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-            this(getGetGroupMembersUrl(parameters, groupId), authTokenManager, clientCredentials);
+        public GetGroupMembersRequest(GroupRequestParameters parameters, String groupId, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+            this(getGetGroupMembersUrl(parameters, groupId), authTokenManager, appCredentials);
         }
 
         @Override

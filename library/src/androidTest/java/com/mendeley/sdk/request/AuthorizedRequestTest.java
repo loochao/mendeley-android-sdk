@@ -48,7 +48,7 @@ public abstract class AuthorizedRequestTest extends SignedInTest {
         final CountDownLatch latch = new CountDownLatch(1);
 
         // GIVEN a request
-        final Request<String> request = new GetAuthorizedRequest<String>(Uri.parse("https://httpbin.org/get"), getAuthTokenManager(), getClientCredentials()) {
+        final Request<String> request = new GetAuthorizedRequest<String>(Uri.parse("https://httpbin.org/get"), getAuthTokenManager(), getAppCredentials()) {
             @Override
             protected String manageResponse(InputStream is) throws Exception {
                 try {

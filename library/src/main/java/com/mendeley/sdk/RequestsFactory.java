@@ -83,7 +83,7 @@ public interface RequestsFactory {
     /**
      * Obtains a {@link Request} to retrieve one single {@link Document} by its id.
      *
-     * @param documentId documentId the id of the document to get
+     * @param documentId the id of the document to get
      * @param view used to configure which fields the server will return
      * @return the request
      */
@@ -344,44 +344,75 @@ public interface RequestsFactory {
      */
     Request<List<UserRole>> newGetGroupMembersRequest(Uri url);
 
-
-    /* ANNOTATIONS */
-
-    Request<List<Annotation>> newGetAnnotationsRequest();
-
+    /**
+     * Obtains a {@link Request} to retrieve the list of {@link Annotation}s.
+     *
+     * @param parameters used  to configure the query. Can be null.
+     * @return the requests
+     */
     Request<List<Annotation>> newGetAnnotationsRequest(AnnotationsEndpoint.AnnotationRequestParameters parameters);
 
+    /**
+     * Obtains a {@link Request} to retrieve the list of {@link Annotation}s.
+     *
+     * @param url the URL of the request.
+     *            May be the {@link com.mendeley.sdk.request.Request.Response#next} field of a previous request.
+     * @return the request
+     */
     Request<List<Annotation>> newGetAnnotationsRequest(Uri url);
 
+    /**
+     * Obtains a {@link Request} to retrieve one single {@link Annotation} by its id.
+     *
+     * @param annotationId the id of the annotation to get
+     * @return the request
+     */
     Request<Annotation> newGetAnnotationRequest(String annotationId);
 
+    /**
+     * Obtains a {@link Request} to create a new {@link Annotation} in the user's library.
+     *
+     * @param annotation the annotation to create
+     * @return the request
+     */
     Request<Annotation> newPostAnnotationRequest(Annotation annotation);
 
+    /**
+     * Obtains a {@link Request} to update an existing {@link Annotation} in the user's library.
+     *
+     * @param annotationId the id of the annotation to be updated.
+     * @param annotation an annotation object containing the fields to be updated.
+     *                 Missing fields are left unchanged (not cleared).
+     * @return the request
+     */
     Request<Annotation> newPatchAnnotationRequest(String annotationId, Annotation annotation);
 
+    /**
+     * Obtains a {@link Request} to delete the {@link Annotation} with the passed id.
+     *
+     * @param annotationId the id of the annotation to delete
+     * @return the request
+     */
     Request<Void> newDeleteAnnotationRequest(String annotationId);
 
-    /* RECENTLY READ POSITIONS */
-
     /**
-     * Queries the last {@link ReadPosition}s for some files
+     * Obtains a {@link Request} to retrieve the last {@link ReadPosition}s for some files
      *
-     * @param groupId id of the group of the documents of the files of which read positions we want. If null it will return only the ones in the user's library.
-     * @param fileId id of the file of which read position we want. If null it will return positions for all the files in the specified group.
-     * @param limit
-     * @return a list of {@link ReadPosition} with the last {@link ReadPosition} for some files
+     * @param groupId id of the group of the documents of the files of the queried read positions.
+     *                If null it will return only the ones in the user's library.
+     * @param fileId id of the file of which read position we want.
+     *               If null it will return positions for all the files in the specified group.
+     * @param limit maximum number of entries to get
+     * @return the request
      */
     Request<List<ReadPosition>> newGetRecentlyReadRequest(String groupId, String fileId, int limit);
 
     /**
-     * Posts the passed {@link ReadPosition} to the Mendeley Web API
+     * Obtains a {@link Request} to post the new {@link ReadPosition}.
      *
-     * @param readPosition
-     * @return the posted {@link ReadPosition} as it's now in the server
+     * @param readPosition the readPosition to create
+     * @return the request
      */
     Request<ReadPosition> newPostRecentlyReadRequest(ReadPosition readPosition);
-
-
-
 
 }

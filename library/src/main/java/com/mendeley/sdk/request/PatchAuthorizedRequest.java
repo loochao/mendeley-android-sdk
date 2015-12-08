@@ -3,7 +3,7 @@ package com.mendeley.sdk.request;
 import android.net.Uri;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.util.DateUtils;
 import com.mendeley.sdk.util.NetworkUtils;
 
@@ -18,8 +18,8 @@ public abstract class PatchAuthorizedRequest<ResultType> extends HttpUrlConnecti
 
     private final Date ifModifiedSinceDate;
 
-    public PatchAuthorizedRequest(Uri url, Date ifModifiedSinceDate, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(url, authTokenManager, clientCredentials);
+    public PatchAuthorizedRequest(Uri url, Date ifModifiedSinceDate, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+        super(url, authTokenManager, appCredentials);
         this.ifModifiedSinceDate = ifModifiedSinceDate;
     }
 

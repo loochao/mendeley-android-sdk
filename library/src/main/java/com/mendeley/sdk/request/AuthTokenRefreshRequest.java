@@ -3,7 +3,7 @@ package com.mendeley.sdk.request;
 import android.net.Uri;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.exceptions.AuthenticationException;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
@@ -19,8 +19,8 @@ import java.net.URL;
 
 public class AuthTokenRefreshRequest extends Request<Void> {
 
-    public AuthTokenRefreshRequest(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(Uri.parse(AuthTokenManager.TOKENS_URL), authTokenManager, clientCredentials);
+    public AuthTokenRefreshRequest(AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+        super(Uri.parse(AuthTokenManager.TOKENS_URL), authTokenManager, appCredentials);
     }
 
     @Override
@@ -38,9 +38,9 @@ public class AuthTokenRefreshRequest extends Request<Void> {
 
             final String urlEncodedForm = new Uri.Builder()
                     .appendQueryParameter("grant_type", "refresh_token")
-                    .appendQueryParameter("redirect_uri", clientCredentials.redirectUri)
-                    .appendQueryParameter("client_id", clientCredentials.clientId)
-                    .appendQueryParameter("client_secret", clientCredentials.clientSecret)
+                    .appendQueryParameter("redirect_uri", AuthTokenManager.REDIRECT_URI)
+                    .appendQueryParameter("client_id", appCredentials.clientId)
+                    .appendQueryParameter("client_secret", appCredentials.clientSecret)
                     .appendQueryParameter("refresh_token", authTokenManager.getRefreshToken())
                     .build()
                     .getEncodedQuery();

@@ -5,5 +5,4 @@ integration_test_username=PASTE_VALUE_HERE
 integration_test_password=PASTE_VALUE_HERE
 integration_test_project_id=PASTE_VALUE_HERE
 integration_test_client_secret=PASTE_VALUE_HERE
-integration_test_client_redirect_url=PASTE_VALUE_HERE
 

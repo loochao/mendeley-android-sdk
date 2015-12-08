@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.exceptions.AuthenticationException;
 import com.mendeley.sdk.util.NetworkUtils;
 
@@ -22,14 +22,14 @@ public class UsernameAndPasswordSessionManager {
     private final String username;
     private final String password;
 
-    private final ClientCredentials clientCredentials;
+    private final AppCredentials appCredentials;
     private final AuthTokenManager authTokenManager;
 
     private static final String TAG = InMemoryAuthTokenManager.class.getSimpleName();
 
 
-    public UsernameAndPasswordSessionManager(ClientCredentials clientCredentials, AuthTokenManager authTokenManager, String username, String password) {
-        this.clientCredentials = clientCredentials;
+    public UsernameAndPasswordSessionManager(AppCredentials appCredentials, AuthTokenManager authTokenManager, String username, String password) {
+        this.appCredentials = appCredentials;
         this.username = username;
         this.password = password;
         this.authTokenManager = authTokenManager;
@@ -61,8 +61,8 @@ public class UsernameAndPasswordSessionManager {
             final String urlEncodedForm = new Uri.Builder()
                     .appendQueryParameter("grant_type", "password")
                     .appendQueryParameter("scope", "all")
-                    .appendQueryParameter("client_id", clientCredentials.clientId)
-                    .appendQueryParameter("client_secret", clientCredentials.clientSecret)
+                    .appendQueryParameter("client_id", appCredentials.clientId)
+                    .appendQueryParameter("client_secret", appCredentials.clientSecret)
                     .appendQueryParameter("username", username)
                     .appendQueryParameter("password", password)
                     .build()

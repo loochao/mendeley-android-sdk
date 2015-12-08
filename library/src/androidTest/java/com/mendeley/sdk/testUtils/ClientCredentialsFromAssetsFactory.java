@@ -2,7 +2,7 @@ package com.mendeley.sdk.testUtils;
 
 import android.content.res.AssetManager;
 
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -19,7 +19,7 @@ public class ClientCredentialsFromAssetsFactory {
     private static final String KEY_CLIENT_SECRET = "integration_test_client_secret";
     private static final String KEY_CLIENT_REDIRECT_URI = "integration_test_client_redirect_url";
 
-    public static ClientCredentials create(AssetManager assetManager) {
+    public static AppCredentials create(AssetManager assetManager) {
         try {
             InputStream is = assetManager.open(CONFIG_FILE);
             InputStream bis = new BufferedInputStream(is);
@@ -30,7 +30,7 @@ public class ClientCredentialsFromAssetsFactory {
             final String clientSecret = propertyResourceBundle.getString(KEY_CLIENT_SECRET);
             final String clientRedirectUri = propertyResourceBundle.getString(KEY_CLIENT_REDIRECT_URI);
 
-            return new ClientCredentials(clientId, clientSecret, clientRedirectUri);
+            return new AppCredentials(clientId, clientSecret);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -3,7 +3,7 @@ package com.mendeley.sdk.request;
 import android.net.Uri;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.AppCredentials;
 import com.mendeley.sdk.util.NetworkUtils;
 
 import java.io.IOException;
@@ -19,8 +19,8 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public abstract class PutAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
-    public PutAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
-        super(url, authTokenManager, clientCredentials);
+    public PutAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+        super(url, authTokenManager, appCredentials);
     }
 
     @Override
