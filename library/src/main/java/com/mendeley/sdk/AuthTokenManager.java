@@ -54,7 +54,7 @@ public interface AuthTokenManager {
      * Implementations of the interface should decide if they will use a persistent method for
      * storing the data or any other approach.
      *
-     * @param accessToken the access toekn string
+     * @param accessToken the access token string
      * @param refreshToken the refresh token string
      * @param tokenType the token type string
      * @param expiresIn the expires in value
@@ -65,7 +65,7 @@ public interface AuthTokenManager {
      * Clears the tokens.
      * This implies logging the user out from the Mendeley API.
      * After this method is invoked, the user will need to sign in again or {@link Request}s will
-     * end up in a authorization error.
+     * end up with an authorization error.
      */
     void clearTokens();
 }

@@ -72,7 +72,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
      * Template method to be implemented by extending classes.
      * This method is guaranteed to be run with a valid access token.
      *
-     * @return
+     * @return Response
      * @throws MendeleyException
      */
     protected abstract Response doRunAuthorized() throws MendeleyException;

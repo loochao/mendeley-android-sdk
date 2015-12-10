@@ -203,11 +203,6 @@ public class DocumentEndpoint {
         public Integer limit;
 
         /**
-         * A flag to indicate that the scrolling direction has switched.
-         */
-        public Boolean reverse;
-
-        /**
          * The sort order.
          */
         public Order order;
@@ -232,9 +227,6 @@ public class DocumentEndpoint {
             }
             if (limit != null) {
                 bld.appendQueryParameter("limit", String.valueOf(limit));
-            }
-            if (reverse != null) {
-                bld.appendQueryParameter("reverse", String.valueOf(reverse));
             }
             if (order != null) {
                 bld.appendQueryParameter("order", order.getValue());

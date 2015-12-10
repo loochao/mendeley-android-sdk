@@ -71,7 +71,7 @@ public abstract class Request<ResultType> {
      *
      * <ul>
      * <li>Using the {@link Request#runAsync(RequestCallback)} method</li>
-     * <li>Executing this method in one {@link AsyncTask}, {@link android.app.IntentService} or using any other threading mechanism </li>
+     * <li>Executing this method in an {@link AsyncTask}, {@link android.app.IntentService} or using any other threading mechanism </li>
      * </ul>
      *
      * @return the response of the request
@@ -125,7 +125,7 @@ public abstract class Request<ResultType> {
     }
 
     /**
-     * Tells this request to cancel its work and to return as soon as posible.
+     * Tells this request to cancel its work and to return as soon as possible.
      */
     public final void cancel() {
         cancelled = true;
@@ -188,7 +188,7 @@ public abstract class Request<ResultType> {
 
     /**
      * Callback used when the {@link Request} is executed asynchronously.
-     * Id the request is run with {@link Request#runAsync(RequestCallback)}, the SDK will invoke
+     * If the request is run with {@link Request#runAsync(RequestCallback)}, the SDK will invoke
      * one method in this object upon completion.
      *
      * @param <ResultType>

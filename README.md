@@ -24,7 +24,7 @@ Java version: 1.7
 
 First thing you'll need to do is to create the credentials of a Mendely app. The SDK will use these to let the Mendeley server identify your app.
 
-You can do so by creating one app in the [Mendeley Applications page](http://dev.mendeley.com/myapps.html)
+You can do so by creating a new app in the [Mendeley Applications page](http://dev.mendeley.com/myapps.html)
 
 For creating Android apps, you will only need the client secret and id. The redirect URL won't be used.
 
@@ -38,14 +38,14 @@ git clone https://github.com/Mendeley/mendeley-android-sdk.git
 ```
 Setup the Android Studio project by importing the `build.gradle` file in the directory cloned.
 
-This should create to modules:
+This should create two modules:
 
 * :library, the library of the SDK itself
 * :example, the example app
 
 **Configuration of the example app**
 
-Before running the example app you need to configure it, so it will use the credentials of the app created before.
+Before running the example app you need to configure it to use the credentials you created before.
 
 To do so:
 
@@ -67,8 +67,8 @@ git clone https://github.com/Mendeley/mendeley-android-sdk.git
 ```
 
 2. In Android Studio, while you have your project opened, do `File -> New -> Import Module`
-3. In the dialog, in the *Source directory* field, point to the `[DIRECTORY_OF_THE_MENDELEY_REPO]/library` directory. Leave the *Module name* field with its default value of change it if you prefer.
-4. In the `build.gradle` file of your app, include the dependency to the just imported module:
+3. In the dialog, in the *Source directory* field, point to the `[DIRECTORY_OF_THE_MENDELEY_REPO]/library` directory. Leave the *Module name* field with its default value or change it if you prefer.
+4. In the `build.gradle` file of your app, include the dependency to the library module:
 
 ```
 dependencies {
@@ -122,9 +122,9 @@ public void onResume() {
 }
 ```
 
-This will start the sign in flow, which will consist in the SDK opening one `Activity` letting the user enter their username and password. Once this process finishes, the SDK will pass the outcome to the `Activity` that started the flow by calling `Activity#onActivityResult()`.
+This will start the sign in flow, which will consist in the SDK opening an `Activity` letting the user enter their username and password. Once this process finishes, the SDK will pass the outcome to the `Activity` that started the flow by calling `Activity#onActivityResult()`.
 
-You need to implement `Activity#onActivityResult()` so that it will pass the result to the SDK along with one `com.mendeley.sdk.Mendeley.SignInCallback`. Your code will eventually get the outcome of the process in the callback.
+You need to implement `Activity#onActivityResult()` so that it will pass the result to the SDK along with a `com.mendeley.sdk.Mendeley.SignInCallback`. Your code will eventually get the outcome of the process in the callback.
 
 ``` java
 Mendeley.SignInCallback signInCallback = new Mendeley.SignInCallback() {
@@ -167,7 +167,7 @@ The requests will query the server, parse the JSON returned by the server and gi
 
 The esiest way to obtain a `com.mendeley.sdk.Request` object is to use the `RequestsFactory` returned by `Mendeley.getInstance().getRequestsFactory()` 
 
-For example, if you want to obtain one `Request` to query the `Profile` of the currently logged user, do so with
+For example, if you want to obtain a `Request` to query the `Profile` of the currently logged user, do so with
 
 ``` java
 Request<Profile> req = Mendeley.getInstance().getRequestsFactory().newGetMyProfileRequest() 
@@ -248,9 +248,9 @@ We recommend you to read the code in `com.mendeley.sdk.Mendeley`, and surely you
 
 The SDK provides implementation for typical requests against the Mendeley API.
 
-If you need to implement any verb or request against any endpoint no covered yet, you can implement your own by extending the `com.mendeley.sdk.Request` class. You may actually extend from the `com.mendeley.sdk.Request.request.HttpUrlConnectionAuthorizedRequest` hierarchy as you'll have most of the work already done.
+If you need to implement any verb or request against any endpoint not covered yet, you can implement your own by extending the `com.mendeley.sdk.Request` class. You may actually extend from the `com.mendeley.sdk.Request.request.HttpUrlConnectionAuthorizedRequest` hierarchy as you'll have most of the work already done.
 
-Also, we accept pull request.
+Also, we accept pull requests.
 
 ## Support ##
 

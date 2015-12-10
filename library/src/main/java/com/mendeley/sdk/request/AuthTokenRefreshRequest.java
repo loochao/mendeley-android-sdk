@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Request that refreshed an expired access token.
+ * Request that refreshes an expired access token.
  * A valid refresh token in the passed {@link AuthTokenManager} is needed.
  */
 public class AuthTokenRefreshRequest extends Request<Void> {

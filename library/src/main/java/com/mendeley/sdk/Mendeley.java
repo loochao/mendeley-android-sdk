@@ -54,7 +54,7 @@ import java.util.Map;
  *
  * <p/>
  * First thing client code should do is initialising this class by passing a valid
- * API key and credentials calling  {@link Mendeley#initialise(Context, AppCredentials)}
+ * API key and credentials calling  {@link Mendeley#init(Context, String, String)}
  *
  * <p/>
  *
@@ -200,7 +200,7 @@ public class Mendeley {
 
     /**
      * Returns whether or not the user is signed in to the Mendeley API server.
-     * This is, if the SDK has the needed information (AOuth access or refresh tokens) to launch
+     * This is, if the SDK has the needed information (OAuth access or refresh tokens) to launch
      * HTTP {@link Request}s against the Mendeley API.
      *
      * @return if the user is signed in
@@ -221,7 +221,7 @@ public class Mendeley {
 
     /**
      * @return clients credentials used by this Mendeley SDK, as passed by the app
-     * in the {@link Mendeley#initialise(Context, AppCredentials)} method
+     * in the {@link Mendeley#init(Context, String, String)} method
      */
     public AppCredentials getAppCredentials() {
         return appCredentials;

@@ -256,7 +256,6 @@ public class DocumentRequestTest extends SignedInTest {
         Date modifiedSince = DateUtils.parseMendeleyApiTimestamp("2014-02-28T11:52:30.000Z");
         Date deletedSince = DateUtils.parseMendeleyApiTimestamp("2014-01-21T11:52:30.000Z");
         int limit = 7;
-        boolean reverse = true;
         DocumentEndpoint.DocumentRequestParameters.Order order = DocumentEndpoint.DocumentRequestParameters.Order.DESC;
         DocumentEndpoint.DocumentRequestParameters.Sort sort = DocumentEndpoint.DocumentRequestParameters.Sort.MODIFIED;
 
@@ -266,7 +265,6 @@ public class DocumentRequestTest extends SignedInTest {
                 .appendQueryParameter("group_id", groupId)
                 .appendQueryParameter("modified_since", DateUtils.formatMendeleyApiTimestamp(modifiedSince))
                 .appendQueryParameter("limit", String.valueOf(limit))
-                .appendQueryParameter("reverse", String.valueOf(reverse))
                 .appendQueryParameter("order", order.getValue())
                 .appendQueryParameter("sort", sort.getValue())
                 .appendQueryParameter("deleted_since", DateUtils.formatMendeleyApiTimestamp(deletedSince))
@@ -277,7 +275,6 @@ public class DocumentRequestTest extends SignedInTest {
         params.groupId = groupId;
         params.modifiedSince = modifiedSince;
         params.limit = 7;
-        params.reverse = true;
         params.order = order;
         params.sort = sort;
         params.deletedSince = deletedSince;

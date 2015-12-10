@@ -29,7 +29,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * This activity will show the login web interface in a webview.
  * The layout style will depend on the screen size. Full screen for small devices
- * and a dialog view for larg ones.
+ * and a dialog view for large ones.
  */
 public class SignInActivity extends Activity {
 
@@ -257,6 +257,4 @@ public class SignInActivity extends Activity {
 		}
 
 	}
-
-
 }

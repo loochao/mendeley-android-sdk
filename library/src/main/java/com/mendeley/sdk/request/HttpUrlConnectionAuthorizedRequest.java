@@ -180,7 +180,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
     }
 
     /**
-     * Implementation of {@link CancellableInputStream} that stops reading when the reuqest has been cancelled
+     * Implementation of {@link CancellableInputStream} that stops reading when the request has been cancelled
      */
     private class MyCancellableInputStream extends CancellableInputStream {
         public MyCancellableInputStream(InputStream delegate) {

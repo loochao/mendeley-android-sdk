@@ -39,7 +39,7 @@ public interface RequestsFactory {
     Request<Profile> newGetMyProfileRequest();
 
     /**
-     * Obtains a {@link Request} to retrieve the {@link Profile} of use user given their id.
+     * Obtains a {@link Request} to retrieve the {@link Profile} of a user given the id.
      *
      * @param profileId id of the profile to get
      * @return the request
@@ -89,7 +89,7 @@ public interface RequestsFactory {
     Request<Document> newGetDocumentRequest(String documentId, DocumentEndpoint.DocumentRequestParameters.View view);
 
     /**
-     * Obtains a {@link Request} to create a new  {@link Document} in the user's library.
+     * Obtains a {@link Request} to create a new {@link Document} in the user's library.
      *
      * @param document the document to create
      * @return the request
@@ -135,7 +135,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to retrieve the list of {@link Document}s in the trash of the
      * user's library.
      *
-     * @param parameters used  to configure the query. Can be null.
+     * @param parameters used to configure the query. Can be null.
      * @return the requests
      */
     Request<List<Document>> newGetTrashedDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters);
@@ -206,7 +206,7 @@ public interface RequestsFactory {
     Request<Void> newDeleteFileRequest(String fileId);
 
     /**
-     * Obtains a {@link Request} to get the list {@link Folder}s in the user's library.
+     * Obtains a {@link Request} to get the list of {@link Folder}s in the user's library.
      *
      * @param parameters used to configure the query. Can be null.
      * @return the request
@@ -214,7 +214,7 @@ public interface RequestsFactory {
     Request<List<Folder>> newGetFoldersRequest(FoldersEndpoint.FolderRequestParameters parameters);
 
     /**
-     * Obtains a {@link Request} to get the list {@link Folder}s in the user's library.
+     * Obtains a {@link Request} to get the list of {@link Folder}s in the user's library.
      *
      * @param uri the URL of the request.
      *            May be the {@link Request.Response#next} field of a previous request.
@@ -222,11 +222,6 @@ public interface RequestsFactory {
      */
     Request<List<Folder>> newGetFoldersRequest(Uri uri);
 
-    /**
-     * Returns metadata for a single folder, specified by ID.
-     *
-     * @param folderId ID of the folder to retrieve metadata for.
-     */
     /**
      * Obtains a {@link Request} to get one existing {@link Folder} with the passed id.
      *
@@ -236,7 +231,7 @@ public interface RequestsFactory {
     Request<Folder> newGetFolderRequest(String folderId);
 
     /**
-     * Obtains a {@link Request} to create a new  {@link Folder} in the user's library.
+     * Obtains a {@link Request} to create a new {@link Folder} in the user's library.
      *
      * @param folder the folder to create
      * @return the request
@@ -321,7 +316,7 @@ public interface RequestsFactory {
     /**
      * Obtains a {@link Request} to retrieve one single {@link Group} by its id.
      *
-     * @param groupId ID of the group to retrieve
+     * @param groupId the id of the group to retrieve
      */
     Request<Group> newGetGroupRequest(String groupId);
 
@@ -329,7 +324,7 @@ public interface RequestsFactory {
      * Obtains a {@link Request} to retrieve the list of the members in one specific {@link Group}
      *
      * @param parameters used  to configure the query. Can be null.
-     * @param groupId the id of the group whose members are being retrived
+     * @param groupId the id of the group whose members are being retrieved
      * @return the request
      */
     Request<List<UserRole>> newGetGroupMembersRequest(GroupsEndpoint.GroupRequestParameters parameters, String groupId);
@@ -346,7 +341,7 @@ public interface RequestsFactory {
     /**
      * Obtains a {@link Request} to retrieve the list of {@link Annotation}s.
      *
-     * @param parameters used  to configure the query. Can be null.
+     * @param parameters used to configure the query. Can be null.
      * @return the requests
      */
     Request<List<Annotation>> newGetAnnotationsRequest(AnnotationsEndpoint.AnnotationRequestParameters parameters);

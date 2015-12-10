@@ -10,7 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Request against the Mendeley API using the DELETE method.
+ * Request against the Mendeley API using the GET method.
  */
 public abstract class GetAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
 
