@@ -3,8 +3,8 @@ package com.mendeley.sdk.request;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
