@@ -30,8 +30,8 @@ public class RecentlyReadRequestTest extends SignedInTest {
 
         final Uri expectedUrl = Uri.parse(Request.MENDELEY_API_BASE_URL).buildUpon()
                 .appendPath("recently_read")
-                .appendQueryParameter("groupId", groupId)
-                .appendQueryParameter("fileId", fileId)
+                .appendQueryParameter("group_id", groupId)
+                .appendQueryParameter("file_id", fileId)
                 .appendQueryParameter("limit", String.valueOf(limit))
                 .build();
 

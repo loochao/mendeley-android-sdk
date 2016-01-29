@@ -26,7 +26,7 @@ public class FolderRequestTest extends SignedInTest {
     public void test_GetFoldersRequest_usesCorrectUrl_withParameters() throws Exception {
         final String groupId = "test-group_id";
 
-        final Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendQueryParameter("groupId", groupId).build();
+        final Uri expectedUrl = Uri.parse(MENDELEY_API_BASE_URL).buildUpon().appendPath("folders").appendQueryParameter("group_id", groupId).build();
 
         FoldersEndpoint.FolderRequestParameters params = new FoldersEndpoint.FolderRequestParameters();
         params.groupId = groupId;
@@ -225,7 +225,7 @@ public class FolderRequestTest extends SignedInTest {
                 .appendPath("folders")
                 .appendPath(folderId)
                 .appendPath("documents")
-                .appendQueryParameter("groupId", groupdId)
+                .appendQueryParameter("group_id", groupdId)
                 .appendQueryParameter("limit", String.valueOf(limit))
                 .build();
 

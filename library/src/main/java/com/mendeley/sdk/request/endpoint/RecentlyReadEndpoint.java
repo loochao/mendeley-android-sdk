@@ -41,11 +41,11 @@ public class RecentlyReadEndpoint {
 
             // groupId
             if (groupId != null) {
-                bld.appendQueryParameter("groupId", groupId);
+                bld.appendQueryParameter("group_id", groupId);
             }
             // fileId
             if (fileId != null) {
-                bld.appendQueryParameter("fileId", fileId);
+                bld.appendQueryParameter("file_id", fileId);
             }
             // limit
             bld.appendQueryParameter("limit", String.valueOf(limit));

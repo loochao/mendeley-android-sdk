@@ -222,7 +222,7 @@ public class FoldersEndpoint {
             final Uri.Builder bld = uri.buildUpon();
 
             if (groupId != null) {
-                bld.appendQueryParameter("groupId", groupId);
+                bld.appendQueryParameter("group_id", groupId);
             }
             if (limit != null) {
                 bld.appendQueryParameter("limit", Integer.toString(limit));
