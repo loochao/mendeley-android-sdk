@@ -1,0 +1,64 @@
+{
+  "id": "test-id",
+  "first_name": "test-first_name",
+  "last_name": "test-last_name",
+  "display_name": "test-display_name",
+  "email": "test-email",
+  "link": "test-link",
+  "academic_status": "test-academic_status",
+  "discipline": {
+    "name": "test-name",
+    "unexpected_attribute": "void"
+  },
+  "photo": {
+    "standard": "test-standard.png",
+    "original": "test-original.png",
+    "square": "test-square.png",
+    "unexpected_attribute": "void"
+  },
+  "verified": true,
+  "user_type": "test-user_type",
+  "created_at": "2014-04-28T15:37:51.000Z",
+  "education": [
+    {
+      "id": "ff316338-86b7-4363-9721-education",
+      "institution": "test-education_institution",
+      "institution_details": {
+        "name": "test-education_institution",
+        "city": "London",
+        "state": "London",
+        "country": "United Kingdom",
+        "unexpected_attribute": "void"
+      },
+      "degree": "test-degree",
+      "start_date": "2014-12-22",
+      "end_date": "2014-12-22",
+      "website": "www.test.education.website",
+      "unexpected_attribute": "void"
+    }
+  ],
+  "employment": [
+    {
+      "id": "ff316338-86b7-4363-9721-employment",
+      "institution": "test-employment_institution",
+      "institution_details": {
+        "name": "test-employment_institution",
+        "city": "London",
+        "state": "London",
+        "country": "United Kingdom",
+        "unexpected_attribute": "void"
+      },
+      "position": "test-position",
+      "start_date": "2014-12-22",
+      "end_date": "2014-12-22",
+      "website": "www.test.employment.website",
+      "classes": [
+        "Psychology",
+        "Violin"
+      ],
+      "is_main_employment": true,
+      "unexpected_attribute": "void"
+    }
+  ],
+  "unexpected_attribute": "void"
+}

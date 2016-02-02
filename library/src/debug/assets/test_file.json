@@ -1,8 +1,0 @@
-  {
-    "id": "test-id",
-    "document_id": "test-document_id",
-    "mime_type": "test-mime_type",
-    "file_name": "test-file_name",
-    "filehash": "test-filehash",
-    "size": "1024"
-  }

@@ -1,8 +1,7 @@
 apply plugin: 'android'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
-    compile project(path: ':library', configuration: 'productionRelease')
+    compile project(path: ':mendeley_sdk', configuration: 'productionRelease')
 }
 
 android {
