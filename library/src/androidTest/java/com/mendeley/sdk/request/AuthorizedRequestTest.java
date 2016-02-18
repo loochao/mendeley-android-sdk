@@ -49,7 +49,7 @@ public abstract class AuthorizedRequestTest extends SignedInTest {
     @SmallTest
     public void test_run_returnsTheServerDate() throws Exception {
         final Date serverDate = getRequest().run().serverDate;
-        assertTrue("Request reads server date", Math.abs(new Date().getTime() - serverDate.getTime()) < 10000);
+        assertTrue("Request reads server date", Math.abs(new Date().getTime() - serverDate.getTime()) < 1000 * 60 * 60 * 2);
     }
 
     @LargeTest
