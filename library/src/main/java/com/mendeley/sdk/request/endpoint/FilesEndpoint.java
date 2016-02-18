@@ -3,15 +3,16 @@ package com.mendeley.sdk.request.endpoint;
 import android.net.Uri;
 import android.util.JsonReader;
 
-import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.AuthTokenManager;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.FileDownloadException;
 import com.mendeley.sdk.model.File;
+import com.mendeley.sdk.request.CancellableInputStream;
 import com.mendeley.sdk.request.DeleteAuthorizedRequest;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
-import com.mendeley.sdk.Request;
 import com.mendeley.sdk.util.DateUtils;
 
 import org.json.JSONException;
@@ -21,10 +22,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
@@ -128,19 +131,20 @@ public class FilesEndpoint {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
+            super.appendHeaders(headers);
             headers.put("Content-Disposition", "attachment; filename*=UTF-8\'\'" + fileName);
-            headers.put("Content-type", contentType);
             headers.put("Link", "<" + MENDELEY_API_BASE_URL + "documents/" + documentId + ">; rel=\"document\"");
         }
 
         @Override
-        protected void writePostBody(OutputStream os) throws Exception {
-            final int bufferSize = 65536;
-            final byte[] buffer = new byte[bufferSize];
-            int r;
-            while ((r =  inputStream.read(buffer, 0, bufferSize)) > 0) {
-                os.write(buffer, 0, r);
-            }
+        protected RequestBody getBody() throws JSONException {
+            final InputStream cancelableInputStream = new CancellableInputStream(inputStream) {
+                @Override
+                protected boolean isCancelled() {
+                    return PostFileWithBinaryRequest.this.isCancelled();
+                }
+            };
+            return InputStreamRequestBody.create(MediaType.parse(contentType), cancelableInputStream);
         }
 
         @Override

@@ -16,12 +16,9 @@ import com.mendeley.sdk.request.PostAuthorizedRequest;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -92,10 +89,8 @@ public class FoldersEndpoint {
         }
 
         @Override
-        protected void writePostBody(OutputStream os) throws Exception {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.folderToJson(folder).toString());
-            writer.flush();
+        protected RequestBody getBody() throws JSONException {
+            return RequestBody.create(MediaType.parse(FOLDER_CONTENT_TYPE), JsonParser.folderToJson(folder).toString());
         }
 
         @Override
@@ -104,10 +99,6 @@ public class FoldersEndpoint {
             return JsonParser.folderFromJson(reader);
         }
 
-        @Override
-        protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", FOLDER_CONTENT_TYPE);
-        }
     }
 
     public static class PatchFolderAuthorizedRequest extends PatchAuthorizedRequest<Folder> {
@@ -144,16 +135,10 @@ public class FoldersEndpoint {
         }
 
         @Override
-        protected void writePostBody(OutputStream os) throws Exception {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.documentIdToJson(documentId).toString());
-            writer.flush();
+        protected RequestBody getBody() throws JSONException {
+            return RequestBody.create(MediaType.parse(DocumentEndpoint.DOCUMENTS_CONTENT_TYPE), JsonParser.documentIdToJson(documentId).toString());
         }
 
-        @Override
-        protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
-        }
     }
 
     public static class GetFolderDocumentIdsRequest extends GetAuthorizedRequest<List<String>> {
