@@ -17,12 +17,9 @@ import com.mendeley.sdk.util.DateUtils;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -95,21 +92,16 @@ public class AnnotationsEndpoint {
         }
 
         @Override
-        protected void writePostBody(OutputStream os) throws Exception {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.annotationToJson(annotation).toString());
-            writer.flush();
+        protected RequestBody getBody() throws JSONException {
+            return RequestBody.create(MediaType.parse(ANNOTATIONS_CONTENT_TYPE), JsonParser.annotationToJson(annotation).toString());
         }
+
         @Override
         protected Annotation manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.annotationFromJson(reader);
         }
 
-        @Override
-        protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", ANNOTATIONS_CONTENT_TYPE);
-        }
     }
 
     public static class PatchAnnotationRequest extends PatchAuthorizedRequest<Annotation> {

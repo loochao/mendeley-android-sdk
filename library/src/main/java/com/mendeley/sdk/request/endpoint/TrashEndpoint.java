@@ -3,14 +3,14 @@ package com.mendeley.sdk.request.endpoint;
 import android.net.Uri;
 import android.util.JsonReader;
 
-import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.AuthTokenManager;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.model.Document;
 import com.mendeley.sdk.request.DeleteAuthorizedRequest;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
-import com.mendeley.sdk.Request;
 
 import org.json.JSONException;
 
@@ -18,10 +18,12 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
@@ -75,8 +77,8 @@ public class TrashEndpoint {
         }
 
         @Override
-        protected void writePostBody(OutputStream os) throws Exception {
-
+        protected RequestBody getBody() throws JSONException {
+            return RequestBody.create(MediaType.parse("text/plain"), "");
         }
     }
 }
