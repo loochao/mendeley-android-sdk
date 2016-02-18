@@ -10,12 +10,12 @@ import java.io.InputStream;
 public abstract class ProgressPublisherInputStream extends InputStream {
 
     private final InputStream delegate;
-    private final int length;
+    private final long length;
 
-    private int total;
+    private long total;
 
 
-    public ProgressPublisherInputStream(InputStream delegate, int length) {
+    public ProgressPublisherInputStream(InputStream delegate, long length) {
         this.delegate = delegate;
         this.length = length;
     }
@@ -56,7 +56,7 @@ public abstract class ProgressPublisherInputStream extends InputStream {
 
         if (length > 0) {
             total += r;
-            int progress = (total * 100 / length);
+            long progress = (total * 100 / length);
             onProgress(progress);
         }
 
@@ -73,5 +73,5 @@ public abstract class ProgressPublisherInputStream extends InputStream {
         return delegate.skip(byteCount);
     }
 
-    protected abstract void onProgress(int progress);
+    protected abstract void onProgress(long progress);
 }

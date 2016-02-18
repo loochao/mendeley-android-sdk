@@ -3,15 +3,15 @@ package com.mendeley.sdk.request.endpoint;
 import android.net.Uri;
 import android.util.JsonReader;
 
-import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.AuthTokenManager;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.model.Document;
 import com.mendeley.sdk.request.DeleteAuthorizedRequest;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
 import com.mendeley.sdk.request.PatchAuthorizedRequest;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
-import com.mendeley.sdk.Request;
 import com.mendeley.sdk.util.DateUtils;
 
 import org.json.JSONException;
@@ -27,6 +27,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 
@@ -115,7 +118,7 @@ public class DocumentEndpoint {
 
         @Override
         protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", "application/vnd.mendeley-document.1+json");
+            headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
         }
     }
 
@@ -129,15 +132,8 @@ public class DocumentEndpoint {
         }
 
         @Override
-        protected void appendHeaders(Map<String, String> headers) {
-            headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
-        }
-
-        @Override
-        protected void writePatchBody(OutputStream os) throws Exception {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.documentToJson(document).toString());
-            writer.flush();
+        protected RequestBody getBody() throws JSONException {
+            return RequestBody.create(MediaType.parse(DOCUMENTS_CONTENT_TYPE), JsonParser.documentToJson(document).toString());
         }
 
         @Override

@@ -63,6 +63,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
         assertTrue("Posted and returned content", actual.contains(postedBody));
     }
 
+
     @LargeTest
     public void test_cancel_interruptsWritingToTheOuputStream() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
