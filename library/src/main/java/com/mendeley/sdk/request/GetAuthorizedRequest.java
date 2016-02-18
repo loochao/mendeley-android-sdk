@@ -2,32 +2,31 @@ package com.mendeley.sdk.request;
 
 import android.net.Uri;
 
-import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.AuthTokenManager;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import org.json.JSONException;
+
+import java.io.InputStream;
 
 /**
  * Request against the Mendeley API using the GET method.
  */
-public abstract class GetAuthorizedRequest<ResultType> extends HttpUrlConnectionAuthorizedRequest<ResultType> {
+public  class GetAuthorizedRequest<ResultType> extends OkHttpAuthorizedRequest<ResultType> {
 
     protected GetAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
         super(url, authTokenManager, appCredentials);
     }
 
     @Override
-    protected final void onConnected(HttpURLConnection con) throws Exception {
+    protected void setMethod(okhttp3.Request.Builder requestBld) throws JSONException, Exception {
+        requestBld.get();
     }
 
     @Override
-    protected final HttpURLConnection createConnection(Uri uri) throws IOException {
-        final URL url = new URL(uri.toString());
-        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        return con;
+    protected ResultType manageResponse(InputStream is) throws Exception {
+        return null;
     }
 
 }
+

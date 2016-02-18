@@ -1,11 +1,12 @@
 package com.mendeley.sdk.request.endpoint;
 
 import android.net.Uri;
+import android.os.Environment;
 import android.test.suitebuilder.annotation.SmallTest;
 
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.model.Document;
 import com.mendeley.sdk.model.File;
-import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 import com.mendeley.sdk.util.DateUtils;
@@ -179,7 +180,6 @@ public class FileRequestTest extends SignedInTest {
 
 
     public void test_postFile_createsFileInServer() throws Exception {
-
         // GIVEN a file
         final Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title"));
         String fileName = "android.pdf";
@@ -194,6 +194,32 @@ public class FileRequestTest extends SignedInTest {
 
         // ...and the file exists in the server
         AssertUtils.assertFiles(getRequestFactory().newGetFilesRequest((FilesEndpoint.FileRequestParameters) null).run().resource, Arrays.asList(postingFile));
+    }
+
+    public void test_getFileBinary_receivesTheCorrectFile() throws Exception {
+        java.io.File downloadedBinaryFile = null;
+        try {
+            // GIVEN a file
+            final Document document = getTestAccountSetupUtils().setupDocument(createDocument("doc title"));
+            String fileName = "android.pdf";
+            File postingFile = createFile(document.id);
+
+            // ...that has been posted
+            final File returnedFile = getRequestFactory().newPostFileWithBinaryRequest(postingFile.mimeType, document.id, getContext().getAssets().open(fileName), fileName).run().resource;
+
+            downloadedBinaryFile = new java.io.File(Environment.getExternalStorageDirectory(), "downloadedFile.pdf");
+
+            // WHEN we download it
+            long downloaded = getRequestFactory().newGetFileBinaryRequest(returnedFile.id, downloadedBinaryFile).run().resource;
+
+            // THEN we receive correct file
+            assertEquals("file length matches", 34355, downloadedBinaryFile.length());
+            assertEquals("file length matches", 34355, downloaded);
+        } finally {
+            if (downloadedBinaryFile != null && downloadedBinaryFile.exists()) {
+                downloadedBinaryFile.delete();
+            }
+        }
     }
 
     public void test_deleteFile_removesTheFileFromServer() throws Exception {

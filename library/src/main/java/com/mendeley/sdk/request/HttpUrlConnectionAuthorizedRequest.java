@@ -141,7 +141,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
      * Sets a listener to be notified of progress
      * @param progressListener
      */
-    public final void setProgressListener(GetAuthorizedRequest.RequestProgressListener progressListener) {
+    public final void setProgressListener(RequestProgressListener progressListener) {
         this.progressListener = progressListener;
     }
 
