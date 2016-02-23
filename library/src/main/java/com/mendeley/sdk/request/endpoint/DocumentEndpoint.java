@@ -17,12 +17,9 @@ import com.mendeley.sdk.util.DateUtils;
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -104,13 +101,6 @@ public class DocumentEndpoint {
         }
 
         @Override
-        protected void writePostBody(OutputStream os) throws Exception {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(JsonParser.documentToJson(doc).toString());
-            writer.flush();
-        }
-
-        @Override
         protected Document manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.documentFromJson(reader);
@@ -119,6 +109,11 @@ public class DocumentEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
+        }
+
+        @Override
+        protected RequestBody getBody() throws JSONException {
+            return RequestBody.create(MediaType.parse(DOCUMENTS_CONTENT_TYPE), JsonParser.documentToJson(doc).toString());
         }
     }
 
@@ -155,8 +150,8 @@ public class DocumentEndpoint {
         }
 
         @Override
-        protected void writePostBody(OutputStream os) throws Exception {
-
+        protected RequestBody getBody() throws JSONException {
+            return RequestBody.create(MediaType.parse("text/plain"), "");
         }
     }
 

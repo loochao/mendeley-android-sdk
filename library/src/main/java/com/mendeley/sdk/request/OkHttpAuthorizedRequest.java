@@ -9,11 +9,8 @@ import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.exceptions.UserCancelledException;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -72,17 +69,10 @@ public abstract class OkHttpAuthorizedRequest<ResultType> extends AuthorizedRequ
                 requestBld.addHeader(key, requestHeaders.get(key));
             }
 
-            // TODO: see if okhttp follows redirects
-
             final okhttp3.Request okHttpRequest =  requestBld.build();
             final okhttp3.Response okHttpResponse = sOkHttpClient.newCall(okHttpRequest).execute();
 
             final int responseCode = okHttpResponse.code();
-
-//            // Implementation of HTTP redirection.
-//            if (responseCode / 100 == 3) {
-//                return followRedirection(con);
-//            }
 
             responseBody = okHttpResponse.body();
             if (responseCode / 100 != 2) {
@@ -123,19 +113,7 @@ public abstract class OkHttpAuthorizedRequest<ResultType> extends AuthorizedRequ
         }
     }
 
-    protected abstract void setMethod(okhttp3.Request.Builder requestBld) throws JSONException, Exception;
-
-    /*
-     * We implement the redirection by hand because:
-     * - we don't want to send the auth token in the query string, but as a HTTP header
-     * - if redirected to Amazon or other server, we don't want to forward the Mendeley auth jeader
-     * - ... but the redirection that HttpUrlConnection does forwards the header
-     */
-    private Response followRedirection(HttpURLConnection con) throws MendeleyException {
-        final Uri redirectionUri = Uri.parse(con.getHeaderField("location"));
-        final boolean addOauthToken = redirectionUri.getHost().equals(Uri.parse(MENDELEY_API_BASE_URL).getHost());
-        return doRun(redirectionUri, 0, addOauthToken);
-    }
+    protected abstract void setMethod(okhttp3.Request.Builder requestBld) throws Exception;
 
     /**
      * Sets a listener to be notified of progress

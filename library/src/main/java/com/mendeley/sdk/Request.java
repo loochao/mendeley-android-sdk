@@ -146,7 +146,6 @@ public abstract class Request<ResultType> {
         return finishedRun || cancelled;
     }
 
-
     /**
      * Response of the @{link Request}
      */
