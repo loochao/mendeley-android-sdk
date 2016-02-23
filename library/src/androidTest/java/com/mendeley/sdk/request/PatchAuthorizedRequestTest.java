@@ -7,11 +7,11 @@ import com.mendeley.sdk.util.DateUtils;
 
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Date;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import static com.mendeley.sdk.util.NetworkUtils.readInputStream;
 
@@ -29,11 +29,10 @@ public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
         return new PatchAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/patch"), currentDate, getAuthTokenManager(), getAppCredentials()) {
+
             @Override
-            protected void writePatchBody(OutputStream os) throws Exception {
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(patchedBody);
-                writer.flush();
+            protected RequestBody getBody() {
+                return RequestBody.create(MediaType.parse("text/plain"), patchedBody);
             }
 
             @Override
@@ -49,7 +48,7 @@ public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
     public void test_run_writesThePatchPayload() throws Exception {
 
         final JSONObject httpBinResponse = getRequest().run().resource;
-        final String actual = httpBinResponse.getString("form");
+        final String actual = httpBinResponse.getString("data");
 
         assertTrue("Patched and returned content", actual.contains(patchedBody));
     }

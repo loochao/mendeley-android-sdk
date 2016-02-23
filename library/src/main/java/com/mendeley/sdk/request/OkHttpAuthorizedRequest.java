@@ -1,15 +1,15 @@
 package com.mendeley.sdk.request;
 
 import android.net.Uri;
-import android.text.TextUtils;
 
-import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.exceptions.UserCancelledException;
-import com.mendeley.sdk.util.NetworkUtils;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,21 +19,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HttpsURLConnection;
+import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 
 /**
- * Base implementation of {@link Request} using {@link HttpURLConnection} as the HTTP client.
+ * Base implementation of {@link Request} using {@link OkHttpClient} as the HTTP client.
  */
-public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends AuthorizedRequest<ResultType> {
+public abstract class OkHttpAuthorizedRequest<ResultType> extends AuthorizedRequest<ResultType> {
 
-    static {
-        HttpsURLConnection.setDefaultSSLSocketFactory(new NoSSLv3Factory());
+    private static OkHttpClient sOkHttpClient;
+
+    static  {
+        sOkHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS)
+                .writeTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
+                .followRedirects(true)
+                .build();
+
     }
 
     private RequestProgressListener progressListener;
 
-    public HttpUrlConnectionAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+    public OkHttpAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
         super(url, authTokenManager, appCredentials);
     }
 
@@ -43,60 +53,48 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
     }
 
     private Response doRun(Uri url, int currentRetry, boolean addOauthToken) throws MendeleyException {
-        InputStream is = null;
-        HttpURLConnection con = null;
+        ResponseBody responseBody = null;
 
         try {
-            con = createConnection(url);
+            okhttp3.Request.Builder requestBld = new okhttp3.Request.Builder();
+            requestBld.url(url.toString());
+            setMethod(requestBld);
 
             if (addOauthToken) {
-                con.addRequestProperty("Authorization", "Bearer " + authTokenManager.getAccessToken());
+                requestBld.addHeader("Authorization", "Bearer " + authTokenManager.getAccessToken());
             }
 
-            con.setConnectTimeout(CONNECTION_TIMEOUT);
-            con.setReadTimeout(READ_TIMEOUT);
+
 
             final Map<String, String> requestHeaders = new HashMap<String, String>();
             appendHeaders(requestHeaders);
             for (String key : requestHeaders.keySet()) {
-                con.addRequestProperty(key, requestHeaders.get(key));
+                requestBld.addHeader(key, requestHeaders.get(key));
             }
 
-            // the redirection in implemented by us
-            con.setInstanceFollowRedirects(false);
+            // TODO: see if okhttp follows redirects
 
-            con.connect();
+            final okhttp3.Request okHttpRequest =  requestBld.build();
+            final okhttp3.Response okHttpResponse = sOkHttpClient.newCall(okHttpRequest).execute();
 
-            onConnected(con);
+            final int responseCode = okHttpResponse.code();
 
-            final int responseCode = con.getResponseCode();
+//            // Implementation of HTTP redirection.
+//            if (responseCode / 100 == 3) {
+//                return followRedirection(con);
+//            }
 
-            // Implementation of HTTP redirection.
-            if (responseCode / 100 == 3) {
-                return followRedirection(con);
-            }
-
+            responseBody = okHttpResponse.body();
             if (responseCode / 100 != 2) {
-                String responseString = "";
-                try {
-                    responseString = NetworkUtils.readInputStream(con.getErrorStream());
-                    if (TextUtils.isEmpty(responseString)) {
-                        responseString = NetworkUtils.readInputStream(con.getInputStream());
-                    }
-                } catch (IOException ignored) {
-                }
-
-                throw new HttpResponseException(responseCode, con.getResponseMessage(), url.toString(), responseString);
+                throw new HttpResponseException(responseCode, okHttpResponse.message(), url.toString(), okHttpResponse.body().toString());
             }
 
             // wrapping the input stream of the connection in:
             // -- CancellableInputStream to stop reading if the request has been cancelled
             // -- ProgressPublisherInputStream to publish progress as the file is being read
-            is = new MyCancellableInputStream(new MyProgressPublisherInputStream(con.getInputStream(), con.getContentLength()));
-
-            final Map<String, List<String>> responseHeaders = con.getHeaderFields();
+            final InputStream is = new MyCancellableInputStream(new MyProgressPublisherInputStream(responseBody.byteStream(), responseBody.contentLength()));
+            final Map<String, List<String>> responseHeaders = okHttpResponse.headers().toMultimap();
             return new Response(manageResponse(is), getServerDateString(responseHeaders), getNextPage(responseHeaders));
-
         } catch (MendeleyException me) {
             throw me;
         } catch (CancellationException ce) {
@@ -113,17 +111,19 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         } catch (Exception e) {
             throw new MendeleyException("Error in request " + url, e);
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ignored) {
+            if (responseBody != null) {
+                if (responseBody.byteStream() != null) {
+                    try {
+                        responseBody.byteStream().close();
+                    } catch (IOException ignored) {
+                    }
                 }
-            }
-            if (con != null) {
-                con.disconnect();
+                responseBody.close();
             }
         }
     }
+
+    protected abstract void setMethod(okhttp3.Request.Builder requestBld) throws JSONException, Exception;
 
     /*
      * We implement the redirection by hand because:
@@ -141,16 +141,12 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
      * Sets a listener to be notified of progress
      * @param progressListener
      */
-    public final void setProgressListener(GetAuthorizedRequest.RequestProgressListener progressListener) {
+    public final void setProgressListener(RequestProgressListener progressListener) {
         this.progressListener = progressListener;
     }
 
     protected void appendHeaders(Map<String, String> headers) {
     }
-
-    protected abstract HttpURLConnection createConnection(Uri uri) throws IOException;
-
-    protected abstract void onConnected(HttpURLConnection con) throws Exception;
 
     protected abstract ResultType manageResponse(InputStream is) throws Exception;
 
@@ -189,7 +185,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
 
         @Override
         protected boolean isCancelled() {
-            return HttpUrlConnectionAuthorizedRequest.this.isCancelled();
+            return OkHttpAuthorizedRequest.this.isCancelled();
         }
     }
 
@@ -198,7 +194,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
      * {@link RequestProgressListener}
      */
     private class MyProgressPublisherInputStream extends ProgressPublisherInputStream {
-        public MyProgressPublisherInputStream(InputStream inputStream, int contentLength) {
+        public MyProgressPublisherInputStream(InputStream inputStream, long contentLength) {
             super(inputStream, contentLength);
         }
 
@@ -210,6 +206,7 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
         }
     }
 
+
     /**
      * To be implemented by classes that want to listen the progress of the download
      */
@@ -219,4 +216,5 @@ public abstract class HttpUrlConnectionAuthorizedRequest<ResultType> extends Aut
          */
         void onProgress(long progress);
     }
+
 }

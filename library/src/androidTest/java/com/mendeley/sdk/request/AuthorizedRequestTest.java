@@ -3,6 +3,7 @@ package com.mendeley.sdk.request;
 
 import android.net.Uri;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.MendeleyException;
@@ -12,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +44,12 @@ public abstract class AuthorizedRequestTest extends SignedInTest {
         final String actual = headersJson.getString("Authorization");
 
         assertEquals("Authorization token sent", actual, "Bearer " + getAuthTokenManager().getAccessToken());
+    }
+
+    @SmallTest
+    public void test_run_returnsTheServerDate() throws Exception {
+        final Date serverDate = getRequest().run().serverDate;
+        assertTrue("Request reads server date", Math.abs(new Date().getTime() - serverDate.getTime()) < 10000);
     }
 
     @LargeTest
