@@ -47,6 +47,7 @@
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/button_signin"
                 android:text="@string/signin_button_text"
+                android:textAllCaps="false"
                 android:textColor="@color/mendeley_red"
                 android:textSize="@dimen/signin_button_text" />
 
@@ -54,11 +55,13 @@
 		        android:id="@+id/signupButton"
 		        android:layout_width="@dimen/phone_button_width"
 		        android:layout_height="@dimen/button_height"
+		        android:layout_alignParentStart="true"
 		        android:layout_alignParentLeft="true"
 		        android:layout_below="@+id/signinButton"
 		        android:layout_marginTop="@dimen/button_margin"
 		        android:background="@drawable/button_signup"
 		        android:text="@string/signup_button_text"
+                android:textAllCaps="false"
 		        android:textColor="@color/create_account_botton_text"
 		        android:textSize="@dimen/signin_button_text" />
 
