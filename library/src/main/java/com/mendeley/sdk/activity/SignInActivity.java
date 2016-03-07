@@ -242,7 +242,7 @@ public class SignInActivity extends Activity {
 			if (statusCode != 200) {
 				String responseBody = "";
 				try {
-					return NetworkUtils.readInputStream(con.getInputStream());
+					responseBody = NetworkUtils.readInputStream(con.getInputStream());
 				} catch (IOException ignored) {
 				}
 				throw new HttpResponseException(statusCode, con.getResponseMessage(), url, responseBody);
