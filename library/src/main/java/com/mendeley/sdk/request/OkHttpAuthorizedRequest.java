@@ -76,7 +76,7 @@ public abstract class OkHttpAuthorizedRequest<ResultType> extends AuthorizedRequ
 
             responseBody = okHttpResponse.body();
             if (responseCode / 100 != 2) {
-                throw new HttpResponseException(responseCode, okHttpResponse.message(), url.toString(), okHttpResponse.body().toString());
+                throw new HttpResponseException(responseCode, okHttpResponse.message(), url.toString(), responseBody.string(), okHttpResponse.header("X-Mendeley-Trace-Id"));
             }
 
             // wrapping the input stream of the connection in:
