@@ -8,20 +8,11 @@ import java.util.Date;
  */
 public class MendeleyException extends Exception {
 
-    final Date timeStamp;
-
-    public MendeleyException(String message) {
-        super(message);
-        timeStamp = new Date(System.currentTimeMillis());
+    public MendeleyException(String detailMessage) {
+        this(detailMessage, null);
     }
 
     public MendeleyException(String detailMessage, Throwable throwable) {
-        super(detailMessage, throwable);
-        timeStamp = new Date(System.currentTimeMillis());
-    }
-
-    @Override
-    public String getMessage() {
-        return super.getMessage() + " (" + timeStamp.toString() + ") ";
+        super(detailMessage + " (" + new Date(System.currentTimeMillis()).toString() + ") ", throwable);
     }
 }
