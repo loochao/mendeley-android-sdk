@@ -77,7 +77,9 @@ public class SignInOrSignUpActivity extends Activity implements OnClickListener 
 		switch(requestCode) {
 			case SignInActivity.AUTH_REQUEST_CODE:
 				setResult(resultCode, data);
-				finish();
+				if (resultCode == Activity.RESULT_OK) {
+					finish();
+				}
 				break;
     		}
     }
