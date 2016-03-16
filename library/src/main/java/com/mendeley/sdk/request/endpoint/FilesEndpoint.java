@@ -90,21 +90,28 @@ public class FilesEndpoint {
         protected Long manageResponse(InputStream is) throws IOException, FileDownloadException {
             final java.io.File tempFile = new java.io.File(targetFile.getParent(), targetFile.getName() + PARTIALLY_DOWNLOADED_EXTENSION);
 
-            long total = 0;
-            FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+            try {
+                long total = 0;
+                FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
 
-            byte data[] = new byte[1024];
-            int count;
+                byte data[] = new byte[1024 * 16];
+                int count;
 
-            while (!isCancelled() && (count = is.read(data)) != -1) {
-                total += count;
-                fileOutputStream.write(data, 0, count);
-            }
+                while ((count = is.read(data)) != -1) {
+                    total += count;
+                    fileOutputStream.write(data, 0, count);
+                }
 
-            if (!tempFile.renameTo(targetFile)) {
-                throw new FileDownloadException("Cannot rename downloaded file", fileId);
-            } else {
-                return total;
+                if (!tempFile.renameTo(targetFile)) {
+                    throw new FileDownloadException("Cannot rename downloaded file", fileId);
+                } else {
+                    return total;
+                }
+            } catch (Exception e) {
+                if (tempFile.exists()) {
+                    tempFile.delete();
+                }
+                throw e;
             }
         }
 

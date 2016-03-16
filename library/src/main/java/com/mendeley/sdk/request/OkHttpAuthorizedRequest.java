@@ -85,10 +85,10 @@ public abstract class OkHttpAuthorizedRequest<ResultType> extends AuthorizedRequ
             final InputStream is = new MyCancellableInputStream(new MyProgressPublisherInputStream(responseBody.byteStream(), responseBody.contentLength()));
             final Map<String, List<String>> responseHeaders = okHttpResponse.headers().toMultimap();
             return new Response(manageResponse(is), getServerDateString(responseHeaders), getNextPage(responseHeaders));
+        } catch (CancellationException ce) {
+            throw new UserCancelledException(ce);
         } catch (MendeleyException me) {
             throw me;
-        } catch (CancellationException ce) {
-            throw new UserCancelledException();
         } catch (ParseException pe) {
             throw new MendeleyException("Could not parse a date in the JSON response " + url, pe);
         } catch (IOException ioe) {
