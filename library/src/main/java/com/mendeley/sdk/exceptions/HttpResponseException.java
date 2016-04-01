@@ -10,28 +10,20 @@ public class HttpResponseException extends MendeleyException {
 
     public final String url;
     public final int httpReturnCode;
-    private final String response;
+    public final String httpMessage;
+    public final String httpResponse;
 
-
-    public HttpResponseException(int httpReturnCode, String message, String url, String response) {
-		super(message);
-        this.url = url;
-        this.httpReturnCode = httpReturnCode;
-        this.response = response;
-	}
 
     public HttpResponseException(int httpReturnCode, String message, String url) {
-        this(httpReturnCode, message, url, "");
+        this(httpReturnCode, message, url, "", null);
     }
 
-    @Override
-    public String getMessage() {
-        return String.format("%d %s (%s)", httpReturnCode, super.getMessage() + ". " + response, url);
+    public HttpResponseException(int httpReturnCode, String httpMessage, String url, String httpResponse, String mendeleyTraceId) {
+        super(httpReturnCode + ": " + httpMessage + " ("+ url + ")" + " " + httpResponse + " X-Mendeley-Trace-Id: " + mendeleyTraceId);
+        this.url = url;
+        this.httpReturnCode = httpReturnCode;
+        this.httpMessage = httpMessage;
+        this.httpResponse = httpResponse;
     }
-
-    public String getResponse() {
-        return response;
-    }
-
 
 }

@@ -245,7 +245,7 @@ public class SignInActivity extends Activity {
 					responseBody = NetworkUtils.readInputStream(con.getInputStream());
 				} catch (IOException ignored) {
 				}
-				throw new HttpResponseException(statusCode, con.getResponseMessage(), url, responseBody);
+				throw new HttpResponseException(statusCode, con.getResponseMessage(), url, responseBody, con.getHeaderField("X-Mendeley-Trace-Id"));
 			}
 
 			return NetworkUtils.readInputStream(con.getInputStream());
