@@ -10,3 +10,5 @@ android:
     - build-tools-20.0.0
     - build-tools-22.0.1
     - android-23
+    # Intel emulator for connectedCheck
+    - sys-img-x86-android-23
