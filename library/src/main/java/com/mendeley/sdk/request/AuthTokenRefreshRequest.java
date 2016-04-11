@@ -73,7 +73,7 @@ public class AuthTokenRefreshRequest extends Request<Void> {
             if (statusCode != 200) {
                 String responseBody = "";
                 try {
-                    responseBody = NetworkUtils.readInputStream(con.getInputStream());
+                    responseBody = NetworkUtils.readInputStream(con.getErrorStream());
                 } catch (IOException ignored) {
                 }
                 throw new HttpResponseException(statusCode, con.getResponseMessage(), url, responseBody, con.getHeaderField("X-Mendeley-Trace-Id"));
