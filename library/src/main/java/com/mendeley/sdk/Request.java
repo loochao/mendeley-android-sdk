@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.mendeley.sdk.exceptions.MendeleyException;
+import com.mendeley.sdk.exceptions.UserCancelledException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -75,7 +76,8 @@ public abstract class Request<ResultType> {
      * </ul>
      *
      * @return the response of the request
-     * @throws MendeleyException if the request could not be completed for any reason
+     * @throws UserCancelledException if the request was cancelled by the user
+     * @throws MendeleyException if the request could not be completed for any unexpected reason
      */
     public final Response run() throws MendeleyException {
         try {
