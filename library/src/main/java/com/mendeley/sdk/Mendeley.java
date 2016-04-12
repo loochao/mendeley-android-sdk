@@ -26,11 +26,11 @@ import com.mendeley.sdk.request.endpoint.DocumentTypesEndpoint;
 import com.mendeley.sdk.request.endpoint.FilesEndpoint;
 import com.mendeley.sdk.request.endpoint.FoldersEndpoint;
 import com.mendeley.sdk.request.endpoint.GroupsEndpoint;
+import com.mendeley.sdk.request.endpoint.OAuthTokenEndpoint;
 import com.mendeley.sdk.request.endpoint.ProfilesEndpoint;
 import com.mendeley.sdk.request.endpoint.RecentlyReadEndpoint;
 import com.mendeley.sdk.request.endpoint.TrashEndpoint;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -71,7 +71,7 @@ public class Mendeley {
     private static final String TAG = Mendeley.class.getSimpleName();
     private static Mendeley instance;
 
-    private AppCredentials appCredentials;
+    private ClientCredentials clientCredentials;
     private AuthTokenManager authTokenManager;
     private RequestsFactory requestsFactory;
 
@@ -97,9 +97,9 @@ public class Mendeley {
      * @param appSecret, valid client app secret
      */
     public final void init(Context context, String appId, String appSecret) {
-        this.appCredentials = new AppCredentials(appId, appSecret);
+        this.clientCredentials = new ClientCredentials(appId, appSecret);
         this.authTokenManager = new SharedPreferencesAuthTokenManager(context.getSharedPreferences(SharedPreferencesAuthTokenManager.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE));
-        this.requestsFactory = new RequestFactoryImpl(authTokenManager, appCredentials);
+        this.requestsFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
     }
 
     /**
@@ -126,7 +126,7 @@ public class Mendeley {
 
         final Class<? extends Activity> activityClass = showSignUpScreen ? SignInOrSignUpActivity.class : SignInActivity.class;
         final Intent intent = new Intent(activity, activityClass);
-        activity.startActivityForResult(intent, SignInActivity.AUTH_REQUEST_CODE);
+        activity.startActivityForResult(intent, SignInActivity.ACTIVITY_REQUEST_CODE);
     }
 
 
@@ -164,7 +164,7 @@ public class Mendeley {
         assertInitialised();
 
         switch (requestCode) {
-            case SignInActivity.AUTH_REQUEST_CODE:
+            case SignInActivity.ACTIVITY_REQUEST_CODE:
                 onLoginActivityResult(resultCode, data, signInCallback);
                 return true;
             default:
@@ -183,15 +183,9 @@ public class Mendeley {
     private boolean onJsonStringResult(String jsonTokenString) {
         try {
             JSONObject tokenObject = new JSONObject(jsonTokenString);
-
-            String accessToken = tokenObject.getString("access_token");
-            String refreshToken = tokenObject.getString("refresh_token");
-            String tokenType = tokenObject.getString("token_type");
-            int expiresIn = tokenObject.getInt("expires_in");
-
-            authTokenManager.saveTokens(accessToken, refreshToken, tokenType, expiresIn);
+            OAuthTokenEndpoint.saveTokens(authTokenManager, tokenObject);
             return true;
-        } catch (JSONException e) {
+        } catch (Exception e) {
             // If the client credentials are incorrect, the tokenString contains an error message
             Log.e(TAG, "Could not parse the json response with the auth tokens: " + jsonTokenString, e);
             return false;
@@ -223,8 +217,8 @@ public class Mendeley {
      * @return clients credentials used by this Mendeley SDK, as passed by the app
      * in the {@link Mendeley#init(Context, String, String)} method
      */
-    public AppCredentials getAppCredentials() {
-        return appCredentials;
+    public ClientCredentials getClientCredentials() {
+        return clientCredentials;
     }
 
     /**
@@ -260,229 +254,229 @@ public class Mendeley {
      */
     public static class RequestFactoryImpl implements RequestsFactory {
 
-        private final AppCredentials appCredentials;
+        private final ClientCredentials clientCredentials;
         private final AuthTokenManager authTokenManager;
 
-        public RequestFactoryImpl(AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+        public RequestFactoryImpl(AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
             this.authTokenManager = authTokenManager;
-            this.appCredentials = appCredentials;
+            this.clientCredentials = clientCredentials;
         }
 
         @Override
         public Request<Profile> newGetMyProfileRequest() {
-            return new ProfilesEndpoint.GetProfileRequest("me", authTokenManager, appCredentials);
+            return new ProfilesEndpoint.GetProfileRequest("me", authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Profile> newGetProfileRequest(final String profileId) {
-            return new ProfilesEndpoint.GetProfileRequest(profileId, authTokenManager, appCredentials);
+            return new ProfilesEndpoint.GetProfileRequest(profileId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Map<String, String>> newGetDocumentTypesRequest()  {
-            return new DocumentTypesEndpoint.GetDocumentTypesRequest(authTokenManager, appCredentials);
+            return new DocumentTypesEndpoint.GetDocumentTypesRequest(authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Map<String, String>> newGetDocumentIdentifierTypesRequest() {
-            return new DocumentIdentifiersEndpoint.GetDocumentIdentifiersRequest(authTokenManager, appCredentials);
+            return new DocumentIdentifiersEndpoint.GetDocumentIdentifiersRequest(authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Document>> newGetDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters) {
-            return new DocumentEndpoint.GetDocumentsRequest(parameters, authTokenManager, appCredentials);
+            return new DocumentEndpoint.GetDocumentsRequest(parameters, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Document>> newGetDocumentsRequest(Uri url) {
-            return new DocumentEndpoint.GetDocumentsRequest(url, authTokenManager, appCredentials);
+            return new DocumentEndpoint.GetDocumentsRequest(url, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Document> newGetDocumentRequest(String documentId, DocumentEndpoint.DocumentRequestParameters.View view) {
-            return new DocumentEndpoint.GetDocumentRequest(documentId, view, authTokenManager, appCredentials);
+            return new DocumentEndpoint.GetDocumentRequest(documentId, view, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Document> newPostDocumentRequest(Document document) {
-            return new DocumentEndpoint.PostDocumentRequest(document, authTokenManager, appCredentials);
+            return new DocumentEndpoint.PostDocumentRequest(document, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Document> newPatchDocumentRequest(String documentId, Date date, Document document) {
-            return new DocumentEndpoint.PatchDocumentAuthorizedRequest(documentId, document, date, authTokenManager, appCredentials);
+            return new DocumentEndpoint.PatchDocumentAuthorizedRequest(documentId, document, date, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newTrashDocumentRequest(String documentId) {
-            return new DocumentEndpoint.TrashDocumentRequest(documentId, authTokenManager, appCredentials);
+            return new DocumentEndpoint.TrashDocumentRequest(documentId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newDeleteDocumentRequest(String documentId) {
-            return new DocumentEndpoint.DeleteDocumentRequest(documentId, authTokenManager, appCredentials);
+            return new DocumentEndpoint.DeleteDocumentRequest(documentId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newDeleteTrashedDocumentRequest(String documentId) {
-            return new TrashEndpoint.DeleteTrashedDocumentRequest(documentId, authTokenManager, appCredentials);
+            return new TrashEndpoint.DeleteTrashedDocumentRequest(documentId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Document>> newGetTrashedDocumentsRequest(DocumentEndpoint.DocumentRequestParameters parameters) {
-            return new TrashEndpoint.GetTrashedDocumentsRequest(parameters, authTokenManager, appCredentials);
+            return new TrashEndpoint.GetTrashedDocumentsRequest(parameters, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Document>> newGetTrashedDocumentsRequest(Uri uri) {
-            return new TrashEndpoint.GetTrashedDocumentsRequest(uri, authTokenManager, appCredentials);
+            return new TrashEndpoint.GetTrashedDocumentsRequest(uri, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newRestoreTrashedDocumentRequest(String documentId) {
-            return new TrashEndpoint.RestoreTrashedDocumentRequest(documentId, authTokenManager, appCredentials);
+            return new TrashEndpoint.RestoreTrashedDocumentRequest(documentId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Annotation>> newGetAnnotationsRequest(AnnotationsEndpoint.AnnotationRequestParameters parameters) {
-            return new AnnotationsEndpoint.GetAnnotationsRequest(parameters, authTokenManager, appCredentials);
+            return new AnnotationsEndpoint.GetAnnotationsRequest(parameters, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Annotation>> newGetAnnotationsRequest(Uri url) {
-            return new AnnotationsEndpoint.GetAnnotationsRequest(url, authTokenManager, appCredentials);
+            return new AnnotationsEndpoint.GetAnnotationsRequest(url, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Annotation> newGetAnnotationRequest(String annotationId) {
-            return new AnnotationsEndpoint.GetAnnotationRequest(annotationId, authTokenManager, appCredentials);
+            return new AnnotationsEndpoint.GetAnnotationRequest(annotationId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Annotation> newPostAnnotationRequest(Annotation annotation) {
-            return new AnnotationsEndpoint.PostAnnotationRequest(annotation, authTokenManager, appCredentials);
+            return new AnnotationsEndpoint.PostAnnotationRequest(annotation, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Annotation> newPatchAnnotationRequest(String annotationId, Annotation annotation) {
-            return new AnnotationsEndpoint.PatchAnnotationRequest(annotationId, annotation, authTokenManager, appCredentials);
+            return new AnnotationsEndpoint.PatchAnnotationRequest(annotationId, annotation, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newDeleteAnnotationRequest(String annotationId) {
-            return new AnnotationsEndpoint.DeleteAnnotationRequest(annotationId, authTokenManager, appCredentials);
+            return new AnnotationsEndpoint.DeleteAnnotationRequest(annotationId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<File>> newGetFilesRequest(FilesEndpoint.FileRequestParameters parameters) {
-            return new FilesEndpoint.GetFilesRequest(parameters, authTokenManager, appCredentials);
+            return new FilesEndpoint.GetFilesRequest(parameters, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<File>> newGetFilesRequest(Uri uri) {
-            return new FilesEndpoint.GetFilesRequest(uri, authTokenManager, appCredentials);
+            return new FilesEndpoint.GetFilesRequest(uri, authTokenManager, clientCredentials);
         }
 
         @Override
         public FilesEndpoint.GetFileBinaryRequest newGetFileBinaryRequest(String fileId, java.io.File targetFile) {
-            return new FilesEndpoint.GetFileBinaryRequest(fileId, targetFile, authTokenManager, appCredentials);
+            return new FilesEndpoint.GetFileBinaryRequest(fileId, targetFile, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<File> newPostFileWithBinaryRequest(String contentType, String documentId, InputStream inputStream, String fileName) {
-            return new FilesEndpoint.PostFileWithBinaryRequest(contentType, documentId, fileName, inputStream, authTokenManager, appCredentials);
+            return new FilesEndpoint.PostFileWithBinaryRequest(contentType, documentId, fileName, inputStream, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newDeleteFileRequest(String fileId) {
-            return new FilesEndpoint.DeleteFileRequest(fileId, authTokenManager, appCredentials);
+            return new FilesEndpoint.DeleteFileRequest(fileId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Folder>> newGetFoldersRequest(FoldersEndpoint.FolderRequestParameters parameters) {
-            return new FoldersEndpoint.GetFoldersRequest(parameters, authTokenManager, appCredentials);
+            return new FoldersEndpoint.GetFoldersRequest(parameters, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Folder>> newGetFoldersRequest(Uri uri) {
-            return new FoldersEndpoint.GetFoldersRequest(uri, authTokenManager, appCredentials);
+            return new FoldersEndpoint.GetFoldersRequest(uri, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Folder> newGetFolderRequest(String folderId) {
-            return new FoldersEndpoint.GetFolderRequest(folderId, authTokenManager, appCredentials);
+            return new FoldersEndpoint.GetFolderRequest(folderId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Folder> newPostFolderRequest(Folder folder) {
-            return new FoldersEndpoint.PostFolderRequest(folder, authTokenManager, appCredentials);
+            return new FoldersEndpoint.PostFolderRequest(folder, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Folder> newPatchFolderRequest(String folderId, Folder folder) {
-            return new FoldersEndpoint.PatchFolderAuthorizedRequest(folderId, folder, authTokenManager, appCredentials);
+            return new FoldersEndpoint.PatchFolderAuthorizedRequest(folderId, folder, authTokenManager, clientCredentials);
         }
 
 
         @Override
         public Request<Void> newDeleteFolderRequest(String folderId) {
-            return new FoldersEndpoint.DeleteFolderRequest(folderId, authTokenManager, appCredentials);
+            return new FoldersEndpoint.DeleteFolderRequest(folderId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<String>> newGetFolderDocumentsRequest(FoldersEndpoint.FolderRequestParameters parameters, String folderId) {
-            return new FoldersEndpoint.GetFolderDocumentIdsRequest(parameters, folderId, authTokenManager, appCredentials);
+            return new FoldersEndpoint.GetFolderDocumentIdsRequest(parameters, folderId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<String>> newGetFolderDocumentsRequest(Uri uri) {
-            return new FoldersEndpoint.GetFolderDocumentIdsRequest(uri, authTokenManager, appCredentials);
+            return new FoldersEndpoint.GetFolderDocumentIdsRequest(uri, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newPostDocumentToFolderRequest(String folderId, String documentId) {
-            return new FoldersEndpoint.PostDocumentToFolderRequest(folderId, documentId, authTokenManager, appCredentials);
+            return new FoldersEndpoint.PostDocumentToFolderRequest(folderId, documentId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Void> newDeleteDocumentFromFolderRequest(String folderId, String documentId) {
-            return new FoldersEndpoint.DeleteDocumentFromFolder(folderId, documentId, authTokenManager, appCredentials);
+            return new FoldersEndpoint.DeleteDocumentFromFolder(folderId, documentId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Group>> newGetGroupsRequest(GroupsEndpoint.GroupRequestParameters parameters) {
-            return new GroupsEndpoint.GetGroupsRequest(parameters, authTokenManager, appCredentials);
+            return new GroupsEndpoint.GetGroupsRequest(parameters, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<Group>> newGetGroupsRequest(Uri uri) {
-            return new GroupsEndpoint.GetGroupsRequest(uri, authTokenManager, appCredentials);
+            return new GroupsEndpoint.GetGroupsRequest(uri, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<Group> newGetGroupRequest(String groupId) {
-            return new GroupsEndpoint.GetGroupRequest(groupId, authTokenManager, appCredentials);
+            return new GroupsEndpoint.GetGroupRequest(groupId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<UserRole>> newGetGroupMembersRequest(GroupsEndpoint.GroupRequestParameters parameters, String groupId) {
-            return new GroupsEndpoint.GetGroupMembersRequest(parameters, groupId, authTokenManager, appCredentials);
+            return new GroupsEndpoint.GetGroupMembersRequest(parameters, groupId, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<List<UserRole>> newGetGroupMembersRequest(Uri url){
-            return new GroupsEndpoint.GetGroupMembersRequest(url, authTokenManager, appCredentials);
+            return new GroupsEndpoint.GetGroupMembersRequest(url, authTokenManager, clientCredentials);
 
         }
 
         @Override
         public Request<List<ReadPosition>> newGetRecentlyReadRequest(String groupId, String fileId, int limit) {
-            return new RecentlyReadEndpoint.GetRecentlyReadRequest(groupId, fileId, limit, authTokenManager, appCredentials);
+            return new RecentlyReadEndpoint.GetRecentlyReadRequest(groupId, fileId, limit, authTokenManager, clientCredentials);
         }
 
         @Override
         public Request<ReadPosition> newPostRecentlyReadRequest(ReadPosition readPosition) {
-            return new RecentlyReadEndpoint.PostRecentlyReadRequest(readPosition, authTokenManager, appCredentials);
+            return new RecentlyReadEndpoint.PostRecentlyReadRequest(readPosition, authTokenManager, clientCredentials);
         }
     }
 

@@ -3,9 +3,7 @@ package com.mendeley.sdk.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -13,18 +11,16 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.mendeley.sdk.AuthTokenManager;
+import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.Mendeley;
 import com.mendeley.sdk.R;
-import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.Request;
-import com.mendeley.sdk.util.NetworkUtils;
+import com.mendeley.sdk.exceptions.MendeleyException;
+import com.mendeley.sdk.request.endpoint.OAuthTokenEndpoint;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.URL;
+import org.json.JSONObject;
 
-import javax.net.ssl.HttpsURLConnection;
+import java.util.Date;
 
 /**
  * This activity will show the login web interface in a webview.
@@ -33,24 +29,13 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class SignInActivity extends Activity {
 
-	private final static String GRANT_TYPE_AUTH = "authorization_code";
-	private final static String SCOPE = "all";
-	private final static String RESPONSE_TYPE = "code";
-
-
-
-	public final static int AUTH_REQUEST_CODE = 31231;
+	public final static int ACTIVITY_REQUEST_CODE = 31231;
 	public static final String EXTRA_JSON_TOKENS = "returned_json_tokens";
-
-    private static final String OAUTH2_URL = Request.MENDELEY_API_BASE_URL + "oauth/authorize";
-
 	private static final double SMALL_SCREEN_SIZE = 6.0;
 	private static final String FORGOT_PASSWORD_URL = "http://www.mendeley.com/forgot/";
-	private static final String TAG = SignInActivity.class.getSimpleName();
 
+    private Mendeley mendeley;
 	private WebView webView;
-
-	private Mendeley mendeley;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +69,7 @@ public class SignInActivity extends Activity {
 		if (savedInstanceState != null) {
 			webView.restoreState(savedInstanceState);
 		} else {
-			webView.loadUrl(getOauth2URL());
+			webView.loadUrl(getOauth2URL(mendeley.getClientCredentials()).toString());
 		}
 
         View dismissButton = findViewById(R.id.dismissButton);
@@ -120,24 +105,6 @@ public class SignInActivity extends Activity {
     }
 
 	/**
-	 * Creating and return the Oauth2 url string.
-	 *
-	 * @return the url string
-	 */
-	private String getOauth2URL() {
-        StringBuilder urlString = new StringBuilder(OAUTH2_URL);
-
-		urlString
-			.append("?").append("grant_type=").append(GRANT_TYPE_AUTH)
-			.append("&").append("redirect_uri=").append(AuthTokenManager.REDIRECT_URI)
-			.append("&").append("scope=").append(SCOPE)
-			.append("&").append("response_type=").append(RESPONSE_TYPE)
-			.append("&").append("client_id=").append(mendeley.getAppCredentials().clientId);
-
-		return urlString.toString();
-	}
-
-	/**
 	 * A WebViewClient that starts the AuthenticationTask when a new url is loaded.
 	 */
     private class MendeleyWebViewClient extends WebViewClient {
@@ -146,12 +113,22 @@ public class SignInActivity extends Activity {
 
     		if (url.equals(FORGOT_PASSWORD_URL)) {
     			openUrlInBrowser(url);
-    		} else {
-    			new AuthenticateTask().execute(url);
+				return true;
     		}
+
+			String authorizationCode = null;
+			int index = url.indexOf("code=");
+	        if (index != -1) {
+	        	index += 5;
+	        	authorizationCode = url.substring(index);
+	        }
+
+			obtainAccessTokenFromAuthorizationCode(authorizationCode);
+
 			return true;
     	}
-    }
+
+	}
 
     /**
      * Opening a web browser to load the given url
@@ -162,99 +139,36 @@ public class SignInActivity extends Activity {
     	startActivity(intent);
     }
 
-    /**
-	 * AsyncTask class that carry out the authentication task and send the
-	 * authorisation code with the result data, which will be received by
-	 * the SignInOrSignUpActivity
-	 */
-    private final class AuthenticateTask extends AsyncTask<String, Void, String> {
-        private String authorizationCode;
-
-		protected String getAuthorizationCode(String authReturnUrl) {
-    		String authorizationCode = null;
-			int index = authReturnUrl.indexOf("code=");
-	        if (index != -1) {
-	        	index += 5;
-	        	authorizationCode = authReturnUrl.substring(index);
-	        }
-
-			return authorizationCode;
-    	}
-
-		@Override
-		protected String doInBackground(String... params) {
-			String authReturnUrl = params[0];
-			authorizationCode = getAuthorizationCode(authReturnUrl);
-
-			if (authorizationCode != null) {
-				try {
-					return postAuthorizationCode(AuthTokenManager.TOKENS_URL, GRANT_TYPE_AUTH, authorizationCode);
-				} catch (Exception e) {
-					Log.e(TAG, "Could not obtain the access token from authorization code", e);
-				}
-			}
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String jsonTokenString) {
-			if (!TextUtils.isEmpty(jsonTokenString)) {
-				setResult(Activity.RESULT_OK, new Intent().putExtra(SignInActivity.EXTRA_JSON_TOKENS, jsonTokenString));
-			} else {
-				setResult(Activity.RESULT_CANCELED, new Intent());
-			}
-			finish();
-		}
+   private Uri getOauth2URL(ClientCredentials clientCredentials) {
+        return Uri.parse(OAuthTokenEndpoint.OAUTH2_URL).buildUpon()
+                .appendQueryParameter("grant_type", "authorization_code")
+                .appendQueryParameter("scope", "all")
+                .appendQueryParameter("response_type", "code")
+                .appendQueryParameter("client_id", clientCredentials.clientId)
+                .build();
     }
-    
-	/**
-	 * Helper method for executing http post request
-	 */
-	private String postAuthorizationCode(String url, String grantType, String authorizationCode)  throws Exception {
 
-		HttpsURLConnection con = null;
-		try {
-			con = (HttpsURLConnection) new URL(url).openConnection();
-			con.setRequestMethod("POST");
-			con.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-			con.setDoInput(true);
-			con.setDoOutput(true);
-
-			final String urlEncodedForm = new Uri.Builder()
-					.appendQueryParameter("grant_type", grantType)
-					.appendQueryParameter("redirect_uri", AuthTokenManager.REDIRECT_URI)
-					.appendQueryParameter("code", authorizationCode)
-					.appendQueryParameter("client_id", mendeley.getAppCredentials().clientId)
-					.appendQueryParameter("client_secret", mendeley.getAppCredentials().clientSecret)
-					.build()
-					.getEncodedQuery();
-
-			//Send request
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream ());
-			wr.writeBytes (urlEncodedForm);
-			wr.flush ();
-			wr.close ();
-
-			final int statusCode = con.getResponseCode();
-
-			if (statusCode != 200) {
-				String responseBody = "";
-				try {
-					responseBody = NetworkUtils.readInputStream(con.getInputStream());
-				} catch (IOException ignored) {
-				}
-				throw new HttpResponseException(statusCode, con.getResponseMessage(), url, responseBody, con.getHeaderField("X-Mendeley-Trace-Id"));
+	private void obtainAccessTokenFromAuthorizationCode(String authorizationCode) {
+		final OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest request = new OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest(mendeley.getClientCredentials(), authorizationCode);
+		request.runAsync(new Request.RequestCallback<JSONObject>() {
+			@Override
+			public void onSuccess(JSONObject jsonResponse, Uri next, Date serverDate) {
+				setResult(Activity.RESULT_OK, new Intent().putExtra(SignInActivity.EXTRA_JSON_TOKENS, jsonResponse.toString()));
+				finish();
 			}
 
-			return NetworkUtils.readInputStream(con.getInputStream());
-
-		} finally {
-			if (con != null) {
-				con.disconnect();
+			@Override
+			public void onFailure(MendeleyException mendeleyException) {
+                Log.e(SignInActivity.class.getSimpleName(), "Error obtaining access token", mendeleyException);
+				setResult(Activity.RESULT_CANCELED, new Intent());
+				finish();
 			}
-		}
 
+			@Override
+			public void onCancelled() {
+				setResult(Activity.RESULT_CANCELED, new Intent());
+				finish();
+			}
+		});
 	}
 }

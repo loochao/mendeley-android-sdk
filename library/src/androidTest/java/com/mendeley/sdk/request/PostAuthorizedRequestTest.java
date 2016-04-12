@@ -25,7 +25,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
 
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
-        return new PostAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getAppCredentials()) {
+        return new PostAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/post"), getAuthTokenManager(), getClientCredentials()) {
 
             @Override
             protected RequestBody getBody() throws JSONException {
