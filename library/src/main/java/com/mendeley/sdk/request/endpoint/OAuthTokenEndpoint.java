@@ -6,7 +6,6 @@ import android.net.Uri;
 import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.Request;
-import com.mendeley.sdk.exceptions.AuthenticationException;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.JsonParsingException;
 import com.mendeley.sdk.exceptions.MendeleyException;
@@ -106,8 +105,10 @@ public class OAuthTokenEndpoint {
                 final JSONObject jsonResponse = new JSONObject(responseString);
                 return new Response(jsonResponse, con.getHeaderField("Date"));
 
+            } catch (MendeleyException me) {
+                throw me;
             } catch (Exception e) {
-                throw new AuthenticationException("Cannot obtain token", e);
+                throw new MendeleyException("Cannot obtain token", e);
             } finally {
                 if (con != null) {
                     con.disconnect();

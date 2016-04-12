@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.Request;
-import com.mendeley.sdk.exceptions.AuthenticationException;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.request.endpoint.OAuthTokenEndpoint;
@@ -48,7 +47,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
     public final Response doRun() throws MendeleyException {
         if (TextUtils.isEmpty(authTokenManager.getAccessToken())) {
             // Must call startSignInProcess first - caller error!
-            throw new AuthenticationException("No access token found");
+            throw new MendeleyException("No access token found");
         }
 
         if (willExpireSoon()) {
