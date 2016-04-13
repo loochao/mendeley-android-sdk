@@ -4,8 +4,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
-    <dimen name="signin_button_text">18sp</dimen>
-    <dimen name="create_account_botton_text">18sp</dimen>
+    <dimen name="sign_in_button_text">18sp</dimen>
+    <dimen name="create_account_button_text">18sp</dimen>
     <dimen name="button_width">180dp</dimen>
     <dimen name="button_height">44dp</dimen>
     <dimen name="space_between_buttons">20dp</dimen>
@@ -18,5 +18,10 @@
 	<dimen name="dialog_height">400dp</dimen>
 
 	<dimen name="dialog_height_small">300dp</dimen>
-	
+
+    <dimen name="sign_up_card_width">340dp</dimen>
+    <dimen name="medium_padding">10dp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="create_account_text_size">14sp</dimen>
+
 </resources>

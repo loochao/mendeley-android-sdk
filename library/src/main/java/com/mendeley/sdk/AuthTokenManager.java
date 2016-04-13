@@ -50,8 +50,7 @@ public interface AuthTokenManager {
      * Stores the tokens for further retrieval.
      * Implementations of the interface should decide if they will use a persistent method for
      * storing the data or any other approach.
-     *
-     * @param accessToken the access token string
+     *  @param accessToken the access token string
      * @param refreshToken the refresh token string
      * @param tokenType the token type string
      * @param expiresIn the expires in value

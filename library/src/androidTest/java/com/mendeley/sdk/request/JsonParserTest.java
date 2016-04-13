@@ -41,27 +41,27 @@ import java.util.List;
 
 public class JsonParserTest extends InstrumentationTestCase {
 
-	final String documentWithNotNullCollectionsFile = "test_document_not_null_collections.json";
+    final String documentWithNotNullCollectionsFile = "test_document_not_null_collections.json";
     final String documentWithNullCollectionsFile = "test_document_null_collections.json";
-    final String folderFile =  "test_folder.json";
-    final String fileFile =  "test_file.json";
-    final String profileFile =  "test_profile.json";
-    final String documentIdsFile =  "test_document_ids.json";
-    final String groupFile =  "test_group.json";
-    final String userRoleFile =  "test_user_role.json";
+    final String folderFile = "test_folder.json";
+    final String fileFile = "test_file.json";
+    final String profileFile = "test_profile.json";
+    final String documentIdsFile = "test_document_ids.json";
+    final String groupFile = "test_group.json";
+    final String userRoleFile = "test_user_role.json";
     final String annotationWithNotNullValuesFile = "test_annotation_not_null_values.json";
     final String annotationWithNullValuesFile = "test_annotation_null_values.json";
-    final String readPositionFile =  "test_read_position.json";
+    final String readPositionFile = "test_read_position.json";
 
     private Document getTestDocumentWithNonNotNullCollections() throws ParseException {
-        HashMap<String,String> identifiers = new HashMap<String, String>();
+        HashMap<String, String> identifiers = new HashMap<String, String>();
 
         Person author = new Person("test-first_name", "test-last_name");
         ArrayList<Person> authorsList = new ArrayList<Person>();
         authorsList.add(author);
 
         Person editor = new Person("test-first_name", "test-last_name");
-        ArrayList<Person>editorsList = new ArrayList<Person>();
+        ArrayList<Person> editorsList = new ArrayList<Person>();
         editorsList.add(editor);
 
         ArrayList<String> keywords = new ArrayList<String>();
@@ -74,8 +74,8 @@ public class JsonParserTest extends InstrumentationTestCase {
         websites.add("test-website1");
         websites.add("test-website2");
 
-	    return getTestDocument(authorsList, editorsList, keywords, tags, websites, identifiers);
-	}
+        return getTestDocument(authorsList, editorsList, keywords, tags, websites, identifiers);
+    }
 
     private Document getTestDocument(ArrayList<Person> authorsList, ArrayList<Person> editorsList, ArrayList<String> keywords, ArrayList<String> tags, ArrayList<String> websites, HashMap<String, String> identifiers) throws ParseException {
         Document.Builder testDocument = new Document.Builder();
@@ -154,34 +154,34 @@ public class JsonParserTest extends InstrumentationTestCase {
     }
 
     private Folder getTestFolder() throws ParseException {
-		Folder.Builder mendeleyFolder = new Folder.Builder();
+        Folder.Builder mendeleyFolder = new Folder.Builder();
         mendeleyFolder.setName("test-name");
-		mendeleyFolder.setId("test-id");
-		mendeleyFolder.setAdded(DateUtils.parseMendeleyApiTimestamp("2014-02-20T16:53:25.000Z"));
-	    
-	    return mendeleyFolder.build();
-	}
+        mendeleyFolder.setId("test-id");
+        mendeleyFolder.setAdded(DateUtils.parseMendeleyApiTimestamp("2014-02-20T16:53:25.000Z"));
+
+        return mendeleyFolder.build();
+    }
 
     private File getTestFile() {
-	    File.Builder testFile = new File.Builder();
-	    testFile.setId("test-id");
-	    testFile.setDocumentId("test-document_id");
-	    testFile.setMimeType("test-mime_type");
-	    testFile.setFileName("test-file_name");
-	    testFile.setFileHash("test-filehash");
+        File.Builder testFile = new File.Builder();
+        testFile.setId("test-id");
+        testFile.setDocumentId("test-document_id");
+        testFile.setMimeType("test-mime_type");
+        testFile.setFileName("test-file_name");
+        testFile.setFileHash("test-filehash");
         testFile.setFileSize(1024);
-	    
-	    return testFile.build();
-	}
+
+        return testFile.build();
+    }
 
     private Profile getTestProfile() throws ParseException {
-		
-		Discipline testDiscipline = new Discipline();
-		testDiscipline.name = "test-name";
-		Photo testPhoto = new Photo("test-original.png", "test-standard.png", "test-square.png");
-		Education.Builder testEducation = new Education.Builder();
 
-		testEducation.
+        Discipline testDiscipline = new Discipline();
+        testDiscipline.name = "test-name";
+        Photo testPhoto = new Photo("test-original.png", "test-standard.png", "test-square.png");
+        Education.Builder testEducation = new Education.Builder();
+
+        testEducation.
                 setId("ff316338-86b7-4363-9721-education").
                 setInstitution("test-education_institution").
                 setDegree("test-degree").
@@ -200,29 +200,29 @@ public class JsonParserTest extends InstrumentationTestCase {
                 setWebsite("www.test.employment.website").
                 setClasses(Arrays.asList("Psychology", "Violin")).
                 setIsMainEmployment(true);
-		
-		Profile.Builder testProfile = new Profile.Builder();
-		testProfile.setId("test-id");
-		testProfile.setFirstName("test-first_name");
-		testProfile.setLastName("test-last_name");
-		testProfile.setDisplayName("test-display_name");
-		testProfile.setEmail("test-email");
-		testProfile.setLink("test-link");
-		testProfile.setAcademicStatus("test-academic_status");
-		testProfile.setVerified(true);
-		testProfile.setUserType("test-user_type");
-		testProfile.setCreatedAt(DateUtils.parseMendeleyApiTimestamp("2014-04-28T15:37:51.000Z"));
-		testProfile.setDiscipline(testDiscipline);
-		testProfile.setPhoto(testPhoto);
-      	ArrayList<Education> educationList = new ArrayList<Education>();
-      	educationList.add(testEducation.build());
-		testProfile.setEducation(educationList);
-		ArrayList<Employment> employmentList = new ArrayList<Employment>();
-		employmentList.add(testEmploymentBuilder.build());
-		testProfile.setEmployment(employmentList);
 
-	    return testProfile.build();
-	}
+        Profile.Builder testProfile = new Profile.Builder();
+        testProfile.setId("test-id");
+        testProfile.setFirstName("test-first_name");
+        testProfile.setLastName("test-last_name");
+        testProfile.setDisplayName("test-display_name");
+        testProfile.setEmail("test-email");
+        testProfile.setLink("test-link");
+        testProfile.setAcademicStatus("test-academic_status");
+        testProfile.setVerified(true);
+        testProfile.setUserType("test-user_type");
+        testProfile.setCreatedAt(DateUtils.parseMendeleyApiTimestamp("2014-04-28T15:37:51.000Z"));
+        testProfile.setDiscipline(testDiscipline);
+        testProfile.setPhoto(testPhoto);
+        ArrayList<Education> educationList = new ArrayList<Education>();
+        educationList.add(testEducation.build());
+        testProfile.setEducation(educationList);
+        ArrayList<Employment> employmentList = new ArrayList<Employment>();
+        employmentList.add(testEmploymentBuilder.build());
+        testProfile.setEmployment(employmentList);
+
+        return testProfile.build();
+    }
 
     private Annotation getTestAnnotationWithNonNotNullValues() throws ParseException {
         ArrayList<Annotation.Position> positions = new ArrayList<Annotation.Position>();
@@ -265,16 +265,16 @@ public class JsonParserTest extends InstrumentationTestCase {
                 .build();
     }
 
-	private String getJsonStringFromAssetsFile(String fileNameName) throws IOException {
-	    return getAssetsFileAsString(getInstrumentation().getContext().getAssets(), fileNameName);
-	}
+    private String getJsonStringFromAssetsFile(String fileNameName) throws IOException {
+        return getAssetsFileAsString(getInstrumentation().getContext().getAssets(), fileNameName);
+    }
 
     private JsonReader getJsonReaderFromAssetsFile(String fileFile) throws IOException {
         final InputStream is = getInstrumentation().getContext().getAssets().open(fileFile);
         return new JsonReader(new InputStreamReader(is));
     }
 
-	@SmallTest
+    @SmallTest
     public void test_parseDocument_withNotNullCollections()
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
 
@@ -297,7 +297,6 @@ public class JsonParserTest extends InstrumentationTestCase {
         assertFalse(actualDocument.keywords.isNull());
         assertFalse(actualDocument.identifiers.isNull());
     }
-
 
 
     @SmallTest
@@ -334,83 +333,83 @@ public class JsonParserTest extends InstrumentationTestCase {
 
     }
 
-	@SmallTest
-	public void test_parseFolder()
+    @SmallTest
+    public void test_parseFolder()
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
-		Folder expectedFolder = getTestFolder();
-		JsonReader reader = getJsonReaderFromAssetsFile(folderFile);
+        Folder expectedFolder = getTestFolder();
+        JsonReader reader = getJsonReaderFromAssetsFile(folderFile);
 
-		Folder actualFolder = JsonParser.folderFromJson(reader);
+        Folder actualFolder = JsonParser.folderFromJson(reader);
 
         reader.close();
 
-		boolean equal =
-				expectedFolder.id.equals(actualFolder.id) &&
+        boolean equal =
+                expectedFolder.id.equals(actualFolder.id) &&
                         expectedFolder.name.equals(actualFolder.name) &&
                         expectedFolder.added.equals(actualFolder.added);
 
-		assertTrue("Parsed folder with wrong or missing data", equal);
-	}
-	
-	@SmallTest
-	public void test_parseFile()
-			throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+        assertTrue("Parsed folder with wrong or missing data", equal);
+    }
 
-		File expectedFile = getTestFile();
+    @SmallTest
+    public void test_parseFile()
+            throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
+
+        File expectedFile = getTestFile();
         JsonReader reader = getJsonReaderFromAssetsFile(fileFile);
 
-		File actualFile = JsonParser.fileFromJson(reader);
+        File actualFile = JsonParser.fileFromJson(reader);
 
-		boolean equal =
-				expectedFile.id.equals(actualFile.id) &&
-				expectedFile.documentId.equals(actualFile.documentId) &&
-				expectedFile.mimeType.equals(actualFile.mimeType) &&
-				expectedFile.fileName.equals(actualFile.fileName) &&
-				expectedFile.fileHash.equals(actualFile.fileHash) &&
-                expectedFile.fileSize == actualFile.fileSize;
+        boolean equal =
+                expectedFile.id.equals(actualFile.id) &&
+                        expectedFile.documentId.equals(actualFile.documentId) &&
+                        expectedFile.mimeType.equals(actualFile.mimeType) &&
+                        expectedFile.fileName.equals(actualFile.fileName) &&
+                        expectedFile.fileHash.equals(actualFile.fileHash) &&
+                        expectedFile.fileSize == actualFile.fileSize;
 
         reader.close();
 
-		assertTrue("Parsed folder with wrong or missing data", equal);
-	}
-
+        assertTrue("Parsed folder with wrong or missing data", equal);
+    }
 
 
     @SmallTest
-	public void test_parseProfile()
+    public void test_parseProfile()
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException, ParseException {
-		Profile expectedProfile = getTestProfile();
-		JsonReader reader = getJsonReaderFromAssetsFile(profileFile);
+        Profile expectedProfile = getTestProfile();
+        JsonReader reader = getJsonReaderFromAssetsFile(profileFile);
 
-		final Profile actualProfile = JsonParser.profileFromJson(reader);
+        final Profile actualProfile = JsonParser.profileFromJson(reader);
 
-		boolean equal =
-                expectedProfile.id.equals(actualProfile.id) &&
-                        expectedProfile.firstName.equals(actualProfile.firstName) &&
-                        expectedProfile.lastName.equals(actualProfile.lastName) &&
-                        expectedProfile.displayName.equals(actualProfile.displayName) &&
-                        expectedProfile.email.equals(actualProfile.email) &&
-                        expectedProfile.link.equals(actualProfile.link) &&
-                        expectedProfile.academicStatus.equals(actualProfile.academicStatus) &&
-                        expectedProfile.verified.equals(actualProfile.verified) &&
-                        expectedProfile.userType.equals(actualProfile.userType) &&
-                        expectedProfile.createdAt.equals(actualProfile.createdAt) &&
-                        expectedProfile.discipline.name.equals(actualProfile.discipline.name) &&
 
-                        expectedProfile.education.get(0).id.equals(actualProfile.education.get(0).id) &&
-                        expectedProfile.education.get(0).institution.equals(actualProfile.education.get(0).institution) &&
-                        expectedProfile.education.get(0).degree.equals(actualProfile.education.get(0).degree) &&
-                        expectedProfile.education.get(0).startDate.equals(actualProfile.education.get(0).startDate) &&
-                        expectedProfile.education.get(0).endDate.equals(actualProfile.education.get(0).endDate) &&
-                        expectedProfile.education.get(0).website.equals(actualProfile.education.get(0).website) &&
+        assertEquals(expectedProfile.id, actualProfile.id);
+        assertEquals(expectedProfile.firstName, actualProfile.firstName);
+        assertEquals(expectedProfile.lastName, actualProfile.lastName);
+        assertEquals(expectedProfile.displayName, actualProfile.displayName);
+        assertEquals(expectedProfile.email, actualProfile.email);
+        assertEquals(expectedProfile.link, actualProfile.link);
+        assertEquals(expectedProfile.academicStatus, actualProfile.academicStatus);
+        assertEquals(expectedProfile.verified, actualProfile.verified);
+        assertEquals(expectedProfile.userType, actualProfile.userType);
+        assertEquals(expectedProfile.createdAt, actualProfile.createdAt);
+        assertEquals(expectedProfile.discipline.name, actualProfile.discipline.name);
 
-                        expectedProfile.employment.get(0).id.equals(actualProfile.employment.get(0).id) &&
-                        expectedProfile.employment.get(0).institution.equals(actualProfile.employment.get(0).institution) &&
-                        expectedProfile.employment.get(0).position.equals(actualProfile.employment.get(0).position) &&
-                        expectedProfile.employment.get(0).startDate.equals(actualProfile.employment.get(0).startDate) &&
-                        expectedProfile.employment.get(0).endDate.equals(actualProfile.employment.get(0).endDate) &&
-                        expectedProfile.employment.get(0).website.equals(actualProfile.employment.get(0).website) &&
-                        expectedProfile.employment.get(0).isMainEmployment == actualProfile.employment.get(0).isMainEmployment;
+        assertEquals(expectedProfile.education.get(0).id, actualProfile.education.get(0).id);
+        assertEquals(expectedProfile.education.get(0).institution, actualProfile.education.get(0).institution);
+        assertEquals(expectedProfile.education.get(0).degree, actualProfile.education.get(0).degree);
+        assertEquals(expectedProfile.education.get(0).startDate, actualProfile.education.get(0).startDate);
+        assertEquals(expectedProfile.education.get(0).endDate, actualProfile.education.get(0).endDate);
+        assertEquals(expectedProfile.education.get(0).website, actualProfile.education.get(0).website);
+
+        assertEquals(expectedProfile.employment.get(0).id, actualProfile.employment.get(0).id);
+        assertEquals(expectedProfile.employment.get(0).institution, actualProfile.employment.get(0).institution);
+        assertEquals(expectedProfile.employment.get(0).position, actualProfile.employment.get(0).position);
+        assertEquals(expectedProfile.employment.get(0).startDate, actualProfile.employment.get(0).startDate);
+        assertEquals(expectedProfile.employment.get(0).endDate, actualProfile.employment.get(0).endDate);
+        assertEquals(expectedProfile.employment.get(0).website, actualProfile.employment.get(0).website);
+        assertEquals(expectedProfile.employment.get(0).isMainEmployment, actualProfile.employment.get(0).isMainEmployment);
+
 
         reader.close();
 
@@ -420,11 +419,8 @@ public class JsonParserTest extends InstrumentationTestCase {
             assertEquals("Employment class not equals", expectedProfile.employment.get(0).classes.get(i), (actualProfile.employment.get(0).classes.get(i)));
         }
 
-
-        assertTrue("Parsed profile with wrong or missing data", equal);
-
         assertPhoto(expectedProfile.photo, actualProfile.photo);
-	}
+    }
 
     private void assertPhoto(Photo actualPhoto, Photo expectedPhoto) {
         assertEquals("original photo", actualPhoto.original, expectedPhoto.original);
@@ -434,7 +430,7 @@ public class JsonParserTest extends InstrumentationTestCase {
 
 
     @SmallTest
-	public void test_jsonFromDocument_withNotNullCollections()
+    public void test_jsonFromDocument_withNotNullCollections()
             throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException, ParseException {
 
         // GIVEN a document where its collections (authors, editors...) are NOT null
@@ -478,46 +474,46 @@ public class JsonParserTest extends InstrumentationTestCase {
     }
 
 
-	@SmallTest
-	public void test_jsonFromFolder()
+    @SmallTest
+    public void test_jsonFromFolder()
             throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException, ParseException {
-		Folder parsingFolder = getTestFolder();
-		
-		String actualJson = JsonParser.folderToJson(parsingFolder).toString();
-		String expectedJson = getJsonStringFromAssetsFile(folderFile);
+        Folder parsingFolder = getTestFolder();
+
+        String actualJson = JsonParser.folderToJson(parsingFolder).toString();
+        String expectedJson = getJsonStringFromAssetsFile(folderFile);
 
         JSONAssert.assertEquals(expectedJson, actualJson, false);
     }
-	
-	@SmallTest
-	public void test_jsonFromDocumentId()
-			throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException {
-    	String documentId = "test-document_id";
-    	String expectedString = "{\"id\":\"test-document_id\"}";
-		
-		String actualString = JsonParser.documentIdToJson(documentId).toString();
+
+    @SmallTest
+    public void test_jsonFromDocumentId()
+            throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException {
+        String documentId = "test-document_id";
+        String expectedString = "{\"id\":\"test-document_id\"}";
+
+        String actualString = JsonParser.documentIdToJson(documentId).toString();
 
         JSONAssert.assertEquals(expectedString, actualString, false);
     }
-	
-	@SmallTest
-	public void test_parseDocumentIds()
-			throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException {
+
+    @SmallTest
+    public void test_parseDocumentIds()
+            throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException {
 
         final JsonReader reader = getJsonReaderFromAssetsFile(documentIdsFile);
 
-		List<String> expectedList = new ArrayList<String>();
+        List<String> expectedList = new ArrayList<String>();
         expectedList.add("test-document_id_1");
         expectedList.add("test-document_id_2");
         expectedList.add("test-document_id_3");
-		
-		final List<String> actualList = JsonParser.documentsIdsFromJson(reader);
+
+        final List<String> actualList = JsonParser.documentsIdsFromJson(reader);
 
         assertEquals("Wrong list size", expectedList.size(), actualList.size());
-		for (int i = 0; i < actualList.size(); i++) {
-			assertEquals("Wrong list item ", actualList.get(i), (expectedList.get(i)));
-		}
-	}
+        for (int i = 0; i < actualList.size(); i++) {
+            assertEquals("Wrong list item ", actualList.get(i), (expectedList.get(i)));
+        }
+    }
 
     @SmallTest
     public void test_parseGroup()
@@ -547,7 +543,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         final UserRole expectedUserRole = getTestUserRole();
         final JsonReader reader = getJsonReaderFromAssetsFile(userRoleFile);
 
-        UserRole actualUserRole = JsonParser.userRoleFromJson(reader);
+        UserRole actualUserRole = JsonParser.groupUserRoleFromJson(reader);
 
         assertEquals("profile_id", expectedUserRole.profileId, actualUserRole.profileId);
         assertEquals("joined", expectedUserRole.joined, actualUserRole.joined);
@@ -713,12 +709,12 @@ public class JsonParserTest extends InstrumentationTestCase {
     }
 
     public String getAssetsFileAsString(AssetManager assetManager, String fileName) throws IOException {
-        StringBuilder buf=new StringBuilder();
-        InputStream json=assetManager.open(fileName);
-        BufferedReader in= new BufferedReader(new InputStreamReader(json, "UTF-8"));
+        StringBuilder buf = new StringBuilder();
+        InputStream json = assetManager.open(fileName);
+        BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
         String str;
 
-        while ((str=in.readLine()) != null) {
+        while ((str = in.readLine()) != null) {
             buf.append(str);
         }
 

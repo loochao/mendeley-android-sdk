@@ -16,12 +16,7 @@
 
         <!-- Activities needed by the SDK -->
         <activity
-            android:name="com.mendeley.sdk.activity.SignInOrSignUpActivity"
-            android:label="@string/title_activity_sign_in" >
-        </activity>
-
-        <activity
-            android:name="com.mendeley.sdk.activity.SignInActivity"
+            android:name=".ui.sign_in.SignInActivity"
             android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
     </application>

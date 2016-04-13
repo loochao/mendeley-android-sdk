@@ -13,11 +13,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.mendeley.sdk.Mendeley;
+import com.mendeley.sdk.Request;
 import com.mendeley.sdk.RequestsFactory;
 import com.mendeley.sdk.example.R;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.model.Document;
-import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 
 import java.io.BufferedInputStream;
@@ -93,7 +93,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
         if (Mendeley.getInstance().isSignedIn()) {
             setSignInStatus(SignInStatus.SIGNED_IN);
         } else {
-            Mendeley.getInstance().signIn(this, true);
+            Mendeley.getInstance().signIn(this);
             setSignInStatus(SignInStatus.SIGNING_IN);
         }
     }
@@ -178,7 +178,7 @@ public class ExampleActivity extends Activity implements View.OnClickListener, M
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (Mendeley.getInstance().onActivityResult(requestCode, resultCode, data, this)) {
+        if (Mendeley.getInstance().onActivityResult(requestCode, resultCode, this)) {
             return;
         }
 

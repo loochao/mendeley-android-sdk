@@ -105,6 +105,13 @@ public class AssertUtils {
         Assert.assertEquals(expected.lastName, actual.lastName);
     }
 
+    public static void assertNewProfile(Profile expected, Profile actual) {
+        Assert.assertEquals(expected.firstName, actual.firstName);
+        Assert.assertEquals(expected.lastName, actual.lastName);
+        Assert.assertEquals(expected.discipline.name, actual.discipline.name);
+        Assert.assertEquals(expected.academicStatus, actual.academicStatus);
+    }
+
     public static void assertReadPositions(List<ReadPosition> expected, List<ReadPosition> actual) {
         Assert.assertEquals("Number of read positions gotten", expected.size(), actual.size());
 

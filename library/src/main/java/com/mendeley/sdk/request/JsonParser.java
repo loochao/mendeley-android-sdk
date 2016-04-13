@@ -79,6 +79,9 @@ public class JsonParser {
             } else if (key.equals("verified")) {
                 builder.setVerified(reader.nextBoolean());
 
+            } else if (key.equals("marketing")) {
+                builder.setMarketing(reader.nextBoolean());
+
             } else if (key.equals("created_at")) {
                 builder.setCreatedAt(DateUtils.parseMendeleyApiTimestamp(reader.nextString()));
 
@@ -475,6 +478,22 @@ public class JsonParser {
         }
 
         return jFolder;
+    }
+
+    public static JSONObject profileToJson(Profile profile, String password) throws JSONException {
+        JSONObject jProfile = new JSONObject();
+
+        jProfile.put("first_name", profile.firstName);
+        jProfile.put("last_name", profile.lastName);
+        jProfile.put("email", profile.email);
+        jProfile.put("password", password);
+        if (profile.discipline != null) {
+            jProfile.put("discipline", profile.discipline.name);
+        }
+        jProfile.put("academic_status", profile.academicStatus);
+        jProfile.put("marketing", profile.marketing);
+
+        return jProfile;
     }
 
     public static List<Group> groupsFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
@@ -1016,19 +1035,19 @@ public class JsonParser {
         return builder.build();
     }
 
-    public static List<UserRole> userRolesFromJson(JsonReader reader) throws JSONException, IOException {
+    public static List<UserRole> groupUserRolesFromJson(JsonReader reader) throws JSONException, IOException {
         final List<UserRole> userRoles = new ArrayList<UserRole>();
         reader.beginArray();
 
         while (reader.hasNext()) {
-            userRoles.add(userRoleFromJson(reader));
+            userRoles.add(groupUserRoleFromJson(reader));
         }
 
         reader.endArray();
         return userRoles;
     }
 
-    public static UserRole userRoleFromJson(JsonReader reader) throws JSONException, IOException {
+    public static UserRole groupUserRoleFromJson(JsonReader reader) throws JSONException, IOException {
         final UserRole.Builder mendeleyUserRole = new UserRole.Builder();
         reader.beginObject();
 
@@ -1075,4 +1094,44 @@ public class JsonParser {
         return typesMap;
     }
 
+
+    public static List<String> subjectAreasFromJson(JsonReader reader) throws JSONException, IOException {
+        final List<String> subjectAreas = new ArrayList<>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            subjectAreas.add(stringValueFromJson(reader, "name"));
+        }
+        reader.endArray();
+
+        return subjectAreas;
+    }
+
+    public static List<String> userRolesFromJson(JsonReader reader) throws JSONException, IOException {
+        final List<String> subjectAreas = new ArrayList<>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            subjectAreas.add(stringValueFromJson(reader, "description"));
+        }
+        reader.endArray();
+
+        return subjectAreas;
+    }
+
+    public static String stringValueFromJson(JsonReader reader, String keyString) throws JSONException, IOException {
+        String value = null;
+        reader.beginObject();
+        while (reader.hasNext()) {
+
+            final String key = reader.nextName();
+            if (key.equals(keyString)) {
+                value = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return value;
+    }
 }

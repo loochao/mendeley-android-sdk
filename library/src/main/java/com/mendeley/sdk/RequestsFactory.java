@@ -47,6 +47,24 @@ public interface RequestsFactory {
     Request<Profile> newGetProfileRequest(String profileId);
 
     /**
+     * Obtains a {@link Request} to create a new {@link Profile}.
+     *
+     * @param profile the profile to create
+     * @param password password for the new user
+     * @return the request
+     */
+    Request<Profile> newPostProfileRequest(Profile profile, String password);
+
+
+    /**
+     * Obtains a {@link Request} to delete an existing profile
+     *
+     * @param profileId the id of the profile to delete
+     * @return the request
+     */
+    Request<Void> newDeleteProfileRequest(String profileId);
+
+    /**
      * Obtains a {@link Request} to retrieve the list of valid document types. This is, the
      * possible values for {@link Document#type}
      *
@@ -409,4 +427,17 @@ public interface RequestsFactory {
      */
     Request<ReadPosition> newPostRecentlyReadRequest(ReadPosition readPosition);
 
+    /**
+     * Obtains a {@link Request} to retrieve the list of subject areas.
+     *
+     * @return the request
+     */
+    Request<List<String>> newGetSubjectAreasRequest();
+
+    /**
+     * Obtains a {@link Request} to retrieve the list of user roles.
+     *
+     * @return the request
+     */
+    Request<List<String>> newGetUserRolesRequest();
 }
