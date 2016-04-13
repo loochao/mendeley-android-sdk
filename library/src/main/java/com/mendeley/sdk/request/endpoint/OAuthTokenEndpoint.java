@@ -3,23 +3,25 @@ package com.mendeley.sdk.request.endpoint;
 
 import android.net.Uri;
 
-import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.AuthTokenManager;
+import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.JsonParsingException;
 import com.mendeley.sdk.exceptions.MendeleyException;
-import com.mendeley.sdk.util.NetworkUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 
 /**
  * Class with the implementation of typical {@link Request}s against the /oauth/token endpoint.
@@ -58,62 +60,66 @@ public class OAuthTokenEndpoint {
 
         @Override
         public Response doRun() throws MendeleyException {
-            final String url = getUrl().toString();
-            HttpURLConnection con = null;
+            ResponseBody responseBody = null;
 
             try {
-                con = (HttpURLConnection) new URL(url).openConnection();
-                con.setRequestMethod("POST");
-                con.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                final String url = getUrl().toString();
 
-                con.setDoInput(true);
-                con.setDoOutput(true);
+                final FormBody.Builder formBodyBld = new FormBody.Builder();
+                formBodyBld.add("client_id", clientCredentials.clientId);
+                formBodyBld.add("client_secret", clientCredentials.clientSecret);
+                formBodyBld.add("grant_type", getGrantType());
+                formBodyBld.add("scope", "all");
 
                 final Map<String, String> oauthParams = new HashMap<>();
                 appendOAuthParams(oauthParams);
-
-                final Uri.Builder urlEncodedFormBld = new Uri.Builder();
-                urlEncodedFormBld.appendQueryParameter("client_id", clientCredentials.clientId);
-                urlEncodedFormBld.appendQueryParameter("client_secret", clientCredentials.clientSecret);
-                urlEncodedFormBld.appendQueryParameter("grant_type", getGrantType());
-                urlEncodedFormBld.appendQueryParameter("scope", "all");
-
                 for (final String key : oauthParams.keySet()) {
-                    urlEncodedFormBld.appendQueryParameter(key, oauthParams.get(key));
+                    formBodyBld.add(key, oauthParams.get(key));
                 }
 
-                final String body = urlEncodedFormBld.build().getEncodedQuery();
+                final RequestBody postBody  = formBodyBld.build();
 
-                //Send request
-                DataOutputStream wr = new DataOutputStream(con.getOutputStream ());
-                wr.writeBytes (body);
-                wr.flush ();
-                wr.close ();
+                okhttp3.Request okHttpRequest = new okhttp3.Request.Builder()
+                        .url(url.toString())
+                        .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                        .post(postBody)
+                        .build();
 
-                final int statusCode = con.getResponseCode();
+                final okhttp3.Response okHttpResponse = new OkHttpClient().newCall(okHttpRequest).execute();
 
-                if (statusCode != 200) {
-                    String responseBody = "";
-                    try {
-                        responseBody = NetworkUtils.readInputStream(con.getErrorStream());
-                    } catch (IOException ignored) {
-                    }
-                    throw new HttpResponseException(statusCode, con.getResponseMessage(), url, responseBody, con.getHeaderField("X-Mendeley-Trace-Id"));
+                final int responseCode = okHttpResponse.code();
+                responseBody = okHttpResponse.body();
+                if (responseCode != 200) {
+                    throw new HttpResponseException(responseCode, okHttpResponse.message(), url.toString(), responseBody.string(), okHttpResponse.header("X-Mendeley-Trace-Id"));
                 }
 
-                final String responseString = NetworkUtils.readInputStream(con.getInputStream());
-                final JSONObject jsonResponse = new JSONObject(responseString);
-                return new Response(jsonResponse, con.getHeaderField("Date"));
+                final JSONObject jsonResponse = new JSONObject(responseBody.string());
+                final Map<String, List<String>> responseHeaders = okHttpResponse.headers().toMultimap();
+                return new Response(jsonResponse, getServerDateString(responseHeaders));
 
             } catch (MendeleyException me) {
                 throw me;
             } catch (Exception e) {
                 throw new MendeleyException("Cannot obtain token", e);
             } finally {
-                if (con != null) {
-                    con.disconnect();
+                if (responseBody != null) {
+                    if (responseBody.byteStream() != null) {
+                        try {
+                            responseBody.byteStream().close();
+                        } catch (IOException ignored) {
+                        }
+                    }
+                    responseBody.close();
                 }
             }
+        }
+
+        private String getServerDateString(Map<String, List<String>> headersMap) throws IOException {
+            final List<String> dateHeaders = headersMap.get("Date");
+            if (dateHeaders != null) {
+                return headersMap.get("Date").get(0);
+            }
+            return null;
         }
 
         public abstract String getGrantType();

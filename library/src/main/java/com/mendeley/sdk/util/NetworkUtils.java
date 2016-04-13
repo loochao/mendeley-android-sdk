@@ -4,11 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Utilities for the NetworkProviders.
@@ -42,38 +37,5 @@ public class NetworkUtils {
         }
 
         return data.toString();
-    }
-
-    /**
-     * Workaround method to allow unsupported HTTP methods (ie: PATCH) requests with {@link HttpURLConnection}
-     *
-     * {@see http://stackoverflow.com/questions/15209160/how-to-set-http-request-move-using-httpurlconnection}
-     * {@see https://java.net/jira/browse/JERSEY-639}
-     *
-     * @param httpURLConnection
-     * @param method
-     */
-    public static void setRequestMethodUsingWorkaroundForJREBug(final HttpURLConnection httpURLConnection, final String method) {
-        try {
-            httpURLConnection.setRequestMethod(method);
-        } catch (final ProtocolException pe) {
-            try {
-                final Class<?> httpURLConnectionClass = httpURLConnection.getClass();
-                final Class<?> parentClass = httpURLConnectionClass.getSuperclass();
-                final Field methodField;
-                // If the implementation class is an HTTPS URL Connection, we
-                // need to go up one level higher in the hierarchy to modify the
-                // 'method' field.
-                if (parentClass == HttpsURLConnection.class) {
-                    methodField = parentClass.getSuperclass().getDeclaredField("method");
-                } else {
-                    methodField = parentClass.getDeclaredField("method");
-                }
-                methodField.setAccessible(true);
-                methodField.set(httpURLConnection, method);
-            } catch (final Exception e) {
-                throw new RuntimeException("Could not configure " + httpURLConnection + " to use " + method + " method", e);
-            }
-        }
     }
 }
