@@ -3,7 +3,7 @@ package com.mendeley.sdk.request.endpoint;
 import android.net.Uri;
 import android.util.JsonReader;
 
-import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.model.Annotation;
@@ -40,8 +40,8 @@ public class AnnotationsEndpoint {
     private static String ANNOTATIONS_CONTENT_TYPE = "application/vnd.mendeley-annotation.1+json";
 
     public static class GetAnnotationRequest extends GetAuthorizedRequest<Annotation> {
-        public GetAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-            super(Uri.parse(ANNOTATIONS_BASE_URL + "/" + annotationId), authTokenManager, appCredentials);
+        public GetAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(ANNOTATIONS_BASE_URL + "/" + annotationId), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -63,12 +63,12 @@ public class AnnotationsEndpoint {
             return params != null ? params.appendToUi(uri) : uri;
         }
 
-        public GetAnnotationsRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-            super(url, authTokenManager, appCredentials);
+        public GetAnnotationsRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(url, authTokenManager, clientCredentials);
         }
 
-        public GetAnnotationsRequest(AnnotationRequestParameters parameters, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-            this(getAnnotationsUrl(parameters), authTokenManager, appCredentials);
+        public GetAnnotationsRequest(AnnotationRequestParameters parameters, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            this(getAnnotationsUrl(parameters), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -86,8 +86,8 @@ public class AnnotationsEndpoint {
     public static class PostAnnotationRequest extends PostAuthorizedRequest<Annotation> {
         private final Annotation annotation;
 
-        public PostAnnotationRequest(Annotation annotation, AuthTokenManager authTokenManager, AppCredentials appCredentials){
-            super(Uri.parse(ANNOTATIONS_BASE_URL), authTokenManager, appCredentials);
+        public PostAnnotationRequest(Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials){
+            super(Uri.parse(ANNOTATIONS_BASE_URL), authTokenManager, clientCredentials);
             this.annotation = annotation;
         }
 
@@ -107,8 +107,8 @@ public class AnnotationsEndpoint {
     public static class PatchAnnotationRequest extends PatchAuthorizedRequest<Annotation> {
         private final Annotation annotation;
 
-        public PatchAnnotationRequest(String annotationId, Annotation annotation, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-            super(getUrl(annotationId), null, authTokenManager, appCredentials);
+        public PatchAnnotationRequest(String annotationId, Annotation annotation, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(getUrl(annotationId), null, authTokenManager, clientCredentials);
             this.annotation = annotation;
         }
 
@@ -130,8 +130,8 @@ public class AnnotationsEndpoint {
     }
 
     public static class DeleteAnnotationRequest extends DeleteAuthorizedRequest<Void> {
-        public DeleteAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-            super(Uri.parse(ANNOTATIONS_BASE_URL + "/" + annotationId), authTokenManager, appCredentials);
+        public DeleteAnnotationRequest(String annotationId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(ANNOTATIONS_BASE_URL + "/" + annotationId), authTokenManager, clientCredentials);
         }
     }
 

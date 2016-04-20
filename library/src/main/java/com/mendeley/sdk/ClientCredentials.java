@@ -8,12 +8,12 @@ package com.mendeley.sdk;
  *
  * To create your application credentials {@see http://dev.mendeley.com/myapps.html}
  */
-public class AppCredentials {
+public class ClientCredentials {
 
     public final String clientId;
     public final String clientSecret;
 
-    public AppCredentials(String clientId, String clientSecret) {
+    public ClientCredentials(String clientId, String clientSecret) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
     }

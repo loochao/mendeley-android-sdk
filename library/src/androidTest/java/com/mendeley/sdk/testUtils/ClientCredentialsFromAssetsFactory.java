@@ -2,7 +2,7 @@ package com.mendeley.sdk.testUtils;
 
 import android.content.res.AssetManager;
 
-import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.ClientCredentials;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ public class ClientCredentialsFromAssetsFactory {
     private static final String KEY_PROJECT_ID = "integration_test_project_id";
     private static final String KEY_CLIENT_SECRET = "integration_test_client_secret";
 
-    public static AppCredentials create(AssetManager assetManager) {
+    public static ClientCredentials create(AssetManager assetManager) {
         try {
             InputStream is = assetManager.open(CONFIG_FILE);
             InputStream bis = new BufferedInputStream(is);
@@ -28,7 +28,7 @@ public class ClientCredentialsFromAssetsFactory {
             final String clientId = propertyResourceBundle.getString(KEY_PROJECT_ID);
             final String clientSecret = propertyResourceBundle.getString(KEY_CLIENT_SECRET);
 
-            return new AppCredentials(clientId, clientSecret);
+            return new ClientCredentials(clientId, clientSecret);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

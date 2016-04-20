@@ -4,11 +4,13 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
-import com.mendeley.sdk.exceptions.NotSignedInException;
+import com.mendeley.sdk.request.endpoint.OAuthTokenEndpoint;
+
+import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -26,37 +28,37 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
     private final static int MIN_TOKEN_VALIDITY_SEC = 300;
 
     protected final AuthTokenManager authTokenManager;
-    protected final AppCredentials appCredentials;
+    protected final ClientCredentials clientCredentials;
 
     /**
      * Constructor
      *
      * @param url URI the request will be executed against
      * @param authTokenManager used to get the access token
-     * @param appCredentials used to refresh the access token, if needed
+     * @param clientCredentials used to refresh the access token, if needed
      */
-    public AuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
+    public AuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(url);
         this.authTokenManager = authTokenManager;
-        this.appCredentials = appCredentials;
+        this.clientCredentials = clientCredentials;
     }
 
     @Override
     public final Response doRun() throws MendeleyException {
         if (TextUtils.isEmpty(authTokenManager.getAccessToken())) {
             // Must call startSignInProcess first - caller error!
-            throw new NotSignedInException();
+            throw new MendeleyException("No access token found");
         }
 
         if (willExpireSoon()) {
-            launchRefreshTokenRequest();
+            refreshExpiredToken();
         }
         try {
             return doRunAuthorized();
         } catch (HttpResponseException e) {
             if (e.httpReturnCode == 401 && e.getMessage().contains("Token has expired")) {
                 // The refresh-token-in-advance logic did not work for some reason: force a refresh now
-                launchRefreshTokenRequest();
+                refreshExpiredToken();
                 return doRunAuthorized();
             } else {
                 throw e;
@@ -64,8 +66,9 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
         }
     }
 
-    private void launchRefreshTokenRequest() throws MendeleyException {
-        new AuthTokenRefreshRequest(authTokenManager, appCredentials).run();
+    private void refreshExpiredToken() throws MendeleyException {
+        final JSONObject serverResponse = new OAuthTokenEndpoint.RefreshTokenRequest(clientCredentials, authTokenManager.getRefreshToken()).run().resource;
+        OAuthTokenEndpoint.saveTokens(authTokenManager, serverResponse);
     }
 
     /**

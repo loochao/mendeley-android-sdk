@@ -26,9 +26,6 @@ import java.util.Date;
  */
 public interface AuthTokenManager {
 
-    String TOKENS_URL = Request.MENDELEY_API_BASE_URL + "/oauth/token";
-    String REDIRECT_URI = "http://localhost/auth_return";
-
     /**
      * @return the OAuth access token.
      */
@@ -68,4 +65,5 @@ public interface AuthTokenManager {
      * end up with an authorization error.
      */
     void clearTokens();
+
 }

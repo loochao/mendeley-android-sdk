@@ -1,16 +1,19 @@
-package com.mendeley.sdk.request;
+package com.mendeley.sdk.request.endpoint;
 
 
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.model.Profile;
+import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 
-public class AuthTokenRefreshRequestTest extends SignedInTest {
+import org.json.JSONObject;
+
+public class RefreshTokenRequestTest extends SignedInTest {
 
     @SmallTest
-    public void test_AuthTokenRefreshRequest_updatesTheAccessToken() throws Exception {
+    public void test_RefreshTokenRequest_obtainsAnUpdatedTheAccessToken() throws Exception {
 
         final Profile expected = getRequestFactory().newGetMyProfileRequest().run().resource;
 
@@ -21,9 +24,9 @@ public class AuthTokenRefreshRequestTest extends SignedInTest {
         authTokenManager.saveTokens(invalidAccessToken, authTokenManager.getRefreshToken(), authTokenManager.getTokenType(), 1000);
 
         // WHEN running the refresh token request
-        final AuthTokenRefreshRequest refreshRequest = new AuthTokenRefreshRequest(getAuthTokenManager(), getAppCredentials());
-        refreshRequest.run();
-
+        final OAuthTokenEndpoint.RefreshTokenRequest refreshRequest = new OAuthTokenEndpoint.RefreshTokenRequest(getClientCredentials(), authTokenManager.getRefreshToken());
+        final JSONObject response = refreshRequest.run().resource;
+        OAuthTokenEndpoint.saveTokens(authTokenManager, response);
 
         // THEN we have new access token
         assertNotSame("Access token updated", invalidAccessToken, authTokenManager.getAccessToken());

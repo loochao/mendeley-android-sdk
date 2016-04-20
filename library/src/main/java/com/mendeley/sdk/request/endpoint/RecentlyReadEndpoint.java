@@ -3,7 +3,7 @@ package com.mendeley.sdk.request.endpoint;
 import android.net.Uri;
 import android.util.JsonReader;
 
-import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.model.ReadPosition;
@@ -53,8 +53,8 @@ public class RecentlyReadEndpoint {
             return bld.build();
         }
 
-        public GetRecentlyReadRequest(String groupId, String fileId, int limit, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-            super(getGetRecentlyReadUrl(groupId, fileId, limit), authTokenManager, appCredentials);
+        public GetRecentlyReadRequest(String groupId, String fileId, int limit, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(getGetRecentlyReadUrl(groupId, fileId, limit), authTokenManager, clientCredentials);
         }
 
         @Override
@@ -76,8 +76,8 @@ public class RecentlyReadEndpoint {
 
         private final ReadPosition readPosition;
 
-        public PostRecentlyReadRequest(ReadPosition readPosition, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-            super(Uri.parse(RECENTLY_READ_BASE_URL), authTokenManager, appCredentials);
+        public PostRecentlyReadRequest(ReadPosition readPosition, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(RECENTLY_READ_BASE_URL), authTokenManager, clientCredentials);
             this.readPosition = readPosition;
         }
 

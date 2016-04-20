@@ -51,7 +51,7 @@ public class SignInOrSignUpActivity extends Activity implements OnClickListener 
 		int id = v.getId();
 		if (id == R.id.signinButton) {
 			Intent intent = new Intent(this, SignInActivity.class);
-			startActivityForResult(intent, SignInActivity.AUTH_REQUEST_CODE);
+			startActivityForResult(intent, SignInActivity.ACTIVITY_REQUEST_CODE);
 		} else if (id == R.id.signupButton) {
 			openUrlInBrowser(CREATE_ACCOUNT_URL);
 		}
@@ -75,7 +75,7 @@ public class SignInOrSignUpActivity extends Activity implements OnClickListener 
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
 		switch(requestCode) {
-			case SignInActivity.AUTH_REQUEST_CODE:
+			case SignInActivity.ACTIVITY_REQUEST_CODE:
 				setResult(resultCode, data);
 				if (resultCode == Activity.RESULT_OK) {
 					finish();

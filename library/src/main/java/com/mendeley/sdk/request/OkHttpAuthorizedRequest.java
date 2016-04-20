@@ -2,7 +2,7 @@ package com.mendeley.sdk.request;
 
 import android.net.Uri;
 
-import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.HttpResponseException;
@@ -40,8 +40,8 @@ public abstract class OkHttpAuthorizedRequest<ResultType> extends AuthorizedRequ
 
     private RequestProgressListener progressListener;
 
-    public OkHttpAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-        super(url, authTokenManager, appCredentials);
+    public OkHttpAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+        super(url, authTokenManager, clientCredentials);
     }
 
     @Override

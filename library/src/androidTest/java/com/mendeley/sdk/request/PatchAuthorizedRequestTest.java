@@ -28,7 +28,7 @@ public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
 
     @Override
     protected AuthorizedRequest<JSONObject> createRequest() {
-        return new PatchAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/patch"), currentDate, getAuthTokenManager(), getAppCredentials()) {
+        return new PatchAuthorizedRequest<JSONObject>(Uri.parse("https://httpbin.org/patch"), currentDate, getAuthTokenManager(), getClientCredentials()) {
 
             @Override
             protected RequestBody getBody() {

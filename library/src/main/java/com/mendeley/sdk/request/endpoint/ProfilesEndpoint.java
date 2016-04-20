@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.util.JsonReader;
 
 import com.mendeley.sdk.AuthTokenManager;
-import com.mendeley.sdk.AppCredentials;
+import com.mendeley.sdk.ClientCredentials;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
@@ -32,8 +32,8 @@ public class ProfilesEndpoint {
     }
 
     public static class GetProfileRequest extends GetAuthorizedRequest<Profile> {
-        public GetProfileRequest(String profileId, AuthTokenManager authTokenManager, AppCredentials appCredentials) {
-            super(Uri.parse(ProfilesEndpoint.PROFILES_URL + profileId), authTokenManager, appCredentials);
+        public GetProfileRequest(String profileId, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(ProfilesEndpoint.PROFILES_URL + profileId), authTokenManager, clientCredentials);
         }
 
         @Override
