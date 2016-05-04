@@ -16,7 +16,7 @@ public abstract class AuthorizedRequestTest extends SignedInTest {
     private AuthorizedRequest<JSONObject> request;
 
     @Override
-    protected void setUp() throws InterruptedException {
+    protected void setUp() throws Exception {
         super.setUp();
         request = createRequest();
     }

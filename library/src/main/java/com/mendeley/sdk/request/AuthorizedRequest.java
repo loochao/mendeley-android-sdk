@@ -10,8 +10,6 @@ import com.mendeley.sdk.exceptions.HttpResponseException;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.request.endpoint.OAuthTokenEndpoint;
 
-import org.json.JSONObject;
-
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -67,8 +65,7 @@ public abstract class AuthorizedRequest<ResultType> extends Request<ResultType> 
     }
 
     private void refreshExpiredToken() throws MendeleyException {
-        final JSONObject serverResponse = new OAuthTokenEndpoint.RefreshTokenRequest(clientCredentials, authTokenManager.getRefreshToken()).run().resource;
-        OAuthTokenEndpoint.saveTokens(authTokenManager, serverResponse);
+        new OAuthTokenEndpoint.RefreshTokenRequest(authTokenManager, clientCredentials).run();
     }
 
     /**

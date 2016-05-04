@@ -10,8 +10,6 @@ import com.mendeley.sdk.testUtils.InMemoryAuthTokenManager;
 
 import junit.framework.Assert;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 
 
@@ -31,15 +29,15 @@ public class AccessTokenWithClientCredentialsRequestTest extends AndroidTestCase
     }
 
     @SmallTest
-    public void test_AccessTokenWithClientCredentialsRequestTest_obtainsAnAccessToken() throws Exception {
+    public void test_run_obtainsAnAccessToken() throws Exception {
 
-        // WHEN running the  request
-        final OAuthTokenEndpoint.AccessTokenWithClientCredentialsRequest request = new OAuthTokenEndpoint.AccessTokenWithClientCredentialsRequest(clientCredentials);
-        final JSONObject response = request.run().resource;
+        // GIVEN the request
+        final OAuthTokenEndpoint.AccessTokenWithClientCredentialsRequest request = new OAuthTokenEndpoint.AccessTokenWithClientCredentialsRequest(authTokenManager, clientCredentials);
+
+        // WHEN running it
+        request.run();
 
         // THEN we have an access token that lets us perform non-user-related requests
-        OAuthTokenEndpoint.saveTokens(authTokenManager, response);
-
         final Map<String, String> resource = new DocumentTypesEndpoint.GetDocumentTypesRequest(authTokenManager, clientCredentials).run().resource;
         Assert.assertNotNull("Empty response", resource);
     }

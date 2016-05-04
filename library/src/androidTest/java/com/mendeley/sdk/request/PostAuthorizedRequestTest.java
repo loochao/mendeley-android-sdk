@@ -18,7 +18,7 @@ public class PostAuthorizedRequestTest extends AuthorizedRequestTest {
     private String postedBody;
 
     @Override
-    protected void setUp() throws InterruptedException {
+    protected void setUp() throws Exception {
         super.setUp();
         postedBody = "the posted body";
     }

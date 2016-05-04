@@ -7,10 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.mendeley.sdk.activity.SignInActivity;
-import com.mendeley.sdk.activity.SignInOrSignUpActivity;
 import com.mendeley.sdk.model.Annotation;
 import com.mendeley.sdk.model.Document;
 import com.mendeley.sdk.model.File;
@@ -26,12 +23,12 @@ import com.mendeley.sdk.request.endpoint.DocumentTypesEndpoint;
 import com.mendeley.sdk.request.endpoint.FilesEndpoint;
 import com.mendeley.sdk.request.endpoint.FoldersEndpoint;
 import com.mendeley.sdk.request.endpoint.GroupsEndpoint;
-import com.mendeley.sdk.request.endpoint.OAuthTokenEndpoint;
 import com.mendeley.sdk.request.endpoint.ProfilesEndpoint;
 import com.mendeley.sdk.request.endpoint.RecentlyReadEndpoint;
+import com.mendeley.sdk.request.endpoint.SubjectAreasEndpoint;
 import com.mendeley.sdk.request.endpoint.TrashEndpoint;
-
-import org.json.JSONObject;
+import com.mendeley.sdk.request.endpoint.UserRolesEndpoint;
+import com.mendeley.sdk.ui.sign_in.SignInActivity;
 
 import java.io.InputStream;
 import java.util.Calendar;
@@ -68,7 +65,6 @@ import java.util.Map;
  */
 public class Mendeley {
 
-    private static final String TAG = Mendeley.class.getSimpleName();
     private static Mendeley instance;
 
     private ClientCredentials clientCredentials;
@@ -98,7 +94,7 @@ public class Mendeley {
      */
     public final void init(Context context, String appId, String appSecret) {
         this.clientCredentials = new ClientCredentials(appId, appSecret);
-        this.authTokenManager = new SharedPreferencesAuthTokenManager(context.getSharedPreferences(SharedPreferencesAuthTokenManager.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE));
+        this.authTokenManager = SharedPreferencesAuthTokenManager.obtain(context);
         this.requestsFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
     }
 
@@ -119,14 +115,11 @@ public class Mendeley {
      *
      * @param activity used for creating the sign in @{Activity}. The SDK won't hold any reference to this,
      *                 so there is no risk of leaking it.
-     * @param showSignUpScreen whether or not to show the screen with UI to create a new account before the sign-in screen
      */
-    public final void signIn(Activity activity, boolean showSignUpScreen) {
+    public final void signIn(Activity activity) {
         assertInitialised();
 
-        final Class<? extends Activity> activityClass = showSignUpScreen ? SignInOrSignUpActivity.class : SignInActivity.class;
-        final Intent intent = new Intent(activity, activityClass);
-        activity.startActivityForResult(intent, SignInActivity.ACTIVITY_REQUEST_CODE);
+        activity.startActivityForResult(new Intent(activity, SignInActivity.class), SignInActivity.REQUEST_CODE);
     }
 
 
@@ -155,40 +148,27 @@ public class Mendeley {
      *
      * @param requestCode the requestCode received in the onActivityResult of your app
      * @param resultCode the resultCode received in the onActivityResult of your app
-     * @param data the data received in the onActivityResult of your app
      * @param signInCallback a callback letting client code know the outcome of the sign in attempt
      *
      * @return true if the result relates to a sign in attempt and has been consumed by the Mendeley SDK
      */
-    public final boolean onActivityResult(int requestCode, int resultCode, Intent data, SignInCallback signInCallback) {
+    public final boolean onActivityResult(int requestCode, int resultCode, SignInCallback signInCallback) {
         assertInitialised();
 
         switch (requestCode) {
-            case SignInActivity.ACTIVITY_REQUEST_CODE:
-                onLoginActivityResult(resultCode, data, signInCallback);
+            case SignInActivity.REQUEST_CODE:
+                onLoginActivityResult(resultCode, signInCallback);
                 return true;
             default:
                 return false;
         }
     }
 
-    private void onLoginActivityResult(int resultCode, Intent data, SignInCallback signInCallback) {
-        if (resultCode == Activity.RESULT_OK && onJsonStringResult(data.getStringExtra(SignInActivity.EXTRA_JSON_TOKENS))) {
+    private void onLoginActivityResult(int resultCode, SignInCallback signInCallback) {
+        if (resultCode == Activity.RESULT_OK) {
             signInCallback.onSignedIn();
         } else {
             signInCallback.onSignInFailure();
-        }
-    }
-
-    private boolean onJsonStringResult(String jsonTokenString) {
-        try {
-            JSONObject tokenObject = new JSONObject(jsonTokenString);
-            OAuthTokenEndpoint.saveTokens(authTokenManager, tokenObject);
-            return true;
-        } catch (Exception e) {
-            // If the client credentials are incorrect, the tokenString contains an error message
-            Log.e(TAG, "Could not parse the json response with the auth tokens: " + jsonTokenString, e);
-            return false;
         }
     }
 
@@ -201,8 +181,11 @@ public class Mendeley {
      */
     public final boolean isSignedIn() {
         assertInitialised();
+        return isValidToken(authTokenManager.getAccessToken()) && isValidToken(authTokenManager.getRefreshToken());
+    }
 
-        return !TextUtils.isEmpty(authTokenManager.getAccessToken());
+    private boolean isValidToken(String token) {
+        return !TextUtils.isEmpty(token) && !"null".equals(token);
     }
 
     /**
@@ -270,6 +253,16 @@ public class Mendeley {
         @Override
         public Request<Profile> newGetProfileRequest(final String profileId) {
             return new ProfilesEndpoint.GetProfileRequest(profileId, authTokenManager, clientCredentials);
+        }
+
+        @Override
+        public Request<Profile> newPostProfileRequest(Profile profile, String password) {
+            return new ProfilesEndpoint.PostProfileRequest(authTokenManager, clientCredentials, profile, password);
+        }
+
+        @Override
+        public Request<Void> newDeleteProfileRequest(String profileId) {
+            return new ProfilesEndpoint.DeleteProfileRequest(profileId, authTokenManager, clientCredentials);
         }
 
         @Override
@@ -478,6 +471,16 @@ public class Mendeley {
         public Request<ReadPosition> newPostRecentlyReadRequest(ReadPosition readPosition) {
             return new RecentlyReadEndpoint.PostRecentlyReadRequest(readPosition, authTokenManager, clientCredentials);
         }
+
+        @Override
+        public Request<List<String>> newGetSubjectAreasRequest() {
+            return new SubjectAreasEndpoint.GetSubjectAreasRequest(authTokenManager, clientCredentials);
+        }
+
+        @Override
+        public Request<List<String>> newGetUserRolesRequest() {
+            return new UserRolesEndpoint.GetUserRolesRequest(authTokenManager, clientCredentials);
+        }
     }
 
 
@@ -500,6 +503,11 @@ public class Mendeley {
         private static final String REFRESH_TOKEN_KEY = "refreshToken";
         private static final String EXPIRES_AT_KEY = "expiresAtDate";
         private static final String TOKEN_TYPE_KEY = "tokenType";
+
+        public static SharedPreferencesAuthTokenManager obtain(Context context) {
+            return new SharedPreferencesAuthTokenManager(context.getSharedPreferences(SharedPreferencesAuthTokenManager.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE));
+        }
+
 
         private final SharedPreferences preferences;
 
@@ -557,5 +565,4 @@ public class Mendeley {
             return c.getTime();
         }
     }
-
 }

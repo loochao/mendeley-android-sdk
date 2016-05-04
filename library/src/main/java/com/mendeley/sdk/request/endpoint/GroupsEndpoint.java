@@ -98,7 +98,7 @@ public class GroupsEndpoint {
         @Override
         protected List<UserRole> manageResponse(InputStream is) throws JSONException, IOException {
             final JsonReader reader = new JsonReader(new InputStreamReader(new BufferedInputStream(is)));
-            return JsonParser.userRolesFromJson(reader);
+            return JsonParser.groupUserRolesFromJson(reader);
         }
 
         @Override

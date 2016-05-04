@@ -21,6 +21,7 @@ public class Profile {
 	public final String researchInterests;
 	public final String academicStatus;
 	public final Boolean verified;
+	public final Boolean marketing;
 	public final Date createdAt;
 	
 	public final Discipline discipline;
@@ -41,6 +42,7 @@ public class Profile {
 			String researchInterests,
 			String academicStatus,
 			Boolean verified,
+			Boolean marketing,
 			Date createdAt,
 			Discipline discipline,
 			Photo photo,
@@ -58,6 +60,7 @@ public class Profile {
 		this.researchInterests = researchInterests;
 		this.academicStatus = academicStatus;
 		this.verified = verified;
+		this.marketing = marketing;
 		this.createdAt = createdAt;
 		this.discipline = discipline;
 		this.photo = photo;
@@ -90,7 +93,8 @@ public class Profile {
 				", researchInterests: " + researchInterests + 
 				", academicStatus: " + academicStatus + 
 				", verified: " + verified + 
-				", createdAt: " + createdAt + 
+				", marketing: " + marketing +
+				", createdAt: " + createdAt +
 				", discipline: " + discipline + 
 				", photo: " + photo +
 				", employment: " + employmentString +
@@ -109,6 +113,7 @@ public class Profile {
 		private String researchInterests;
 		private String academicStatus;
 		private Boolean verified;
+		private Boolean marketing;
 		private Date createdAt;
 		private Discipline discipline;
 		private Photo photo;		
@@ -129,6 +134,7 @@ public class Profile {
 			this.researchInterests = from.researchInterests;
 			this.academicStatus = from.academicStatus;
 			this.verified = from.verified;
+			this.marketing = from.marketing;
 			this.createdAt = from.createdAt;
 			this.discipline = from.discipline;
 			this.photo = from.photo;
@@ -190,6 +196,11 @@ public class Profile {
 			this.verified = verified;
 			return this;
 		}
+
+		public Builder setMarketing(Boolean marketing) {
+			this.marketing = marketing;
+			return this;
+		}
 		
 		public Builder setCreatedAt(Date createdAt) {
 			this.createdAt = createdAt;
@@ -229,6 +240,7 @@ public class Profile {
 					researchInterests,
 					academicStatus,
 					verified,
+					marketing,
 					createdAt,
 					discipline,
 					photo,

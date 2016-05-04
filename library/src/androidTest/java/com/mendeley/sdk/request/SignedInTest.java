@@ -5,13 +5,14 @@ import android.test.AndroidTestCase;
 
 import com.mendeley.sdk.AuthTokenManager;
 import com.mendeley.sdk.ClientCredentials;
+import com.mendeley.sdk.testUtils.InMemoryAuthTokenManager;
 import com.mendeley.sdk.Mendeley;
 import com.mendeley.sdk.RequestsFactory;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
+import com.mendeley.sdk.request.endpoint.OAuthTokenEndpoint;
 import com.mendeley.sdk.testUtils.ClientCredentialsFromAssetsFactory;
-import com.mendeley.sdk.testUtils.InMemoryAuthTokenManager;
 import com.mendeley.sdk.testUtils.TestAccountSetupUtils;
-import com.mendeley.sdk.testUtils.UsernameAndPasswordSessionManagerFactory;
+import com.mendeley.sdk.testUtils.EmailAndPasswordFromAssetsFactory;
 
 import java.util.Date;
 import java.util.Random;
@@ -26,13 +27,16 @@ public abstract class SignedInTest extends AndroidTestCase {
     private Random random;
 
     @Override
-    protected void setUp() throws InterruptedException {
+    protected void setUp() throws Exception {
         random = new Random();
 
         final AssetManager assetManager =  getContext().getAssets();
         clientCredentials = ClientCredentialsFromAssetsFactory.create(assetManager);
         authTokenManager = new InMemoryAuthTokenManager();
-        UsernameAndPasswordSessionManagerFactory.create(assetManager, clientCredentials, authTokenManager).signIn();
+
+        // sign in
+        final EmailAndPasswordFromAssetsFactory.UsernameAndPassword usernameAndPassword = EmailAndPasswordFromAssetsFactory.create(assetManager);
+        new OAuthTokenEndpoint.AccessTokenWithPasswordRequest(authTokenManager, clientCredentials, usernameAndPassword.username, usernameAndPassword.password).run();
 
         requestsFactory = new Mendeley.RequestFactoryImpl(authTokenManager, clientCredentials);
         testAccountSetupUtils = new TestAccountSetupUtils(authTokenManager, requestsFactory);

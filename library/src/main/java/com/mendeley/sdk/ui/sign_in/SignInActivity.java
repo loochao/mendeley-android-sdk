@@ -1,4 +1,4 @@
-package com.mendeley.sdk.activity;
+package com.mendeley.sdk.ui.sign_in;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,8 +18,6 @@ import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.MendeleyException;
 import com.mendeley.sdk.request.endpoint.OAuthTokenEndpoint;
 
-import org.json.JSONObject;
-
 import java.util.Date;
 
 /**
@@ -29,12 +27,13 @@ import java.util.Date;
  */
 public class SignInActivity extends Activity {
 
-	public final static int ACTIVITY_REQUEST_CODE = 31231;
-	public static final String EXTRA_JSON_TOKENS = "returned_json_tokens";
-	private static final double SMALL_SCREEN_SIZE = 6.0;
+    //  Request code used both by this activity.
+    public final static int REQUEST_CODE = 31231;
+
+    private static final double SMALL_SCREEN_SIZE = 6.0;
 	private static final String FORGOT_PASSWORD_URL = "http://www.mendeley.com/forgot/";
 
-    private Mendeley mendeley;
+	private Mendeley mendeley;
 	private WebView webView;
 
     @Override
@@ -46,13 +45,13 @@ public class SignInActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         if (getScreenSize() <= SMALL_SCREEN_SIZE) {
-			super.setTheme(R.style.AppTheme);
+			super.setTheme(R.style.MendeleySDKTheme);
 
         } else {
 			setFinishOnTouchOutside(false);
 		}
 
-        setContentView(R.layout.dialog_layout);
+        setContentView(R.layout.activity_sign_in);
 		webView = (WebView) findViewById(R.id.dialogWebView);
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setVerticalScrollBarEnabled(true);
@@ -149,26 +148,28 @@ public class SignInActivity extends Activity {
     }
 
 	private void obtainAccessTokenFromAuthorizationCode(String authorizationCode) {
-		final OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest request = new OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest(mendeley.getClientCredentials(), authorizationCode);
-		request.runAsync(new Request.RequestCallback<JSONObject>() {
+		final OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest request = new OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest(mendeley.getAuthTokenManager(), mendeley.getClientCredentials(), authorizationCode);
+		request.runAsync(new Request.RequestCallback<Void>() {
 			@Override
-			public void onSuccess(JSONObject jsonResponse, Uri next, Date serverDate) {
-				setResult(Activity.RESULT_OK, new Intent().putExtra(SignInActivity.EXTRA_JSON_TOKENS, jsonResponse.toString()));
-				finish();
+			public void onSuccess(Void aVoid, Uri next, Date serverDate) {
+				setResultAndFinish(Activity.RESULT_OK);
 			}
 
 			@Override
 			public void onFailure(MendeleyException mendeleyException) {
                 Log.e(SignInActivity.class.getSimpleName(), "Error obtaining access token", mendeleyException);
-				setResult(Activity.RESULT_CANCELED, new Intent());
-				finish();
+				setResultAndFinish(Activity.RESULT_CANCELED);
 			}
 
 			@Override
 			public void onCancelled() {
-				setResult(Activity.RESULT_CANCELED, new Intent());
-				finish();
+				setResultAndFinish(Activity.RESULT_CANCELED);
 			}
 		});
+	}
+
+	private void setResultAndFinish(int result) {
+		setResult(result);
+		finish();
 	}
 }

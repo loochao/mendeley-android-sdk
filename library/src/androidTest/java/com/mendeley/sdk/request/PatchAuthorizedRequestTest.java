@@ -21,7 +21,7 @@ public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
     private final Date currentDate = new Date(System.currentTimeMillis());
 
     @Override
-    protected void setUp() throws InterruptedException {
+    protected void setUp() throws Exception {
         super.setUp();
         patchedBody = "the patched body";
     }

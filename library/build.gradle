@@ -1,10 +1,7 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-}
-
-dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.1.2'
 
     // Dependencies of the unit tests
