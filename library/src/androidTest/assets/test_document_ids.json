@@ -1,0 +1,12 @@
+[
+  {
+    "id": "test-document_id_1"
+  },
+  {
+    "id": "test-document_id_2"
+  },
+  {
+    "id": "test-document_id_3",
+    "unexpected_attribute": "void"
+  }
+]

@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.mendeley.api.SignInActivity" >
+    tools:context="com.mendeley.sdk.SignInActivity" >
 
     <item
         android:id="@+id/action_settings"

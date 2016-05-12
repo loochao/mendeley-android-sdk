@@ -1,10 +1,15 @@
-# Android Studio
+I# Android Studio
 *.iml
 .idea/
 
 # Credentials files
+library/src/productionDebug/assets/config.properties
+library/src/stagingDebug/assets/config.properties
+
 example/src/main/assets/config.properties
-library/src/debug/assets/config.properties
+example/src/debug/assets/config.properties
+example/src/productionDebug/config.properties
+example/src/stagingDebug/config.properties
 
 # Files for the Dalvik VM
 *.dex

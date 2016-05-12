@@ -1,0 +1,8 @@
+# This values are used by the integration tests for signing the test user in
+# Rename this to config.properties and paste here your configuration
+
+integration_test_username=PASTE_VALUE_HERE
+integration_test_password=PASTE_VALUE_HERE
+integration_test_project_id=PASTE_VALUE_HERE
+integration_test_client_secret=PASTE_VALUE_HERE
+
