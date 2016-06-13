@@ -440,4 +440,11 @@ public interface RequestsFactory {
      * @return the request
      */
     Request<List<String>> newGetUserRolesRequest();
+
+    /**
+     * Obtains a {@link Document} if found in the catalog with the given catalog id
+     *
+     * @return the request
+     */
+    Request<List<Document>> newGetCatalogDocument(String identifier, String value);
 }

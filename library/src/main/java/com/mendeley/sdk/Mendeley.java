@@ -17,6 +17,7 @@ import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
 import com.mendeley.sdk.model.UserRole;
 import com.mendeley.sdk.request.endpoint.AnnotationsEndpoint;
+import com.mendeley.sdk.request.endpoint.CatalogEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentIdentifiersEndpoint;
 import com.mendeley.sdk.request.endpoint.DocumentTypesEndpoint;
@@ -480,6 +481,11 @@ public class Mendeley {
         @Override
         public Request<List<String>> newGetUserRolesRequest() {
             return new UserRolesEndpoint.GetUserRolesRequest(authTokenManager, clientCredentials);
+        }
+
+        @Override
+        public Request<List<Document>> newGetCatalogDocument(String identifier, String value) {
+            return new CatalogEndpoint.GetCatalogDocumentRequest(identifier, value, authTokenManager, clientCredentials);
         }
     }
 
