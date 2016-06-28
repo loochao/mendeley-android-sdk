@@ -3,6 +3,7 @@ package com.mendeley.sdk.request;
 import android.graphics.Color;
 import android.util.JsonReader;
 
+import com.mendeley.sdk.model.AlternativeName;
 import com.mendeley.sdk.model.Annotation;
 import com.mendeley.sdk.model.Discipline;
 import com.mendeley.sdk.model.Document;
@@ -11,6 +12,7 @@ import com.mendeley.sdk.model.Employment;
 import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
+import com.mendeley.sdk.model.Institution;
 import com.mendeley.sdk.model.Person;
 import com.mendeley.sdk.model.Photo;
 import com.mendeley.sdk.model.Point;
@@ -97,7 +99,13 @@ public class JsonParser {
             } else if (key.equals("employment")) {
                 builder.setEmployment(employmentsFromJson(reader));
 
-            } else {
+            } else if (key.equals("institution")) {
+                builder.setInstitution(reader.nextString());
+
+            } else if (key.equals("institution_details")) {
+                builder.setInstitutionDetails(InstitutionFromJson(reader));
+
+            }else {
                 reader.skipValue();
             }
         }
@@ -492,8 +500,48 @@ public class JsonParser {
         }
         jProfile.put("academic_status", profile.academicStatus);
         jProfile.put("marketing", profile.marketing);
+        jProfile.put("institution", profile.institution);
+
+        if (profile.institutionDetails != null) {
+            jProfile.put("institution_details", institutionDetailsToJson(profile.institutionDetails));
+        }
 
         return jProfile;
+    }
+
+    private static JSONObject institutionDetailsToJson(Institution institutionDetails) throws JSONException {
+        JSONObject jInstitutionDetails = new JSONObject();
+
+        jInstitutionDetails.put("scival_id", institutionDetails.scivalId);
+        jInstitutionDetails.put("id", institutionDetails.id);
+        jInstitutionDetails.put("name", institutionDetails.name);
+        jInstitutionDetails.put("city", institutionDetails.city);
+        jInstitutionDetails.put("state", institutionDetails.state);
+        jInstitutionDetails.put("country", institutionDetails.country);
+        jInstitutionDetails.put("parent_id", institutionDetails.parentId);
+        if (!institutionDetails.urls.isNull()) {
+            JSONArray urls = new JSONArray();
+            for (int i = 0; i < institutionDetails.urls.size(); i++) {
+                urls.put(i, institutionDetails.urls.get(i));
+            }
+            jInstitutionDetails.put("urls", urls);
+        }
+        jInstitutionDetails.put("profile_url", institutionDetails.profilerUrl);
+        if (!institutionDetails.altNames.isNull()) {
+            JSONArray altNames = new JSONArray();
+            for (int i = 0; i < institutionDetails.altNames.size(); i++) {
+                altNames.put(i, alternativeNameToJson(institutionDetails.altNames.get(i)));
+            }
+            jInstitutionDetails.put("urls", altNames);
+        }
+        return jInstitutionDetails;
+    }
+
+    private static JSONObject alternativeNameToJson(AlternativeName alternativeName) throws JSONException {
+        JSONObject jAlternativeName = new JSONObject();
+        jAlternativeName.put("name", alternativeName.name);
+
+        return jAlternativeName;
     }
 
     public static List<Group> groupsFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
@@ -901,6 +949,35 @@ public class JsonParser {
         reader.endObject();
     }
 
+    private static List<AlternativeName> alternativeNamesFromJson(JsonReader reader) throws IOException, JSONException, ParseException {
+        final List<AlternativeName> list = new LinkedList<>();
+        reader.beginArray();
+
+        while (reader.hasNext()) {
+            list.add(alternativeNameFromJson(reader));
+        }
+
+        reader.endArray();
+        return list;
+    }
+
+    private static AlternativeName alternativeNameFromJson(JsonReader reader) throws IOException {
+        final AlternativeName alternativeName = new AlternativeName();
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if ("name".equals(key)) {
+                alternativeName.name = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return alternativeName;
+    }
+
     private static Discipline disciplineFromJson(JsonReader reader) throws IOException {
         final Discipline discipline = new Discipline();
         reader.beginObject();
@@ -985,6 +1062,53 @@ public class JsonParser {
 
             } else if (key.equals("is_main_employment")) {
                 builder.setIsMainEmployment(reader.nextBoolean());
+
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return builder.build();
+    }
+
+    private static Institution InstitutionFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+        final Institution.Builder builder = new Institution.Builder();
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+
+            final String key = reader.nextName();
+
+            if (key.equals("scival_id")) {
+                builder.setScivalId(reader.nextInt());
+
+            } else if (key.equals("id")) {
+                builder.setId(reader.nextString());
+
+            } else if (key.equals("name")) {
+                builder.setName(reader.nextString());
+
+            } else if (key.equals("city")) {
+                builder.setCity(reader.nextString());
+
+            } else if (key.equals("state")) {
+                builder.setState(reader.nextString());
+
+            } else if (key.equals("country")) {
+                builder.setCountry(reader.nextString());
+
+            } else if (key.equals("parent_id")) {
+                builder.setParentId(reader.nextString());
+
+            } else if (key.equals("urls")) {
+                builder.setUrls(stringListFromJson(reader));
+
+            } else if (key.equals("profile_url")) {
+                builder.setProfilerUrl(reader.nextString());
+
+            } else if (key.equals("alt_names")) {
+                builder.setAltNames(alternativeNamesFromJson(reader));
 
             } else {
                 reader.skipValue();

@@ -23,12 +23,14 @@ public class Profile {
 	public final Boolean verified;
 	public final Boolean marketing;
 	public final Date createdAt;
-	
+
 	public final Discipline discipline;
 	public final Photo photo;
 	
 	public final List<Education> education;
 	public final List<Employment> employment;
+	public final String institution;
+	public final Institution institutionDetails;
 	
 	public Profile(
 			String id,
@@ -47,7 +49,9 @@ public class Profile {
 			Discipline discipline,
 			Photo photo,
 			List<Education> education,
-			List<Employment> employment) {
+			List<Employment> employment,
+			String institution,
+			Institution institutionDetails ) {
 
 		this.id = id;
 		this.displayName = displayName;
@@ -66,6 +70,8 @@ public class Profile {
 		this.photo = photo;
 		this.education = education;
 		this.employment = employment;
+		this.institution = institution;
+		this.institutionDetails = institutionDetails;
 	}
 	
 	@Override
@@ -119,7 +125,9 @@ public class Profile {
 		private Photo photo;		
 		private List<Education> education;
 		private List<Employment> employment;
-		
+		private String institution;
+		private Institution institutionDetails;
+
 		public Builder() {}
 
 		public Builder(Profile from) {
@@ -140,6 +148,8 @@ public class Profile {
 			this.photo = from.photo;
 			this.education = from.education==null?new ArrayList<Education>():from.education;
 			this.employment = from.employment==null?new ArrayList<Employment>():from.employment;
+			this.institution = from.institution;
+			this.institutionDetails = from.institutionDetails;
 		}
 		
 		public Builder setId(String id) {
@@ -225,7 +235,17 @@ public class Profile {
 		public Builder setEmployment(List<Employment> employment) {
 			this.employment = employment;
 			return this;
-		}		
+		}
+
+		public Builder setInstitution(String institution) {
+			this.institution = institution;
+			return this;
+		}
+
+		public Builder setInstitutionDetails(Institution institutionDetails) {
+			this.institutionDetails = institutionDetails;
+			return this;
+		}
 
 		public Profile build() {
 			return new Profile(
@@ -245,7 +265,9 @@ public class Profile {
 					discipline,
 					photo,
 					education,
-					employment);
+					employment,
+					institution,
+					institutionDetails);
 		}
 	}
 }
