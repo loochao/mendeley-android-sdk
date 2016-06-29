@@ -34,6 +34,22 @@ public class ProfileRequestTest extends SignedInTest {
         AssertUtils.assertProfile(expected, actual);
     }
 
+    public void test_patchMeProfile_patchingAndReturningTheUpdatedProfile() throws Exception {
+        // GIVEN the user profile on the server
+        final Profile originalProfile = createTestProfile();
+
+        // WHEN updating the profile
+        final Profile expected = new Profile.Builder(originalProfile).setFirstName("Alfred").setLastName("Schnittke").setInstitution("Moscow Conservatory").build();
+        getRequestFactory().newPatchMeProfileRequest(expected).run();
+
+        // WHEN getting the profile
+        final Profile actual = getRequestFactory().newGetMyProfileRequest().run().resource;
+
+
+        // THEN we have the expected profile
+        AssertUtils.assertProfile(expected, actual);
+    }
+
     /**
      * Cannot run this test as delete /profiles is not available on staging at the moment
      */

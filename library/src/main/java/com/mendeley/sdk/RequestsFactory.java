@@ -39,6 +39,14 @@ public interface RequestsFactory {
     Request<Profile> newGetMyProfileRequest();
 
     /**
+     * Obtains a {@link Request} to patch the {@link Profile} of the signed in user.
+     *
+     * @param profile the profile to patch
+     * @return the request
+     */
+    Request<Profile> newPatchMeProfileRequest(Profile profile);
+
+    /**
      * Obtains a {@link Request} to retrieve the {@link Profile} of a user given the id.
      *
      * @param profileId id of the profile to get

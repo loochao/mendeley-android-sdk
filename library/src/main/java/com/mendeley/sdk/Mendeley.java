@@ -252,6 +252,11 @@ public class Mendeley {
         }
 
         @Override
+        public Request<Profile> newPatchMeProfileRequest(Profile profile) {
+            return new ProfilesEndpoint.PatchMeProfileRequest(profile, authTokenManager, clientCredentials);
+        }
+
+        @Override
         public Request<Profile> newGetProfileRequest(final String profileId) {
             return new ProfilesEndpoint.GetProfileRequest(profileId, authTokenManager, clientCredentials);
         }

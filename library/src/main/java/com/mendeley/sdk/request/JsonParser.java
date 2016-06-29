@@ -488,13 +488,19 @@ public class JsonParser {
         return jFolder;
     }
 
+    public static JSONObject profileToJson(Profile profile) throws JSONException {
+        return profileToJson(profile, null);
+    }
+
     public static JSONObject profileToJson(Profile profile, String password) throws JSONException {
         JSONObject jProfile = new JSONObject();
 
         jProfile.put("first_name", profile.firstName);
         jProfile.put("last_name", profile.lastName);
         jProfile.put("email", profile.email);
-        jProfile.put("password", password);
+        if (password != null) {
+            jProfile.put("password", password);
+        }
         if (profile.discipline != null) {
             jProfile.put("discipline", profile.discipline.name);
         }
