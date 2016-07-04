@@ -110,21 +110,17 @@ public class SignInActivity extends Activity {
     	@Override
     	public boolean shouldOverrideUrlLoading (WebView view, String url) {
 
+			if (url.startsWith(OAuthTokenEndpoint.REDIRECT_URI)) {
+				onAboutToLoadRedirectionUrl(url);
+				return true;
+			}
+
     		if (url.equals(FORGOT_PASSWORD_URL)) {
     			openUrlInBrowser(url);
 				return true;
     		}
 
-			String authorizationCode = null;
-			int index = url.indexOf("code=");
-	        if (index != -1) {
-	        	index += 5;
-	        	authorizationCode = url.substring(index);
-	        }
-
-			obtainAccessTokenFromAuthorizationCode(authorizationCode);
-
-			return true;
+			return false;
     	}
 
 	}
@@ -139,13 +135,24 @@ public class SignInActivity extends Activity {
     }
 
    private Uri getOauth2URL(ClientCredentials clientCredentials) {
-        return Uri.parse(OAuthTokenEndpoint.OAUTH2_URL).buildUpon()
+        return Uri.parse(OAuthTokenEndpoint.AUTHORIZATION_URL).buildUpon()
                 .appendQueryParameter("grant_type", "authorization_code")
                 .appendQueryParameter("scope", "all")
                 .appendQueryParameter("response_type", "code")
                 .appendQueryParameter("client_id", clientCredentials.clientId)
                 .build();
     }
+
+	private void onAboutToLoadRedirectionUrl(String url) {
+		String authorizationCode = null;
+		int index = url.indexOf("code=");
+		if (index != -1) {
+			index += 5;
+			authorizationCode = url.substring(index);
+		}
+
+		obtainAccessTokenFromAuthorizationCode(authorizationCode);
+	}
 
 	private void obtainAccessTokenFromAuthorizationCode(String authorizationCode) {
 		final OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest request = new OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest(mendeley.getAuthTokenManager(), mendeley.getClientCredentials(), authorizationCode);
