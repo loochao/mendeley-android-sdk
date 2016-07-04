@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -36,7 +37,7 @@ public class SignInActivity extends Activity {
 	private Mendeley mendeley;
 	private WebView webView;
 
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -64,6 +65,8 @@ public class SignInActivity extends Activity {
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setUserAgentString("Android " + getPackageName());
 		webView.setWebViewClient(new MendeleyWebViewClient());
+
+		CookieManager.getInstance().setAcceptCookie(true);
 
 		if (savedInstanceState != null) {
 			webView.restoreState(savedInstanceState);
@@ -143,23 +146,28 @@ public class SignInActivity extends Activity {
                 .build();
     }
 
-	private void onAboutToLoadRedirectionUrl(String url) {
+	private void onAboutToLoadRedirectionUrl(String redirectUrl) {
+		// after the POST against /oauth/authorize the server should have set the msso cookie
+		final String mssoCookie = getCookie(Request.MENDELEY_API_BASE_URL,"msso");
+
+		// extract the authorization code from the redirect url and get the access code
 		String authorizationCode = null;
-		int index = url.indexOf("code=");
+		int index = redirectUrl.indexOf("code=");
 		if (index != -1) {
 			index += 5;
-			authorizationCode = url.substring(index);
+			authorizationCode = redirectUrl.substring(index);
 		}
 
-		obtainAccessTokenFromAuthorizationCode(authorizationCode);
+		obtainAccessTokenFromAuthorizationCode(authorizationCode, mssoCookie);
 	}
 
-	private void obtainAccessTokenFromAuthorizationCode(String authorizationCode) {
+	private void obtainAccessTokenFromAuthorizationCode(final String authorizationCode, final String mssoCookie) {
 		final OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest request = new OAuthTokenEndpoint.AccessTokenWithAuthorizationCodeRequest(mendeley.getAuthTokenManager(), mendeley.getClientCredentials(), authorizationCode);
 		request.runAsync(new Request.RequestCallback<Void>() {
 			@Override
 			public void onSuccess(Void aVoid, Uri next, Date serverDate) {
 				setResultAndFinish(Activity.RESULT_OK);
+				mendeley.getMssoCookieManager().saveMSSOCookieValue(mssoCookie);
 			}
 
 			@Override
@@ -178,5 +186,20 @@ public class SignInActivity extends Activity {
 	private void setResultAndFinish(int result) {
 		setResult(result);
 		finish();
+	}
+
+	private String getCookie(String siteName,String CookieName) {
+		String CookieValue = null;
+
+		CookieManager cookieManager = CookieManager.getInstance();
+		String cookies = cookieManager.getCookie(siteName);
+		String[] temp=cookies.split(";");
+		for (String ar1 : temp ){
+			if(ar1.contains(CookieName)){
+				String[] temp1=ar1.split("=");
+				CookieValue = temp1[1];
+			}
+		}
+		return CookieValue;
 	}
 }

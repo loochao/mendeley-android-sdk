@@ -30,6 +30,7 @@ import com.mendeley.sdk.request.endpoint.SubjectAreasEndpoint;
 import com.mendeley.sdk.request.endpoint.TrashEndpoint;
 import com.mendeley.sdk.request.endpoint.UserRolesEndpoint;
 import com.mendeley.sdk.ui.sign_in.SignInActivity;
+import com.mendeley.sdk.util.MssoCookieManager;
 
 import java.io.InputStream;
 import java.util.Calendar;
@@ -70,6 +71,7 @@ public class Mendeley {
 
     private ClientCredentials clientCredentials;
     private AuthTokenManager authTokenManager;
+    private MssoCookieManager mssoCookieManager;
     private RequestsFactory requestsFactory;
 
     /**
@@ -94,9 +96,13 @@ public class Mendeley {
      * @param appSecret, valid client app secret
      */
     public final void init(Context context, String appId, String appSecret) {
-        this.clientCredentials = new ClientCredentials(appId, appSecret);
-        this.authTokenManager = SharedPreferencesAuthTokenManager.obtain(context);
+        final SharedPreferencesAuthTokenManager sharedPreferencesAuthTokenManager = SharedPreferencesAuthTokenManager.obtain(context);
+
+        this.authTokenManager = sharedPreferencesAuthTokenManager;
+        this.mssoCookieManager = sharedPreferencesAuthTokenManager;
+
         this.requestsFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
+        this.clientCredentials = new ClientCredentials(appId, appSecret);
     }
 
     /**
@@ -210,6 +216,10 @@ public class Mendeley {
      */
     public AuthTokenManager getAuthTokenManager() {
         return authTokenManager;
+    }
+
+    public MssoCookieManager getMssoCookieManager() {
+        return mssoCookieManager;
     }
 
     private void assertInitialised() {
@@ -505,7 +515,7 @@ public class Mendeley {
      * but this class is left public in case you don't want to use the {@link Mendeley} singleton
      * in your app and you prefer to instantiate the {@link AuthTokenManager} by yourself.
      */
-    public static class SharedPreferencesAuthTokenManager implements AuthTokenManager {
+    public static class SharedPreferencesAuthTokenManager implements AuthTokenManager, MssoCookieManager {
 
         private static final String SHARED_PREFERENCES_NAME = "auth";
 
@@ -515,10 +525,11 @@ public class Mendeley {
         private static final String EXPIRES_AT_KEY = "expiresAtDate";
         private static final String TOKEN_TYPE_KEY = "tokenType";
 
+        private static final String MSSO_COOKIE_KEY = "mssoCookie";
+
         public static SharedPreferencesAuthTokenManager obtain(Context context) {
             return new SharedPreferencesAuthTokenManager(context.getSharedPreferences(SharedPreferencesAuthTokenManager.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE));
         }
-
 
         private final SharedPreferences preferences;
 
@@ -568,6 +579,18 @@ public class Mendeley {
         @Override
         public final String getTokenType() {
             return preferences.getString(TOKEN_TYPE_KEY, null);
+        }
+
+        @Override
+        public void saveMSSOCookieValue(String mssoCookie) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(MSSO_COOKIE_KEY, mssoCookie);
+            editor.commit();
+        }
+
+        @Override
+        public String getMssoCookieValue() {
+            return preferences.getString(MSSO_COOKIE_KEY, null);
         }
 
         private Date generateExpiresAtFromExpiresIn(int expiresIn) {
