@@ -1,6 +1,7 @@
 package com.mendeley.sdk.request.endpoint;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.JsonReader;
 
 import com.mendeley.sdk.AuthTokenManager;
@@ -94,6 +95,9 @@ public class ProfilesEndpoint {
 
         @Override
         protected RequestBody getBody() throws JSONException {
+            if (!TextUtils.isEmpty(profile.email)) {
+                throw new IllegalArgumentException("Email can't be patched using this endpoint/request");
+            }
             return RequestBody.create(MediaType.parse(PROFILE_AMENDMENT_CONTENT_TYPE), JsonParser.profileToJson(profile).toString());
         }
 
