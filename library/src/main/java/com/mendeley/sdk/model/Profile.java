@@ -29,7 +29,6 @@ public class Profile {
 	
 	public final List<Education> education;
 	public final List<Employment> employment;
-	public final String institution;
 	public final Institution institutionDetails;
 	
 	public Profile(
@@ -50,7 +49,6 @@ public class Profile {
 			Photo photo,
 			List<Education> education,
 			List<Employment> employment,
-			String institution,
 			Institution institutionDetails ) {
 
 		this.id = id;
@@ -70,41 +68,15 @@ public class Profile {
 		this.photo = photo;
 		this.education = education;
 		this.employment = employment;
-		this.institution = institution;
 		this.institutionDetails = institutionDetails;
 	}
 	
 	@Override
 	public String toString() {
-		
-		String educationString = "";
-		String employmentString = "";
-		
-		for (Education e : education) {
-			educationString = "\n" + e;
-		}
-		
-		for (Employment e : employment) {
-			employmentString = "\n" + e;
-		}
-		
 		return " id: " + id +
-				", displayName: " + displayName + 
-				", userType: " + userType + 
-				", url: " + url + 
-				", email: " + email + 
-				", link: " + link +
-				", firstName: " + firstName + 
-				", lastName: " + lastName + 
-				", researchInterests: " + researchInterests + 
-				", academicStatus: " + academicStatus + 
-				", verified: " + verified + 
-				", marketing: " + marketing +
-				", createdAt: " + createdAt +
-				", discipline: " + discipline + 
-				", photo: " + photo +
-				", employment: " + employmentString +
-				", education: " + educationString;			
+				"  firstName: " + firstName +
+				", lastName: " + lastName +
+				", original photo: " + photo.original ;
 	} 
 	
 	public static class Builder {
@@ -125,8 +97,7 @@ public class Profile {
 		private Photo photo;		
 		private List<Education> education;
 		private List<Employment> employment;
-		private String institution;
-		private Institution institutionDetails;
+		private Institution institutionDetails = new Institution.Builder().build();
 
 		public Builder() {}
 
@@ -148,7 +119,6 @@ public class Profile {
 			this.photo = from.photo;
 			this.education = from.education==null?new ArrayList<Education>():from.education;
 			this.employment = from.employment==null?new ArrayList<Employment>():from.employment;
-			this.institution = from.institution;
 			this.institutionDetails = from.institutionDetails;
 		}
 		
@@ -237,11 +207,6 @@ public class Profile {
 			return this;
 		}
 
-		public Builder setInstitution(String institution) {
-			this.institution = institution;
-			return this;
-		}
-
 		public Builder setInstitutionDetails(Institution institutionDetails) {
 			this.institutionDetails = institutionDetails;
 			return this;
@@ -266,7 +231,6 @@ public class Profile {
 					photo,
 					education,
 					employment,
-					institution,
 					institutionDetails);
 		}
 	}

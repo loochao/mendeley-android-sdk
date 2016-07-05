@@ -103,13 +103,8 @@ public class AssertUtils {
         Assert.assertEquals(expected.id, actual.id);
         Assert.assertEquals(expected.firstName, actual.firstName);
         Assert.assertEquals(expected.lastName, actual.lastName);
-    }
-
-    public static void assertNewProfile(Profile expected, Profile actual) {
-        Assert.assertEquals(expected.firstName, actual.firstName);
-        Assert.assertEquals(expected.lastName, actual.lastName);
-        Assert.assertEquals(expected.discipline.name, actual.discipline.name);
-        Assert.assertEquals(expected.academicStatus, actual.academicStatus);
+        Assert.assertEquals(expected.institutionDetails.id, actual.institutionDetails.id);
+        Assert.assertEquals(expected.institutionDetails.name, actual.institutionDetails.name);
     }
 
     public static void assertReadPositions(List<ReadPosition> expected, List<ReadPosition> actual) {

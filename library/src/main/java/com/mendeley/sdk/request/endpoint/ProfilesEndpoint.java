@@ -98,7 +98,7 @@ public class ProfilesEndpoint {
             if (!TextUtils.isEmpty(profile.email)) {
                 throw new IllegalArgumentException("Email can't be patched using this endpoint/request");
             }
-            return RequestBody.create(MediaType.parse(PROFILE_AMENDMENT_CONTENT_TYPE), JsonParser.profileToJson(profile).toString());
+            return RequestBody.create(MediaType.parse(PROFILE_AMENDMENT_CONTENT_TYPE), JsonParser.profileToJsonAmendment(profile).toString());
         }
 
         @Override

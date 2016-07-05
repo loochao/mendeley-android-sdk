@@ -1,7 +1,7 @@
 package com.mendeley.sdk.request;
 
 import android.net.Uri;
-import android.test.suitebuilder.annotation.LargeTest;
+import android.test.FlakyTest;
 
 import com.mendeley.sdk.Request;
 import com.mendeley.sdk.exceptions.MendeleyException;
@@ -26,7 +26,7 @@ public class GetAuthorizedRequestTest extends AuthorizedRequestTest {
         };
     }
 
-    @LargeTest
+    @FlakyTest
     public void test_cancel_interruptsReadingFromTheInputStream() throws InterruptedException, MendeleyException {
         // GIVEN a request
         final Request<Integer> request = new GetAuthorizedRequest<Integer>(Uri.parse("http://mirror.internode.on.net/pub/test/5meg.test1"), getAuthTokenManager(), getClientCredentials()) {

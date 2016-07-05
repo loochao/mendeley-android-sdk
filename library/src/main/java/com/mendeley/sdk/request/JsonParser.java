@@ -99,9 +99,6 @@ public class JsonParser {
             } else if (key.equals("employment")) {
                 builder.setEmployment(employmentsFromJson(reader));
 
-            } else if (key.equals("institution")) {
-                builder.setInstitution(reader.nextString());
-
             } else if (key.equals("institution_details")) {
                 builder.setInstitutionDetails(institutionFromJson(reader));
 
@@ -506,10 +503,23 @@ public class JsonParser {
         }
         jProfile.put("academic_status", profile.academicStatus);
         jProfile.put("marketing", profile.marketing);
-        jProfile.put("institution", profile.institution);
 
         if (profile.institutionDetails != null) {
             jProfile.put("institution_details", institutionDetailsToJson(profile.institutionDetails));
+        }
+
+        return jProfile;
+    }
+
+    public static JSONObject profileToJsonAmendment(Profile profile) throws JSONException {
+        JSONObject jProfile = new JSONObject();
+
+        jProfile.put("first_name", profile.firstName);
+        jProfile.put("last_name", profile.lastName);
+        jProfile.put("email", profile.email);
+
+        if (profile.institutionDetails != null) {
+            jProfile.put("institution_id", profile.institutionDetails.id);
         }
 
         return jProfile;
@@ -1276,4 +1286,6 @@ public class JsonParser {
         reader.endObject();
         return value;
     }
+
+
 }
