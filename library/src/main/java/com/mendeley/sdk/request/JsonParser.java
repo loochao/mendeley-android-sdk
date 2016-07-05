@@ -103,7 +103,7 @@ public class JsonParser {
                 builder.setInstitution(reader.nextString());
 
             } else if (key.equals("institution_details")) {
-                builder.setInstitutionDetails(InstitutionFromJson(reader));
+                builder.setInstitutionDetails(institutionFromJson(reader));
 
             }else {
                 reader.skipValue();
@@ -1078,7 +1078,19 @@ public class JsonParser {
         return builder.build();
     }
 
-    private static Institution InstitutionFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+    public static List<Institution> institutionsFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+        final List<Institution> institutions = new ArrayList<>();
+        reader.beginArray();
+
+        while (reader.hasNext()) {
+            institutions.add(institutionFromJson(reader));
+        }
+
+        reader.endArray();
+        return institutions;
+    }
+
+    public static Institution institutionFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final Institution.Builder builder = new Institution.Builder();
         reader.beginObject();
 
