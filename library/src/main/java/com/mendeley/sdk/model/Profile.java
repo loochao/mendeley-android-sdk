@@ -76,7 +76,7 @@ public class Profile {
 		return " id: " + id +
 				"  firstName: " + firstName +
 				", lastName: " + lastName +
-				", original photo: " + photo.original ;
+				", original photo: " + (photo != null ? photo.original : "null") ;
 	} 
 	
 	public static class Builder {

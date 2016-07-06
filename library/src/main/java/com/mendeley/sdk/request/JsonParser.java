@@ -516,7 +516,7 @@ public class JsonParser {
 
         jProfile.put("first_name", profile.firstName);
         jProfile.put("last_name", profile.lastName);
-        jProfile.put("email", profile.email);
+        jProfile.put("academic_status", profile.academicStatus);
 
         if (profile.institutionDetails != null) {
             jProfile.put("institution_id", profile.institutionDetails.id);

@@ -103,6 +103,7 @@ public class AssertUtils {
         Assert.assertEquals(expected.id, actual.id);
         Assert.assertEquals(expected.firstName, actual.firstName);
         Assert.assertEquals(expected.lastName, actual.lastName);
+        Assert.assertEquals(expected.academicStatus, actual.academicStatus);
         Assert.assertEquals(expected.institutionDetails.id, actual.institutionDetails.id);
         Assert.assertEquals(expected.institutionDetails.name, actual.institutionDetails.name);
     }
