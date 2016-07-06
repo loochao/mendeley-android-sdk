@@ -1,23 +1,25 @@
 package com.mendeley.sdk.model;
 
+import java.util.Date;
+
 /**
  * Model class representing education json object.
  */
 public class Education {
 	
 	public final String id;
-	public final String institution;
+	public final Institution institution;
 	public final String degree;
-	public final String startDate;
-	public final String endDate;
+	public final Date startDate;
+	public final Date endDate;
 	public final String website;
 
 	private Education(
 			String id,
-			String institution,
+			Institution institution,
 			String degree,
-			String startDate,
-			String endDate,
+			Date startDate,
+			Date endDate,
 			String website) {
 		this.id = id;
 		this.institution = institution;
@@ -29,10 +31,10 @@ public class Education {
 	
 	public static class Builder {
 		private String id;
-		private String institution;
+		private Institution institution;
 		private String degree;
-		private String startDate;
-		private String endDate;
+		private Date startDate;
+		private Date endDate;
 		private String website;
 		
 		public Builder() {}
@@ -51,7 +53,7 @@ public class Education {
 			return this;
 		}
 
-		public Builder setInstitution(String institution) {
+		public Builder setInstitution(Institution institution) {
 			this.institution = institution;
 			return this;
 		}
@@ -61,12 +63,12 @@ public class Education {
 			return this;
 		}
 
-		public Builder setStartDate(String startDate) {
+		public Builder setStartDate(Date startDate) {
 			this.startDate = startDate;
 			return this;
 		}
 		
-		public Builder setEndDate(String endDate) {
+		public Builder setEndDate(Date endDate) {
 			this.endDate = endDate;
 			return this;
 		}

@@ -1,6 +1,7 @@
 package com.mendeley.sdk.request;
 
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.JsonReader;
 
 import com.mendeley.sdk.model.AlternativeName;
@@ -72,6 +73,9 @@ public class JsonParser {
             } else if (key.equals("last_name")) {
                 builder.setLastName(reader.nextString());
 
+            } else if (key.equals("title")) {
+                builder.setTitle(reader.nextString());
+
             } else if (key.equals("research_interests")) {
                 builder.setResearchInterests(reader.nextString());
 
@@ -102,7 +106,7 @@ public class JsonParser {
             } else if (key.equals("institution_details")) {
                 builder.setInstitutionDetails(institutionFromJson(reader));
 
-            }else {
+            } else {
                 reader.skipValue();
             }
         }
@@ -485,10 +489,6 @@ public class JsonParser {
         return jFolder;
     }
 
-    public static JSONObject profileToJson(Profile profile) throws JSONException {
-        return profileToJson(profile, null);
-    }
-
     public static JSONObject profileToJson(Profile profile, String password) throws JSONException {
         JSONObject jProfile = new JSONObject();
 
@@ -504,9 +504,8 @@ public class JsonParser {
         jProfile.put("academic_status", profile.academicStatus);
         jProfile.put("marketing", profile.marketing);
 
-        if (profile.institutionDetails != null) {
-            jProfile.put("institution_details", institutionDetailsToJson(profile.institutionDetails));
-        }
+        //TODO: format employments
+        //TODO: format education
 
         return jProfile;
     }
@@ -516,49 +515,15 @@ public class JsonParser {
 
         jProfile.put("first_name", profile.firstName);
         jProfile.put("last_name", profile.lastName);
+        jProfile.put("title", profile.title);
         jProfile.put("academic_status", profile.academicStatus);
-
-        if (profile.institutionDetails != null) {
+        if (profile.institutionDetails != null && !TextUtils.isEmpty(profile.institutionDetails.id)) {
             jProfile.put("institution_id", profile.institutionDetails.id);
         }
 
         return jProfile;
     }
 
-    private static JSONObject institutionDetailsToJson(Institution institutionDetails) throws JSONException {
-        JSONObject jInstitutionDetails = new JSONObject();
-
-        jInstitutionDetails.put("scival_id", institutionDetails.scivalId);
-        jInstitutionDetails.put("id", institutionDetails.id);
-        jInstitutionDetails.put("name", institutionDetails.name);
-        jInstitutionDetails.put("city", institutionDetails.city);
-        jInstitutionDetails.put("state", institutionDetails.state);
-        jInstitutionDetails.put("country", institutionDetails.country);
-        jInstitutionDetails.put("parent_id", institutionDetails.parentId);
-        if (!institutionDetails.urls.isNull()) {
-            JSONArray urls = new JSONArray();
-            for (int i = 0; i < institutionDetails.urls.size(); i++) {
-                urls.put(i, institutionDetails.urls.get(i));
-            }
-            jInstitutionDetails.put("urls", urls);
-        }
-        jInstitutionDetails.put("profile_url", institutionDetails.profilerUrl);
-        if (!institutionDetails.altNames.isNull()) {
-            JSONArray altNames = new JSONArray();
-            for (int i = 0; i < institutionDetails.altNames.size(); i++) {
-                altNames.put(i, alternativeNameToJson(institutionDetails.altNames.get(i)));
-            }
-            jInstitutionDetails.put("urls", altNames);
-        }
-        return jInstitutionDetails;
-    }
-
-    private static JSONObject alternativeNameToJson(AlternativeName alternativeName) throws JSONException {
-        JSONObject jAlternativeName = new JSONObject();
-        jAlternativeName.put("name", alternativeName.name);
-
-        return jAlternativeName;
-    }
 
     public static List<Group> groupsFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final List<Group> groups = new ArrayList<Group>();
@@ -1047,7 +1012,19 @@ public class JsonParser {
         return list;
     }
 
-    private static Employment employmentFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+    public static List<Institution> institutionsFromJson(JsonReader reader) throws IOException, JSONException, ParseException {
+        final List<Institution> list = new LinkedList<>();
+        reader.beginArray();
+
+        while (reader.hasNext()) {
+            list.add(institutionFromJson(reader));
+        }
+
+        reader.endArray();
+        return list;
+    }
+
+    public static Employment employmentFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final Employment.Builder builder = new Employment.Builder();
         reader.beginObject();
 
@@ -1058,23 +1035,20 @@ public class JsonParser {
             if (key.equals("id")) {
                 builder.setId(reader.nextString());
 
-            } else if (key.equals("institution")) {
-                builder.setInstitution(reader.nextString());
+            } else if (key.equals("institution_details")) {
+                builder.setInstitution(institutionFromJson(reader));
 
             } else if (key.equals("position")) {
                 builder.setPosition(reader.nextString());
 
             } else if (key.equals("start_date")) {
-                builder.setStartDate(reader.nextString());
+                builder.setStartDate(DateUtils.parseYearMonthDayDate(reader.nextString()));
 
             } else if (key.equals("end_date")) {
-                builder.setEndDate(reader.nextString());
+                builder.setEndDate(DateUtils.parseYearMonthDayDate(reader.nextString()));
 
             } else if (key.equals("website")) {
                 builder.setWebsite(reader.nextString());
-
-            } else if (key.equals("classes")) {
-                builder.setClasses(stringListFromJson(reader));
 
             } else if (key.equals("is_main_employment")) {
                 builder.setIsMainEmployment(reader.nextBoolean());
@@ -1086,18 +1060,6 @@ public class JsonParser {
 
         reader.endObject();
         return builder.build();
-    }
-
-    public static List<Institution> institutionsFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
-        final List<Institution> institutions = new ArrayList<>();
-        reader.beginArray();
-
-        while (reader.hasNext()) {
-            institutions.add(institutionFromJson(reader));
-        }
-
-        reader.endArray();
-        return institutions;
     }
 
     public static Institution institutionFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
@@ -1113,6 +1075,9 @@ public class JsonParser {
 
             } else if (key.equals("id")) {
                 builder.setId(reader.nextString());
+
+            } else if (key.equals("parent_id")) {
+                builder.setParentId(reader.nextString());
 
             } else if (key.equals("name")) {
                 builder.setName(reader.nextString());
@@ -1159,7 +1124,7 @@ public class JsonParser {
         return list;
     }
 
-    private static Education educationFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+    public static Education educationFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final Education.Builder builder = new Education.Builder();
 
         reader.beginObject();
@@ -1170,12 +1135,12 @@ public class JsonParser {
                 builder.setId(reader.nextString());
             } else if (key.equals("degree")) {
                 builder.setDegree(reader.nextString());
-            } else if (key.equals("institution")) {
-                builder.setInstitution(reader.nextString());
+            } else if (key.equals("institution_details")) {
+                builder.setInstitution(institutionFromJson(reader));
             } else if (key.equals("start_date")) {
-                builder.setStartDate(reader.nextString());
+                builder.setStartDate(DateUtils.parseYearMonthDayDate(reader.nextString()));
             } else if (key.equals("end_date")) {
-                builder.setEndDate(reader.nextString());
+                builder.setEndDate(DateUtils.parseYearMonthDayDate(reader.nextString()));
             } else if (key.equals("website")) {
                 builder.setWebsite(reader.nextString());
             } else {

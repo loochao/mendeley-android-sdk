@@ -1,10 +1,15 @@
 package com.mendeley.sdk.testUtils;
 
+import android.text.TextUtils;
+
 import com.mendeley.sdk.model.Annotation;
 import com.mendeley.sdk.model.Document;
+import com.mendeley.sdk.model.Education;
+import com.mendeley.sdk.model.Employment;
 import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
+import com.mendeley.sdk.model.Institution;
 import com.mendeley.sdk.model.Person;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
@@ -100,12 +105,16 @@ public class AssertUtils {
 
 
     public static void assertProfile(Profile expected, Profile actual) {
-        Assert.assertEquals(expected.id, actual.id);
+        if (!TextUtils.isEmpty(expected.id) && !TextUtils.isEmpty(actual.id)) {
+            Assert.assertEquals(expected.id, actual.id);
+        }
         Assert.assertEquals(expected.firstName, actual.firstName);
         Assert.assertEquals(expected.lastName, actual.lastName);
+        Assert.assertEquals(expected.title, actual.title);
         Assert.assertEquals(expected.academicStatus, actual.academicStatus);
-        Assert.assertEquals(expected.institutionDetails.id, actual.institutionDetails.id);
-        Assert.assertEquals(expected.institutionDetails.name, actual.institutionDetails.name);
+        assertInstitution(expected.institutionDetails, actual.institutionDetails);
+        assertEmployments(expected.employment, actual.employment);
+        assertEducations(expected.education, actual.education);
     }
 
     public static void assertReadPositions(List<ReadPosition> expected, List<ReadPosition> actual) {
@@ -121,6 +130,64 @@ public class AssertUtils {
         Assert.assertEquals(expected.page, actual.page);
         Assert.assertEquals(expected.verticalPosition, actual.verticalPosition);
         //cannot assert date as server ignores the posted date
+    }
+
+    public static void assertEmployments(List<Employment> expected, List<Employment> actual) {
+        Assert.assertEquals("Number of employments gotten", expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertEmployment(expected.get(i), actual.get(i));
+        }
+    }
+
+    public static void assertEducations(List<Education> expected, List<Education> actual) {
+        Assert.assertEquals("Number of educations gotten", expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertEducation(expected.get(i), actual.get(i));
+        }
+    }
+
+    public static void assertEmployment(Employment actual, Employment expected) {
+        if (!TextUtils.isEmpty(expected.id) && !TextUtils.isEmpty(actual.id)) {
+            Assert.assertEquals("Employment id", actual.id, expected.id);
+        }
+        Assert.assertEquals("Employment start date", actual.startDate, expected.startDate);
+        Assert.assertEquals("Employment end date", actual.endDate, expected.endDate);
+        Assert.assertEquals("Employment position", actual.position, expected.position);
+        Assert.assertEquals("Employment website", actual.website, expected.website);
+        Assert.assertEquals("Employment isMainEmployment", actual.isMainEmployment, expected.isMainEmployment);
+        assertInstitution(actual.institution, expected.institution);
+    }
+
+    public static void assertEducation(Education actual, Education expected) {
+        if (!TextUtils.isEmpty(expected.id) && !TextUtils.isEmpty(actual.id)) {
+            Assert.assertEquals("Education id", actual.id, expected.id);
+        }
+        Assert.assertEquals("Education start date", actual.startDate, expected.startDate);
+        Assert.assertEquals("Education end date", actual.endDate, expected.endDate);
+        Assert.assertEquals("Education degree", actual.degree, expected.degree);
+        Assert.assertEquals("Education website", actual.website, expected.website);
+        assertInstitution(actual.institution, expected.institution);
+    }
+
+    public static void assertInstitution(Institution actual, Institution expected) {
+        Assert.assertEquals("Institution id", actual.id, expected.id);
+        Assert.assertEquals("Institution name", actual.name, expected.name);
+
+        if (!TextUtils.isEmpty(expected.parentId) && !TextUtils.isEmpty(actual.parentId)) {
+            Assert.assertEquals("Institution parentId", actual.parentId, expected.parentId);
+        }
+        if (!TextUtils.isEmpty(expected.city) && !TextUtils.isEmpty(actual.city)) {
+            Assert.assertEquals("Institution end city", actual.city, expected.city);
+        }
+        if (!TextUtils.isEmpty(expected.country) && !TextUtils.isEmpty(actual.country)) {
+            Assert.assertEquals("Institution country", actual.country, expected.country);
+        }
+        if (!TextUtils.isEmpty(expected.state) && !TextUtils.isEmpty(actual.state)) {
+            Assert.assertEquals("Institution state", actual.state, expected.state);
+        }
+        if (!TextUtils.isEmpty(expected.profilerUrl) && !TextUtils.isEmpty(actual.profilerUrl)) {
+            Assert.assertEquals("Institution profilerUrl", actual.profilerUrl, expected.profilerUrl);
+        }
     }
 
     public static <T extends Object> void assertSameElementsInCollection(Collection<T> col1, Collection<T> col2, Comparator<T> comparator) {

@@ -1,5 +1,7 @@
 package com.mendeley.sdk.model;
 
+import com.mendeley.sdk.util.NullableList;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +22,7 @@ public class Profile {
 	public final String lastName;
 	public final String researchInterests;
 	public final String academicStatus;
+	public final String title;
 	public final Boolean verified;
 	public final Boolean marketing;
 	public final Date createdAt;
@@ -27,9 +30,9 @@ public class Profile {
 	public final Discipline discipline;
 	public final Photo photo;
 	
-	public final List<Education> education;
-	public final List<Employment> employment;
 	public final Institution institutionDetails;
+	public final NullableList<Education> education;
+	public final NullableList<Employment> employment;
 	
 	public Profile(
 			String id,
@@ -40,7 +43,7 @@ public class Profile {
 			String link,
 			String firstName,
 			String lastName,
-			String researchInterests,
+			String title, String researchInterests,
 			String academicStatus,
 			Boolean verified,
 			Boolean marketing,
@@ -48,8 +51,8 @@ public class Profile {
 			Discipline discipline,
 			Photo photo,
 			List<Education> education,
-			List<Employment> employment,
-			Institution institutionDetails ) {
+			Institution institutionDetails,
+			List<Employment> employment) {
 
 		this.id = id;
 		this.displayName = displayName;
@@ -59,6 +62,7 @@ public class Profile {
 		this.link = link;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.title = title;
 		this.researchInterests = researchInterests;
 		this.academicStatus = academicStatus;
 		this.verified = verified;
@@ -66,9 +70,9 @@ public class Profile {
 		this.createdAt = createdAt;
 		this.discipline = discipline;
 		this.photo = photo;
-		this.education = education;
-		this.employment = employment;
 		this.institutionDetails = institutionDetails;
+		this.education = new NullableList<>(education);
+		this.employment = new NullableList<>(employment);
 	}
 	
 	@Override
@@ -98,6 +102,7 @@ public class Profile {
 		private List<Education> education;
 		private List<Employment> employment;
 		private Institution institutionDetails = new Institution.Builder().build();
+		private String title;
 
 		public Builder() {}
 
@@ -110,6 +115,7 @@ public class Profile {
 			this.link = from.link;
 			this.firstName = from.firstName;
 			this.lastName = from.lastName;
+            this.title = from.title;
 			this.researchInterests = from.researchInterests;
 			this.academicStatus = from.academicStatus;
 			this.verified = from.verified;
@@ -117,9 +123,9 @@ public class Profile {
 			this.createdAt = from.createdAt;
 			this.discipline = from.discipline;
 			this.photo = from.photo;
+            this.institutionDetails = from.institutionDetails;
 			this.education = from.education==null?new ArrayList<Education>():from.education;
 			this.employment = from.employment==null?new ArrayList<Employment>():from.employment;
-			this.institutionDetails = from.institutionDetails;
 		}
 		
 		public Builder setId(String id) {
@@ -159,6 +165,11 @@ public class Profile {
 		
 		public Builder setLastName(String lastName) {
 			this.lastName = lastName;
+			return this;
+		}
+
+		public Builder setTitle(String title) {
+			this.title = title;
 			return this;
 		}
 		
@@ -222,6 +233,7 @@ public class Profile {
 					link,
 				    firstName,
 					lastName,
+					title,
 					researchInterests,
 					academicStatus,
 					verified,
@@ -230,8 +242,8 @@ public class Profile {
 					discipline,
 					photo,
 					education,
-					employment,
-					institutionDetails);
+					institutionDetails,
+					employment);
 		}
 	}
 }

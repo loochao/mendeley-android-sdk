@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.mendeley.sdk.model.Annotation;
 import com.mendeley.sdk.model.Document;
+import com.mendeley.sdk.model.Employment;
 import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
@@ -455,4 +456,6 @@ public interface RequestsFactory {
      * @return the request
      */
     Request<List<Document>> newGetCatalogDocument(String identifier, String value);
+
+
 }
