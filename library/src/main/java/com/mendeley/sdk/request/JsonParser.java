@@ -15,7 +15,6 @@ import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.Institution;
 import com.mendeley.sdk.model.Person;
-import com.mendeley.sdk.model.Photo;
 import com.mendeley.sdk.model.Point;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
@@ -94,8 +93,8 @@ public class JsonParser {
             } else if (key.equals("discipline")) {
                 builder.setDiscipline(disciplineFromJson(reader));
 
-            } else if (key.equals("photo")) {
-                builder.setPhoto(photoFromJson(reader));
+            } else if (key.equals("photos")) {
+                builder.setPhotos(profilePhotosFromJson(reader));
 
             } else if (key.equals("education")) {
                 builder.setEducation(educationsFromJson(reader));
@@ -115,6 +114,68 @@ public class JsonParser {
 
         return builder.build();
     }
+
+    public static List<Profile.Photo> profilePhotosFromJson(JsonReader reader) throws IOException, JSONException, ParseException {
+        List<Profile.Photo> photos = new ArrayList<>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            photos.add(profilePhotoFromJson(reader));
+        }
+        reader.endArray();
+
+        return photos;
+    }
+
+    public static Profile.Photo profilePhotoFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+        final Profile.Photo.Builder bld = new Profile.Photo.Builder();
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+
+            if (key.equals("width")) {
+                bld.setWidth(reader.nextInt());
+            } else if (key.equals("height")) {
+                bld.setHeight(reader.nextInt());
+            } else if (key.equals("url")) {
+                bld.setUrl(reader.nextString());
+            } else if (key.equals("original")) {
+                bld.setOriginal(reader.nextBoolean());
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return bld.build();
+    }
+
+    public static Group.Photo groupPhotoFromJson(JsonReader reader) throws IOException {
+        reader.beginObject();
+
+        String original = null;
+        String standard = null;
+        String square = null;
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if ("original".equals(key)) {
+                original = reader.nextString();
+            } else if ("standard".equals(key)) {
+                standard = reader.nextString();
+            } else if ("square".equals(key)) {
+                square = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return new Group.Photo(original, standard, square);
+    }
+
+
 
     public static List<Document> documentsFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final List<Document> documents = new ArrayList<Document>();
@@ -579,7 +640,7 @@ public class JsonParser {
                 builder.setDisciplines(stringListFromJson(reader));
 
             } else if (key.equals("photo")) {
-                builder.setPhoto(photoFromJson(reader));
+                builder.setPhoto(groupPhotoFromJson(reader));
 
             } else {
                 reader.skipValue();
@@ -974,30 +1035,6 @@ public class JsonParser {
 
         reader.endObject();
         return discipline;
-    }
-
-    public static Photo photoFromJson(JsonReader reader) throws IOException {
-        reader.beginObject();
-
-        String original = null;
-        String standard = null;
-        String square = null;
-
-        while (reader.hasNext()) {
-            final String key = reader.nextName();
-            if ("original".equals(key)) {
-                original = reader.nextString();
-            } else if ("standard".equals(key)) {
-                standard = reader.nextString();
-            } else if ("square".equals(key)) {
-                square = reader.nextString();
-            } else {
-                reader.skipValue();
-            }
-        }
-
-        reader.endObject();
-        return new Photo(original, standard, square);
     }
 
     private static List<Employment> employmentsFromJson(JsonReader reader) throws IOException, JSONException, ParseException {

@@ -13,7 +13,6 @@ import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
 import com.mendeley.sdk.model.Person;
-import com.mendeley.sdk.model.Photo;
 import com.mendeley.sdk.model.Point;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
@@ -34,6 +33,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -132,7 +132,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         testGroup.setRole(Group.Role.OWNER);
         testGroup.setWebpage("test-group-webpage");
         testGroup.setLink("test-group-link");
-        Photo testPhoto = new Photo("test-original.png", "test-standard.png", "test-square.png");
+        Group.Photo testPhoto = new Group.Photo("test-original.png", "test-standard.png", "test-square.png");
         testGroup.setPhoto(testPhoto);
         ArrayList<String> testDisciplines = new ArrayList<String>();
         testDisciplines.add("Computer and Information Science");
@@ -342,7 +342,29 @@ public class JsonParserTest extends InstrumentationTestCase {
                 .setUserType("test-user_type")
                 .setCreatedAt(DateUtils.parseMendeleyApiTimestamp("2014-04-28T15:37:51.000Z"))
                 .setDiscipline(testDiscipline)
-                .setPhoto(new Photo("test-original.png", "test-standard.png", "test-square.png"))
+                .setPhotos(Arrays.asList(
+                        new Profile.Photo.Builder()
+                                .setOriginal(true)
+                                .setUrl("photo_original_url")
+                                .build(),
+                        new Profile.Photo.Builder()
+                                .setOriginal(false)
+                                .setHeight(120)
+                                .setUrl("photo_120_url")
+                                .build(),
+                        new Profile.Photo.Builder()
+                                .setOriginal(false)
+                                .setHeight(48)
+                                .setWidth(48)
+                                .setUrl("photo_48_url")
+                                .build(),
+                        new Profile.Photo.Builder()
+                                .setOriginal(false)
+                                .setHeight(256)
+                                .setWidth(256)
+                                .setUrl("photo_256_url")
+                                .build()
+                ))
                 .build();
 
         final JsonReader reader = getJsonReaderFromAssetsFile(profileFile);
@@ -363,21 +385,20 @@ public class JsonParserTest extends InstrumentationTestCase {
         AssertUtils.assertInstitution(expectedProfile.institutionDetails, actualProfile.institutionDetails);
         AssertUtils.assertEducations(expectedProfile.education, actualProfile.education);
         AssertUtils.assertEmployments(expectedProfile.employment, actualProfile.employment);
+        AssertUtils.assertProfilePhotos(expectedProfile.photos, actualProfile.photos);
 
         reader.close();
 
-        assertPhoto(expectedProfile.photo, actualProfile.photo);
     }
 
 
-    private void assertPhoto(Photo actualPhoto, Photo expectedPhoto) {
+    private void assertGroupPhoto(Group.Photo actualPhoto, Group.Photo expectedPhoto) {
         assertEquals("original photo", actualPhoto.original, expectedPhoto.original);
         assertEquals("standard photo", actualPhoto.standard, expectedPhoto.standard);
         assertEquals("square photo", actualPhoto.square, expectedPhoto.square);
     }
 
-
-    @SmallTest
+        @SmallTest
     public void test_jsonFromDocument_withNotNullCollections()
             throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JSONException, ParseException {
 
@@ -481,7 +502,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         assertEquals("role", expectedGroup.role, actualGroup.role);
         assertEquals("webpage", expectedGroup.webpage, actualGroup.webpage);
         assertEquals("link", expectedGroup.link, actualGroup.link);
-        assertPhoto(actualGroup.photo, expectedGroup.photo);
+        assertGroupPhoto(actualGroup.photo, expectedGroup.photo);
         assertEquals("disciplines", expectedGroup.disciplines.get(0), actualGroup.disciplines.get(0));
     }
 

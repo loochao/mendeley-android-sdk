@@ -117,6 +117,25 @@ public class AssertUtils {
         assertEducations(expected.education, actual.education);
     }
 
+    public static void assertProfilePhotos(List<Profile.Photo> expectedPhotos, List<Profile.Photo> actualPhotos) {
+        Assert.assertEquals("number of photos", expectedPhotos.size(), actualPhotos.size());
+        for (int i = 0; i < expectedPhotos.size(); i++) {
+            assertProfilePhoto(expectedPhotos.get(i), actualPhotos.get(i));
+        }
+    }
+
+
+    public static void assertProfilePhoto(Profile.Photo expectedPhoto, Profile.Photo actualPhoto) {
+        Assert.assertEquals("is original photo", expectedPhoto.original, actualPhoto.original);
+        Assert.assertEquals("photo url", expectedPhoto.url, actualPhoto.url);
+        if (expectedPhoto.width != null) {
+            Assert.assertEquals("photo width", actualPhoto.width, expectedPhoto.width);
+        }
+        if (expectedPhoto.height != null) {
+            Assert.assertEquals("photo height", actualPhoto.height, expectedPhoto.height);
+        }
+    }
+
     public static void assertReadPositions(List<ReadPosition> expected, List<ReadPosition> actual) {
         Assert.assertEquals("Number of read positions gotten", expected.size(), actual.size());
 

@@ -8,242 +8,309 @@ import java.util.List;
 
 /**
  * Model class representing profile json object.
- *
  */
 public class Profile {
 
-	public final String id;
-	public final String displayName;
-	public final String userType;
-	public final String url;
-	public final String email;
-	public final String link;
-	public final String firstName;
-	public final String lastName;
-	public final String researchInterests;
-	public final String academicStatus;
-	public final String title;
-	public final Boolean verified;
-	public final Boolean marketing;
-	public final Date createdAt;
+    public final String id;
+    public final String displayName;
+    public final String userType;
+    public final String url;
+    public final String email;
+    public final String link;
+    public final String firstName;
+    public final String lastName;
+    public final String researchInterests;
+    public final String academicStatus;
+    public final String title;
+    public final Boolean verified;
+    public final Boolean marketing;
+    public final Date createdAt;
 
-	public final Discipline discipline;
-	public final Photo photo;
-	
-	public final Institution institutionDetails;
-	public final NullableList<Education> education;
-	public final NullableList<Employment> employment;
-	
-	public Profile(
-			String id,
-			String displayName,
-			String userType,
-			String url,
-			String email,
-			String link,
-			String firstName,
-			String lastName,
-			String title, String researchInterests,
-			String academicStatus,
-			Boolean verified,
-			Boolean marketing,
-			Date createdAt,
-			Discipline discipline,
-			Photo photo,
-			List<Education> education,
-			Institution institutionDetails,
-			List<Employment> employment) {
+    public final Discipline discipline;
+    public final NullableList<Photo> photos;
 
-		this.id = id;
-		this.displayName = displayName;
-		this.userType = userType;
-		this.url = url;
-		this.email = email;
-		this.link = link;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.title = title;
-		this.researchInterests = researchInterests;
-		this.academicStatus = academicStatus;
-		this.verified = verified;
-		this.marketing = marketing;
-		this.createdAt = createdAt;
-		this.discipline = discipline;
-		this.photo = photo;
-		this.institutionDetails = institutionDetails;
-		this.education = new NullableList<>(education);
-		this.employment = new NullableList<>(employment);
-	}
-	
-	@Override
-	public String toString() {
-		return " id: " + id +
-				"  firstName: " + firstName +
-				", lastName: " + lastName +
-				", original photo: " + (photo != null ? photo.original : "null") ;
-	} 
-	
-	public static class Builder {
-		private String id;
-		private String displayName;
-		private String userType;
-		private String url;
-		private String email;
-		private String link;
-		private String firstName;
-		private String lastName;
-		private String researchInterests;
-		private String academicStatus;
-		private Boolean verified;
-		private Boolean marketing;
-		private Date createdAt;
-		private Discipline discipline;
-		private Photo photo;		
-		private List<Education> education;
-		private List<Employment> employment;
-		private Institution institutionDetails = new Institution.Builder().build();
-		private String title;
+    public final Institution institutionDetails;
+    public final NullableList<Education> education;
+    public final NullableList<Employment> employment;
 
-		public Builder() {}
+    public Profile(
+            String id,
+            String displayName,
+            String userType,
+            String url,
+            String email,
+            String link,
+            String firstName,
+            String lastName,
+            String title, String researchInterests,
+            String academicStatus,
+            Boolean verified,
+            Boolean marketing,
+            Date createdAt,
+            Discipline discipline,
+            List<Photo> photos,
+            List<Education> education,
+            Institution institutionDetails,
+            List<Employment> employment) {
 
-		public Builder(Profile from) {
-			this.id = from.id;
-			this.displayName = from.displayName;
-			this.userType = from.userType;
-			this.url = from.url;
-			this.email = from.email;
-			this.link = from.link;
-			this.firstName = from.firstName;
-			this.lastName = from.lastName;
+        this.id = id;
+        this.displayName = displayName;
+        this.userType = userType;
+        this.url = url;
+        this.email = email;
+        this.link = link;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.title = title;
+        this.researchInterests = researchInterests;
+        this.academicStatus = academicStatus;
+        this.verified = verified;
+        this.marketing = marketing;
+        this.createdAt = createdAt;
+        this.discipline = discipline;
+        this.photos = new NullableList<>(photos);
+        this.institutionDetails = institutionDetails;
+        this.education = new NullableList<>(education);
+        this.employment = new NullableList<>(employment);
+    }
+
+    @Override
+    public String toString() {
+        return " id: " + id +
+                "  firstName: " + firstName +
+                ", lastName: " + lastName;
+    }
+
+    public static class Builder {
+        private String id;
+        private String displayName;
+        private String userType;
+        private String url;
+        private String email;
+        private String link;
+        private String firstName;
+        private String lastName;
+        private String researchInterests;
+        private String academicStatus;
+        private Boolean verified;
+        private Boolean marketing;
+        private Date createdAt;
+        private Discipline discipline;
+        private List<Photo> photos;
+        private List<Education> education;
+        private List<Employment> employment;
+        private Institution institutionDetails = new Institution.Builder().build();
+        private String title;
+
+        public Builder() {
+        }
+
+        public Builder(Profile from) {
+            this.id = from.id;
+            this.displayName = from.displayName;
+            this.userType = from.userType;
+            this.url = from.url;
+            this.email = from.email;
+            this.link = from.link;
+            this.firstName = from.firstName;
+            this.lastName = from.lastName;
             this.title = from.title;
-			this.researchInterests = from.researchInterests;
-			this.academicStatus = from.academicStatus;
-			this.verified = from.verified;
-			this.marketing = from.marketing;
-			this.createdAt = from.createdAt;
-			this.discipline = from.discipline;
-			this.photo = from.photo;
+            this.researchInterests = from.researchInterests;
+            this.academicStatus = from.academicStatus;
+            this.verified = from.verified;
+            this.marketing = from.marketing;
+            this.createdAt = from.createdAt;
+            this.discipline = from.discipline;
+            this.photos = from.photos;
             this.institutionDetails = from.institutionDetails;
-			this.education = from.education==null?new ArrayList<Education>():from.education;
-			this.employment = from.employment==null?new ArrayList<Employment>():from.employment;
-		}
-		
-		public Builder setId(String id) {
-			this.id = id;
-			return this;
-		}
-		
-		public Builder setDisplayName(String displayName) {
-			this.displayName = displayName;
-			return this;
-		}
-		
-		public Builder setUserType(String userType) {
-			this.userType = userType;
-			return this;
-		}
-		
-		public Builder setUrl(String url) {
-			this.url = url;
-			return this;
-		}
-		
-		public Builder setEmail(String email) {
-			this.email = email;
-			return this;
-		}
-		
-		public Builder setLink(String link) {
-			this.link = link;
-			return this;
-		}
-		
-		public Builder setFirstName(String firstName) {
-			this.firstName = firstName;
-			return this;
-		}
-		
-		public Builder setLastName(String lastName) {
-			this.lastName = lastName;
-			return this;
-		}
+            this.education = from.education == null ? new ArrayList<Education>() : from.education;
+            this.employment = from.employment == null ? new ArrayList<Employment>() : from.employment;
+        }
 
-		public Builder setTitle(String title) {
-			this.title = title;
-			return this;
-		}
-		
-		public Builder setResearchInterests(String researchInterests) {
-			this.researchInterests = researchInterests;
-			return this;
-		}
-		
-		public Builder setAcademicStatus(String academicStatus) {
-			this.academicStatus = academicStatus;
-			return this;
-		}
-		
-		public Builder setVerified(Boolean verified) {
-			this.verified = verified;
-			return this;
-		}
+        public Builder setId(String id) {
+            this.id = id;
+            return this;
+        }
 
-		public Builder setMarketing(Boolean marketing) {
-			this.marketing = marketing;
-			return this;
-		}
-		
-		public Builder setCreatedAt(Date createdAt) {
-			this.createdAt = createdAt;
-			return this;
-		}
-		
-		public Builder setDiscipline(Discipline discipline) {
-			this.discipline = discipline;
-			return this;
-		}
-		
-		public Builder setPhoto(Photo photo) {
-			this.photo = photo;
-			return this;
-		}
-		
-		public Builder setEducation(List<Education> education) {
-			this.education = education;
-			return this;
-		}
-		
-		public Builder setEmployment(List<Employment> employment) {
-			this.employment = employment;
-			return this;
-		}
+        public Builder setDisplayName(String displayName) {
+            this.displayName = displayName;
+            return this;
+        }
 
-		public Builder setInstitutionDetails(Institution institutionDetails) {
-			this.institutionDetails = institutionDetails;
-			return this;
-		}
+        public Builder setUserType(String userType) {
+            this.userType = userType;
+            return this;
+        }
 
-		public Profile build() {
-			return new Profile(
-					id,
-					displayName,
-					userType,
-					url,
-					email,
-					link,
-				    firstName,
-					lastName,
-					title,
-					researchInterests,
-					academicStatus,
-					verified,
-					marketing,
-					createdAt,
-					discipline,
-					photo,
-					education,
-					institutionDetails,
-					employment);
-		}
-	}
+        public Builder setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder setLink(String link) {
+            this.link = link;
+            return this;
+        }
+
+        public Builder setFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder setLastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder setResearchInterests(String researchInterests) {
+            this.researchInterests = researchInterests;
+            return this;
+        }
+
+        public Builder setAcademicStatus(String academicStatus) {
+            this.academicStatus = academicStatus;
+            return this;
+        }
+
+        public Builder setVerified(Boolean verified) {
+            this.verified = verified;
+            return this;
+        }
+
+        public Builder setMarketing(Boolean marketing) {
+            this.marketing = marketing;
+            return this;
+        }
+
+        public Builder setCreatedAt(Date createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder setDiscipline(Discipline discipline) {
+            this.discipline = discipline;
+            return this;
+        }
+
+        public Builder setPhotos(List<Photo> photos) {
+            this.photos = photos;
+            return this;
+        }
+
+        public Builder setEducation(List<Education> education) {
+            this.education = education;
+            return this;
+        }
+
+        public Builder setEmployment(List<Employment> employment) {
+            this.employment = employment;
+            return this;
+        }
+
+        public Builder setInstitutionDetails(Institution institutionDetails) {
+            this.institutionDetails = institutionDetails;
+            return this;
+        }
+
+        public Profile build() {
+            return new Profile(
+                    id,
+                    displayName,
+                    userType,
+                    url,
+                    email,
+                    link,
+                    firstName,
+                    lastName,
+                    title,
+                    researchInterests,
+                    academicStatus,
+                    verified,
+                    marketing,
+                    createdAt,
+                    discipline,
+                    photos,
+                    education,
+                    institutionDetails,
+                    employment);
+        }
+    }
+
+    /**
+     * Model class representing the metadata for an image.
+     */
+    public static class Photo {
+
+        public final Integer width;
+        public final Integer height;
+        public final String url;
+        public final boolean original;
+
+        public Photo(
+                Integer width,
+                Integer height,
+                String url,
+                boolean original) {
+
+            this.width = width;
+            this.height = height;
+            this.url = url;
+            this.original = original;
+        }
+
+        public static class Builder {
+            private Integer width;
+            private Integer height;
+            private String url;
+            private boolean original;
+
+            public Builder() {
+            }
+
+            public Builder(Photo from) {
+                this.width = from.width;
+                this.height = from.height;
+                this.url = from.url;
+                this.original = from.original;
+            }
+
+            public Builder setWidth(Integer width) {
+                this.width = width;
+                return this;
+            }
+
+            public Builder setHeight(Integer height) {
+                this.height = height;
+                return this;
+            }
+
+            public Builder setUrl(String url) {
+                this.url = url;
+                return this;
+            }
+
+            public Builder setOriginal(boolean original) {
+                this.original = original;
+                return this;
+            }
+
+            public Photo build() {
+                return new Photo(
+                        width,
+                        height,
+                        url,
+                        original);
+            }
+        }
+    }
 }

@@ -10,12 +10,29 @@
     "name": "test-name",
     "unexpected_attribute": "void"
   },
-  "photo": {
-    "standard": "test-standard.png",
-    "original": "test-original.png",
-    "square": "test-square.png",
-    "unexpected_attribute": "void"
-  },
+  "photos": [
+    {
+      "url": "photo_original_url",
+      "original": true
+    },
+    {
+      "height": 120,
+      "url": "photo_120_url",
+      "original": false
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "url": "photo_48_url",
+      "original": false
+    },
+    {
+      "width": 256,
+      "height": 256,
+      "url": "photo_256_url",
+      "original": false
+    }
+  ],
   "verified": true,
   "user_type": "test-user_type",
   "created_at": "2014-04-28T15:37:51.000Z",

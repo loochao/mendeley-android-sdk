@@ -452,4 +452,5 @@ public class Document {
 			return other.id.equals(this.id);
 		}
 	}
+
 }
