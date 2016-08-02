@@ -19,7 +19,7 @@ public class DeleteAuthorizedRequest<ResultType> extends OkHttpAuthorizedRequest
     }
 
     @Override
-    protected void setMethod(Request.Builder requestBld) throws Exception {
+    protected final void setMethod(Request.Builder requestBld) throws Exception {
         requestBld.delete();
     }
 

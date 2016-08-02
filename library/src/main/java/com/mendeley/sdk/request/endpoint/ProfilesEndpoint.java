@@ -1,6 +1,7 @@
 package com.mendeley.sdk.request.endpoint;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.JsonReader;
 
 import com.mendeley.sdk.AuthTokenManager;
@@ -10,6 +11,7 @@ import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.request.DeleteAuthorizedRequest;
 import com.mendeley.sdk.request.GetAuthorizedRequest;
 import com.mendeley.sdk.request.JsonParser;
+import com.mendeley.sdk.request.PatchAuthorizedRequest;
 import com.mendeley.sdk.request.PostAuthorizedRequest;
 
 import org.json.JSONException;
@@ -33,7 +35,8 @@ import static com.mendeley.sdk.Request.MENDELEY_API_BASE_URL;
 public class ProfilesEndpoint {
 	public static final String PROFILES_URL = MENDELEY_API_BASE_URL + "profiles/";
     public static final String PROFILE_CONTENT_TYPE = "application/vnd.mendeley-profiles.1+json";
-    public static final String NEW_PROFILE_CONTENT_TYPE = "application/vnd.mendeley-new-profile.1+json";
+    public static final String PROFILE_NEW_CONTENT_TYPE = "application/vnd.mendeley-new-profile.1+json";
+    public static final String PROFILE_AMENDMENT_CONTENT_TYPE = "application/vnd.mendeley-profile-amendment.1+json";
 
     public ProfilesEndpoint() {
     }
@@ -72,7 +75,7 @@ public class ProfilesEndpoint {
 
         @Override
         protected RequestBody getBody() throws JSONException {
-            return RequestBody.create(MediaType.parse(NEW_PROFILE_CONTENT_TYPE), JsonParser.profileToJson(profile, password).toString());
+            return RequestBody.create(MediaType.parse(PROFILE_NEW_CONTENT_TYPE), JsonParser.profileToJson(profile, password).toString());
         }
 
         @Override
@@ -80,6 +83,30 @@ public class ProfilesEndpoint {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.profileFromJson(reader);
         }
+    }
+
+    public static class PatchMeProfileRequest extends PatchAuthorizedRequest<Profile> {
+        private final Profile profile;
+
+        public PatchMeProfileRequest(Profile profile, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+            super(Uri.parse(ProfilesEndpoint.PROFILES_URL + "me"), null, authTokenManager, clientCredentials);
+            this.profile = profile;
+        }
+
+        @Override
+        protected RequestBody getBody() throws JSONException {
+            if (!TextUtils.isEmpty(profile.email)) {
+                throw new IllegalArgumentException("Email can't be patched using this endpoint/request");
+            }
+            return RequestBody.create(MediaType.parse(PROFILE_AMENDMENT_CONTENT_TYPE), JsonParser.profileToJsonAmendment(profile).toString());
+        }
+
+        @Override
+        protected Profile manageResponse(InputStream is) throws Exception {
+            final JsonReader reader = new JsonReader(new InputStreamReader(is));
+            return JsonParser.profileFromJson(reader);
+        }
+
     }
 
     public static class DeleteProfileRequest extends DeleteAuthorizedRequest<Void> {

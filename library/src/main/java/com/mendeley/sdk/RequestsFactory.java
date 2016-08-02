@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.mendeley.sdk.model.Annotation;
 import com.mendeley.sdk.model.Document;
+import com.mendeley.sdk.model.Employment;
 import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
@@ -37,6 +38,14 @@ public interface RequestsFactory {
      * @return the request
      */
     Request<Profile> newGetMyProfileRequest();
+
+    /**
+     * Obtains a {@link Request} to patch the {@link Profile} of the signed in user.
+     *
+     * @param profile the profile to patch
+     * @return the request
+     */
+    Request<Profile> newPatchMeProfileRequest(Profile profile);
 
     /**
      * Obtains a {@link Request} to retrieve the {@link Profile} of a user given the id.
@@ -447,4 +456,6 @@ public interface RequestsFactory {
      * @return the request
      */
     Request<List<Document>> newGetCatalogDocument(String identifier, String value);
+
+
 }

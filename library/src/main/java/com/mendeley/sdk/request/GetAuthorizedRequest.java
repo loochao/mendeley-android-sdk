@@ -12,21 +12,19 @@ import java.io.InputStream;
 /**
  * Request against the Mendeley API using the GET method.
  */
-public  class GetAuthorizedRequest<ResultType> extends OkHttpAuthorizedRequest<ResultType> {
+public abstract class GetAuthorizedRequest<ResultType> extends OkHttpAuthorizedRequest<ResultType> {
 
-    protected GetAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
+    public GetAuthorizedRequest(Uri url, AuthTokenManager authTokenManager, ClientCredentials clientCredentials) {
         super(url, authTokenManager, clientCredentials);
     }
 
     @Override
-    protected void setMethod(okhttp3.Request.Builder requestBld) throws JSONException, Exception {
+    protected final void setMethod(okhttp3.Request.Builder requestBld) throws JSONException, Exception {
         requestBld.get();
     }
 
     @Override
-    protected ResultType manageResponse(InputStream is) throws Exception {
-        return null;
-    }
+    protected abstract ResultType manageResponse(InputStream is) throws Exception;
 
 }
 

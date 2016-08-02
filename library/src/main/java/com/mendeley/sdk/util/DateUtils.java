@@ -10,9 +10,13 @@ public class DateUtils {
     // ISO 8601 format, used by the Mendeley web API for timestamps.
     public final static SimpleDateFormat mendeleyApiDateFormat;
 
+    private final static SimpleDateFormat yearMonthDateDateFormat;
+
     static {
         mendeleyApiDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
         mendeleyApiDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        yearMonthDateDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     }
 
     /**
@@ -34,4 +38,13 @@ public class DateUtils {
         }
     }
 
+    public static Date parseYearMonthDayDate(String date) throws ParseException {
+        return yearMonthDateDateFormat.parse(date);
+    }
+
+    public static String formatYearMonthDayDate(Date date) {
+        synchronized (yearMonthDateDateFormat) {
+            return yearMonthDateDateFormat.format(date);
+        }
+    }
 }

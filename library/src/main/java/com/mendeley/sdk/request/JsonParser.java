@@ -1,8 +1,10 @@
 package com.mendeley.sdk.request;
 
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.JsonReader;
 
+import com.mendeley.sdk.model.AlternativeName;
 import com.mendeley.sdk.model.Annotation;
 import com.mendeley.sdk.model.Discipline;
 import com.mendeley.sdk.model.Document;
@@ -11,8 +13,8 @@ import com.mendeley.sdk.model.Employment;
 import com.mendeley.sdk.model.File;
 import com.mendeley.sdk.model.Folder;
 import com.mendeley.sdk.model.Group;
+import com.mendeley.sdk.model.Institution;
 import com.mendeley.sdk.model.Person;
-import com.mendeley.sdk.model.Photo;
 import com.mendeley.sdk.model.Point;
 import com.mendeley.sdk.model.Profile;
 import com.mendeley.sdk.model.ReadPosition;
@@ -70,6 +72,9 @@ public class JsonParser {
             } else if (key.equals("last_name")) {
                 builder.setLastName(reader.nextString());
 
+            } else if (key.equals("title")) {
+                builder.setTitle(reader.nextString());
+
             } else if (key.equals("research_interests")) {
                 builder.setResearchInterests(reader.nextString());
 
@@ -88,14 +93,17 @@ public class JsonParser {
             } else if (key.equals("discipline")) {
                 builder.setDiscipline(disciplineFromJson(reader));
 
-            } else if (key.equals("photo")) {
-                builder.setPhoto(photoFromJson(reader));
+            } else if (key.equals("photos")) {
+                builder.setPhotos(profilePhotosFromJson(reader));
 
             } else if (key.equals("education")) {
                 builder.setEducation(educationsFromJson(reader));
 
             } else if (key.equals("employment")) {
                 builder.setEmployment(employmentsFromJson(reader));
+
+            } else if (key.equals("institution_details")) {
+                builder.setInstitutionDetails(institutionFromJson(reader));
 
             } else {
                 reader.skipValue();
@@ -106,6 +114,68 @@ public class JsonParser {
 
         return builder.build();
     }
+
+    public static List<Profile.Photo> profilePhotosFromJson(JsonReader reader) throws IOException, JSONException, ParseException {
+        List<Profile.Photo> photos = new ArrayList<>();
+
+        reader.beginArray();
+        while (reader.hasNext()) {
+            photos.add(profilePhotoFromJson(reader));
+        }
+        reader.endArray();
+
+        return photos;
+    }
+
+    public static Profile.Photo profilePhotoFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+        final Profile.Photo.Builder bld = new Profile.Photo.Builder();
+
+        reader.beginObject();
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+
+            if (key.equals("width")) {
+                bld.setWidth(reader.nextInt());
+            } else if (key.equals("height")) {
+                bld.setHeight(reader.nextInt());
+            } else if (key.equals("url")) {
+                bld.setUrl(reader.nextString());
+            } else if (key.equals("original")) {
+                bld.setOriginal(reader.nextBoolean());
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+
+        return bld.build();
+    }
+
+    public static Group.Photo groupPhotoFromJson(JsonReader reader) throws IOException {
+        reader.beginObject();
+
+        String original = null;
+        String standard = null;
+        String square = null;
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if ("original".equals(key)) {
+                original = reader.nextString();
+            } else if ("standard".equals(key)) {
+                standard = reader.nextString();
+            } else if ("square".equals(key)) {
+                square = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return new Group.Photo(original, standard, square);
+    }
+
+
 
     public static List<Document> documentsFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final List<Document> documents = new ArrayList<Document>();
@@ -486,15 +556,35 @@ public class JsonParser {
         jProfile.put("first_name", profile.firstName);
         jProfile.put("last_name", profile.lastName);
         jProfile.put("email", profile.email);
-        jProfile.put("password", password);
+        if (password != null) {
+            jProfile.put("password", password);
+        }
         if (profile.discipline != null) {
             jProfile.put("discipline", profile.discipline.name);
         }
         jProfile.put("academic_status", profile.academicStatus);
         jProfile.put("marketing", profile.marketing);
 
+        //TODO: format employments
+        //TODO: format education
+
         return jProfile;
     }
+
+    public static JSONObject profileToJsonAmendment(Profile profile) throws JSONException {
+        JSONObject jProfile = new JSONObject();
+
+        jProfile.put("first_name", profile.firstName);
+        jProfile.put("last_name", profile.lastName);
+        jProfile.put("title", profile.title);
+        jProfile.put("academic_status", profile.academicStatus);
+        if (profile.institutionDetails != null && !TextUtils.isEmpty(profile.institutionDetails.id)) {
+            jProfile.put("institution_id", profile.institutionDetails.id);
+        }
+
+        return jProfile;
+    }
+
 
     public static List<Group> groupsFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final List<Group> groups = new ArrayList<Group>();
@@ -550,7 +640,7 @@ public class JsonParser {
                 builder.setDisciplines(stringListFromJson(reader));
 
             } else if (key.equals("photo")) {
-                builder.setPhoto(photoFromJson(reader));
+                builder.setPhoto(groupPhotoFromJson(reader));
 
             } else {
                 reader.skipValue();
@@ -901,6 +991,35 @@ public class JsonParser {
         reader.endObject();
     }
 
+    private static List<AlternativeName> alternativeNamesFromJson(JsonReader reader) throws IOException, JSONException, ParseException {
+        final List<AlternativeName> list = new LinkedList<>();
+        reader.beginArray();
+
+        while (reader.hasNext()) {
+            list.add(alternativeNameFromJson(reader));
+        }
+
+        reader.endArray();
+        return list;
+    }
+
+    private static AlternativeName alternativeNameFromJson(JsonReader reader) throws IOException {
+        final AlternativeName alternativeName = new AlternativeName();
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+            final String key = reader.nextName();
+            if ("name".equals(key)) {
+                alternativeName.name = reader.nextString();
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return alternativeName;
+    }
+
     private static Discipline disciplineFromJson(JsonReader reader) throws IOException {
         final Discipline discipline = new Discipline();
         reader.beginObject();
@@ -918,30 +1037,6 @@ public class JsonParser {
         return discipline;
     }
 
-    public static Photo photoFromJson(JsonReader reader) throws IOException {
-        reader.beginObject();
-
-        String original = null;
-        String standard = null;
-        String square = null;
-
-        while (reader.hasNext()) {
-            final String key = reader.nextName();
-            if ("original".equals(key)) {
-                original = reader.nextString();
-            } else if ("standard".equals(key)) {
-                standard = reader.nextString();
-            } else if ("square".equals(key)) {
-                square = reader.nextString();
-            } else {
-                reader.skipValue();
-            }
-        }
-
-        reader.endObject();
-        return new Photo(original, standard, square);
-    }
-
     private static List<Employment> employmentsFromJson(JsonReader reader) throws IOException, JSONException, ParseException {
         final List<Employment> list = new LinkedList<>();
         reader.beginArray();
@@ -954,7 +1049,19 @@ public class JsonParser {
         return list;
     }
 
-    private static Employment employmentFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+    public static List<Institution> institutionsFromJson(JsonReader reader) throws IOException, JSONException, ParseException {
+        final List<Institution> list = new LinkedList<>();
+        reader.beginArray();
+
+        while (reader.hasNext()) {
+            list.add(institutionFromJson(reader));
+        }
+
+        reader.endArray();
+        return list;
+    }
+
+    public static Employment employmentFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final Employment.Builder builder = new Employment.Builder();
         reader.beginObject();
 
@@ -965,26 +1072,73 @@ public class JsonParser {
             if (key.equals("id")) {
                 builder.setId(reader.nextString());
 
-            } else if (key.equals("institution")) {
-                builder.setInstitution(reader.nextString());
+            } else if (key.equals("institution_details")) {
+                builder.setInstitution(institutionFromJson(reader));
 
             } else if (key.equals("position")) {
                 builder.setPosition(reader.nextString());
 
             } else if (key.equals("start_date")) {
-                builder.setStartDate(reader.nextString());
+                builder.setStartDate(DateUtils.parseYearMonthDayDate(reader.nextString()));
 
             } else if (key.equals("end_date")) {
-                builder.setEndDate(reader.nextString());
+                builder.setEndDate(DateUtils.parseYearMonthDayDate(reader.nextString()));
 
             } else if (key.equals("website")) {
                 builder.setWebsite(reader.nextString());
 
-            } else if (key.equals("classes")) {
-                builder.setClasses(stringListFromJson(reader));
-
             } else if (key.equals("is_main_employment")) {
                 builder.setIsMainEmployment(reader.nextBoolean());
+
+            } else {
+                reader.skipValue();
+            }
+        }
+
+        reader.endObject();
+        return builder.build();
+    }
+
+    public static Institution institutionFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+        final Institution.Builder builder = new Institution.Builder();
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+
+            final String key = reader.nextName();
+
+            if (key.equals("scival_id")) {
+                builder.setScivalId(reader.nextInt());
+
+            } else if (key.equals("id")) {
+                builder.setId(reader.nextString());
+
+            } else if (key.equals("parent_id")) {
+                builder.setParentId(reader.nextString());
+
+            } else if (key.equals("name")) {
+                builder.setName(reader.nextString());
+
+            } else if (key.equals("city")) {
+                builder.setCity(reader.nextString());
+
+            } else if (key.equals("state")) {
+                builder.setState(reader.nextString());
+
+            } else if (key.equals("country")) {
+                builder.setCountry(reader.nextString());
+
+            } else if (key.equals("parent_id")) {
+                builder.setParentId(reader.nextString());
+
+            } else if (key.equals("urls")) {
+                builder.setUrls(stringListFromJson(reader));
+
+            } else if (key.equals("profile_url")) {
+                builder.setProfilerUrl(reader.nextString());
+
+            } else if (key.equals("alt_names")) {
+                builder.setAltNames(alternativeNamesFromJson(reader));
 
             } else {
                 reader.skipValue();
@@ -1007,7 +1161,7 @@ public class JsonParser {
         return list;
     }
 
-    private static Education educationFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
+    public static Education educationFromJson(JsonReader reader) throws JSONException, IOException, ParseException {
         final Education.Builder builder = new Education.Builder();
 
         reader.beginObject();
@@ -1018,12 +1172,12 @@ public class JsonParser {
                 builder.setId(reader.nextString());
             } else if (key.equals("degree")) {
                 builder.setDegree(reader.nextString());
-            } else if (key.equals("institution")) {
-                builder.setInstitution(reader.nextString());
+            } else if (key.equals("institution_details")) {
+                builder.setInstitution(institutionFromJson(reader));
             } else if (key.equals("start_date")) {
-                builder.setStartDate(reader.nextString());
+                builder.setStartDate(DateUtils.parseYearMonthDayDate(reader.nextString()));
             } else if (key.equals("end_date")) {
-                builder.setEndDate(reader.nextString());
+                builder.setEndDate(DateUtils.parseYearMonthDayDate(reader.nextString()));
             } else if (key.equals("website")) {
                 builder.setWebsite(reader.nextString());
             } else {
@@ -1134,4 +1288,6 @@ public class JsonParser {
         reader.endObject();
         return value;
     }
+
+
 }

@@ -51,8 +51,6 @@ public class Document {
     public final NullableList<String> websites;
     public final String clientData;
     public final String uniqueId;
-	
-	final static String ET_EL = "et. al";
 		
 	private Document(
 			Date lastModified,
@@ -454,4 +452,5 @@ public class Document {
 			return other.id.equals(this.id);
 		}
 	}
+
 }
