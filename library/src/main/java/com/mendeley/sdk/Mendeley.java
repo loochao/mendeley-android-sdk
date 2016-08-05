@@ -101,8 +101,8 @@ public class Mendeley {
         this.authTokenManager = sharedPreferencesAuthTokenManager;
         this.mssoCookieManager = sharedPreferencesAuthTokenManager;
 
-        this.requestsFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
         this.clientCredentials = new ClientCredentials(appId, appSecret);
+        this.requestsFactory = new RequestFactoryImpl(authTokenManager, clientCredentials);
     }
 
     /**
