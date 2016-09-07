@@ -1,5 +1,6 @@
 package com.mendeley.sdk.testUtils;
 
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.util.JsonReader;
 
@@ -32,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -315,7 +318,40 @@ public class TestAccountSetupUtils {
     }
 
 
+    /**
+     * Dumps a file from AssetManger to an array of bytes.
+     * Needed to work around some issures when posting files from the the AssetManager.
+     *
+     * @param assetManager
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public byte[] readFully(AssetManager assetManager, String fileName) throws IOException {
+        InputStream assetsInputStream = null;
+        ByteArrayOutputStream bos = null;
 
+        try {
+            assetsInputStream = assetManager.open(fileName);
+            bos = new ByteArrayOutputStream();
+
+            byte[] buffer = new byte[1024 * 10];
+
+            int read;
+            while ((read = assetsInputStream.read(buffer, 0, buffer.length)) > 0) {
+                bos.write(buffer, 0, read);
+            }
+
+            return bos.toByteArray();
+        } finally {
+            if (assetsInputStream != null) {
+                assetsInputStream.close();
+            }
+            if (bos != null) {
+                bos.close();
+            }
+        }
+    }
 
     /**
      * Exceptions that may happen when trying to set up the testing scenario
