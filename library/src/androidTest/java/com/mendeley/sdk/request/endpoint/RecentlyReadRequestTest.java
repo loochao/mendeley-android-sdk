@@ -13,6 +13,7 @@ import com.mendeley.sdk.Request;
 import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -138,8 +139,9 @@ public class RecentlyReadRequestTest extends SignedInTest {
         final String docId = getTestAccountSetupUtils().setupDocument(doc).id;
 
         // create file
-        final InputStream inputStream = getContext().getAssets().open("android.pdf");
-        return getTestAccountSetupUtils().setupFile(docId, "file" + getRandom().nextInt(2000), inputStream);
+        final byte[] fileBytes = getTestAccountSetupUtils().readFully(getContext().getAssets(), "android.pdf");
+        final InputStream fileInputStream = new ByteArrayInputStream(fileBytes);
+        return getTestAccountSetupUtils().setupFile(docId, "file" + getRandom().nextInt(2000), fileInputStream);
     }
 
 

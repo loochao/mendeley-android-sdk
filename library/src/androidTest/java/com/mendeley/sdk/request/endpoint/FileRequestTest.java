@@ -11,6 +11,8 @@ import com.mendeley.sdk.request.SignedInTest;
 import com.mendeley.sdk.testUtils.AssertUtils;
 import com.mendeley.sdk.util.DateUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -85,7 +87,9 @@ public class FileRequestTest extends SignedInTest {
         String[] fileNames = new String[]{"android.pdf", "api.pdf", "contact.pdf", "google.pdf"};
         for (int i = 0; i < fileNames.length; i++) {
             String fileName = fileNames[i];
-            File file = getTestAccountSetupUtils().setupFile(document.id, fileName, getContext().getAssets().open(fileName));
+            final byte[] fileBytes = getTestAccountSetupUtils().readFully(getContext().getAssets(), fileName);
+            final InputStream fileInputStream = new ByteArrayInputStream(fileBytes);
+            File file = getTestAccountSetupUtils().setupFile(document.id, fileName, fileInputStream);
             expected.add(file);
         }
 
@@ -112,7 +116,9 @@ public class FileRequestTest extends SignedInTest {
         String[] fileNames = new String[]{"android.pdf", "api.pdf", "contact.pdf", "google.pdf"};
         for (int i = 0; i < fileNames.length; i++) {
             String fileName = fileNames[i];
-            File file = getTestAccountSetupUtils().setupFile(document.id, fileName, getContext().getAssets().open(fileName));
+            final byte[] fileBytes = getTestAccountSetupUtils().readFully(getContext().getAssets(), fileName);
+            final InputStream fileInputStream = new ByteArrayInputStream(fileBytes);
+            File file = getTestAccountSetupUtils().setupFile(document.id, fileName, fileInputStream);
             expected.add(file);
         }
 
@@ -145,7 +151,9 @@ public class FileRequestTest extends SignedInTest {
         String[] fileNames = new String[]{"android.pdf", "api.pdf", "contact.pdf", "google.pdf"};
         for (int i = 0; i < fileNames.length; i++) {
             String fileName = fileNames[i];
-            File file = getTestAccountSetupUtils().setupFile(document.id, fileName, getContext().getAssets().open(fileName));
+            final byte[] fileBytes = getTestAccountSetupUtils().readFully(getContext().getAssets(), fileName);
+            final InputStream fileInputStream = new ByteArrayInputStream(fileBytes);
+            File file = getTestAccountSetupUtils().setupFile(document.id, fileName, fileInputStream);
             expected.add(file);
         }
 
@@ -230,7 +238,9 @@ public class FileRequestTest extends SignedInTest {
         String[] fileNames = new String[]{"android.pdf", "api.pdf", "contact.pdf", "google.pdf"};
         for (int i = 0; i < fileNames.length; i++) {
             String fileName = fileNames[i];
-            File file = getTestAccountSetupUtils().setupFile(document.id, fileName, getContext().getAssets().open(fileName));
+            final byte[] fileBytes = getTestAccountSetupUtils().readFully(getContext().getAssets(), fileName);
+            final InputStream fileInputStream = new ByteArrayInputStream(fileBytes);
+            File file = getTestAccountSetupUtils().setupFile(document.id, fileName, fileInputStream);
             serverFilesBefore.add(file);
         }
 
@@ -265,4 +275,6 @@ public class FileRequestTest extends SignedInTest {
 
         return file;
     }
+
+
 }
