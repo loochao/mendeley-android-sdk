@@ -1,6 +1,10 @@
 package com.mendeley.sdk.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.mendeley.sdk.util.NullableList;
+import com.mendeley.sdk.util.ParcelableUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +13,7 @@ import java.util.List;
 /**
  * Model class representing profile json object.
  */
-public class Profile {
+public class Profile implements Parcelable {
 
     public final String id;
     public final String displayName;
@@ -73,6 +77,76 @@ public class Profile {
         this.education = new NullableList<>(education);
         this.employment = new NullableList<>(employment);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(id);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, displayName);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, userType);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, url);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, email);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, link);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, firstName);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, lastName);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, researchInterests);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, academicStatus);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, title);
+        ParcelableUtils.writeOptionalBooleanToParcel(parcel, verified);
+        ParcelableUtils.writeOptionalBooleanToParcel(parcel, marketing);
+        ParcelableUtils.writeOptionalDateToParcel(parcel, createdAt);
+        ParcelableUtils.writeOptionalParcelableToParcel(parcel, discipline, 0);
+        ParcelableUtils.writeOptionalParcelableToParcel(parcel, institutionDetails, 0);
+        parcel.writeList(photos);
+        parcel.writeList(education);
+        parcel.writeList(employment);
+    }
+
+    public static final Creator<Profile> CREATOR = new Creator<Profile>() {
+        @Override
+        public Profile createFromParcel(Parcel in) {
+            Profile.Builder builder = new Profile.Builder()
+                    .setId(in.readString())
+                    .setDisplayName(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setUserType(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setUrl(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setEmail(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setLink(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setFirstName(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setLastName(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setResearchInterests(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setAcademicStatus(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setTitle(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setVerified(ParcelableUtils.readOptionalBooleanFromParcel(in))
+                    .setMarketing(ParcelableUtils.readOptionalBooleanFromParcel(in))
+                    .setCreatedAt(ParcelableUtils.readOptionalDateFromParcel(in))
+                    .setDiscipline((Discipline) ParcelableUtils.readOptionalParcelableFromParcel(in, Discipline.class.getClassLoader()))
+                    .setInstitutionDetails((Institution) ParcelableUtils.readOptionalParcelableFromParcel(in, Institution.class.getClassLoader()));
+
+            final List<Photo> photos = new ArrayList<>();
+            in.readList(photos, Photo.class.getClassLoader());
+            builder.setPhotos(photos);
+
+            final List<Education> education = new ArrayList<>();
+            in.readList(education, Education.class.getClassLoader());
+            builder.setEducation(education);
+
+            final List<Employment> employment = new ArrayList<>();
+            in.readList(employment, Employment.class.getClassLoader());
+            builder.setEmployment(employment);
+
+            return builder.build();
+        }
+
+        @Override
+        public Profile[] newArray(int size) {
+            return new Profile[size];
+        }
+    };
 
     @Override
     public String toString() {
@@ -249,7 +323,7 @@ public class Profile {
     /**
      * Model class representing the metadata for an image.
      */
-    public static class Photo {
+    public static class Photo implements Parcelable{
 
         public final Integer width;
         public final Integer height;
@@ -266,6 +340,37 @@ public class Profile {
             this.height = height;
             this.url = url;
             this.original = original;
+        }
+
+        public static final Creator<Photo> CREATOR = new Creator<Photo>() {
+
+            @Override
+            public Photo createFromParcel(Parcel parcel) {
+                return new Builder()
+                        .setWidth(ParcelableUtils.readOptionalIntegerFromParcel(parcel))
+                        .setHeight(ParcelableUtils.readOptionalIntegerFromParcel(parcel))
+                        .setUrl(ParcelableUtils.readOptionalStringFromParcel(parcel))
+                        .setOriginal(parcel.readInt()==1)
+                        .build();
+            }
+
+            @Override
+            public Photo[] newArray(int size) {
+                return new Photo[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            ParcelableUtils.writeOptionalIntegerToParcel(parcel, width);
+            ParcelableUtils.writeOptionalIntegerToParcel(parcel, height);
+            ParcelableUtils.writeOptionalStringToParcel(parcel, url);
+            parcel.writeInt(original?1:0);
         }
 
         public static class Builder {

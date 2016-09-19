@@ -1,12 +1,17 @@
 package com.mendeley.sdk.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.mendeley.sdk.util.ParcelableUtils;
+
 import java.util.Date;
 
 /**
  * Model class representing employment json object.
  *
  */
-public class Employment {
+public class Employment implements Parcelable {
 
 	public final String id;
 	public final Institution institution;
@@ -15,6 +20,43 @@ public class Employment {
 	public final Date startDate;
 	public final Date endDate;
 	public final Boolean isMainEmployment;
+
+	public static final Creator<Employment> CREATOR = new Creator<Employment>() {
+
+		@Override
+		public Employment createFromParcel(Parcel in) {
+			return new Builder()
+					.setId(ParcelableUtils.readOptionalStringFromParcel(in))
+					.setInstitution((Institution) ParcelableUtils.readOptionalParcelableFromParcel(in, Institution.class.getClassLoader()))
+					.setPosition(ParcelableUtils.readOptionalStringFromParcel(in))
+					.setWebsite(ParcelableUtils.readOptionalStringFromParcel(in))
+					.setStartDate(ParcelableUtils.readOptionalDateFromParcel(in))
+					.setEndDate(ParcelableUtils.readOptionalDateFromParcel(in))
+					.setIsMainEmployment(ParcelableUtils.readOptionalBooleanFromParcel(in))
+					.build();
+		}
+
+		@Override
+		public Employment[] newArray(int size) {
+			return new Employment[size];
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int flags) {
+		ParcelableUtils.writeOptionalStringToParcel(parcel, id);
+		ParcelableUtils.writeOptionalParcelableToParcel(parcel, institution, 0);
+		ParcelableUtils.writeOptionalStringToParcel(parcel, position);
+		ParcelableUtils.writeOptionalStringToParcel(parcel, website);
+		ParcelableUtils.writeOptionalDateToParcel(parcel, startDate);
+		ParcelableUtils.writeOptionalDateToParcel(parcel, endDate);
+		ParcelableUtils.writeOptionalBooleanToParcel(parcel, isMainEmployment);
+	}
 
 	private Employment(
 			String id,

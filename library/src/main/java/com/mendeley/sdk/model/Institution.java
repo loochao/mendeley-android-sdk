@@ -1,6 +1,10 @@
 package com.mendeley.sdk.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.mendeley.sdk.util.NullableList;
+import com.mendeley.sdk.util.ParcelableUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +13,7 @@ import java.util.List;
  * Model class representing institution json object.
  *
  */
-public class Institution {
+public class Institution implements Parcelable{
 
     public final int scivalId;
     public final String id;
@@ -18,9 +22,59 @@ public class Institution {
     public final String state;
     public final String country;
     public final String parentId;
-    public final NullableList<String> urls;
     public final String profilerUrl;
+    public final NullableList<String> urls;
     public final NullableList<AlternativeName> altNames;
+
+    public static final Creator<Institution> CREATOR = new Creator<Institution>() {
+
+        @Override
+        public Institution createFromParcel(Parcel in) {
+            Institution.Builder builder = new Builder()
+                    .setScivalId(in.readInt())
+                    .setId(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setName(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setCity(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setState(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setCountry(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setParentId(ParcelableUtils.readOptionalStringFromParcel(in))
+                    .setProfilerUrl(ParcelableUtils.readOptionalStringFromParcel(in));
+
+            final List<String> urls = new ArrayList<>();
+            in.readStringList(urls);
+            builder.setUrls(urls);
+
+            final List<AlternativeName> alternativeNames = new ArrayList<>();
+            in.readList(urls, AlternativeName.class.getClassLoader());
+            builder.setAltNames(alternativeNames);
+
+            return builder.build();
+        }
+
+        @Override
+        public Institution[] newArray(int size) {
+            return new Institution[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeInt(scivalId);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, id);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, name);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, city);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, state);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, country);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, parentId);
+        ParcelableUtils.writeOptionalStringToParcel(parcel, profilerUrl);
+        parcel.writeList(urls);
+        parcel.writeList(altNames);
+    }
 
     public Institution(
             int scivalId,

@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 
-import static com.mendeley.sdk.util.NetworkUtils.readInputStream;
+import static com.mendeley.sdk.util.IOUtils.readInputStream;
 
 public class GetAuthorizedRequestTest extends AuthorizedRequestTest {
 

@@ -1,11 +1,16 @@
 package com.mendeley.sdk.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.mendeley.sdk.util.ParcelableUtils;
+
 import java.util.Date;
 
 /**
  * Model class representing education json object.
  */
-public class Education {
+public class Education implements Parcelable {
 	
 	public final String id;
 	public final Institution institution;
@@ -13,6 +18,42 @@ public class Education {
 	public final Date startDate;
 	public final Date endDate;
 	public final String website;
+
+	public static final Creator<Education> CREATOR = new Creator<Education>() {
+
+		@Override
+		public Education createFromParcel(Parcel in) {
+			return new Builder()
+					.setId(ParcelableUtils.readOptionalStringFromParcel(in))
+					.setInstitution((Institution) ParcelableUtils.readOptionalParcelableFromParcel(in, Institution.class.getClassLoader()))
+					.setDegree(ParcelableUtils.readOptionalStringFromParcel(in))
+					.setStartDate(ParcelableUtils.readOptionalDateFromParcel(in))
+					.setEndDate(ParcelableUtils.readOptionalDateFromParcel(in))
+					.setWebsite(ParcelableUtils.readOptionalStringFromParcel(in))
+					.build();
+		}
+
+		@Override
+		public Education[] newArray(int size) {
+			return new Education[size];
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int flags) {
+		ParcelableUtils.writeOptionalStringToParcel(parcel, id);
+		ParcelableUtils.writeOptionalParcelableToParcel(parcel, institution, 0);
+		ParcelableUtils.writeOptionalStringToParcel(parcel, degree);
+		ParcelableUtils.writeOptionalDateToParcel(parcel, startDate);
+		ParcelableUtils.writeOptionalDateToParcel(parcel, endDate);
+		ParcelableUtils.writeOptionalStringToParcel(parcel, website);
+
+	}
 
 	private Education(
 			String id,

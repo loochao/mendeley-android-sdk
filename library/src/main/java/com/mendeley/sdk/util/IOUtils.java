@@ -6,9 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Utilities for the NetworkProviders.
+ * Utilities for IO operations.
  */
-public class NetworkUtils {
+public class IOUtils {
 
     /**
      * Extracting json String from the given InputStream object.
