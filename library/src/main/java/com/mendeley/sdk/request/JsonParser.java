@@ -254,6 +254,9 @@ public class JsonParser {
             } else if (key.equals("pages")) {
                 bld.setPages(reader.nextString());
 
+            } else if (key.equals("notes")) {
+                bld.setNotes(reader.nextString());
+
             } else if (key.equals("volume")) {
                 bld.setVolume(reader.nextString());
 
@@ -395,6 +398,7 @@ public class JsonParser {
             jDocument.put("created", DateUtils.formatMendeleyApiTimestamp(document.created));
         }
         jDocument.put("pages", document.pages);
+        jDocument.put("notes", document.notes);
         jDocument.put("volume", document.volume);
         jDocument.put("issue", document.issue);
         jDocument.put("publisher", document.publisher);

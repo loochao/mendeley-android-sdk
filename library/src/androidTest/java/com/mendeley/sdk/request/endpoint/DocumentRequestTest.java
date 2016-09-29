@@ -345,6 +345,7 @@ public class DocumentRequestTest extends SignedInTest {
                 setYear(getRandom().nextInt(2000)).
                 setAbstractString("abstract" + getRandom().nextInt()).
                 setSource("source" + getRandom().nextInt()).
+                setNotes("notes" + getRandom().nextInt()).
                 build();
 
         return doc;
