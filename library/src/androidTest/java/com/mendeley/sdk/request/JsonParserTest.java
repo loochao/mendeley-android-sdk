@@ -104,6 +104,7 @@ public class JsonParserTest extends InstrumentationTestCase {
         testDocument.setCreated(DateUtils.parseMendeleyApiTimestamp("2014-02-20T16:53:25.000Z"));
         testDocument.setAbstractString("test-abstract");
         testDocument.setPages("1-9");
+        testDocument.setNotes("my note");
         testDocument.setVolume("1");
         testDocument.setIssue("1");
         testDocument.setPublisher("test-publisher");
@@ -588,70 +589,71 @@ public class JsonParserTest extends InstrumentationTestCase {
         JSONAssert.assertEquals(expectedJson, actualJson, false);
     }
 
-    private void assertDocumentsAreEqual(Document doc1, Document doc2)
+    private void assertDocumentsAreEqual(Document expected, Document actual)
             throws IOException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JSONException {
 
-        assertEquals("title", doc1.title, doc2.title);
-        assertEquals("year", doc1.year, doc2.year);
-        assertEquals("type", doc1.type, doc2.type);
-        assertEquals("lastModified", doc1.lastModified, doc2.lastModified);
-        assertEquals("groupId", doc1.groupId, doc2.groupId);
-        assertEquals("profileId", doc1.profileId, doc2.profileId);
-        assertEquals("read", doc1.read, doc2.read);
-        assertEquals("starred", doc1.starred, doc2.starred);
-        assertEquals("authored", doc1.authored, doc2.authored);
-        assertEquals("confirmed", doc1.confirmed, doc2.confirmed);
-        assertEquals("hidden", doc1.hidden, doc2.hidden);
-        assertEquals("id", doc1.id, doc2.id);
-        assertEquals("month", doc1.month, doc2.month);
-        assertEquals("year", doc1.year, doc2.year);
-        assertEquals("day", doc1.day, doc2.day);
-        assertEquals("source", doc1.source, doc2.source);
-        assertEquals("revision", doc1.revision, doc2.revision);
-        assertEquals("created", doc1.created, doc2.created);
+        assertEquals("title", expected.title, actual.title);
+        assertEquals("year", expected.year, actual.year);
+        assertEquals("type", expected.type, actual.type);
+        assertEquals("lastModified", expected.lastModified, actual.lastModified);
+        assertEquals("groupId", expected.groupId, actual.groupId);
+        assertEquals("profileId", expected.profileId, actual.profileId);
+        assertEquals("read", expected.read, actual.read);
+        assertEquals("starred", expected.starred, actual.starred);
+        assertEquals("authored", expected.authored, actual.authored);
+        assertEquals("confirmed", expected.confirmed, actual.confirmed);
+        assertEquals("hidden", expected.hidden, actual.hidden);
+        assertEquals("id", expected.id, actual.id);
+        assertEquals("month", expected.month, actual.month);
+        assertEquals("year", expected.year, actual.year);
+        assertEquals("day", expected.day, actual.day);
+        assertEquals("source", expected.source, actual.source);
+        assertEquals("revision", expected.revision, actual.revision);
+        assertEquals("created", expected.created, actual.created);
 
-        assertEquals("abstract", doc1.abstractString, doc2.abstractString);
-        assertEquals("pages", doc1.pages, doc2.pages);
-        assertEquals("volume", doc1.volume, doc2.volume);
-        assertEquals("issue", doc1.issue, doc2.issue);
-        assertEquals("publisher", doc1.publisher, doc2.publisher);
-        assertEquals("city", doc1.city, doc2.city);
-        assertEquals("edition", doc1.edition, doc2.edition);
-        assertEquals("institution", doc1.institution, doc2.institution);
-        assertEquals("series", doc1.series, doc2.series);
-        assertEquals("chapter", doc1.chapter, doc2.chapter);
-        assertEquals("fileAttached", doc1.fileAttached, doc2.fileAttached);
+        assertEquals("abstract", expected.abstractString, actual.abstractString);
+        assertEquals("pages", expected.pages, actual.pages);
+        assertEquals("notes", expected.notes, actual.notes);
+        assertEquals("volume", expected.volume, actual.volume);
+        assertEquals("issue", expected.issue, actual.issue);
+        assertEquals("publisher", expected.publisher, actual.publisher);
+        assertEquals("city", expected.city, actual.city);
+        assertEquals("edition", expected.edition, actual.edition);
+        assertEquals("institution", expected.institution, actual.institution);
+        assertEquals("series", expected.series, actual.series);
+        assertEquals("chapter", expected.chapter, actual.chapter);
+        assertEquals("fileAttached", expected.fileAttached, actual.fileAttached);
 
-        assertEquals("identifiers size", doc1.identifiers.size(), doc2.identifiers.size());
-        for (String key : doc1.identifiers.keySet()) {
-            assertEquals("identifier " + key, doc1.identifiers.get(key), doc1.identifiers.get(key));
+        assertEquals("identifiers size", expected.identifiers.size(), actual.identifiers.size());
+        for (String key : expected.identifiers.keySet()) {
+            assertEquals("identifier " + key, expected.identifiers.get(key), expected.identifiers.get(key));
         }
 
-        assertEquals("keywords size", doc1.keywords.size(), doc2.keywords.size());
-        for (int i = 0; i < doc1.identifiers.size(); i++) {
-            assertEquals("keyword " + i, doc1.keywords.get(i), doc2.keywords.get(i));
+        assertEquals("keywords size", expected.keywords.size(), actual.keywords.size());
+        for (int i = 0; i < expected.identifiers.size(); i++) {
+            assertEquals("keyword " + i, expected.keywords.get(i), actual.keywords.get(i));
         }
 
-        assertEquals("tags size", doc1.tags.size(), doc2.tags.size());
-        for (int i = 0; i < doc1.tags.size(); i++) {
-            assertEquals("tag " + i, doc1.tags.get(i), doc2.tags.get(i));
+        assertEquals("tags size", expected.tags.size(), actual.tags.size());
+        for (int i = 0; i < expected.tags.size(); i++) {
+            assertEquals("tag " + i, expected.tags.get(i), actual.tags.get(i));
         }
 
-        assertEquals("websites size", doc1.websites.size(), doc2.websites.size());
-        for (int i = 0; i < doc1.websites.size(); i++) {
-            assertEquals("website " + i, doc1.websites.get(i), doc2.websites.get(i));
+        assertEquals("websites size", expected.websites.size(), actual.websites.size());
+        for (int i = 0; i < expected.websites.size(); i++) {
+            assertEquals("website " + i, expected.websites.get(i), actual.websites.get(i));
         }
 
-        assertEquals("author size", doc1.authors.size(), doc2.authors.size());
-        for (int i = 0; i < doc1.authors.size(); i++) {
-            assertEquals("author firstname" + i, doc1.authors.get(i).firstName, doc2.authors.get(i).firstName);
-            assertEquals("author lastName" + i, doc1.authors.get(i).lastName, doc2.authors.get(i).lastName);
+        assertEquals("author size", expected.authors.size(), actual.authors.size());
+        for (int i = 0; i < expected.authors.size(); i++) {
+            assertEquals("author firstname" + i, expected.authors.get(i).firstName, actual.authors.get(i).firstName);
+            assertEquals("author lastName" + i, expected.authors.get(i).lastName, actual.authors.get(i).lastName);
         }
 
-        assertEquals("editors size", doc1.editors.size(), doc2.editors.size());
-        for (int i = 0; i < doc1.editors.size(); i++) {
-            assertEquals("editor firstname" + i, doc1.editors.get(i).firstName, doc2.editors.get(i).firstName);
-            assertEquals("editor lastName" + i, doc1.editors.get(i).lastName, doc2.editors.get(i).lastName);
+        assertEquals("editors size", expected.editors.size(), actual.editors.size());
+        for (int i = 0; i < expected.editors.size(); i++) {
+            assertEquals("editor firstname" + i, expected.editors.get(i).firstName, actual.editors.get(i).firstName);
+            assertEquals("editor lastName" + i, expected.editors.get(i).lastName, actual.editors.get(i).lastName);
         }
     }
 

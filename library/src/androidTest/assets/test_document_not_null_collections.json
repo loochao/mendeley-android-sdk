@@ -51,7 +51,8 @@
     "test-website2"
   ],
   "client_data": "test-client_data",
-  "unique_id": "test-unique_id"
+  "unique_id": "test-unique_id",
+  "notes": "my note"
 }
 
 
