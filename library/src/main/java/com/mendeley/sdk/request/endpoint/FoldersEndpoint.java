@@ -60,6 +60,7 @@ public class FoldersEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", FOLDER_CONTENT_TYPE);
+            headers.put("Accept", FOLDER_CONTENT_TYPE);
         }
     }
 
@@ -77,6 +78,7 @@ public class FoldersEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", FOLDER_CONTENT_TYPE);
+            headers.put("Accept", FOLDER_CONTENT_TYPE);
         }
     }
 
@@ -99,6 +101,11 @@ public class FoldersEndpoint {
             return JsonParser.folderFromJson(reader);
         }
 
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Accept", FOLDER_CONTENT_TYPE);
+        }
+
     }
 
     public static class PatchFolderAuthorizedRequest extends PatchAuthorizedRequest<Folder> {
@@ -118,6 +125,11 @@ public class FoldersEndpoint {
         protected Folder manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.folderFromJson(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Accept", FOLDER_CONTENT_TYPE);
         }
     }
 
@@ -165,6 +177,7 @@ public class FoldersEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
+            headers.put("Accept", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
         }
     }
 

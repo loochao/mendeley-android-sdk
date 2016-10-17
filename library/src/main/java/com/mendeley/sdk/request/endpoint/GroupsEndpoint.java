@@ -58,6 +58,7 @@ public class GroupsEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", GROUP_CONTENT_TYPE);
+            headers.put("Accept", GROUP_CONTENT_TYPE);
         }
     }
 
@@ -75,6 +76,7 @@ public class GroupsEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", GROUP_CONTENT_TYPE);
+            headers.put("Accept", GROUP_CONTENT_TYPE);
         }
     }
 
@@ -104,6 +106,7 @@ public class GroupsEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", MEMBERSHIP_CONTENT_TYPE);
+            headers.put("Accept", MEMBERSHIP_CONTENT_TYPE);
         }
     }
 

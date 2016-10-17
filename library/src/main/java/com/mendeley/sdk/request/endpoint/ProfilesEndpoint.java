@@ -55,6 +55,7 @@ public class ProfilesEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", PROFILE_CONTENT_TYPE);
+            headers.put("Accept", PROFILE_CONTENT_TYPE);
         }
     }
 
@@ -71,6 +72,7 @@ public class ProfilesEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", PROFILE_CONTENT_TYPE);
+            headers.put("Accept", PROFILE_CONTENT_TYPE);
         }
 
         @Override
@@ -107,6 +109,11 @@ public class ProfilesEndpoint {
             return JsonParser.profileFromJson(reader);
         }
 
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", PROFILE_CONTENT_TYPE);
+            headers.put("Accept", PROFILE_CONTENT_TYPE);
+        }
     }
 
     public static class DeleteProfileRequest extends DeleteAuthorizedRequest<Void> {

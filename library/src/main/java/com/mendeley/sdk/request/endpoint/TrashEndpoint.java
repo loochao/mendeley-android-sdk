@@ -57,6 +57,7 @@ public class TrashEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
+            headers.put("Accept", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
         }
     }
 

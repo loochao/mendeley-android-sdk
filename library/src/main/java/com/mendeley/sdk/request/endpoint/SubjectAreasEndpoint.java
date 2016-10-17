@@ -42,6 +42,7 @@ public class SubjectAreasEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", "application/vnd.mendeley-subject-area.1+json");
+            headers.put("Accept", "application/vnd.mendeley-subject-area.1+json");
         }
     }
 }
