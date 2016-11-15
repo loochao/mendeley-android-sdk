@@ -51,9 +51,8 @@ public class Document {
     public final NullableList<String> websites;
     public final String clientData;
     public final String uniqueId;
-	
-	final static String ET_EL = "et. al";
-		
+	public final String notes;
+
 	private Document(
 			Date lastModified,
 			String groupId,
@@ -67,14 +66,14 @@ public class Document {
 			String type,
 			Integer month,
 			Integer year,
-			Integer day,	
+			Integer day,
 			String source,
 			String title,
 			String revision,
 			Date created,
 			Map<String, String> identifiers,
 			String abstractString,
-            List<Person> authors,
+			List<Person> authors,
 			String pages,
 			String volume,
 			String issue,
@@ -84,13 +83,13 @@ public class Document {
 			String institution,
 			String series,
 			String chapter,
-            List<Person> editors,
-            List<String> tags,
-            Boolean fileAttached,
-            List<String> keywords,
-            List<String> websites,
-            String clientData,
-            String uniqueId) {
+			List<Person> editors,
+			List<String> tags,
+			Boolean fileAttached,
+			List<String> keywords,
+			List<String> websites,
+			String clientData,
+			String notes, String uniqueId) {
 		this.lastModified = lastModified;
 		this.groupId = groupId;
 		this.profileId = profileId;
@@ -126,7 +125,8 @@ public class Document {
         this.keywords = new NullableList<String>(keywords);
         this.websites = new NullableList<String>(websites);
         this.clientData = clientData;
-        this.uniqueId = uniqueId;
+		this.notes = notes;
+		this.uniqueId = uniqueId;
 	}
 
 	public static class Builder {
@@ -167,7 +167,8 @@ public class Document {
         private List<String> websites;
         private String clientData;
         private String uniqueId;
-		
+		private String notes;
+
 		public Builder() {
         }
 		
@@ -206,6 +207,7 @@ public class Document {
             this.fileAttached = from.fileAttached;
             this.keywords = from.keywords==null?new ArrayList<String>():from.keywords;
             this.websites = from.websites==null?new ArrayList<String>():from.websites;
+            this.notes = from.notes;
             this.clientData = from.clientData;
             this.uniqueId = from.uniqueId;
 		}
@@ -391,6 +393,11 @@ public class Document {
             return this;
         }
 
+		public Builder setNotes(String notes) {
+			this.notes = notes;
+			return this;
+		}
+
 		public Document build() {
 			return new Document(
 					lastModified,
@@ -428,7 +435,8 @@ public class Document {
                     keywords,
                     websites,
                     clientData,
-                    uniqueId);
+					notes,
+					uniqueId);
 		}
 	}
 
@@ -454,4 +462,5 @@ public class Document {
 			return other.id.equals(this.id);
 		}
 	}
+
 }

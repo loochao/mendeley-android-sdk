@@ -75,7 +75,7 @@ public class Group {
     public final List<String> tags;
     public final String webpage;
     public final List<String> disciplines;
-    public final Photo photo;
+    public final Group.Photo photo;
 
     private Group(
             String id,
@@ -89,7 +89,7 @@ public class Group {
             List<String> tags,
             String webpage,
             List<String> disciplines,
-            Photo photo) {
+            Group.Photo photo) {
         this.id = id;
         this.created = created;
         this.owningProfileId = owningProfileId;
@@ -116,7 +116,7 @@ public class Group {
             private List<String> tags;
             private String webpage;
             private List<String> disciplines;
-            private Photo photo;
+            private Group.Photo photo;
 
         public Builder() {}
 
@@ -190,7 +190,7 @@ public class Group {
             return this;
         }
 
-        public Builder setPhoto(Photo photo) {
+        public Builder setPhoto(Group.Photo photo) {
             this.photo = photo;
             return this;
         }
@@ -211,4 +211,30 @@ public class Group {
                     photo);
         }
     }
+
+    /**
+     * Model class representing a group photo
+     */
+    public static class Photo {
+
+        public final String original;
+        public final String standard;
+        public final String square;
+
+        public Photo(String original, String standard, String square) {
+            this.original = original;
+            this.standard = standard;
+            this.square = square;
+        }
+
+        @Override
+        public String toString() {
+            return "Photo{" +
+                    "original='" + original + '\'' +
+                    ", standard='" + standard + '\'' +
+                    ", square='" + square + '\'' +
+                    '}';
+        }
+    }
+
 }

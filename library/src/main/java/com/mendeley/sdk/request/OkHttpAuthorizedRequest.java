@@ -96,10 +96,10 @@ public abstract class OkHttpAuthorizedRequest<ResultType> extends AuthorizedRequ
             if (currentRetry <  MAX_HTTP_RETRIES) {
                 return doRun(url, currentRetry + 1, addOauthToken);
             } else {
-                throw new MendeleyException("IO error in request " + url, ioe);
+                throw new MendeleyException("IO error performing the request " + url, ioe);
             }
         } catch (Exception e) {
-            throw new MendeleyException("Error in request " + url, e);
+            throw new MendeleyException("Error performing the request " + url, e);
         } finally {
             if (responseBody != null) {
                 if (responseBody.byteStream() != null) {

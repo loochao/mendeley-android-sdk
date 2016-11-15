@@ -42,6 +42,7 @@ public class DocumentIdentifiersEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", DOCUMENT_IDENTIFIER_CONTENT_TYPE);
+            headers.put("Accept", DOCUMENT_IDENTIFIER_CONTENT_TYPE);
         }
     }
 

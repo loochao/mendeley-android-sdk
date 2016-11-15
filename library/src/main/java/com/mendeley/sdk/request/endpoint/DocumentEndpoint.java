@@ -58,6 +58,7 @@ public class DocumentEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
+            headers.put("Accept", DocumentEndpoint.DOCUMENTS_CONTENT_TYPE);
         }
     }
 
@@ -88,6 +89,7 @@ public class DocumentEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
+            headers.put("Accept", DOCUMENTS_CONTENT_TYPE);
         }
     }
 
@@ -109,6 +111,7 @@ public class DocumentEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", DOCUMENTS_CONTENT_TYPE);
+            headers.put("Accept", DOCUMENTS_CONTENT_TYPE);
         }
 
         @Override
@@ -135,6 +138,11 @@ public class DocumentEndpoint {
         protected Document manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.documentFromJson(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Accept", DOCUMENTS_CONTENT_TYPE);
         }
 
     }

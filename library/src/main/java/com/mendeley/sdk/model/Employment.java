@@ -1,31 +1,70 @@
 package com.mendeley.sdk.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.mendeley.sdk.util.ParcelableUtils;
+
+import java.util.Date;
 
 /**
  * Model class representing employment json object.
  *
  */
-public class Employment {
+public class Employment implements Parcelable {
 
 	public final String id;
-	public final String institution;
+	public final Institution institution;
 	public final String position;
-	public final String startDate;
-	public final String endDate;
 	public final String website;
-	public final List<String> classes;
+	public final Date startDate;
+	public final Date endDate;
 	public final Boolean isMainEmployment;
+
+	public static final Creator<Employment> CREATOR = new Creator<Employment>() {
+
+		@Override
+		public Employment createFromParcel(Parcel in) {
+			return new Builder()
+					.setId(ParcelableUtils.readOptionalStringFromParcel(in))
+					.setInstitution((Institution) ParcelableUtils.readOptionalParcelableFromParcel(in, Institution.class.getClassLoader()))
+					.setPosition(ParcelableUtils.readOptionalStringFromParcel(in))
+					.setWebsite(ParcelableUtils.readOptionalStringFromParcel(in))
+					.setStartDate(ParcelableUtils.readOptionalDateFromParcel(in))
+					.setEndDate(ParcelableUtils.readOptionalDateFromParcel(in))
+					.setIsMainEmployment(ParcelableUtils.readOptionalBooleanFromParcel(in))
+					.build();
+		}
+
+		@Override
+		public Employment[] newArray(int size) {
+			return new Employment[size];
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int flags) {
+		ParcelableUtils.writeOptionalStringToParcel(parcel, id);
+		ParcelableUtils.writeOptionalParcelableToParcel(parcel, institution, 0);
+		ParcelableUtils.writeOptionalStringToParcel(parcel, position);
+		ParcelableUtils.writeOptionalStringToParcel(parcel, website);
+		ParcelableUtils.writeOptionalDateToParcel(parcel, startDate);
+		ParcelableUtils.writeOptionalDateToParcel(parcel, endDate);
+		ParcelableUtils.writeOptionalBooleanToParcel(parcel, isMainEmployment);
+	}
 
 	private Employment(
 			String id,
-			String institution,
+			Institution institution,
 			String position,
-			String startDate,
-			String endDate,
 			String website,
-			List<String> classes,
+			Date startDate,
+			Date endDate,
 			Boolean isMainEmployment) {
 
 		this.id = id;
@@ -34,18 +73,16 @@ public class Employment {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.website = website;
-		this.classes = classes;
 		this.isMainEmployment = isMainEmployment;
 	}
 
 	public static class Builder {
 		private String id;
-		private String institution;
-		private String position;
-		private String startDate;
-		private String endDate;
+		private Institution institution;
 		private String website;
-		private List<String> classes;
+		private String position;
+		private Date startDate;
+		private Date endDate;
 		private Boolean isMainEmployment;
 
 		public Builder() {}
@@ -57,7 +94,6 @@ public class Employment {
 			this.startDate = from.startDate;
 			this.endDate = from.endDate;
 			this.website = from.website;
-			this.classes = from.classes==null?new ArrayList<String>():from.classes;
 			this.isMainEmployment = from.isMainEmployment;
 		}
 
@@ -66,7 +102,7 @@ public class Employment {
 			return this;
 		}
 
-		public Builder setInstitution(String institution) {
+		public Builder setInstitution(Institution institution) {
 			this.institution = institution;
 			return this;
 		}
@@ -76,23 +112,18 @@ public class Employment {
 			return this;
 		}
 
-		public Builder setStartDate(String startDate) {
+		public Builder setStartDate(Date startDate) {
 			this.startDate = startDate;
 			return this;
 		}
 
-		public Builder setEndDate(String endDate) {
+		public Builder setEndDate(Date endDate) {
 			this.endDate = endDate;
 			return this;
 		}
 
 		public Builder setWebsite(String website) {
 			this.website = website;
-			return this;
-		}
-
-		public Builder setClasses(List<String> classes) {
-			this.classes = classes;
 			return this;
 		}
 
@@ -106,10 +137,9 @@ public class Employment {
 					id,
 					institution,
 					position,
+					website,
 					startDate,
 					endDate,
-					website,
-					classes,
 					isMainEmployment);
 		}
 	}

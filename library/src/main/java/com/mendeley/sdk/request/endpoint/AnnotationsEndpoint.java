@@ -53,6 +53,7 @@ public class AnnotationsEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", ANNOTATIONS_CONTENT_TYPE);
+            headers.put("Accept", ANNOTATIONS_CONTENT_TYPE);
         }
     }
 
@@ -80,6 +81,7 @@ public class AnnotationsEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", ANNOTATIONS_CONTENT_TYPE);
+            headers.put("Accept", ANNOTATIONS_CONTENT_TYPE);
         }
    }
 
@@ -100,6 +102,12 @@ public class AnnotationsEndpoint {
         protected Annotation manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.annotationFromJson(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Content-type", ANNOTATIONS_CONTENT_TYPE);
+            headers.put("Accept", ANNOTATIONS_CONTENT_TYPE);
         }
 
     }
@@ -125,6 +133,11 @@ public class AnnotationsEndpoint {
         protected Annotation manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.annotationFromJson(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Accept", ANNOTATIONS_CONTENT_TYPE);
         }
 
     }

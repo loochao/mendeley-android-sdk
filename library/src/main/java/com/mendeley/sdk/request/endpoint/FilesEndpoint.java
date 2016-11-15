@@ -66,6 +66,7 @@ public class FilesEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", FILES_CONTENT_TYPE);
+            headers.put("Accept", FILES_CONTENT_TYPE);
         }
     }
 

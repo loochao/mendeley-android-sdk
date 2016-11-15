@@ -13,7 +13,7 @@ import java.util.Date;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
-import static com.mendeley.sdk.util.NetworkUtils.readInputStream;
+import static com.mendeley.sdk.util.IOUtils.readInputStream;
 
 public class PatchAuthorizedRequestTest extends AuthorizedRequestTest {
 
