@@ -66,6 +66,7 @@ public class RecentlyReadEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", RECENTLY_READ_CONTENT_TYPE);
+            headers.put("Accept", RECENTLY_READ_CONTENT_TYPE);
         }
     }
 
@@ -90,6 +91,11 @@ public class RecentlyReadEndpoint {
         protected ReadPosition manageResponse(InputStream is) throws Exception {
             final JsonReader reader = new JsonReader(new InputStreamReader(is));
             return JsonParser.readPositionFromJson(reader);
+        }
+
+        @Override
+        protected void appendHeaders(Map<String, String> headers) {
+            headers.put("Accept", RECENTLY_READ_CONTENT_TYPE);
         }
 
     }

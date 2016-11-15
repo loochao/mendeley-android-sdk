@@ -29,6 +29,7 @@ public class Profile implements Parcelable {
     public final Boolean verified;
     public final Boolean marketing;
     public final Date createdAt;
+    public final Boolean isMe;
 
     public final Discipline discipline;
     public final NullableList<Photo> photos;
@@ -55,7 +56,8 @@ public class Profile implements Parcelable {
             List<Photo> photos,
             List<Education> education,
             Institution institutionDetails,
-            List<Employment> employment) {
+            List<Employment> employment,
+            boolean isMe) {
 
         this.id = id;
         this.displayName = displayName;
@@ -76,6 +78,7 @@ public class Profile implements Parcelable {
         this.institutionDetails = institutionDetails;
         this.education = new NullableList<>(education);
         this.employment = new NullableList<>(employment);
+        this.isMe = isMe;
     }
 
     @Override
@@ -175,6 +178,7 @@ public class Profile implements Parcelable {
         private List<Employment> employment;
         private Institution institutionDetails = new Institution.Builder().build();
         private String title;
+        private boolean isMe;
 
         public Builder() {
         }
@@ -199,6 +203,7 @@ public class Profile implements Parcelable {
             this.institutionDetails = from.institutionDetails;
             this.education = from.education == null ? new ArrayList<Education>() : from.education;
             this.employment = from.employment == null ? new ArrayList<Employment>() : from.employment;
+            this.isMe = from.isMe;
         }
 
         public Builder setId(String id) {
@@ -296,6 +301,11 @@ public class Profile implements Parcelable {
             return this;
         }
 
+        public Builder setIsMe(Boolean isMe) {
+            this.isMe = isMe;
+            return this;
+        }
+
         public Profile build() {
             return new Profile(
                     id,
@@ -316,7 +326,8 @@ public class Profile implements Parcelable {
                     photos,
                     education,
                     institutionDetails,
-                    employment);
+                    employment,
+                    isMe);
         }
     }
 

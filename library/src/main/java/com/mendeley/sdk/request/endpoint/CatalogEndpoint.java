@@ -57,6 +57,7 @@ public class CatalogEndpoint {
         @Override
         protected void appendHeaders(Map<String, String> headers) {
             headers.put("Content-type", CATALOG_CONTENT_TYPE);
+            headers.put("Accept", CATALOG_CONTENT_TYPE);
         }
     }
 
